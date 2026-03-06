@@ -457,7 +457,9 @@ async function main() {
 
   // ─── Admin User ──────────────────────────────────────────────
 
-  const hashedPassword = await hash("admin123", 12);
+  // WARNING: Development-only credentials. Change in production!
+  const DEV_ADMIN_PASSWORD = "fomo-dev-2026!";
+  const hashedPassword = await hash(DEV_ADMIN_PASSWORD, 12);
 
   await prisma.admin.create({
     data: {
@@ -473,7 +475,8 @@ async function main() {
   console.log("   → 7 categories");
   console.log("   → 7 groups with profiles");
   console.log("   → 10 questions");
-  console.log("   → 1 admin user (admin@fomo.dev / admin123)");
+  console.log(`   → 1 admin user (admin@fomo.dev / ${DEV_ADMIN_PASSWORD})`);
+  console.log("   ⚠️  Change admin password before deploying to production!");
 }
 
 main()

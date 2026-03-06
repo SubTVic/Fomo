@@ -9,7 +9,7 @@ interface Props {
   onChange: (value: string) => void;
 }
 
-export function YesNoQuestion({ question: _question, value, onChange }: Props) {
+export function YesNoQuestion({ value, onChange }: Props) {
   const selected = typeof value === "string" ? value : undefined;
 
   return (

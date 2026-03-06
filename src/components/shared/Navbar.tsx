@@ -13,9 +13,6 @@ export function Navbar() {
           <Link href="/groups" className="text-muted-foreground hover:text-foreground transition-colors">
             Alle Gruppen
           </Link>
-          <Link href="/quiz" className="text-muted-foreground hover:text-foreground transition-colors">
-            Quiz starten
-          </Link>
         </nav>
       </div>
     </header>

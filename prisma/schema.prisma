@@ -44,12 +44,69 @@ model Group {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  category Category       @relation(fields: [categoryId], references: [id])
-  profiles GroupProfile[]
+  // ─── Matching-Attribute (aus CSV-Import) ─────────────────────
+  career                  Boolean @default(false)
+  tech                    Boolean @default(false)
+  socialImpact            Boolean @default(false)
+  party                   Boolean @default(false)
+  religion                Boolean @default(false)
+  sports                  Boolean @default(false)
+  networking              Boolean @default(false)
+  arts                    Boolean @default(false)
+  music                   Boolean @default(false)
+  timeLow                 Boolean @default(false)
+  handsOn                 Boolean @default(false)
+  outdoor                 Boolean @default(false)
+  international           Boolean @default(false)
+  beginnerFriendly        Boolean @default(false)
+  competitive             Boolean @default(false)
+  financialCost           Boolean @default(false)
+  leadershipOpportunities Boolean @default(false)
+
+  // Kategoriale Attribute
+  language       String? // "german", "both", "english"
+  eventFrequency String? // "low", "medium", "high"
+  groupSize      String? // "small", "medium", "large"
+
+  // Event-Daten (nächstes bekanntes Event)
+  nextEventTitle    String?
+  nextEventDate     String?
+  nextEventTime     String?
+  nextEventLocation String?
+  nextEventUrl      String?
+  nextEventIsOpen   Boolean @default(false)
+
+  // ─── Registrierung ───────────────────────────────────────────
+  registeredVia     String?   // "import" | "survey" | "admin"
+  registeredAt      DateTime?
+  contactPerson     String?   // Ansprechperson (intern, nicht öffentlich)
+  contactPersonRole String?   // z.B. "Vorsitzende:r"
+  onboardingInfo    String?   @db.Text
+  motto             String?   // Slogan der Gruppe
+  foundedYear       Int?
+
+  category     Category          @relation(fields: [categoryId], references: [id])
+  profiles     GroupProfile[]
+  pilotAnswers GroupPilotAnswer[]
 
   @@index([categoryId])
   @@index([isActive])
+  @@index([registeredVia])
   @@map("groups")
+}
+
+// Answers from groups to pilot survey questions (bridges pilot ↔ quiz)
+model GroupPilotAnswer {
+  id         String @id @default(cuid())
+  groupId    String
+  questionId String // e.g. "D1Q1"
+  value      String // "1"-"5"
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, questionId])
+  @@index([groupId])
+  @@map("group_pilot_answers")
 }
 
 // ─── Quiz-Fragen ─────────────────────────────────────────────────
@@ -160,4 +217,46 @@ model QuizSession {
   // Just aggregate stats for understanding usage
 
   @@map("quiz_sessions")
+}
+
+// ─── Pilot-Umfrage ───────────────────────────────────────────────
+// Responses from the pilot survey (4 UI variants: scroll/classic/swipe/chat)
+// Questions are hardcoded in src/lib/pilot-questions.ts (not stored in DB)
+
+model PilotSession {
+  id          String    @id @default(cuid())
+  variant     String    // Legacy single-variant or "mixed" for multi-variant flow
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  // Multi-variant flow: JSON array of variant keys in the order shown
+  variantOrder     String? // e.g. '["swipe","scroll","chat","classic"]'
+  preferredVariant String? // User's favourite variant, e.g. "swipe"
+  preferenceReason String? @db.Text // Why they preferred it
+
+  // Demographics (collected at the end)
+  semester   String? // e.g. "1", "3", "5+"
+  isMember   String? // "yes" | "no" | "was"
+  groupNames String? // free text, comma-separated
+
+  // Open feedback
+  feedbackConfusing String? @db.Text
+  feedbackMissing   String? @db.Text
+
+  answers PilotAnswer[]
+
+  @@index([variant])
+  @@map("pilot_sessions")
+}
+
+model PilotAnswer {
+  id         String @id @default(cuid())
+  sessionId  String
+  questionId String // e.g. "D1Q1"
+  value      String // Likert "1"-"5" or free text
+
+  session PilotSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("pilot_answers")
 }

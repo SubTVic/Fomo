@@ -93,6 +93,17 @@ export function ClassicSurvey({
                 </button>
               );
             })}
+            <button
+              onClick={() => handleSelect("0")}
+              className={`flex items-center gap-3 rounded-xl border-2 px-5 py-3 text-left text-sm font-medium transition-all duration-150 active:scale-[0.98] ${
+                currentValue === "0"
+                  ? "bg-yellow-500 border-yellow-500 text-white"
+                  : "bg-white/80 border-yellow-400 hover:bg-yellow-50"
+              }`}
+            >
+              <span className="text-lg w-7 text-center">?</span>
+              <span>Ich hab die Frage nicht verstanden</span>
+            </button>
           </div>
         </div>
 

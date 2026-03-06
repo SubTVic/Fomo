@@ -8,12 +8,10 @@ import { useRef, useState, useCallback } from "react";
 import { getDimension } from "@/lib/pilot-questions";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
-const LIKERT_BUTTONS = [
-  { value: "1", label: "1", emoji: "😤", short: "Nein" },
-  { value: "2", label: "2", emoji: "🙁", short: "Eher nicht" },
-  { value: "3", label: "3", emoji: "😐", short: "Neutral" },
-  { value: "4", label: "4", emoji: "🙂", short: "Eher ja" },
-  { value: "5", label: "5", emoji: "😍", short: "Ja!" },
+const SWIPE_OPTIONS = [
+  { value: "1", label: "Nein", emoji: "👎" },
+  { value: "3", label: "Egal", emoji: "😐" },
+  { value: "5", label: "Ja", emoji: "👍" },
 ];
 
 export function SwipeSurvey({
@@ -49,8 +47,8 @@ export function SwipeSurvey({
   function handleAnswer(value: string) {
     if (exitDir) return;
     setAnswer(question.id, value);
-    const dir = parseInt(value) >= 3 ? "right" : "left";
-    setExitDir(dir);
+    const dir = value === "5" ? "right" : value === "1" ? "left" : null;
+    if (dir) setExitDir(dir);
     setTimeout(() => {
       setExitDir(null);
       setDragX(0);
@@ -144,31 +142,44 @@ export function SwipeSurvey({
           <p className="text-base font-semibold leading-relaxed">{question.text}</p>
           {currentValue && (
             <div className="mt-4 text-sm text-muted-foreground">
-              Deine Antwort: <strong>{currentValue}</strong>/5
+              Deine Antwort: <strong>{currentValue === "0" ? "Nicht verstanden" : (SWIPE_OPTIONS.find(o => o.value === currentValue)?.label ?? currentValue)}</strong>
             </div>
           )}
         </div>
 
-        {/* 5 answer buttons */}
-        <div className="flex gap-2 w-full max-w-sm">
-          {LIKERT_BUTTONS.map(({ value, label, emoji }) => {
-            const isSelected = currentValue === value;
-            return (
-              <button
-                key={value}
-                onClick={() => handleAnswer(value)}
-                aria-label={emoji}
-                className={`flex-1 flex flex-col items-center gap-1 rounded-xl border py-3 text-sm font-bold transition-all duration-150 active:scale-95 ${
-                  isSelected
-                    ? "bg-[#e94560] border-[#e94560] text-white scale-105"
-                    : "bg-white/10 border-white/20 hover:bg-white/20"
-                }`}
-              >
-                <span className="text-xl">{emoji}</span>
-                <span className="text-xs">{label}</span>
-              </button>
-            );
-          })}
+        {/* Answer buttons */}
+        <div className="flex flex-col gap-2 w-full max-w-sm">
+          <div className="flex gap-3">
+            {SWIPE_OPTIONS.map(({ value, label, emoji }) => {
+              const isSelected = currentValue === value;
+              return (
+                <button
+                  key={value}
+                  onClick={() => handleAnswer(value)}
+                  aria-label={label}
+                  className={`flex-1 flex flex-col items-center gap-1 rounded-xl border py-4 text-sm font-bold transition-all duration-150 active:scale-95 ${
+                    isSelected
+                      ? "bg-[#e94560] border-[#e94560] text-white scale-105"
+                      : "bg-white/10 border-white/20 hover:bg-white/20"
+                  }`}
+                >
+                  <span className="text-2xl">{emoji}</span>
+                  <span className="text-xs">{label}</span>
+                </button>
+              );
+            })}
+          </div>
+          <button
+            onClick={() => handleAnswer("0")}
+            className={`w-full flex items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-medium transition-all duration-150 active:scale-95 ${
+              currentValue === "0"
+                ? "bg-yellow-500 border-yellow-500 text-white"
+                : "bg-white/5 border-white/10 text-white/50 hover:bg-white/10"
+            }`}
+          >
+            <span>?</span>
+            <span>Nicht verstanden</span>
+          </button>
         </div>
       </div>
 

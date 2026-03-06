@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useSurveyState } from "./useSurveyState";
 import { ScrollSurvey } from "@/components/variants/scroll/ScrollSurvey";
@@ -16,7 +16,7 @@ import { VariantTransition } from "./VariantTransition";
 import { PreferenceQuestion } from "./PreferenceQuestion";
 import { DevSwitcher } from "./DevSwitcher";
 import { generateBlocks, getVariantOrder } from "@/lib/pilot-variant-order";
-import type { VariantKey } from "@/lib/pilot-variant-order";
+import type { Block, VariantKey } from "@/lib/pilot-variant-order";
 import { DIMENSIONS, getQuestionsForDimension } from "@/lib/pilot-questions";
 import type { Dimension, PilotQuestion } from "@/lib/pilot-questions";
 
@@ -36,30 +36,33 @@ export function SurveyRouter() {
 
   const surveyState = useSurveyState();
 
-  // Generate blocks once on mount (stable across re-renders)
-  const blocks = useMemo(() => generateBlocks(), []);
-  const variantOrder = useMemo(() => getVariantOrder(blocks), [blocks]);
+  // Generate blocks on client only to avoid hydration mismatch (Math.random)
+  const [blocks, setBlocks] = useState<Block[] | null>(null);
+  useEffect(() => { setBlocks(generateBlocks()); }, []);
 
-  const currentBlock = blocks[currentBlockIdx];
+  const variantOrder = useMemo(() => blocks ? getVariantOrder(blocks) : [], [blocks]);
+
+  const currentBlock = blocks ? blocks[currentBlockIdx] : null;
 
   // Resolve dimensions and questions for the current block
   const blockDimensions: Dimension[] = useMemo(
-    () => currentBlock.dimensionIds.map((id) => DIMENSIONS.find((d) => d.id === id)!),
-    [currentBlock.dimensionIds],
+    () => currentBlock ? currentBlock.dimensionIds.map((id) => DIMENSIONS.find((d) => d.id === id)!) : [],
+    [currentBlock],
   );
   const blockQuestions: PilotQuestion[] = useMemo(
-    () => currentBlock.dimensionIds.flatMap((id) => getQuestionsForDimension(id)),
-    [currentBlock.dimensionIds],
+    () => currentBlock ? currentBlock.dimensionIds.flatMap((id) => getQuestionsForDimension(id)) : [],
+    [currentBlock],
   );
 
   const onBlockComplete = useCallback(() => {
+    if (!blocks) return;
     if (currentBlockIdx < blocks.length - 1) {
       setCurrentBlockIdx((i) => i + 1);
       setRouterPhase("transition");
     } else {
       setRouterPhase("demographic");
     }
-  }, [currentBlockIdx, blocks.length]);
+  }, [currentBlockIdx, blocks]);
 
   const onSubmit = useCallback(async () => {
     setIsSubmitting(true);
@@ -84,6 +87,15 @@ export function SurveyRouter() {
       setIsSubmitting(false);
     }
   }, [variantOrder, surveyState]);
+
+  // ── Loading (blocks not yet generated on client) ─────
+  if (!blocks || !currentBlock) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <span className="text-muted-foreground">Laden...</span>
+      </div>
+    );
+  }
 
   // ── Done ──────────────────────────────────────────────
   if (routerPhase === "done") {

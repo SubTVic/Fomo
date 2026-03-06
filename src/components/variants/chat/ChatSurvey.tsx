@@ -9,11 +9,9 @@ import { getDimension } from "@/lib/pilot-questions";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 const LIKERT_CHAT = [
-  { value: "1", emoji: "😤", label: "Nein" },
-  { value: "2", emoji: "🙁", label: "Eher nicht" },
-  { value: "3", emoji: "😐", label: "Neutral" },
-  { value: "4", emoji: "🙂", label: "Eher ja" },
-  { value: "5", emoji: "😍", label: "Ja!" },
+  { value: "1", emoji: "👎", label: "Nein" },
+  { value: "3", emoji: "😐", label: "Egal" },
+  { value: "5", emoji: "👍", label: "Ja" },
 ];
 
 interface ChatMessage {
@@ -77,7 +75,7 @@ export function ChatSurvey({
         {
           id: "greeting",
           from: "bot",
-          text: `Hey! Weiter geht's mit ${blockQuestions.length} Fragen im Chat-Stil. Beantworte einfach mit 1–5!`,
+          text: `Hey! Weiter geht's mit ${blockQuestions.length} Fragen im Chat-Stil. Antworte mit Ja, Nein oder Egal!`,
         },
       ]);
     }, 400);
@@ -85,13 +83,13 @@ export function ChatSurvey({
   }, [blockQuestions.length]);
 
   function handleAnswer(value: string) {
-    const label = LIKERT_CHAT.find((l) => l.value === value)?.label ?? value;
+    const label = value === "0" ? "Nicht verstanden" : (LIKERT_CHAT.find((l) => l.value === value)?.label ?? value);
     setMessages((prev) => [
       ...prev,
       {
         id: `a-${question.id}`,
         from: "user",
-        text: `${value}/5 – ${label}`,
+        text: label,
       },
     ]);
     setAnswer(question.id, value);
@@ -194,6 +192,13 @@ export function ChatSurvey({
               </button>
             ))}
           </div>
+          <button
+            onClick={() => handleAnswer("0")}
+            className="w-full mt-2 flex items-center justify-center gap-1.5 rounded-xl bg-[#2a3942] border border-white/10 py-2 text-xs font-medium text-white/40 hover:bg-yellow-900/20 hover:border-yellow-700/50 transition-colors active:scale-95"
+          >
+            <span>?</span>
+            <span>Nicht verstanden</span>
+          </button>
         </div>
       )}
 

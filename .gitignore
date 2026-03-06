@@ -48,3 +48,6 @@ test-results/
 # Uploads
 public/logos/*
 !public/logos/.gitkeep
+
+# Plan docs
+*-PLAN.md

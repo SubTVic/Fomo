@@ -1,0 +1,163 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Hochschulgruppen ────────────────────────────────────────────
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  color       String?  // Hex color for UI, e.g. "#E63946"
+  icon        String?  // Icon identifier, e.g. "globe", "music"
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  groups Group[]
+
+  @@map("categories")
+}
+
+model Group {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  shortDescription String   @db.VarChar(200)
+  longDescription  String?  @db.Text
+  categoryId       String
+  contactEmail     String?
+  websiteUrl       String?
+  instagramUrl     String?
+  logoUrl          String?
+  memberCount      Int?
+  meetingSchedule  String?  // e.g. "Jeden Dienstag 19:00"
+  isActive         Boolean  @default(true)
+  isVerified       Boolean  @default(false) // Profile confirmed by the group itself
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  category Category       @relation(fields: [categoryId], references: [id])
+  profiles GroupProfile[]
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@map("groups")
+}
+
+// ─── Quiz-Fragen ─────────────────────────────────────────────────
+
+enum QuestionType {
+  LIKERT        // 5-point scale (stimme nicht zu ↔ stimme voll zu)
+  SINGLE_CHOICE // One answer from multiple options
+  MULTI_CHOICE  // Multiple answers possible
+  YES_NO        // Binary yes/no
+  SLIDER        // Numeric value on a range
+}
+
+model Question {
+  id          String       @id @default(cuid())
+  text        String       // The question text shown to users
+  type        QuestionType
+  order       Int          @default(0)
+  isRequired  Boolean      @default(true)
+  helpText    String?      // Optional explanation shown below the question
+  categoryTag String?      // Thematic tag, e.g. "politics", "social", "time"
+  weight      Float        @default(1.0) // Default weight for matching
+  // For SLIDER type: defines the range
+  sliderMin   Int?         @default(0)
+  sliderMax   Int?         @default(100)
+  sliderStep  Int?         @default(1)
+  sliderMinLabel String?   // e.g. "Gar nicht wichtig"
+  sliderMaxLabel String?   // e.g. "Sehr wichtig"
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  options  QuestionOption[]
+  profiles GroupProfile[]
+
+  @@map("questions")
+}
+
+model QuestionOption {
+  id         String @id @default(cuid())
+  questionId String
+  label      String // Display text, e.g. "Sport & Bewegung"
+  value      String // Stored value for matching, e.g. "sport"
+  order      Int    @default(0)
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@map("question_options")
+}
+
+// ─── Matching-Profile ────────────────────────────────────────────
+
+model GroupProfile {
+  id         String @id @default(cuid())
+  groupId    String
+  questionId String
+
+  // The group's "answer" to this question.
+  // For LIKERT: "1"-"5"
+  // For YES_NO: "0" or "1"
+  // For SLIDER: numeric string, e.g. "75"
+  // For SINGLE_CHOICE: the option value, e.g. "sport"
+  // For MULTI_CHOICE: comma-separated values, e.g. "sport,culture,tech"
+  answerValue String
+
+  // Optional per-question weight override for this group
+  weight Float @default(1.0)
+
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, questionId])
+  @@index([groupId])
+  @@index([questionId])
+  @@map("group_profiles")
+}
+
+// ─── Admin & Auth ────────────────────────────────────────────────
+
+enum AdminRole {
+  SUPER_ADMIN // StuRa staff, full access
+  EDITOR      // Can edit groups and questions
+}
+
+model Admin {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String?
+  passwordHash String?   // For credentials login (Phase 1)
+  ssoId        String?   @unique // For Shibboleth/SAML (Phase 2)
+  role         AdminRole @default(EDITOR)
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("admins")
+}
+
+// ─── Analytics (anonymous) ───────────────────────────────────────
+
+model QuizSession {
+  id           String    @id @default(cuid())
+  startedAt    DateTime  @default(now())
+  completedAt  DateTime?
+  questionCount Int      @default(0) // How many questions were answered
+  resultCount  Int       @default(0) // How many results were shown
+  // No personal data, no IP, no user agent
+  // Just aggregate stats for understanding usage
+
+  @@map("quiz_sessions")
+}

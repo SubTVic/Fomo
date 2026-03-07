@@ -180,14 +180,13 @@ export function GroupRegisterForm() {
   // ── Done screen ──────────────────────────────────────────────────────────
   if (submitResult?.success) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center bg-background">
-        <div className="text-5xl">🎉</div>
-        <h1 className="text-2xl font-bold">Registrierung erfolgreich!</h1>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
+        <h1 className="font-heading text-2xl uppercase">Registrierung erfolgreich!</h1>
         <p className="max-w-sm text-muted-foreground text-sm">
           Eure Gruppe wurde gespeichert und wird nach der Prüfung durch das FOMO-Team
           freigeschaltet. Wir melden uns per E-Mail.
         </p>
-        <Link href="/groups" className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground">
+        <Link href="/groups" className="bg-foreground px-8 py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors">
           Zur Gruppenübersicht
         </Link>
       </div>
@@ -195,13 +194,13 @@ export function GroupRegisterForm() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Progress header */}
-      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
-        <div className="mx-auto max-w-2xl px-4 py-3">
+    <div className="flex flex-col items-center px-4 py-6 sm:px-6">
+      <div className="w-full max-w-[700px] border-4 border-foreground bg-card">
+        {/* Progress header */}
+        <div className="bg-foreground text-primary-foreground px-6 py-4 sm:px-8">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold">Gruppe registrieren</span>
-            <span className="text-xs text-muted-foreground">
+            <span className="font-heading text-sm uppercase">Gruppe registrieren</span>
+            <span className="text-xs text-primary-foreground/60">
               Schritt {step} / {STEPS.length}
             </span>
           </div>
@@ -209,17 +208,16 @@ export function GroupRegisterForm() {
             {STEPS.map((_, i) => (
               <div
                 key={i}
-                className={`h-1 flex-1 rounded-full transition-colors ${
-                  i + 1 <= step ? "bg-primary" : "bg-muted"
+                className={`h-1.5 flex-1 transition-colors ${
+                  i + 1 <= step ? "bg-primary-foreground" : "bg-primary-foreground/20"
                 }`}
               />
             ))}
           </div>
-          <p className="mt-1.5 text-xs font-medium text-muted-foreground">{STEPS[step - 1]}</p>
+          <p className="mt-1.5 text-xs text-primary-foreground/60">{STEPS[step - 1]}</p>
         </div>
-      </header>
 
-      <main className="mx-auto max-w-2xl px-4 py-8">
+        <div className="px-6 py-8 sm:px-8">
         {step === 1 && (
           <Step1
             form={form}
@@ -273,21 +271,22 @@ export function GroupRegisterForm() {
             <button
               onClick={() => setStep((s) => s + 1)}
               disabled={!canAdvance()}
-              className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-40"
+              className="bg-foreground px-8 py-2.5 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors disabled:opacity-40"
             >
-              Weiter →
+              Weiter
             </button>
           ) : (
             <button
               onClick={handleSubmit}
               disabled={isSubmitting || !canAdvance()}
-              className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground disabled:opacity-40"
+              className="bg-foreground px-8 py-2.5 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors disabled:opacity-40"
             >
               {isSubmitting ? "Wird gespeichert…" : "Absenden"}
             </button>
           )}
         </div>
-      </main>
+        </div>
+      </div>
     </div>
   );
 }
@@ -304,7 +303,7 @@ function Step1({
   const descLen = form.shortDescription.trim().length;
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-xl font-bold">Stammdaten</h2>
+      <h2 className="font-heading text-lg uppercase">Stammdaten</h2>
 
       <Field label="Name der Gruppe *">
         <input
@@ -312,7 +311,7 @@ function Step1({
           value={form.name}
           onChange={(e) => set("name", e.target.value)}
           placeholder="z.B. Fachschaftsrat Informatik"
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
         />
       </Field>
 
@@ -320,7 +319,7 @@ function Step1({
         <select
           value={form.categoryName}
           onChange={(e) => set("categoryName", e.target.value)}
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
         >
           <option value="">Bitte wählen…</option>
           {CATEGORIES.map((c) => (
@@ -341,7 +340,7 @@ function Step1({
           value={form.shortDescription}
           onChange={(e) => set("shortDescription", e.target.value)}
           placeholder="Was macht eure Gruppe aus? (max. 200 Zeichen)"
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors resize-none"
         />
       </Field>
 
@@ -351,7 +350,7 @@ function Step1({
           value={form.longDescription}
           onChange={(e) => set("longDescription", e.target.value)}
           placeholder="Erzählt mehr über eure Geschichte, Ziele und Aktivitäten…"
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors resize-none"
         />
       </Field>
 
@@ -364,7 +363,7 @@ function Step1({
             placeholder="z.B. 2010"
             min={1800}
             max={2030}
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
           />
         </Field>
         <Field label="Motto / Slogan">
@@ -373,7 +372,7 @@ function Step1({
             value={form.motto}
             onChange={(e) => set("motto", e.target.value)}
             placeholder="Optional"
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
           />
         </Field>
       </div>
@@ -390,7 +389,7 @@ function Step2({
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-xl font-bold">Kontakt & Präsenz</h2>
+      <h2 className="font-heading text-lg uppercase">Kontakt & Präsenz</h2>
 
       <Field label="E-Mail-Adresse *" hint="Für Rückfragen und die Bestätigungsmail">
         <input
@@ -398,7 +397,7 @@ function Step2({
           value={form.contactEmail}
           onChange={(e) => set("contactEmail", e.target.value)}
           placeholder="kontakt@meingruppe.de"
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
         />
       </Field>
 
@@ -409,7 +408,7 @@ function Step2({
             value={form.contactPerson}
             onChange={(e) => set("contactPerson", e.target.value)}
             placeholder="Vor- und Nachname"
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
           />
         </Field>
         <Field label="Rolle">
@@ -418,7 +417,7 @@ function Step2({
             value={form.contactPersonRole}
             onChange={(e) => set("contactPersonRole", e.target.value)}
             placeholder="z.B. Vorsitzende:r"
-            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
           />
         </Field>
       </div>
@@ -429,7 +428,7 @@ function Step2({
           value={form.websiteUrl}
           onChange={(e) => set("websiteUrl", e.target.value)}
           placeholder="https://…"
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
         />
       </Field>
 
@@ -439,7 +438,7 @@ function Step2({
           value={form.instagramUrl}
           onChange={(e) => set("instagramUrl", e.target.value)}
           placeholder="https://instagram.com/…"
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
         />
       </Field>
     </div>
@@ -455,7 +454,7 @@ function Step3({
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-xl font-bold">Struktur</h2>
+      <h2 className="font-heading text-lg uppercase">Struktur</h2>
 
       <Field label="Mitgliederanzahl (ungefähr)">
         <div className="flex flex-wrap gap-2">
@@ -464,7 +463,7 @@ function Step3({
               key={range}
               type="button"
               onClick={() => set("memberCount", range)}
-              className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+              className={`border-2 px-4 py-2 text-sm font-medium transition-colors ${
                 form.memberCount === range
                   ? "bg-primary text-primary-foreground border-primary"
                   : "border-border hover:bg-muted"
@@ -482,7 +481,7 @@ function Step3({
           value={form.meetingSchedule}
           onChange={(e) => set("meetingSchedule", e.target.value)}
           placeholder="z.B. Jeden Dienstag 19:00 Uhr im APB"
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
         />
       </Field>
 
@@ -497,7 +496,7 @@ function Step3({
               key={value}
               type="button"
               onClick={() => set("language", value)}
-              className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+              className={`flex-1 border-2 px-3 py-2 text-sm font-medium transition-colors ${
                 form.language === value
                   ? "bg-primary text-primary-foreground border-primary"
                   : "border-border hover:bg-muted"
@@ -515,7 +514,7 @@ function Step3({
           value={form.onboardingInfo}
           onChange={(e) => set("onboardingInfo", e.target.value)}
           placeholder="Beschreibt euren Aufnahmeprozess…"
-          className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors resize-none"
         />
       </Field>
     </div>
@@ -537,7 +536,7 @@ function Step4({
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="text-xl font-bold">Quiz-Profil</h2>
+        <h2 className="font-heading text-lg uppercase">Quiz-Profil</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Beantwortet die folgenden Aussagen aus Sicht eurer Gruppe. Je ehrlicher, desto besser
           das Matching.
@@ -559,7 +558,7 @@ function Step4({
               </div>
             </div>
             {dimQuestions.map((q) => (
-              <div key={q.id} className="rounded-xl border bg-card p-4">
+              <div key={q.id} className="border-2 border-foreground/20 bg-card p-4">
                 <p className="text-sm font-medium mb-3">&ldquo;{q.text}&rdquo;</p>
                 <div className="flex gap-1.5 flex-wrap">
                   {LIKERT_OPTIONS.map(({ value, label }) => (
@@ -567,7 +566,7 @@ function Step4({
                       key={value}
                       type="button"
                       onClick={() => setAnswer(q.id, value)}
-                      className={`flex-1 min-w-[56px] rounded-lg border py-2 text-xs font-medium transition-colors ${
+                      className={`flex-1 min-w-[56px] border-2 py-2 text-xs font-medium transition-colors ${
                         answers[q.id] === value
                           ? "bg-primary text-primary-foreground border-primary"
                           : "border-border hover:bg-muted"
@@ -600,9 +599,9 @@ function Step5({
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-xl font-bold">Abschluss</h2>
+      <h2 className="font-heading text-lg uppercase">Abschluss</h2>
 
-      <div className="rounded-xl border bg-muted/40 p-4 text-sm text-muted-foreground leading-relaxed">
+      <div className="border-2 border-foreground/20 bg-accent p-4 text-sm text-muted-foreground leading-relaxed">
         <p className="font-semibold text-foreground mb-2">Logo nachreichen</p>
         <p>
           Ihr könnt euer Logo per E-Mail an{" "}
@@ -612,7 +611,7 @@ function Step5({
         </p>
       </div>
 
-      <div className="rounded-xl border bg-muted/40 p-4 text-sm text-muted-foreground leading-relaxed">
+      <div className="border-2 border-foreground/20 bg-accent p-4 text-sm text-muted-foreground leading-relaxed">
         <p className="font-semibold text-foreground mb-2">Datenschutz & Nutzung</p>
         <p>
           Eure Daten werden ausschließlich für FOMO – das Hochschulgruppen-Matching der TU Dresden

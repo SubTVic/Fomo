@@ -53,15 +53,17 @@ export default function PilotLandingPage() {
           Studie starten
         </Link>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          Entwickler?{" "}
-          <Link
-            href="/pilot/survey?dev=true"
-            className="underline hover:no-underline"
-          >
-            Mit Dev-Panel starten
-          </Link>
-        </p>
+        {process.env.NODE_ENV === "development" && (
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Entwickler?{" "}
+            <Link
+              href="/pilot/survey?dev=true"
+              className="underline hover:no-underline"
+            >
+              Mit Dev-Panel starten
+            </Link>
+          </p>
+        )}
       </div>
     </div>
   );

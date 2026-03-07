@@ -21,7 +21,7 @@ export function QuestionCard({ question, value, onChange }: QuestionCardProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-xl font-semibold leading-snug">{question.text}</h2>
+      <h2 className="font-heading text-lg uppercase leading-snug">{question.text}</h2>
 
       {question.type === "LIKERT" && <LikertQuestion {...commonProps} />}
       {question.type === "SLIDER" && <SliderQuestion {...commonProps} />}

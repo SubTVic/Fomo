@@ -91,7 +91,7 @@ export function SwipeSurvey({
       {/* Header */}
       <header className="px-4 py-3 flex items-center justify-between border-b border-white/10 flex-shrink-0">
         <div>
-          <span className="font-bold">FOMO</span>
+          <span className="font-heading uppercase border-2 border-white px-2 py-0.5">FOMO</span>
           <span className="text-white/50 text-sm ml-3">
             {dimension.emoji} {dimension.label}
           </span>
@@ -104,7 +104,7 @@ export function SwipeSurvey({
       {/* Progress */}
       <div className="h-0.5 bg-white/10 flex-shrink-0">
         <div
-          className="h-full bg-[#e94560] transition-all duration-300"
+          className="h-full bg-[#ADD8E6] transition-all duration-300"
           style={{ width: `${blockProgress}%` }}
         />
       </div>
@@ -142,7 +142,7 @@ export function SwipeSurvey({
           <p className="text-base font-semibold leading-relaxed">{question.text}</p>
           {currentValue && (
             <div className="mt-4 text-sm text-muted-foreground">
-              Deine Antwort: <strong>{currentValue === "0" ? "Nicht verstanden" : (SWIPE_OPTIONS.find(o => o.value === currentValue)?.label ?? currentValue)}</strong>
+              Deine Antwort: <strong>{currentValue === "0" ? "Frage nicht verstanden" : (SWIPE_OPTIONS.find(o => o.value === currentValue)?.label ?? currentValue)}</strong>
             </div>
           )}
         </div>
@@ -159,7 +159,7 @@ export function SwipeSurvey({
                   aria-label={label}
                   className={`flex-1 flex flex-col items-center gap-1 rounded-xl border py-4 text-sm font-bold transition-all duration-150 active:scale-95 ${
                     isSelected
-                      ? "bg-[#e94560] border-[#e94560] text-white scale-105"
+                      ? "bg-[#ADD8E6] border-[#ADD8E6] text-white scale-105"
                       : "bg-white/10 border-white/20 hover:bg-white/20"
                   }`}
                 >
@@ -171,14 +171,16 @@ export function SwipeSurvey({
           </div>
           <button
             onClick={() => handleAnswer("0")}
-            className={`w-full flex items-center justify-center gap-1.5 rounded-xl border py-2 text-xs font-medium transition-all duration-150 active:scale-95 ${
+            className={`w-full rounded-xl border border-dashed px-3 py-2.5 text-left transition-all duration-150 active:scale-95 ${
               currentValue === "0"
-                ? "bg-yellow-500 border-yellow-500 text-white"
-                : "bg-white/5 border-white/10 text-white/50 hover:bg-white/10"
+                ? "border-yellow-500 bg-yellow-500/20 text-yellow-200"
+                : "border-white/15 text-white/40 hover:bg-white/5"
             }`}
           >
-            <span>?</span>
-            <span>Nicht verstanden</span>
+            <span className="text-xs font-medium">Ich hab die Frage nicht verstanden</span>
+            <span className="block text-[11px] text-white/30 mt-0.5">
+              Hilft uns, unklare Fragen zu verbessern
+            </span>
           </button>
         </div>
       </div>

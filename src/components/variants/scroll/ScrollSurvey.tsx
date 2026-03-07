@@ -34,7 +34,7 @@ export function ScrollSurvey({
       {/* Sticky header with dimension tabs */}
       <header className="sticky top-0 z-10 bg-[#f5f0e8]/95 backdrop-blur-sm border-b">
         <div className="mx-auto max-w-xl px-4 py-3 flex items-center justify-between">
-          <span className="font-bold text-lg">FOMO Pilot</span>
+          <span className="font-heading text-lg uppercase border-2 border-current px-2 py-0.5">FOMO</span>
           <span className="text-sm text-muted-foreground">
             {blockAnswered} / {blockQuestions.length}
           </span>

@@ -2,6 +2,8 @@
 // Simple in-memory rate limiter for API routes
 
 const hits = new Map<string, number[]>();
+let lastCleanup = Date.now();
+const CLEANUP_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
 /**
  * Returns true if the request should be BLOCKED (rate limit exceeded).
@@ -15,6 +17,20 @@ export function isRateLimited(
   windowMs: number
 ): boolean {
   const now = Date.now();
+
+  // Periodic cleanup of stale entries to prevent memory leak
+  if (now - lastCleanup > CLEANUP_INTERVAL) {
+    lastCleanup = now;
+    for (const [k, timestamps] of hits) {
+      const valid = timestamps.filter((t) => now - t < windowMs);
+      if (valid.length === 0) {
+        hits.delete(k);
+      } else {
+        hits.set(k, valid);
+      }
+    }
+  }
+
   const timestamps = hits.get(key) ?? [];
 
   // Remove expired entries

@@ -246,6 +246,7 @@ model PilotSession {
   answers PilotAnswer[]
 
   @@index([variant])
+  @@index([completedAt])
   @@map("pilot_sessions")
 }
 
@@ -257,6 +258,7 @@ model PilotAnswer {
 
   session PilotSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
+  @@unique([sessionId, questionId])
   @@index([sessionId])
   @@map("pilot_answers")
 }

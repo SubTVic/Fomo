@@ -15,6 +15,7 @@ interface PreferenceQuestionProps {
   onReasonChange: (reason: string) => void;
   onSubmit: () => void;
   isSubmitting: boolean;
+  submitError?: string | null;
 }
 
 export function PreferenceQuestion({
@@ -24,6 +25,7 @@ export function PreferenceQuestion({
   onReasonChange,
   onSubmit,
   isSubmitting,
+  submitError,
 }: PreferenceQuestionProps) {
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -80,12 +82,18 @@ export function PreferenceQuestion({
           />
         </label>
 
+        {submitError && (
+          <div className="rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
+            {submitError}
+          </div>
+        )}
+
         <button
           onClick={onSubmit}
           disabled={!selected || isSubmitting}
           className="w-full rounded-xl bg-primary py-4 text-primary-foreground font-semibold text-lg disabled:opacity-50"
         >
-          {isSubmitting ? "Wird gespeichert..." : "Antworten absenden"}
+          {isSubmitting ? "Wird gespeichert..." : submitError ? "Erneut versuchen" : "Antworten absenden"}
         </button>
       </main>
     </div>

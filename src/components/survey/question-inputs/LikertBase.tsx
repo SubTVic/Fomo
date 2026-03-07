@@ -49,12 +49,16 @@ export function LikertBase({
         onClick={() => onChange(NOT_UNDERSTOOD.value)}
         aria-label={`${questionId}: ${NOT_UNDERSTOOD.label}`}
         aria-pressed={value === NOT_UNDERSTOOD.value}
-        className={`w-full flex items-center justify-center gap-1.5 rounded-lg border-2 py-2 text-xs font-medium transition-all duration-150 active:scale-95 ${
-          value === NOT_UNDERSTOOD.value ? NOT_UNDERSTOOD.selected : NOT_UNDERSTOOD.color
+        className={`w-full rounded-lg border-2 border-dashed px-3 py-2.5 text-left transition-all duration-150 active:scale-[0.98] ${
+          value === NOT_UNDERSTOOD.value
+            ? "border-yellow-500 bg-yellow-100 text-yellow-900"
+            : "border-yellow-300 bg-yellow-50/50 text-yellow-800 hover:bg-yellow-50"
         }`}
       >
-        <span>{NOT_UNDERSTOOD.icon}</span>
-        <span>{NOT_UNDERSTOOD.label}</span>
+        <span className="text-sm font-medium">Ich hab die Frage nicht verstanden</span>
+        <span className="block text-[11px] text-yellow-700/70 mt-0.5">
+          Hilft uns, unklare Fragen zu verbessern
+        </span>
       </button>
     </div>
   );

@@ -8,18 +8,18 @@ interface GroupCardProps {
 
 export function GroupCard({ group }: GroupCardProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border bg-card p-5 transition-shadow hover:shadow-md">
+    <div className="flex flex-col gap-3 border-2 border-foreground bg-card p-5 transition-colors hover:bg-accent">
       {/* Category badge */}
       <span
-        className="w-fit rounded-full px-2.5 py-0.5 text-xs font-medium text-white"
-        style={{ backgroundColor: group.category.color ?? "#6b7280" }}
+        className="w-fit px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white"
+        style={{ backgroundColor: group.category.color ?? "#5a8a9a" }}
       >
         {group.category.name}
       </span>
 
       {/* Name + description */}
       <div>
-        <h3 className="font-semibold">{group.name}</h3>
+        <h3 className="font-heading text-sm uppercase">{group.name}</h3>
         <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{group.shortDescription}</p>
       </div>
 

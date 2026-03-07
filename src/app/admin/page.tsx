@@ -11,7 +11,7 @@ export default async function AdminDashboard() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <h1 className="mb-8 text-2xl font-bold">Dashboard</h1>
+      <h1 className="mb-8 font-heading text-2xl uppercase">Dashboard</h1>
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Aktive Gruppen" value={groupCount} href="/admin/groups" />
         <StatCard label="Quiz-Fragen" value={questionCount} href="/admin/questions" />
@@ -31,7 +31,7 @@ function StatCard({
   href?: string;
 }) {
   const content = (
-    <div className="rounded-xl border bg-card p-6">
+    <div className="border-2 border-foreground bg-card p-6">
       <p className="text-sm text-muted-foreground">{label}</p>
       <p className="mt-1 text-3xl font-bold tabular-nums">{value}</p>
     </div>

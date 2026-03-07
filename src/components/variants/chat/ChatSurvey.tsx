@@ -83,7 +83,7 @@ export function ChatSurvey({
   }, [blockQuestions.length]);
 
   function handleAnswer(value: string) {
-    const label = value === "0" ? "Nicht verstanden" : (LIKERT_CHAT.find((l) => l.value === value)?.label ?? value);
+    const label = value === "0" ? "Ich hab die Frage nicht verstanden" : (LIKERT_CHAT.find((l) => l.value === value)?.label ?? value);
     setMessages((prev) => [
       ...prev,
       {
@@ -103,11 +103,11 @@ export function ChatSurvey({
     <div className="min-h-screen bg-[#0b141a] flex flex-col text-white">
       {/* Chat header */}
       <header className="flex-shrink-0 px-4 py-3 flex items-center gap-3 bg-[#202c33] border-b border-white/10">
-        <div className="w-10 h-10 rounded-full bg-[#00a884] flex items-center justify-center text-xl">
+        <div className="w-10 h-10 rounded-full bg-[#ADD8E6] flex items-center justify-center text-xl">
           🤖
         </div>
         <div className="flex-1">
-          <p className="font-semibold text-sm">FOMO-Bot</p>
+          <p className="font-heading text-sm uppercase">FOMO-Bot</p>
           <p className="text-xs text-white/50">
             {blockAnswered} / {blockQuestions.length} beantwortet
           </p>
@@ -118,7 +118,7 @@ export function ChatSurvey({
       {/* Progress */}
       <div className="h-0.5 bg-white/5 flex-shrink-0">
         <div
-          className="h-full bg-[#00a884] transition-all duration-500"
+          className="h-full bg-[#ADD8E6] transition-all duration-500"
           style={{ width: `${blockProgress}%` }}
         />
       </div>
@@ -138,7 +138,7 @@ export function ChatSurvey({
             className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}
           >
             {msg.from === "bot" && (
-              <div className="w-7 h-7 rounded-full bg-[#00a884] flex items-center justify-center text-sm mr-2 flex-shrink-0 self-end">
+              <div className="w-7 h-7 rounded-full bg-[#ADD8E6] flex items-center justify-center text-sm mr-2 flex-shrink-0 self-end">
                 🤖
               </div>
             )}
@@ -157,7 +157,7 @@ export function ChatSurvey({
         {/* Typing indicator */}
         {isTyping && (
           <div className="flex items-end gap-2">
-            <div className="w-7 h-7 rounded-full bg-[#00a884] flex items-center justify-center text-sm">
+            <div className="w-7 h-7 rounded-full bg-[#ADD8E6] flex items-center justify-center text-sm">
               🤖
             </div>
             <div className="bg-[#202c33] rounded-xl rounded-bl-sm px-4 py-3">
@@ -185,7 +185,7 @@ export function ChatSurvey({
               <button
                 key={value}
                 onClick={() => handleAnswer(value)}
-                className="flex-1 flex flex-col items-center gap-0.5 rounded-xl bg-[#2a3942] border border-white/10 py-2.5 text-xs font-medium hover:bg-[#00a884]/20 hover:border-[#00a884]/50 transition-colors active:scale-95"
+                className="flex-1 flex flex-col items-center gap-0.5 rounded-xl bg-[#2a3942] border border-white/10 py-2.5 text-xs font-medium hover:bg-[#ADD8E6]/20 hover:border-[#ADD8E6]/50 transition-colors active:scale-95"
               >
                 <span className="text-lg">{emoji}</span>
                 <span className="text-white/70">{label}</span>
@@ -194,10 +194,12 @@ export function ChatSurvey({
           </div>
           <button
             onClick={() => handleAnswer("0")}
-            className="w-full mt-2 flex items-center justify-center gap-1.5 rounded-xl bg-[#2a3942] border border-white/10 py-2 text-xs font-medium text-white/40 hover:bg-yellow-900/20 hover:border-yellow-700/50 transition-colors active:scale-95"
+            className="w-full mt-2 rounded-xl border border-dashed border-white/15 px-3 py-2.5 text-left text-white/40 hover:bg-yellow-900/20 hover:border-yellow-700/50 transition-colors active:scale-95"
           >
-            <span>?</span>
-            <span>Nicht verstanden</span>
+            <span className="text-xs font-medium">Ich hab die Frage nicht verstanden</span>
+            <span className="block text-[11px] text-white/25 mt-0.5">
+              Hilft uns, unklare Fragen zu verbessern
+            </span>
           </button>
         </div>
       )}
@@ -210,7 +212,7 @@ export function ChatSurvey({
               if (isLast) onBlockComplete();
               else setLocalIdx((i) => i + 1);
             }}
-            className="rounded-lg bg-[#00a884] px-5 py-2 text-sm font-medium"
+            className="rounded-lg bg-[#ADD8E6] px-5 py-2 text-sm font-medium"
           >
             Weiter →
           </button>

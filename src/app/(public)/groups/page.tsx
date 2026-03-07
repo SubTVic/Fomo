@@ -21,57 +21,59 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
   ).sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div className="flex flex-col">
-      {/* Hero – Registrierung */}
-      <section className="border-b bg-muted/30 px-4 py-14">
-        <div className="mx-auto max-w-3xl text-center flex flex-col items-center gap-5">
-          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+    <div className="flex flex-col items-center px-4 py-6 sm:px-6">
+      <div className="w-full max-w-[1000px] border-4 border-foreground bg-card">
+        {/* Hero header */}
+        <div className="bg-foreground text-primary-foreground px-6 py-8 sm:px-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[3px] text-primary-foreground/50 mb-2">
             Hochschulgruppen
           </p>
-          <h1 className="text-3xl font-bold sm:text-4xl">Deine Hochschulgruppe auf FOMO</h1>
-          <p className="max-w-xl text-muted-foreground">
+          <h1 className="font-heading text-[clamp(22px,4vw,40px)] uppercase leading-none mb-4">
+            Deine Hochschulgruppe auf FOMO
+          </h1>
+          <p className="text-sm text-primary-foreground/70 max-w-lg mb-6">
             Erstis suchen euch – lasst euch finden. Registriert eure Gruppe, füllt euer Profil aus
             und werdet Teil des Matchings.
           </p>
           <Link
             href="/groups/register"
-            className="rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            className="inline-block border-2 border-primary-foreground px-8 py-3 font-heading text-sm uppercase tracking-wider hover:bg-primary-foreground hover:text-foreground transition-colors"
           >
-            Gruppe registrieren →
+            Gruppe registrieren
           </Link>
-          <div className="flex gap-8 text-center mt-2">
+          <div className="flex gap-8 mt-6">
             <Stat value="6.300" label="Erstis pro Jahr" />
             <Stat value={String(totalCount)} label="Gruppen dabei" />
             <Stat value="kostenlos" label="& in ~15 min" />
           </div>
         </div>
-      </section>
 
-      {/* Group browse */}
-      <section className="mx-auto w-full max-w-6xl px-4 py-10">
-        <h2 className="mb-2 text-2xl font-bold">Alle Hochschulgruppen</h2>
-        <p className="mb-6 text-sm text-muted-foreground">
-          {allGroups.length} Gruppen an der TU Dresden
-        </p>
+        {/* Group browse */}
+        <div className="border-t-4 border-foreground px-6 py-8 sm:px-8">
+          <h2 className="font-heading text-xl uppercase mb-1">Alle Hochschulgruppen</h2>
+          <p className="mb-6 text-sm text-muted-foreground">
+            {allGroups.length} Gruppen an der TU Dresden
+          </p>
 
-        {/* Category filter */}
-        <div className="mb-8 flex flex-wrap gap-2">
-          <FilterLink href="/groups" active={!kategorie}>
-            Alle
-          </FilterLink>
-          {categories.map((cat) => (
-            <FilterLink
-              key={cat.id}
-              href={`/groups?kategorie=${encodeURIComponent(cat.name)}`}
-              active={kategorie === cat.name}
-            >
-              {cat.name}
+          {/* Category filter */}
+          <div className="mb-8 flex flex-wrap gap-2">
+            <FilterLink href="/groups" active={!kategorie}>
+              Alle
             </FilterLink>
-          ))}
-        </div>
+            {categories.map((cat) => (
+              <FilterLink
+                key={cat.id}
+                href={`/groups?kategorie=${encodeURIComponent(cat.name)}`}
+                active={kategorie === cat.name}
+              >
+                {cat.name}
+              </FilterLink>
+            ))}
+          </div>
 
-        <GroupGrid groups={groups} />
-      </section>
+          <GroupGrid groups={groups} />
+        </div>
+      </div>
     </div>
   );
 }
@@ -79,8 +81,8 @@ export default async function GroupsPage({ searchParams }: GroupsPageProps) {
 function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-lg font-bold">{value}</span>
-      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-lg font-bold text-primary-foreground">{value}</span>
+      <span className="text-xs text-primary-foreground/50">{label}</span>
     </div>
   );
 }
@@ -97,10 +99,10 @@ function FilterLink({
   return (
     <a
       href={href}
-      className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+      className={`border-2 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors ${
         active
-          ? "bg-primary text-primary-foreground border-primary"
-          : "hover:bg-muted"
+          ? "bg-foreground text-primary-foreground border-foreground"
+          : "border-foreground/30 hover:border-foreground hover:bg-accent"
       }`}
     >
       {children}

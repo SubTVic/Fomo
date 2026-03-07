@@ -16,13 +16,13 @@ export default async function AdminQuestionsPage() {
   return (
     <div className="mx-auto max-w-5xl">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Quiz-Fragen</h1>
+        <h1 className="font-heading text-2xl uppercase">Quiz-Fragen</h1>
         <span className="text-sm text-muted-foreground">{questions.length} Fragen</span>
       </div>
 
       <div className="flex flex-col gap-3">
         {questions.map((q, i) => (
-          <div key={q.id} className="rounded-xl border bg-card p-4">
+          <div key={q.id} className="border-2 border-foreground/20 bg-card p-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex gap-3">
                 <span className="shrink-0 tabular-nums text-muted-foreground">{i + 1}.</span>

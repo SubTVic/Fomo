@@ -51,7 +51,7 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
     <div className="mx-auto max-w-6xl">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Hochschulgruppen</h1>
+          <h1 className="font-heading text-2xl uppercase">Hochschulgruppen</h1>
           <p className="text-sm text-muted-foreground mt-1">{allGroups.length} gesamt</p>
         </div>
         <ImportGroupsButton />
@@ -76,7 +76,7 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
         </TabLink>
       </div>
 
-      <div className="rounded-xl border bg-card overflow-hidden">
+      <div className="border-2 border-foreground bg-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="border-b bg-muted/40">

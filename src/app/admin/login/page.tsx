@@ -9,8 +9,10 @@ export default async function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm rounded-xl border bg-card p-8">
-        <h1 className="mb-6 text-xl font-bold">Admin-Login</h1>
+      <div className="w-full max-w-sm border-4 border-foreground bg-card">
+        <div className="bg-foreground text-primary-foreground px-6 py-4">
+          <h1 className="font-heading text-xl uppercase">Admin-Login</h1>
+        </div>
         <form
           action={async (formData: FormData) => {
             "use server";
@@ -20,7 +22,7 @@ export default async function LoginPage() {
               redirectTo: "/admin",
             });
           }}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-4 px-6 py-8"
         >
           <div className="flex flex-col gap-1.5">
             <label htmlFor="email" className="text-sm font-medium">E-Mail</label>
@@ -30,7 +32,7 @@ export default async function LoginPage() {
               type="email"
               required
               autoComplete="email"
-              className="rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/50"
+              className="border-2 border-foreground/30 bg-card px-3 py-2 text-sm outline-none focus:border-foreground transition-colors"
             />
           </div>
           <div className="flex flex-col gap-1.5">
@@ -41,12 +43,12 @@ export default async function LoginPage() {
               type="password"
               required
               autoComplete="current-password"
-              className="rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/50"
+              className="border-2 border-foreground/30 bg-card px-3 py-2 text-sm outline-none focus:border-foreground transition-colors"
             />
           </div>
           <button
             type="submit"
-            className="mt-2 rounded-full bg-primary py-2.5 text-sm font-semibold text-primary-foreground"
+            className="mt-2 bg-foreground py-2.5 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
           >
             Anmelden
           </button>

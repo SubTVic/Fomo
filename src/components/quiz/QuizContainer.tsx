@@ -66,7 +66,7 @@ export function QuizContainer({ questions }: QuizContainerProps) {
         <button
           onClick={handleNext}
           disabled={!hasAnswer}
-          className="w-full rounded-full bg-primary py-3 text-sm font-semibold text-primary-foreground transition-opacity disabled:opacity-40"
+          className="w-full bg-foreground py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground transition-colors hover:bg-[#2a3a45] disabled:opacity-40"
         >
           {isLast ? "Ergebnisse ansehen" : "Weiter"}
         </button>

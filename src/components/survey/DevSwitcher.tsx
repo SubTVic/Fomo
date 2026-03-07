@@ -17,7 +17,7 @@ export function DevSwitcher({ blocks, currentBlockIdx }: DevSwitcherProps) {
   const searchParams = useSearchParams();
   const isDev = searchParams.get("dev") === "true";
 
-  if (!isDev || !blocks) return null;
+  if (!isDev || !blocks || process.env.NODE_ENV !== "development") return null;
 
   return (
     <div className="fixed bottom-4 left-4 z-50 rounded-xl border bg-card/95 p-3 shadow-lg backdrop-blur-sm">

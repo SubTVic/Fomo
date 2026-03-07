@@ -31,6 +31,7 @@ type RouterPhase = "transition" | "block" | "demographic" | "feedback" | "prefer
 
 export function SurveyRouter() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [currentBlockIdx, setCurrentBlockIdx] = useState(0);
   const [routerPhase, setRouterPhase] = useState<RouterPhase>("transition");
 
@@ -66,6 +67,7 @@ export function SurveyRouter() {
 
   const onSubmit = useCallback(async () => {
     setIsSubmitting(true);
+    setSubmitError(null);
     try {
       const res = await fetch("/api/pilot/submit", {
         method: "POST",
@@ -82,7 +84,12 @@ export function SurveyRouter() {
       });
       if (res.ok) {
         setRouterPhase("done");
+      } else {
+        const data = await res.json().catch(() => null);
+        setSubmitError(data?.error ?? "Speichern fehlgeschlagen. Bitte versuche es erneut.");
       }
+    } catch {
+      setSubmitError("Keine Internetverbindung. Bitte prüfe deine Verbindung und versuche es erneut.");
     } finally {
       setIsSubmitting(false);
     }
@@ -123,6 +130,7 @@ export function SurveyRouter() {
         onReasonChange={surveyState.setPreferenceReason}
         onSubmit={onSubmit}
         isSubmitting={isSubmitting}
+        submitError={submitError}
       />
     );
   }

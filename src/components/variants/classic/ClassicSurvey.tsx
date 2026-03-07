@@ -54,7 +54,7 @@ export function ClassicSurvey({
       {/* Header */}
       <header className="px-4 py-4 border-b border-black/10">
         <div className="flex items-center justify-between mb-3">
-          <span className="font-black text-xl tracking-tight">FOMO</span>
+          <span className="font-heading text-xl uppercase border-2 border-current px-2 py-0.5">FOMO</span>
           <span className="text-sm font-medium tabular-nums">
             {localIdx + 1} / {blockQuestions.length}
           </span>
@@ -95,14 +95,16 @@ export function ClassicSurvey({
             })}
             <button
               onClick={() => handleSelect("0")}
-              className={`flex items-center gap-3 rounded-xl border-2 px-5 py-3 text-left text-sm font-medium transition-all duration-150 active:scale-[0.98] ${
+              className={`rounded-xl border-2 border-dashed px-5 py-3 text-left transition-all duration-150 active:scale-[0.98] ${
                 currentValue === "0"
-                  ? "bg-yellow-500 border-yellow-500 text-white"
-                  : "bg-white/80 border-yellow-400 hover:bg-yellow-50"
+                  ? "border-yellow-500 bg-yellow-100 text-yellow-900"
+                  : "bg-white/60 border-yellow-400 hover:bg-yellow-50"
               }`}
             >
-              <span className="text-lg w-7 text-center">?</span>
-              <span>Ich hab die Frage nicht verstanden</span>
+              <span className="text-sm font-medium">Ich hab die Frage nicht verstanden</span>
+              <span className="block text-xs text-yellow-700/70 mt-0.5">
+                Hilft uns, unklare Fragen zu verbessern
+              </span>
             </button>
           </div>
         </div>

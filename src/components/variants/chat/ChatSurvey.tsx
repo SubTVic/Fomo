@@ -5,6 +5,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { getDimensionPriming } from "@/lib/dimension-priming";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 const LIKERT_CHAT = [
@@ -31,6 +32,8 @@ export function ChatSurvey({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [hasShownCurrent, setHasShownCurrent] = useState(-1);
+  const [shownDimIds, setShownDimIds] = useState<Set<string>>(new Set());
+  const isAdvancing = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const question = blockQuestions[localIdx] ?? blockQuestions[0];
@@ -51,12 +54,29 @@ export function ChatSurvey({
   useEffect(() => {
     if (hasShownCurrent === localIdx) return;
 
+    // Add dimension intro when entering a new dimension
+    const dimId = question.dimensionId;
+    const newMessages: ChatMessage[] = [];
+    if (dimId && !shownDimIds.has(dimId)) {
+      const priming = getDimensionPriming(dimId);
+      const dim = blockDimensions.find((d) => d.id === dimId);
+      if (dim && priming) {
+        newMessages.push({
+          id: `dim-${dimId}`,
+          from: "bot",
+          text: `${dim.emoji} ${dim.label}\n${priming.context}`,
+        });
+      }
+      setShownDimIds((prev) => new Set([...prev, dimId]));
+    }
+
     setIsTyping(true);
     const timer = setTimeout(() => {
       setIsTyping(false);
       setHasShownCurrent(localIdx);
       setMessages((prev) => [
         ...prev,
+        ...newMessages,
         {
           id: `q-${question.id}`,
           from: "bot",
@@ -66,7 +86,7 @@ export function ChatSurvey({
     }, 600);
 
     return () => clearTimeout(timer);
-  }, [localIdx, question, hasShownCurrent]);
+  }, [localIdx, question, hasShownCurrent, shownDimIds, blockDimensions]);
 
   // Init: greeting on mount
   useEffect(() => {
@@ -83,6 +103,8 @@ export function ChatSurvey({
   }, [blockQuestions.length]);
 
   function handleAnswer(value: string) {
+    if (isAdvancing.current) return;
+    isAdvancing.current = true;
     const label = value === "0" ? "Ich hab die Frage nicht verstanden" : (LIKERT_CHAT.find((l) => l.value === value)?.label ?? value);
     setMessages((prev) => [
       ...prev,
@@ -94,6 +116,7 @@ export function ChatSurvey({
     ]);
     setAnswer(question.id, value);
     setTimeout(() => {
+      isAdvancing.current = false;
       if (isLast) onBlockComplete();
       else setLocalIdx((i) => i + 1);
     }, 300);
@@ -124,11 +147,19 @@ export function ChatSurvey({
       </div>
 
       {/* Dimension indicator */}
-      <div className="flex-shrink-0 px-4 py-1.5 bg-[#0b141a] border-b border-white/5">
-        <span className="text-xs text-white/40">
-          {dimension.emoji} {dimension.label}
-        </span>
-      </div>
+      {(() => {
+        const priming = dimension ? getDimensionPriming(dimension.id) : null;
+        return (
+          <div className="flex-shrink-0 mx-3 my-2 px-3 py-2.5 rounded-lg bg-[#ADD8E6]/25 border border-[#ADD8E6]/40">
+            <span className="text-sm text-white font-semibold">
+              {dimension.emoji} {dimension.label}
+            </span>
+            {priming && (
+              <p className="text-xs text-[#ADD8E6]/80 mt-1">{priming.reminder}</p>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
@@ -177,9 +208,9 @@ export function ChatSurvey({
         <div ref={bottomRef} />
       </div>
 
-      {/* Answer buttons */}
-      {!isTyping && !alreadyAnswered && hasShownCurrent === localIdx && (
-        <div className="flex-shrink-0 border-t border-white/10 bg-[#202c33] p-3">
+      {/* Answer buttons — always mounted, disabled while typing */}
+      <div className="flex-shrink-0 border-t border-white/10 bg-[#202c33] p-3">
+        <div className={isTyping ? "opacity-40 pointer-events-none" : ""}>
           <div className="flex gap-2">
             {LIKERT_CHAT.map(({ value, emoji, label }) => (
               <button
@@ -202,22 +233,7 @@ export function ChatSurvey({
             </span>
           </button>
         </div>
-      )}
-
-      {/* Already answered: show next */}
-      {alreadyAnswered && (
-        <div className="flex-shrink-0 border-t border-white/10 bg-[#202c33] px-4 py-3 flex justify-end">
-          <button
-            onClick={() => {
-              if (isLast) onBlockComplete();
-              else setLocalIdx((i) => i + 1);
-            }}
-            className="rounded-lg bg-[#ADD8E6] px-5 py-2 text-sm font-medium"
-          >
-            Weiter →
-          </button>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

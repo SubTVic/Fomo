@@ -8,6 +8,11 @@ import { db } from "@/lib/db";
 
 const VALID_ANSWER_VALUES = new Set(["0", "1", "3", "5"]);
 
+// Meta-questions stored alongside regular answers but with their own valid values
+const META_QUESTIONS: Record<string, Set<string>> = {
+  q63_priming_check: new Set(["yes", "partial", "no"]),
+};
+
 const variantEnum = z.enum(["scroll", "classic", "swipe", "chat"]);
 
 const SubmitSchema = z.object({
@@ -59,13 +64,24 @@ export async function POST(req: NextRequest) {
   const invalidIds: string[] = [];
   const invalidValues: string[] = [];
   for (const [questionId, value] of Object.entries(answers)) {
-    if (!validQuestionIds.has(questionId)) {
+    const metaValidValues = META_QUESTIONS[questionId];
+    if (metaValidValues) {
+      // Meta-question: validate against its own value set
+      const v = Array.isArray(value) ? value : [value];
+      for (const val of v) {
+        if (!metaValidValues.has(val)) {
+          invalidValues.push(`${questionId}=${val}`);
+        }
+      }
+    } else if (!validQuestionIds.has(questionId)) {
       invalidIds.push(questionId);
-    }
-    const v = Array.isArray(value) ? value : [value];
-    for (const val of v) {
-      if (!VALID_ANSWER_VALUES.has(val)) {
-        invalidValues.push(`${questionId}=${val}`);
+    } else {
+      // Regular question: validate against Likert values
+      const v = Array.isArray(value) ? value : [value];
+      for (const val of v) {
+        if (!VALID_ANSWER_VALUES.has(val)) {
+          invalidValues.push(`${questionId}=${val}`);
+        }
       }
     }
   }

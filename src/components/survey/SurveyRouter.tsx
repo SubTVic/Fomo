@@ -6,6 +6,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSurveyState } from "./useSurveyState";
 import { ScrollSurvey } from "@/components/variants/scroll/ScrollSurvey";
@@ -13,6 +14,8 @@ import { ClassicSurvey } from "@/components/variants/classic/ClassicSurvey";
 import { SwipeSurvey } from "@/components/variants/swipe/SwipeSurvey";
 import { ChatSurvey } from "@/components/variants/chat/ChatSurvey";
 import { VariantTransition } from "./VariantTransition";
+import { PrimingScreen } from "./PrimingScreen";
+import { MidSurveyReminder } from "./MidSurveyReminder";
 import { PreferenceQuestion } from "./PreferenceQuestion";
 import { DevSwitcher } from "./DevSwitcher";
 import { generateBlocks, getVariantOrder } from "@/lib/pilot-variant-order";
@@ -27,7 +30,7 @@ const VARIANT_COMPONENTS: Record<VariantKey, typeof ScrollSurvey> = {
   chat: ChatSurvey,
 };
 
-type RouterPhase = "transition" | "block" | "demographic" | "feedback" | "preference" | "done";
+type RouterPhase = "priming" | "transition" | "block" | "midreminder" | "demographic" | "feedback" | "preference" | "done";
 
 interface SurveyRouterProps {
   dimensions: Dimension[];
@@ -36,10 +39,16 @@ interface SurveyRouterProps {
 }
 
 export function SurveyRouter({ dimensions, questions, groupNames = [] }: SurveyRouterProps) {
+  const searchParams = useSearchParams();
+  const previewParam = searchParams.get("preview");
+  const isPreview = previewParam === "true" || previewParam === "quick";
+  const isQuickPreview = previewParam === "quick";
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [currentBlockIdx, setCurrentBlockIdx] = useState(0);
-  const [routerPhase, setRouterPhase] = useState<RouterPhase>("transition");
+  const [routerPhase, setRouterPhase] = useState<RouterPhase>("priming");
+  const [shownMidReminder, setShownMidReminder] = useState(false);
 
   const surveyState = useSurveyState(questions, dimensions);
 
@@ -56,22 +65,43 @@ export function SurveyRouter({ dimensions, questions, groupNames = [] }: SurveyR
     () => currentBlock ? currentBlock.dimensionIds.map((id) => dimensions.find((d) => d.id === id)!).filter(Boolean) : [],
     [currentBlock, dimensions],
   );
-  const blockQuestions: PilotQuestion[] = useMemo(
-    () => currentBlock ? currentBlock.dimensionIds.flatMap((id) => getQuestionsForDimension(questions, id)) : [],
-    [currentBlock, questions],
-  );
+  const blockQuestions: PilotQuestion[] = useMemo(() => {
+    if (!currentBlock) return [];
+    const allQuestions = currentBlock.dimensionIds.flatMap((id) => getQuestionsForDimension(questions, id));
+    if (!isQuickPreview) return allQuestions;
+    // Quick preview: max 2 questions per dimension
+    const seen = new Map<string, number>();
+    return allQuestions.filter((q) => {
+      const count = seen.get(q.dimensionId) ?? 0;
+      if (count >= 2) return false;
+      seen.set(q.dimensionId, count + 1);
+      return true;
+    });
+  }, [currentBlock, questions, isQuickPreview]);
 
   const onBlockComplete = useCallback(() => {
     if (!blocks) return;
     if (currentBlockIdx < blocks.length - 1) {
-      setCurrentBlockIdx((i) => i + 1);
-      setRouterPhase("transition");
+      const nextIdx = currentBlockIdx + 1;
+      setCurrentBlockIdx(nextIdx);
+      // Show mid-survey reminder at the halfway point (after block 1 of 4 = index 2)
+      const halfwayIdx = Math.floor(blocks.length / 2);
+      if (nextIdx === halfwayIdx && !shownMidReminder) {
+        setShownMidReminder(true);
+        setRouterPhase("midreminder");
+      } else {
+        setRouterPhase("transition");
+      }
     } else {
       setRouterPhase("demographic");
     }
-  }, [currentBlockIdx, blocks]);
+  }, [currentBlockIdx, blocks, shownMidReminder]);
 
   const onSubmit = useCallback(async () => {
+    if (isPreview) {
+      setRouterPhase("done");
+      return;
+    }
     setIsSubmitting(true);
     setSubmitError(null);
     try {
@@ -99,13 +129,13 @@ export function SurveyRouter({ dimensions, questions, groupNames = [] }: SurveyR
     } finally {
       setIsSubmitting(false);
     }
-  }, [variantOrder, surveyState]);
+  }, [variantOrder, surveyState, isPreview]);
 
   // ── Loading (blocks not yet generated on client) ─────
   if (!blocks || !currentBlock) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <span className="text-muted-foreground">Laden...</span>
+                <span className="text-muted-foreground">Laden...</span>
       </div>
     );
   }
@@ -115,13 +145,23 @@ export function SurveyRouter({ dimensions, questions, groupNames = [] }: SurveyR
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center bg-background">
         <div className="text-5xl">&#127881;</div>
-        <h1 className="text-2xl font-bold">Danke für deine Teilnahme!</h1>
+        <h1 className="text-2xl font-bold">
+          {isPreview ? "Vorschau beendet" : "Danke für deine Teilnahme!"}
+        </h1>
         <p className="text-muted-foreground max-w-sm">
-          Deine Antworten wurden gespeichert. Du hilfst uns damit, FOMO noch besser zu machen.
+          {isPreview
+            ? "Das war der Vorschau-Modus — es wurden keine Daten gespeichert."
+            : "Deine Antworten wurden gespeichert. Du hilfst uns damit, FOMO noch besser zu machen."}
         </p>
-        <Link href="/" className="rounded-lg bg-primary px-6 py-3 text-primary-foreground font-medium">
-          Zur Startseite
-        </Link>
+        {isPreview ? (
+          <a href={`/pilot/survey?preview=${previewParam}`} className="rounded-lg bg-primary px-6 py-3 text-primary-foreground font-medium">
+            Nochmal testen
+          </a>
+        ) : (
+          <Link href="/" className="rounded-lg bg-primary px-6 py-3 text-primary-foreground font-medium">
+            Zur Startseite
+          </Link>
+        )}
       </div>
     );
   }
@@ -143,7 +183,14 @@ export function SurveyRouter({ dimensions, questions, groupNames = [] }: SurveyR
 
   // ── Feedback ──────────────────────────────────────────
   if (routerPhase === "feedback") {
-    const { feedback } = surveyState.state;
+    const { feedback, answers } = surveyState.state;
+    const primingCheck = answers["q63_priming_check"] as string | undefined;
+    const PRIMING_OPTIONS = [
+      { value: "yes", label: "Ja, ich habe an Hochschulgruppen gedacht" },
+      { value: "partial", label: "Teilweise \u2013 mal so, mal so" },
+      { value: "no", label: "Eher allgemein / an andere Dinge gedacht" },
+    ];
+
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b px-4 py-3">
@@ -154,6 +201,29 @@ export function SurveyRouter({ dimensions, questions, groupNames = [] }: SurveyR
         </header>
         <main className="flex-1 mx-auto w-full max-w-xl px-4 py-8 flex flex-col gap-6">
           <h2 className="text-xl font-bold">Kurzes Feedback</h2>
+
+          {/* Q63: Priming check */}
+          <div className="flex flex-col gap-2">
+            <span className="font-medium text-sm">
+              Hast du die Fragen aus der Perspektive &laquo;Hochschulgruppe&raquo; beantwortet, oder eher allgemein?
+            </span>
+            <div className="flex flex-col gap-2">
+              {PRIMING_OPTIONS.map(({ value, label }) => (
+                <button
+                  key={value}
+                  onClick={() => surveyState.setAnswer("q63_priming_check", value)}
+                  className={`rounded-lg border px-4 py-3 text-sm font-medium text-left transition-colors ${
+                    primingCheck === value
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-card hover:bg-muted/40"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="flex flex-col gap-4">
             <label className="flex flex-col gap-1.5">
               <span className="font-medium text-sm">Was war verwirrend oder unklar?</span>
@@ -264,11 +334,25 @@ export function SurveyRouter({ dimensions, questions, groupNames = [] }: SurveyR
     );
   }
 
+  // ── Priming screen (shown once before first block) ───
+  if (routerPhase === "priming") {
+    return (
+      <PrimingScreen onContinue={() => setRouterPhase("transition")} />
+    );
+  }
+
+  // ── Mid-survey reminder (shown at halfway point) ────
+  if (routerPhase === "midreminder") {
+    return (
+      <MidSurveyReminder onContinue={() => setRouterPhase("transition")} />
+    );
+  }
+
   // ── Transition screen (shown before each block) ──────
   if (routerPhase === "transition") {
     return (
       <>
-        <VariantTransition
+                <VariantTransition
           variant={currentBlock.variant}
           blockIndex={currentBlockIdx}
           totalBlocks={blocks.length}

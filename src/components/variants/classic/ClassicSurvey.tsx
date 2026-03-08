@@ -5,6 +5,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { DimensionHeader } from "@/components/survey/DimensionHeader";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 // Maps Likert 1-5 to 3-option display (Zustimmung/Neutral/Ablehnung)
@@ -34,8 +35,6 @@ export function ClassicSurvey({
   const blockProgress = Math.round((blockAnswered / blockQuestions.length) * 100);
 
   // Position within dimension
-  const dimQuestions = blockQuestions.filter((q) => q.dimensionId === question.dimensionId);
-  const qPosInDim = dimQuestions.findIndex((q) => q.id === question.id) + 1;
   const dimIdx = blockDimensions.findIndex((d) => d.id === question.dimensionId) + 1;
 
   const advance = useCallback(() => {
@@ -64,16 +63,17 @@ export function ClassicSurvey({
             style={{ width: `${blockProgress}%` }}
           />
         </div>
-        <div className="mt-2 flex items-center gap-2">
-          <span className="text-sm font-medium opacity-70">
-            {dimension.emoji} Dimension {dimIdx}/{blockDimensions.length} · {dimension.label} ({qPosInDim}/{dimQuestions.length})
-          </span>
-        </div>
       </header>
 
       {/* Question */}
       <main className="flex-1 flex flex-col justify-between p-6 max-w-lg mx-auto w-full">
-        <div className="flex flex-col gap-8 mt-6">
+        <div className="flex flex-col gap-6 mt-4">
+          <DimensionHeader
+            dimension={dimension}
+            dimIndex={dimIdx - 1}
+            totalDimensions={blockDimensions.length}
+            compact
+          />
           <p className="text-xl font-bold leading-snug">&ldquo;{question.text}&rdquo;</p>
 
           <div className="flex flex-col gap-3">

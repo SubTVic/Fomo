@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { LikertBase } from "@/components/survey/question-inputs/LikertBase";
+import { DimensionHeader } from "@/components/survey/DimensionHeader";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 export function ScrollSurvey({
@@ -27,6 +28,11 @@ export function ScrollSurvey({
   const blockAnswered = blockQuestions.filter((q) => answers[q.id] !== undefined).length;
   const blockProgress = Math.round((blockAnswered / blockQuestions.length) * 100);
   const allBlockAnswered = blockAnswered >= blockQuestions.length;
+
+  function switchDimension(idx: number) {
+    setActiveDimIdx(idx);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   return (
     <div className="min-h-screen bg-[#f5f0e8] flex flex-col">
@@ -56,7 +62,7 @@ export function ScrollSurvey({
               return (
                 <button
                   key={dim.id}
-                  onClick={() => setActiveDimIdx(i)}
+                  onClick={() => switchDimension(i)}
                   className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition-colors whitespace-nowrap ${
                     isActive
                       ? "bg-primary text-primary-foreground"
@@ -78,12 +84,13 @@ export function ScrollSurvey({
 
       {/* Questions for current dimension */}
       <main className="flex-1 mx-auto w-full max-w-xl px-4 py-6 flex flex-col gap-8">
-        <div>
-          <h2 className="text-xl font-bold">
-            {currentDim?.emoji} {currentDim?.label}
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">{currentDim?.description}</p>
-        </div>
+        {currentDim && (
+          <DimensionHeader
+            dimension={currentDim}
+            dimIndex={activeDimIdx}
+            totalDimensions={blockDimensions.length}
+          />
+        )}
 
         {dimQuestions.map((q, i) => (
           <div key={q.id} className="flex flex-col gap-3">
@@ -102,7 +109,7 @@ export function ScrollSurvey({
         {/* Navigation */}
         <div className="flex items-center justify-between pt-4 pb-8">
           <button
-            onClick={() => setActiveDimIdx(activeDimIdx - 1)}
+            onClick={() => switchDimension(activeDimIdx - 1)}
             disabled={activeDimIdx === 0}
             className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted/40 disabled:opacity-40"
           >
@@ -111,7 +118,7 @@ export function ScrollSurvey({
 
           {activeDimIdx < blockDimensions.length - 1 ? (
             <button
-              onClick={() => setActiveDimIdx(activeDimIdx + 1)}
+              onClick={() => switchDimension(activeDimIdx + 1)}
               className="rounded-xl bg-primary px-6 py-2.5 text-primary-foreground text-sm font-semibold"
             >
               Weiter →

@@ -11,15 +11,8 @@ function unauthorized() {
 }
 
 export async function GET(req: NextRequest) {
-  if (!EXPORT_KEY) {
-    return NextResponse.json(
-      { error: "PILOT_EXPORT_KEY not configured" },
-      { status: 500 }
-    );
-  }
-
   const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${EXPORT_KEY}`) {
+  if (!EXPORT_KEY || auth !== `Bearer ${EXPORT_KEY}`) {
     return unauthorized();
   }
 

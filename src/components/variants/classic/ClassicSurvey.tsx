@@ -5,7 +5,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { getDimension } from "@/lib/pilot-questions";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 // Maps Likert 1-5 to 3-option display (Zustimmung/Neutral/Ablehnung)
@@ -29,7 +28,7 @@ export function ClassicSurvey({
   const currentValue = answers[question.id] as string | undefined;
   const isFirst = localIdx === 0;
   const isLast = localIdx === blockQuestions.length - 1;
-  const dimension = getDimension(question.dimensionId);
+  const dimension = blockDimensions.find((d) => d.id === question.dimensionId) ?? blockDimensions[0];
 
   const blockAnswered = blockQuestions.filter((q) => answers[q.id] !== undefined).length;
   const blockProgress = Math.round((blockAnswered / blockQuestions.length) * 100);

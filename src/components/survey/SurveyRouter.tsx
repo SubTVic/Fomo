@@ -16,9 +16,9 @@ import { VariantTransition } from "./VariantTransition";
 import { PreferenceQuestion } from "./PreferenceQuestion";
 import { DevSwitcher } from "./DevSwitcher";
 import { generateBlocks, getVariantOrder } from "@/lib/pilot-variant-order";
-import type { Block, VariantKey } from "@/lib/pilot-variant-order";
-import { DIMENSIONS, getQuestionsForDimension } from "@/lib/pilot-questions";
+import { getQuestionsForDimension } from "@/lib/pilot-questions";
 import type { Dimension, PilotQuestion } from "@/lib/pilot-questions";
+import type { Block, VariantKey } from "@/lib/pilot-variant-order";
 
 const VARIANT_COMPONENTS: Record<VariantKey, typeof ScrollSurvey> = {
   scroll: ScrollSurvey,
@@ -29,17 +29,22 @@ const VARIANT_COMPONENTS: Record<VariantKey, typeof ScrollSurvey> = {
 
 type RouterPhase = "transition" | "block" | "demographic" | "feedback" | "preference" | "done";
 
-export function SurveyRouter() {
+interface SurveyRouterProps {
+  dimensions: Dimension[];
+  questions: PilotQuestion[];
+}
+
+export function SurveyRouter({ dimensions, questions }: SurveyRouterProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [currentBlockIdx, setCurrentBlockIdx] = useState(0);
   const [routerPhase, setRouterPhase] = useState<RouterPhase>("transition");
 
-  const surveyState = useSurveyState();
+  const surveyState = useSurveyState(questions, dimensions);
 
   // Generate blocks on client only to avoid hydration mismatch (Math.random)
   const [blocks, setBlocks] = useState<Block[] | null>(null);
-  useEffect(() => { setBlocks(generateBlocks()); }, []);
+  useEffect(() => { setBlocks(generateBlocks(dimensions)); }, [dimensions]);
 
   const variantOrder = useMemo(() => blocks ? getVariantOrder(blocks) : [], [blocks]);
 
@@ -47,12 +52,12 @@ export function SurveyRouter() {
 
   // Resolve dimensions and questions for the current block
   const blockDimensions: Dimension[] = useMemo(
-    () => currentBlock ? currentBlock.dimensionIds.map((id) => DIMENSIONS.find((d) => d.id === id)!) : [],
-    [currentBlock],
+    () => currentBlock ? currentBlock.dimensionIds.map((id) => dimensions.find((d) => d.id === id)!).filter(Boolean) : [],
+    [currentBlock, dimensions],
   );
   const blockQuestions: PilotQuestion[] = useMemo(
-    () => currentBlock ? currentBlock.dimensionIds.flatMap((id) => getQuestionsForDimension(id)) : [],
-    [currentBlock],
+    () => currentBlock ? currentBlock.dimensionIds.flatMap((id) => getQuestionsForDimension(questions, id)) : [],
+    [currentBlock, questions],
   );
 
   const onBlockComplete = useCallback(() => {

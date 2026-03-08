@@ -9,14 +9,6 @@ export interface Block {
   variant: VariantKey;
 }
 
-// 10 dimensions split into 4 blocks (3-2-3-2)
-const BLOCK_DIMENSIONS: string[][] = [
-  ["D1", "D2", "D3"], // 18 questions
-  ["D4", "D5"],       // 12 questions
-  ["D6", "D7", "D8"], // 18 questions
-  ["D9", "D10"],      // 12 questions
-];
-
 // Fisher-Yates shuffle (in-place)
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -29,13 +21,26 @@ function shuffle<T>(arr: T[]): T[] {
 
 const ALL_VARIANTS: VariantKey[] = ["scroll", "classic", "swipe", "chat"];
 
-/** Generate a random variant order and build block assignments */
-export function generateBlocks(): Block[] {
+/** Generate blocks from dimensions (grouped by blockIndex). */
+export function generateBlocks(
+  dimensions: { id: string; blockIndex: number }[],
+): Block[] {
+  // Group dimensions by blockIndex
+  const blockMap = new Map<number, string[]>();
+  for (const d of dimensions) {
+    const existing = blockMap.get(d.blockIndex) ?? [];
+    existing.push(d.id);
+    blockMap.set(d.blockIndex, existing);
+  }
+
+  // Get sorted block indices that have dimensions
+  const blockIndices = [...blockMap.keys()].sort((a, b) => a - b);
   const shuffled = shuffle(ALL_VARIANTS);
-  return BLOCK_DIMENSIONS.map((dimIds, i) => ({
+
+  return blockIndices.map((bi, i) => ({
     index: i,
-    dimensionIds: dimIds,
-    variant: shuffled[i],
+    dimensionIds: blockMap.get(bi) ?? [],
+    variant: shuffled[i % shuffled.length],
   }));
 }
 
@@ -45,14 +50,36 @@ export function getVariantOrder(blocks: Block[]): VariantKey[] {
 }
 
 /** Find which block a dimension belongs to */
-export function getBlockForDimension(blocks: Block[], dimensionId: string): Block | undefined {
+export function getBlockForDimension(
+  blocks: Block[],
+  dimensionId: string,
+): Block | undefined {
   return blocks.find((b) => b.dimensionIds.includes(dimensionId));
 }
 
 /** Variant display info for transition screens and preference question */
-export const VARIANT_INFO: Record<VariantKey, { name: string; emoji: string; description: string }> = {
-  scroll: { name: "Scroll", emoji: "📜", description: "Alle Fragen einer Kategorie auf einen Blick" },
-  classic: { name: "Classic", emoji: "📋", description: "Eine Frage pro Seite, drei Buttons" },
-  swipe: { name: "Swipe", emoji: "👆", description: "Karten wischen wie bei Tinder" },
-  chat: { name: "Chat", emoji: "💬", description: "Fragen im Messenger-Stil" },
+export const VARIANT_INFO: Record<
+  VariantKey,
+  { name: string; emoji: string; description: string }
+> = {
+  scroll: {
+    name: "Scroll",
+    emoji: "📜",
+    description: "Alle Fragen einer Kategorie auf einen Blick",
+  },
+  classic: {
+    name: "Classic",
+    emoji: "📋",
+    description: "Eine Frage pro Seite, drei Buttons",
+  },
+  swipe: {
+    name: "Swipe",
+    emoji: "👆",
+    description: "Karten wischen wie bei Tinder",
+  },
+  chat: {
+    name: "Chat",
+    emoji: "💬",
+    description: "Fragen im Messenger-Stil",
+  },
 };

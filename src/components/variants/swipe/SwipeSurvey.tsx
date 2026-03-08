@@ -5,7 +5,6 @@
 "use client";
 
 import { useRef, useState, useCallback } from "react";
-import { getDimension } from "@/lib/pilot-questions";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 const SWIPE_OPTIONS = [
@@ -18,6 +17,7 @@ export function SwipeSurvey({
   state,
   setAnswer,
   blockQuestions,
+  blockDimensions,
   onBlockComplete,
 }: SurveyVariantProps) {
   const { answers } = state;
@@ -25,7 +25,7 @@ export function SwipeSurvey({
 
   const question = blockQuestions[localIdx] ?? blockQuestions[0];
   const currentValue = answers[question.id] as string | undefined;
-  const dimension = getDimension(question.dimensionId);
+  const dimension = blockDimensions.find((d) => d.id === question.dimensionId) ?? blockDimensions[0];
 
   // Drag/swipe state
   const [dragX, setDragX] = useState(0);

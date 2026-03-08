@@ -5,7 +5,6 @@
 "use client";
 
 import { useState } from "react";
-import { getQuestionsForDimension } from "@/lib/pilot-questions";
 import { LikertBase } from "@/components/survey/question-inputs/LikertBase";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
@@ -20,10 +19,10 @@ export function ScrollSurvey({
   const [activeDimIdx, setActiveDimIdx] = useState(0);
 
   const currentDim = blockDimensions[activeDimIdx];
-  const dimQuestions = currentDim ? getQuestionsForDimension(currentDim.id) : [];
+  const dimQuestions = currentDim ? blockQuestions.filter((q) => q.dimensionId === currentDim.id) : [];
 
   const dimAnswered = (dimId: string) =>
-    getQuestionsForDimension(dimId).every((q) => answers[q.id] !== undefined);
+    blockQuestions.filter((q) => q.dimensionId === dimId).every((q) => answers[q.id] !== undefined);
 
   const blockAnswered = blockQuestions.filter((q) => answers[q.id] !== undefined).length;
   const blockProgress = Math.round((blockAnswered / blockQuestions.length) * 100);

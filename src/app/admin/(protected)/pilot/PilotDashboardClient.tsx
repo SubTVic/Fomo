@@ -2,8 +2,9 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { PilotStatisticsResponse, ItemStats, DimensionStats } from "@/types/pilot-statistics";
 import { getAlphaColor } from "@/lib/pilot-statistics";
 
@@ -74,6 +75,51 @@ export function PilotDashboardClient({ stats, recentSessions, feedback }: Props)
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
+
+  // Bulk delete state
+  const router = useRouter();
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+
+  const toggleSelect = useCallback((id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const toggleAll = useCallback(() => {
+    setSelected((prev) =>
+      prev.size === recentSessions.length
+        ? new Set()
+        : new Set(recentSessions.map((s) => s.id)),
+    );
+  }, [recentSessions]);
+
+  async function handleBulkDelete() {
+    if (selected.size === 0) return;
+    setBulkDeleting(true);
+    try {
+      const res = await fetch("/api/admin/pilot/sessions", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: [...selected] }),
+      });
+      if (res.ok) {
+        setSelected(new Set());
+        router.refresh();
+      } else {
+        const data = await res.json().catch(() => null);
+        alert(data?.error ?? "Fehler beim Loeschen");
+      }
+    } catch {
+      alert("Netzwerkfehler");
+    } finally {
+      setBulkDeleting(false);
+    }
+  }
 
   const { overview, demographics, items, dimensions, redundancies } = stats;
 
@@ -373,13 +419,54 @@ export function PilotDashboardClient({ stats, recentSessions, feedback }: Props)
         <summary className="px-6 py-4 font-heading text-lg uppercase cursor-pointer hover:bg-muted/20">
           Letzte Sessions ({recentSessions.length})
         </summary>
+
+        {/* Bulk action bar */}
+        {selected.size > 0 && (
+          <div className="flex items-center justify-between gap-3 border-b-2 border-foreground bg-red-50 px-4 py-3">
+            <span className="text-sm font-medium">
+              {selected.size} ausgewaehlt
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSelected(new Set())}
+                className="border-2 border-foreground px-3 py-1.5 text-xs font-heading uppercase hover:bg-muted transition-colors"
+              >
+                Abbrechen
+              </button>
+              {bulkDeleting ? (
+                <button
+                  disabled
+                  className="bg-red-600 px-3 py-1.5 text-xs font-heading uppercase text-white opacity-50"
+                >
+                  Wird geloescht...
+                </button>
+              ) : (
+                <button
+                  onClick={handleBulkDelete}
+                  className="bg-red-600 px-3 py-1.5 text-xs font-heading uppercase text-white hover:bg-red-700 transition-colors"
+                >
+                  {selected.size} loeschen
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b-2 border-foreground bg-muted">
+                <th className="w-10 px-3 py-2 text-center">
+                  <input
+                    type="checkbox"
+                    checked={recentSessions.length > 0 && selected.size === recentSessions.length}
+                    onChange={toggleAll}
+                    className="h-4 w-4 accent-foreground"
+                  />
+                </th>
                 <th className="px-3 py-2 text-left font-medium">Datum</th>
                 <th className="px-3 py-2 text-left font-medium">Variante</th>
-                <th className="px-3 py-2 text-left font-medium">Präferenz</th>
+                <th className="px-3 py-2 text-left font-medium">Praeferenz</th>
                 <th className="px-3 py-2 text-left font-medium">Semester</th>
                 <th className="px-3 py-2 text-right font-medium">Dauer</th>
                 <th className="px-3 py-2 text-right font-medium">Antworten</th>
@@ -387,7 +474,18 @@ export function PilotDashboardClient({ stats, recentSessions, feedback }: Props)
             </thead>
             <tbody>
               {recentSessions.map((s) => (
-                <tr key={s.id} className="border-b border-foreground/20 last:border-b-0 hover:bg-muted/30">
+                <tr
+                  key={s.id}
+                  className={`border-b border-foreground/20 last:border-b-0 hover:bg-muted/30 ${selected.has(s.id) ? "bg-red-50" : ""}`}
+                >
+                  <td className="px-3 py-2 text-center">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(s.id)}
+                      onChange={() => toggleSelect(s.id)}
+                      className="h-4 w-4 accent-foreground"
+                    />
+                  </td>
                   <td className="px-3 py-2 tabular-nums">
                     <Link href={`/admin/pilot/${s.id}`} className="hover:underline">
                       {new Date(s.startedAt).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit" })}

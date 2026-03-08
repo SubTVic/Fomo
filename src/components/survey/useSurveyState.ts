@@ -4,8 +4,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { PILOT_QUESTIONS, DIMENSIONS, getDimension } from "@/lib/pilot-questions";
 import type { PilotQuestion, Dimension } from "@/lib/pilot-questions";
+import { getDimension } from "@/lib/pilot-questions";
 
 export interface SurveyDemographic {
   semester: string | null;
@@ -22,7 +22,7 @@ export type SurveyPhase = "questions" | "demographic" | "feedback" | "preference
 
 export interface SurveyState {
   answers: Record<string, string | string[]>;
-  currentQuestionIndex: number; // 0-59
+  currentQuestionIndex: number;
   phase: SurveyPhase;
   startTime: number;
   demographic: SurveyDemographic;
@@ -42,7 +42,7 @@ const initialState: SurveyState = {
   preferenceReason: "",
 };
 
-export function useSurveyState() {
+export function useSurveyState(questions: PilotQuestion[], dimensions: Dimension[]) {
   const [state, setState] = useState<SurveyState>(initialState);
 
   const setAnswer = useCallback((questionId: string, value: string | string[]) => {
@@ -67,18 +67,18 @@ export function useSurveyState() {
   }, []);
 
   const goToQuestion = useCallback((index: number) => {
-    const clamped = Math.max(0, Math.min(index, PILOT_QUESTIONS.length - 1));
+    const clamped = Math.max(0, Math.min(index, questions.length - 1));
     setState((prev) => ({ ...prev, currentQuestionIndex: clamped }));
-  }, []);
+  }, [questions.length]);
 
   const goToDimension = useCallback((dimIndex: number) => {
-    const dim = DIMENSIONS[dimIndex];
+    const dim = dimensions[dimIndex];
     if (!dim) return;
-    const firstIdx = PILOT_QUESTIONS.findIndex((q) => q.dimensionId === dim.id);
+    const firstIdx = questions.findIndex((q) => q.dimensionId === dim.id);
     if (firstIdx >= 0) {
       setState((prev) => ({ ...prev, currentQuestionIndex: firstIdx }));
     }
-  }, []);
+  }, [questions, dimensions]);
 
   const setPhase = useCallback((phase: SurveyPhase) => {
     setState((prev) => ({ ...prev, phase }));
@@ -94,12 +94,12 @@ export function useSurveyState() {
 
   const next = useCallback(() => {
     setState((prev) => {
-      if (prev.currentQuestionIndex < PILOT_QUESTIONS.length - 1) {
+      if (prev.currentQuestionIndex < questions.length - 1) {
         return { ...prev, currentQuestionIndex: prev.currentQuestionIndex + 1 };
       }
       return { ...prev, phase: "demographic" };
     });
-  }, []);
+  }, [questions.length]);
 
   const prev = useCallback(() => {
     setState((prev) => ({
@@ -110,11 +110,13 @@ export function useSurveyState() {
 
   // Derived values
   const totalAnswered = Object.keys(state.answers).length;
-  const progress = Math.round((totalAnswered / PILOT_QUESTIONS.length) * 100);
+  const progress = Math.round((totalAnswered / questions.length) * 100);
   const currentQuestion: PilotQuestion =
-    PILOT_QUESTIONS[state.currentQuestionIndex] ?? PILOT_QUESTIONS[0];
-  const currentDimension: Dimension = getDimension(currentQuestion.dimensionId);
-  const currentDimIndex = DIMENSIONS.findIndex((d) => d.id === currentDimension.id);
+    questions[state.currentQuestionIndex] ?? questions[0];
+  const currentDimension: Dimension = currentQuestion.dimensionId
+    ? getDimension(dimensions, currentQuestion.dimensionId)
+    : dimensions[0];
+  const currentDimIndex = dimensions.findIndex((d) => d.id === currentDimension.id);
 
   return {
     state,

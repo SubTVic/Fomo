@@ -2,15 +2,18 @@
 
 import { Suspense } from "react";
 import { GroupRegisterForm } from "./GroupRegisterForm";
+import { getGroupSurveyData } from "@/lib/group-survey-questions";
 
 export const metadata = {
   title: "Gruppe registrieren – FOMO",
 };
 
-export default function GroupRegisterPage() {
+export default async function GroupRegisterPage() {
+  const { dimensions, questions } = await getGroupSurveyData();
+
   return (
     <Suspense>
-      <GroupRegisterForm />
+      <GroupRegisterForm dimensions={dimensions} questions={questions as (typeof questions[number] & { dimensionId: string })[]} />
     </Suspense>
   );
 }

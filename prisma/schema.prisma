@@ -219,9 +219,41 @@ model QuizSession {
   @@map("quiz_sessions")
 }
 
-// ─── Pilot-Umfrage ───────────────────────────────────────────────
+// ─── Pilot-Fragebogen (Dimensionen & Fragen) ─────────────────────
+// Pilot survey questions are managed via the admin dashboard
+
+model PilotDimension {
+  id          String @id  // "D1", "D2", etc.
+  label       String      // "Zeitbudget & Verbindlichkeit"
+  emoji       String @default("")
+  description String @default("")
+  blockIndex  Int    @default(0) // 0–3: which variant block this dimension belongs to
+  order       Int    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  questions PilotSurveyQuestion[]
+
+  @@map("pilot_dimensions")
+}
+
+model PilotSurveyQuestion {
+  id          String   @id  // "D1Q1", "D1Q2", etc. or "S1" for standalone
+  dimensionId String?       // null = standalone item (no dimension)
+  text        String   @db.Text
+  order       Int      @default(0)
+  isInverse   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  dimension PilotDimension? @relation(fields: [dimensionId], references: [id], onDelete: Cascade)
+
+  @@index([dimensionId])
+  @@map("pilot_survey_questions")
+}
+
+// ─── Pilot-Umfrage (Sessions & Antworten) ────────────────────────
 // Responses from the pilot survey (4 UI variants: scroll/classic/swipe/chat)
-// Questions are hardcoded in src/lib/pilot-questions.ts (not stored in DB)
 
 model PilotSession {
   id          String    @id @default(cuid())

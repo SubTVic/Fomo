@@ -3,10 +3,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import {
-  getGroupSurveyQuestions,
-  getGroupSurveyDimensions,
-} from "@/lib/group-survey-questions";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -89,9 +85,29 @@ const STEPS = [
   "Abschluss",
 ];
 
+// ─── Types for props ─────────────────────────────────────────────────────────
+
+interface DimensionData {
+  id: string;
+  label: string;
+  emoji: string;
+  description: string;
+}
+
+interface QuestionData {
+  id: string;
+  dimensionId: string;
+  text: string;
+}
+
+interface GroupRegisterFormProps {
+  dimensions: DimensionData[];
+  questions: QuestionData[];
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export function GroupRegisterForm() {
+export function GroupRegisterForm({ dimensions, questions }: GroupRegisterFormProps) {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>(INITIAL);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -100,9 +116,6 @@ export function GroupRegisterForm() {
     slug?: string;
     error?: string;
   } | null>(null);
-
-  const questions = getGroupSurveyQuestions();
-  const dimensions = getGroupSurveyDimensions();
 
   function set<K extends keyof FormData>(key: K, value: FormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -529,8 +542,8 @@ function Step4({
 }: {
   answers: Record<string, string>;
   setAnswer: (id: string, v: string) => void;
-  questions: ReturnType<typeof getGroupSurveyQuestions>;
-  dimensions: ReturnType<typeof getGroupSurveyDimensions>;
+  questions: QuestionData[];
+  dimensions: DimensionData[];
 }) {
   const answered = Object.keys(answers).length;
   return (

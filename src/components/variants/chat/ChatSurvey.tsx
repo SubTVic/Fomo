@@ -5,7 +5,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getDimension } from "@/lib/pilot-questions";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 const LIKERT_CHAT = [
@@ -24,6 +23,7 @@ export function ChatSurvey({
   state,
   setAnswer,
   blockQuestions,
+  blockDimensions,
   onBlockComplete,
 }: SurveyVariantProps) {
   const { answers } = state;
@@ -34,7 +34,7 @@ export function ChatSurvey({
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const question = blockQuestions[localIdx] ?? blockQuestions[0];
-  const dimension = getDimension(question.dimensionId);
+  const dimension = blockDimensions.find((d) => d.id === question.dimensionId) ?? blockDimensions[0];
   const currentValue = answers[question.id] as string | undefined;
   const alreadyAnswered = currentValue !== undefined;
   const isLast = localIdx === blockQuestions.length - 1;

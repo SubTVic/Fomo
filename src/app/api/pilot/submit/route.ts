@@ -5,9 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isRateLimited, getClientKey } from "@/lib/rate-limit";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { PILOT_QUESTIONS } from "@/lib/pilot-questions";
 
-const VALID_QUESTION_IDS = new Set(PILOT_QUESTIONS.map((q) => q.id));
 const VALID_ANSWER_VALUES = new Set(["0", "1", "3", "5"]);
 
 const variantEnum = z.enum(["scroll", "classic", "swipe", "chat"]);
@@ -54,11 +52,14 @@ export async function POST(req: NextRequest) {
 
   const { variant, variantOrder, preferredVariant, preferenceReason, answers, demographic, feedback } = parsed.data;
 
-  // Validate question IDs and answer values
+  // Validate question IDs against DB
+  const validQuestions = await db.pilotSurveyQuestion.findMany({ select: { id: true } });
+  const validQuestionIds = new Set(validQuestions.map((q) => q.id));
+
   const invalidIds: string[] = [];
   const invalidValues: string[] = [];
   for (const [questionId, value] of Object.entries(answers)) {
-    if (!VALID_QUESTION_IDS.has(questionId)) {
+    if (!validQuestionIds.has(questionId)) {
       invalidIds.push(questionId);
     }
     const v = Array.isArray(value) ? value : [value];

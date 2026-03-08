@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import Link from "next/link";
 import { getAllGroupsForAdmin } from "@/lib/queries/groups";
 import { ImportGroupsButton } from "./ImportGroupsButton";
 import { VerifyButton } from "./VerifyButton";
@@ -96,9 +97,13 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
                 return (
                   <tr key={group.id} className="hover:bg-muted/20 transition-colors">
                     <td className="px-4 py-3 font-medium max-w-[180px]">
-                      <span className="block truncate" title={group.name}>
+                      <Link
+                        href={`/admin/groups/${group.id}`}
+                        className="block truncate hover:underline"
+                        title={group.name}
+                      >
                         {group.name}
-                      </span>
+                      </Link>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
                       {group.category.name}

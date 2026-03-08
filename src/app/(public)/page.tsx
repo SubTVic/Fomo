@@ -8,6 +8,8 @@ import { getActiveGroupCount } from "@/lib/queries/groups";
 //   "pilot"   → pilot survey CTA (while collecting data from Studis)
 //   "collect" → pilot survey + group registration side by side
 //   "live"    → full quiz (production)
+export const dynamic = "force-dynamic";
+
 const APP_MODE = (process.env.APP_MODE ?? "pilot") as "pilot" | "collect" | "live";
 
 // Group images for the landing page grid

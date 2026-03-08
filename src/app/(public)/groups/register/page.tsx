@@ -4,6 +4,8 @@ import { Suspense } from "react";
 import { GroupRegisterForm } from "./GroupRegisterForm";
 import { getGroupSurveyData } from "@/lib/group-survey-questions";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Gruppe registrieren – FOMO",
 };

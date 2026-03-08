@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { getGroupsWithProfiles } from "@/lib/queries/groups";
+
+export const dynamic = "force-dynamic";
 import { computeMatches } from "@/lib/matching";
 import { MatchCard } from "@/components/results/MatchCard";
 import type { QuizAnswers } from "@/types";

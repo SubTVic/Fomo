@@ -3,6 +3,8 @@
 import { getQuestionsForQuiz } from "@/lib/queries/questions";
 import { QuizContainer } from "@/components/quiz/QuizContainer";
 
+export const dynamic = "force-dynamic";
+
 export default async function QuizPage() {
   const questions = await getQuestionsForQuiz();
 

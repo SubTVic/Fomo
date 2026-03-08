@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { getActiveGroups, getActiveGroupCount } from "@/lib/queries/groups";
+
+export const dynamic = "force-dynamic";
 import { GroupGrid } from "@/components/groups/GroupGrid";
 
 interface GroupsPageProps {

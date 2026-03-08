@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getActiveGroupCount } from "@/lib/queries/groups";
+import { getSiteConfig } from "@/lib/queries/site-config";
 
 // APP_MODE controls the landing page behaviour:
 //   "pilot"   → pilot survey CTA (while collecting data from Studis)
@@ -12,20 +13,21 @@ export const dynamic = "force-dynamic";
 
 const APP_MODE = (process.env.APP_MODE ?? "pilot") as "pilot" | "collect" | "live";
 
-// Group images for the landing page grid
-const GROUP_IMAGES = [
-  { src: "/images/groups/Campusradio.jpeg", alt: "Campusradio Dresden" },
-  { src: "/images/groups/Club11.jpg", alt: "Club 11" },
-  { src: "/images/groups/DieBuilhne.jpeg", alt: "Die Bühne" },
-  { src: "/images/groups/Elbflorace.png", alt: "Elbflorace" },
-  { src: "/images/groups/Star.jpeg", alt: "STAR Dresden" },
-  { src: "/images/groups/Yeti.jpeg", alt: "YETI" },
-];
-
-const GROUP_NAMES = "Campusradio Dresden · Club 11 · Die Bühne · Elbflorace · STAR Dresden · YETI";
-
 export default async function LandingPage() {
-  const groupCount = await getActiveGroupCount();
+  const [groupCount, cfg] = await Promise.all([
+    getActiveGroupCount(),
+    getSiteConfig(),
+  ]);
+
+  // Build image array from config
+  const groupImages = [1, 2, 3, 4, 5, 6].map((n) => ({
+    src: cfg[`image_${n}_src`],
+    alt: cfg[`image_${n}_alt`],
+  }));
+
+  // Render hero title with line breaks
+  const heroLines = cfg.hero_title.split("\n");
+  const subtitleLines = cfg.hero_subtitle.split("\n");
 
   return (
     <div className="flex flex-col items-center px-4 py-6 sm:px-6">
@@ -34,20 +36,26 @@ export default async function LandingPage() {
         {/* Poster Header */}
         <div className="bg-foreground text-primary-foreground px-6 py-6 sm:px-8 sm:py-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <h1 className="font-heading text-[clamp(26px,5vw,52px)] uppercase leading-none">
-            Finde deine
-            <br />
-            Hochschulgruppe
+            {heroLines.map((line, i) => (
+              <span key={i}>
+                {i > 0 && <br />}
+                {line}
+              </span>
+            ))}
           </h1>
           <div className="text-xs sm:text-[13px] font-semibold uppercase tracking-wider text-primary-foreground/45 sm:text-right leading-snug">
-            Launching
-            <br />
-            WS 2026
+            {subtitleLines.map((line, i) => (
+              <span key={i}>
+                {i > 0 && <br />}
+                {line}
+              </span>
+            ))}
           </div>
         </div>
 
         {/* Image Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 border-t-4 border-foreground">
-          {GROUP_IMAGES.map((img, i) => (
+          {groupImages.map((img, i) => (
             <div
               key={i}
               className="aspect-square relative overflow-hidden border-r-2 border-foreground last:border-r-0"
@@ -65,12 +73,12 @@ export default async function LandingPage() {
 
         {/* Image Caption */}
         <div className="border-t-4 border-foreground px-6 py-2.5 sm:px-8 text-[11px] text-muted-foreground italic tracking-wide">
-          {GROUP_NAMES} — 6 von über {groupCount > 0 ? groupCount : 100} Hochschulgruppen
+          {cfg.image_caption}
         </div>
 
         {/* CTA Section (mode-dependent) */}
-        {APP_MODE === "pilot" && <PilotCta />}
-        {APP_MODE === "collect" && <CollectCta groupCount={groupCount} />}
+        {APP_MODE === "pilot" && <PilotCta cfg={cfg} />}
+        {APP_MODE === "collect" && <CollectCta cfg={cfg} groupCount={groupCount} />}
         {APP_MODE === "live" && <LiveCta groupCount={groupCount} />}
 
       </div>
@@ -80,19 +88,18 @@ export default async function LandingPage() {
 
 // ─── CTA Sections ─────────────────────────────────────────────────────────────
 
-function PilotCta() {
+function PilotCta({ cfg }: { cfg: Record<string, string> }) {
   return (
     <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-          Pilotstudie
+          {cfg.pilot_label}
         </p>
         <h2 className="font-heading text-[clamp(18px,3vw,28px)] uppercase leading-tight mb-2.5">
-          Hilf uns, FOMO zu bauen
+          {cfg.pilot_title}
         </h2>
         <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-          Wir entwickeln ein Open-Source-Tool für über 100 Hochschulgruppen in Dresden.
-          Euer Feedback formt das Ergebnis — die Umfrage dauert nur wenige Minuten.
+          {cfg.pilot_text}
         </p>
       </div>
       <div className="flex flex-col items-center sm:items-end gap-2">
@@ -100,29 +107,28 @@ function PilotCta() {
           href="/pilot"
           className="bg-foreground text-primary-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-[#2a3a45] transition-colors"
         >
-          Zur Pilotstudie
+          {cfg.pilot_button}
         </Link>
-        <span className="text-[11px] text-muted-foreground">~ 5 Min &middot; Anonym</span>
+        <span className="text-[11px] text-muted-foreground">{cfg.pilot_duration}</span>
       </div>
     </div>
   );
 }
 
-function CollectCta({ groupCount }: { groupCount: number }) {
+function CollectCta({ cfg, groupCount }: { cfg: Record<string, string>; groupCount: number }) {
   return (
     <div className="border-t-4 border-foreground">
       {/* Ersti CTA */}
       <div className="px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-            Pilotstudie
+            {cfg.pilot_label}
           </p>
           <h2 className="font-heading text-[clamp(18px,3vw,28px)] uppercase leading-tight mb-2.5">
-            Hilf uns, FOMO zu bauen
+            {cfg.pilot_title}
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-            Wir entwickeln ein Open-Source-Tool für über 100 Hochschulgruppen in Dresden.
-            Euer Feedback formt das Ergebnis — die Umfrage dauert nur wenige Minuten.
+            {cfg.pilot_text}
           </p>
         </div>
         <div className="flex flex-col items-center sm:items-end gap-2">
@@ -130,9 +136,9 @@ function CollectCta({ groupCount }: { groupCount: number }) {
             href="/pilot"
             className="bg-foreground text-primary-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-[#2a3a45] transition-colors"
           >
-            Zur Pilotstudie
+            {cfg.pilot_button}
           </Link>
-          <span className="text-[11px] text-muted-foreground">~ 5 Min &middot; Anonym</span>
+          <span className="text-[11px] text-muted-foreground">{cfg.pilot_duration}</span>
         </div>
       </div>
 
@@ -186,7 +192,7 @@ function LiveCta({ groupCount }: { groupCount: number }) {
           >
             Quiz starten
           </Link>
-          <span className="text-[11px] text-muted-foreground">~ 5 Min &middot; Anonym &middot; Im Browser</span>
+          <span className="text-[11px] text-muted-foreground">~ 10 Min &middot; Anonym &middot; Im Browser</span>
         </div>
       </div>
 

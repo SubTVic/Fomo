@@ -4,6 +4,7 @@
 import { Suspense } from "react";
 import { SurveyRouter } from "@/components/survey/SurveyRouter";
 import { getSerializedPilotData } from "@/lib/queries/pilot";
+import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -13,14 +14,22 @@ export const metadata = {
 };
 
 export default async function PilotSurveyPage() {
-  const { dimensions, questions } = await getSerializedPilotData();
+  const [{ dimensions, questions }, groups] = await Promise.all([
+    getSerializedPilotData(),
+    db.group.findMany({
+      where: { isActive: true },
+      select: { name: true },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
   // Exclude standalone items (no dimension) from the survey flow
   const surveyQuestions = questions.filter((q) => q.dimensionId !== null);
+  const groupNames = groups.map((g) => g.name);
 
   return (
     <Suspense>
-      <SurveyRouter dimensions={dimensions} questions={surveyQuestions} />
+      <SurveyRouter dimensions={dimensions} questions={surveyQuestions} groupNames={groupNames} />
     </Suspense>
   );
 }

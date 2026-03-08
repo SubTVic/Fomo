@@ -21,6 +21,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Link href="/admin/groups" className="hover:underline">Gruppen</Link>
             <Link href="/admin/questions" className="hover:underline">Fragen</Link>
             <Link href="/admin/pilot" className="hover:underline">Pilot</Link>
+            <Link href="/admin/site" className="hover:underline">Seite</Link>
             <Link href="/admin/users" className="hover:underline">Admins</Link>
           </nav>
           <form action="/api/auth/signout" method="POST">

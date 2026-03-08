@@ -205,6 +205,16 @@ model Admin {
   @@map("admins")
 }
 
+// ─── Site Configuration (CMS) ────────────────────────────────────
+
+model SiteConfig {
+  key       String   @id          // e.g. "hero_title", "image_1_src"
+  value     String   @db.Text     // Text content or image URL
+  updatedAt DateTime @updatedAt
+
+  @@map("site_config")
+}
+
 // ─── Analytics (anonymous) ───────────────────────────────────────
 
 model QuizSession {

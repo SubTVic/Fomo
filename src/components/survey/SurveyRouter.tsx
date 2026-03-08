@@ -32,9 +32,10 @@ type RouterPhase = "transition" | "block" | "demographic" | "feedback" | "prefer
 interface SurveyRouterProps {
   dimensions: Dimension[];
   questions: PilotQuestion[];
+  groupNames?: string[];
 }
 
-export function SurveyRouter({ dimensions, questions }: SurveyRouterProps) {
+export function SurveyRouter({ dimensions, questions, groupNames = [] }: SurveyRouterProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [currentBlockIdx, setCurrentBlockIdx] = useState(0);
@@ -244,16 +245,11 @@ export function SurveyRouter({ dimensions, questions }: SurveyRouterProps) {
           </div>
 
           {demographic.isMember && demographic.isMember !== "no" && (
-            <label className="flex flex-col gap-1.5">
-              <span className="font-medium text-sm">In welcher Gruppe (optional)?</span>
-              <input
-                type="text"
-                value={demographic.groupNames ?? ""}
-                onChange={(e) => surveyState.setDemographic("groupNames", e.target.value)}
-                placeholder="z.B. AEGEE, ESN, ..."
-                className="rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </label>
+            <GroupSelector
+              groupNames={groupNames}
+              selected={demographic.groupNames ?? ""}
+              onChange={(val) => surveyState.setDemographic("groupNames", val)}
+            />
           )}
 
           <button
@@ -298,5 +294,88 @@ export function SurveyRouter({ dimensions, questions }: SurveyRouterProps) {
       />
       <DevSwitcher blocks={blocks} currentBlockIdx={currentBlockIdx} />
     </>
+  );
+}
+
+// ── Group Selector ──────────────────────────────────────────────────
+
+function GroupSelector({
+  groupNames,
+  selected,
+  onChange,
+}: {
+  groupNames: string[];
+  selected: string;
+  onChange: (value: string) => void;
+}) {
+  const [search, setSearch] = useState("");
+  const selectedSet = new Set(selected ? selected.split(", ").filter(Boolean) : []);
+
+  const filtered = search
+    ? groupNames.filter((g) => g.toLowerCase().includes(search.toLowerCase()))
+    : groupNames;
+
+  function toggle(name: string) {
+    const next = new Set(selectedSet);
+    if (next.has(name)) next.delete(name);
+    else next.add(name);
+    onChange([...next].join(", "));
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span className="font-medium text-sm">In welcher Gruppe (optional)?</span>
+      {selectedSet.size > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {[...selectedSet].map((name) => (
+            <button
+              key={name}
+              onClick={() => toggle(name)}
+              className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
+            >
+              {name}
+              <span className="text-primary/60">&times;</span>
+            </button>
+          ))}
+        </div>
+      )}
+      {groupNames.length > 0 ? (
+        <>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Gruppe suchen..."
+            className="rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          <div className="max-h-40 overflow-y-auto rounded-lg border bg-card">
+            {filtered.length === 0 ? (
+              <p className="px-3 py-2 text-sm text-muted-foreground">Keine Gruppe gefunden</p>
+            ) : (
+              filtered.map((name) => (
+                <button
+                  key={name}
+                  onClick={() => toggle(name)}
+                  className={`w-full px-3 py-2 text-left text-sm transition-colors hover:bg-muted/40 ${
+                    selectedSet.has(name) ? "bg-primary/10 font-medium" : ""
+                  }`}
+                >
+                  {selectedSet.has(name) && <span className="mr-1.5">&#10003;</span>}
+                  {name}
+                </button>
+              ))
+            )}
+          </div>
+        </>
+      ) : (
+        <input
+          type="text"
+          value={selected}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="z.B. AEGEE, ESN, ..."
+          className="rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+      )}
+    </div>
   );
 }

@@ -1,23 +1,33 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { prepareData, computeStats } from "@/lib/pilot-statistics";
 import type { PilotStatisticsResponse } from "@/types/pilot-statistics";
 
-export async function GET() {
+export interface StatsFilter {
+  semester?: string;
+  isMember?: string;
+}
+
+export async function GET(req: NextRequest) {
   const session = await auth();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const stats = await computePilotStatistics();
+  const { searchParams } = new URL(req.url);
+  const filter: StatsFilter = {};
+  if (searchParams.get("semester")) filter.semester = searchParams.get("semester")!;
+  if (searchParams.get("isMember")) filter.isMember = searchParams.get("isMember")!;
+
+  const stats = await computePilotStatistics(filter);
   return NextResponse.json(stats);
 }
 
 /** Compute all pilot statistics from DB data. Exported for direct use in server components. */
-export async function computePilotStatistics(): Promise<PilotStatisticsResponse> {
+export async function computePilotStatistics(filter?: StatsFilter): Promise<PilotStatisticsResponse> {
   // Fetch all data
   const [allSessions, allAnswers, allDimensions, allQuestions] = await Promise.all([
     db.pilotSession.findMany({
@@ -44,10 +54,19 @@ export async function computePilotStatistics(): Promise<PilotStatisticsResponse>
     }),
   ]);
 
+  // Apply demographic filters
+  let filteredSessions = allSessions;
+  if (filter?.semester) {
+    filteredSessions = filteredSessions.filter((s) => s.semester === filter.semester);
+  }
+  if (filter?.isMember) {
+    filteredSessions = filteredSessions.filter((s) => s.isMember === filter.isMember);
+  }
+
   // ── Overview ────────────────────────────────────────────────
 
-  const completedSessions = allSessions.filter((s) => s.completedAt !== null);
-  const totalSessions = allSessions.length;
+  const completedSessions = filteredSessions.filter((s) => s.completedAt !== null);
+  const totalSessions = filteredSessions.length;
 
   const durations = completedSessions
     .map((s) => s.completedAt!.getTime() - s.startedAt.getTime())
@@ -61,13 +80,14 @@ export async function computePilotStatistics(): Promise<PilotStatisticsResponse>
     ? answeredCounts.reduce((a, b) => a + b, 0) / answeredCounts.length
     : 0;
 
-  // ── Demographics ────────────────────────────────────────────
+  // ── Demographics (always computed from ALL sessions, not filtered) ─
 
+  const allCompleted = allSessions.filter((s) => s.completedAt !== null);
   const semester: Record<string, number> = {};
   const membership: Record<string, number> = {};
   const preferredVariant: Record<string, number> = {};
 
-  for (const s of completedSessions) {
+  for (const s of allCompleted) {
     if (s.semester) semester[s.semester] = (semester[s.semester] ?? 0) + 1;
     if (s.isMember) membership[s.isMember] = (membership[s.isMember] ?? 0) + 1;
     if (s.preferredVariant) preferredVariant[s.preferredVariant] = (preferredVariant[s.preferredVariant] ?? 0) + 1;
@@ -77,6 +97,9 @@ export async function computePilotStatistics(): Promise<PilotStatisticsResponse>
 
   const completedIds = completedSessions.map((s) => s.id);
 
+  // Filter answers to only include those from filtered sessions
+  const filteredAnswers = allAnswers.filter((a) => completedIds.includes(a.sessionId));
+
   const questionMetas = allQuestions.map((q) => ({
     id: q.id,
     dimensionId: q.dimensionId,
@@ -84,7 +107,7 @@ export async function computePilotStatistics(): Promise<PilotStatisticsResponse>
     text: q.text,
   }));
 
-  const preparedData = prepareData(completedIds, allAnswers, questionMetas);
+  const preparedData = prepareData(completedIds, filteredAnswers, questionMetas);
 
   const { items, dimensionStats, redundancies } = computeStats({
     preparedData,

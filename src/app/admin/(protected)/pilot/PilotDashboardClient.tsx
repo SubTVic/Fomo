@@ -76,6 +76,37 @@ export function PilotDashboardClient({ stats, recentSessions, feedback }: Props)
   const [search, setSearch] = useState("");
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
+  // Demographic filter state
+  const [filterSemester, setFilterSemester] = useState<string>("all");
+  const [filterMember, setFilterMember] = useState<string>("all");
+  const [filteredStats, setFilteredStats] = useState<PilotStatisticsResponse | null>(null);
+  const [filterLoading, setFilterLoading] = useState(false);
+
+  const isFiltered = filterSemester !== "all" || filterMember !== "all";
+  const activeStats = filteredStats && isFiltered ? filteredStats : stats;
+
+  const fetchFilteredStats = useCallback(async (semester: string, member: string) => {
+    if (semester === "all" && member === "all") {
+      setFilteredStats(null);
+      return;
+    }
+    setFilterLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (semester !== "all") params.set("semester", semester);
+      if (member !== "all") params.set("isMember", member);
+      const res = await fetch(`/api/admin/pilot/statistics?${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setFilteredStats(data);
+      }
+    } catch {
+      // Silently fail, keep unfiltered data
+    } finally {
+      setFilterLoading(false);
+    }
+  }, []);
+
   // Bulk delete state
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -121,7 +152,7 @@ export function PilotDashboardClient({ stats, recentSessions, feedback }: Props)
     }
   }
 
-  const { overview, demographics, items, dimensions, redundancies } = stats;
+  const { overview, demographics, items, dimensions, redundancies } = activeStats;
 
   // ── Sorted & Filtered Items ─────────────────────────────────
 
@@ -238,6 +269,69 @@ export function PilotDashboardClient({ stats, recentSessions, feedback }: Props)
         <StatCard label="Abschlussrate" value={`${overview.completionRate}%`} />
         <StatCard label="Ø Dauer" value={`${overview.avgDurationMinutes} min`} />
         <StatCard label="Ø Fragen" value={overview.avgQuestionsAnswered} />
+      </div>
+
+      {/* ── Demographic Filter ────────────────────────────────── */}
+      <div className="border-2 border-foreground bg-card px-6 py-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <span className="text-sm font-heading uppercase">Filter:</span>
+          <label className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Semester</span>
+            <select
+              value={filterSemester}
+              onChange={(e) => {
+                setFilterSemester(e.target.value);
+                fetchFilteredStats(e.target.value, filterMember);
+              }}
+              className="border-2 border-foreground bg-background px-2 py-1 text-sm"
+            >
+              <option value="all">Alle</option>
+              {Object.keys(stats.demographics.semester)
+                .sort((a, b) => parseInt(a) - parseInt(b))
+                .map((s) => (
+                  <option key={s} value={s}>
+                    {s}. Semester ({stats.demographics.semester[s]})
+                  </option>
+                ))}
+            </select>
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Mitglied</span>
+            <select
+              value={filterMember}
+              onChange={(e) => {
+                setFilterMember(e.target.value);
+                fetchFilteredStats(filterSemester, e.target.value);
+              }}
+              className="border-2 border-foreground bg-background px-2 py-1 text-sm"
+            >
+              <option value="all">Alle</option>
+              <option value="yes">Ja ({stats.demographics.membership["yes"] ?? 0})</option>
+              <option value="no">Nein ({stats.demographics.membership["no"] ?? 0})</option>
+              <option value="was">War Mitglied ({stats.demographics.membership["was"] ?? 0})</option>
+            </select>
+          </label>
+          {isFiltered && (
+            <button
+              onClick={() => {
+                setFilterSemester("all");
+                setFilterMember("all");
+                setFilteredStats(null);
+              }}
+              className="border-2 border-foreground px-3 py-1 text-xs font-heading uppercase hover:bg-muted transition-colors"
+            >
+              Filter zuruecksetzen
+            </button>
+          )}
+          {filterLoading && (
+            <span className="text-xs text-muted-foreground">Lade...</span>
+          )}
+          {isFiltered && !filterLoading && (
+            <span className="text-xs text-muted-foreground">
+              {overview.completedSessions} von {stats.overview.completedSessions} Sessions
+            </span>
+          )}
+        </div>
       </div>
 
       {/* ── Demographics ───────────────────────────────────────── */}

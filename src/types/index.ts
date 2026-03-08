@@ -13,7 +13,6 @@ export type QuizAnswers = Record<string, string | string[]>;
 export interface QuizState {
   currentIndex: number;
   answers: QuizAnswers;
-  skipped: string[]; // questionIds that were skipped (Set serialized as array for reducer)
   isComplete: boolean;
 }
 
@@ -21,7 +20,6 @@ export type QuizAction =
   | { type: "ANSWER"; questionId: string; value: string | string[] }
   | { type: "NEXT" }
   | { type: "PREV" }
-  | { type: "SKIP"; questionId: string }
   | { type: "COMPLETE" };
 
 // ---------------------------------------------------------------------------

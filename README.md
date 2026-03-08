@@ -2,140 +2,245 @@
 
 > Finde die Hochschulgruppe, die zu dir passt.
 
-FOMO ist eine Open-Source-Webanwendung, die Erstsemester der TU Dresden über ein Quiz-basiertes Matching mit passenden Hochschulgruppen verbindet. Beantworte ~20 Fragen und erhalte personalisierte Empfehlungen – ähnlich wie beim Wahl-O-Mat, aber für studentisches Engagement.
+FOMO is an open-source web app that matches TU Dresden freshmen with student organizations through an interactive quiz — like [Wahl-O-Mat](https://www.wahl-o-mat.de/), but for campus life.
+
+Answer ~20 questions about your interests, values, and time budget, and get personalized recommendations from 100+ student groups — with contact info, links, and logos.
+
+**Built for:** [StuRa TU Dresden](https://www.stura.tu-dresden.de/) · **Target launch:** Orientation Week WS 26/27
 
 ## Features
 
-- **Quiz:** ~20 Fragen zu Interessen, Werten und Zeitbudget
-- **Matching:** Algorithmus berechnet Übereinstimmung mit 100+ Hochschulgruppen
-- **Ergebnisse:** Top-Empfehlungen mit Kontaktinfos, Logos und Links
-- **Übersicht:** Alle Hochschulgruppen durchstöbern und filtern
-- **Admin:** Gruppen und Fragen verwalten (mit Login)
-- **Datenschutz:** Matching läuft komplett im Browser – keine Nutzerdaten werden gespeichert
+### Quiz & Matching
+- **~20 questions** across categories like time budget, politics, sports, culture, and more
+- **Client-side matching algorithm** — no user data leaves the browser (DSGVO-friendly)
+- **Weighted scoring** with support for Likert, Yes/No, Single/Multi Choice, and Slider questions
+- **Top results** normalized to 0–100% match score
 
-## Tech-Stack
+### Pilot Study (Current Phase)
+FOMO is currently running a **pilot study** to validate the question set and test 4 different UI variants:
 
-- [Next.js 15](https://nextjs.org/) (App Router, TypeScript)
-- [Tailwind CSS](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/)
-- [PostgreSQL 16](https://www.postgresql.org/)
-- [Prisma](https://www.prisma.io/)
-- [Auth.js](https://authjs.dev/)
-- [Docker Compose](https://docs.docker.com/compose/)
+| Variant | Style | Description |
+|---------|-------|-------------|
+| 📜 Scroll | Tab-based | All questions of a dimension on one screen with sticky tabs |
+| 📋 Classic | Wahl-O-Mat | One question per page with 3 large buttons (Agree / Neutral / Disagree) |
+| 👆 Swipe | Tinder-style | Drag or swipe cards left/right to answer |
+| 💬 Chat | Messenger | Questions appear as bot messages with emoji reply buttons |
 
-## Lokale Entwicklung
+**Pilot flow:** Each participant sees all 4 variants in randomized order (Fisher-Yates shuffle), answering 60 statements across 10 dimensions. After all blocks, they provide demographic data and rate their preferred UI variant.
 
-### Voraussetzungen
+### Preview Mode
+- `?preview=true` — full survey without saving answers to DB (shareable test link)
+- `?preview=quick` — only 2 questions per dimension for fast design testing
+
+### Data Export
+- Protected API endpoint (`/api/pilot/export`) for downloading responses
+- Supports JSON and CSV format with pagination
+- Secured via Bearer token (`PILOT_EXPORT_KEY` env var)
+
+### Psychometric Analysis
+Built-in statistics for evaluating question quality:
+- **Cronbach's Alpha** per dimension (internal consistency)
+- **Corrected Item-Total Correlation (r_it)** per item
+- **Mean, SD, and distribution** analysis
+- Color-coded quality indicators (green/yellow/red)
+
+### Security
+- Input validation with Zod schemas on all API routes
+- Rate limiting (10 submissions/hour per IP) with automatic cleanup
+- Security headers (X-Frame-Options, X-Content-Type-Options, Referrer-Policy)
+- Unique constraints on database to prevent duplicate answers
+- No localStorage/sessionStorage (avoids SecurityError in sandboxed environments)
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | [Next.js 15](https://nextjs.org/) (App Router, TypeScript) |
+| Styling | [Tailwind CSS 4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) |
+| Database | [PostgreSQL 16](https://www.postgresql.org/) via [Prisma ORM](https://www.prisma.io/) |
+| Auth | [Auth.js v5](https://authjs.dev/) (Phase 1: Credentials, Phase 2: TU Dresden Shibboleth/SAML) |
+| Validation | [Zod](https://zod.dev/) |
+| Testing | [Vitest](https://vitest.dev/) + [Playwright](https://playwright.dev/) |
+| Linting | ESLint + Prettier |
+| Infrastructure | Docker Compose |
+
+## Getting Started
+
+### Prerequisites
 
 - [Node.js](https://nodejs.org/) >= 20
-- [Docker](https://www.docker.com/) (für PostgreSQL)
-- [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/) (for PostgreSQL)
 
 ### Setup
 
 ```bash
-# Repository klonen
-git clone https://github.com/EUER-USERNAME/fomo.git
-cd fomo
+# Clone the repository
+git clone https://github.com/SubTVic/Fomo.git
+cd Fomo/Github/fomo
 
-# Umgebungsvariablen einrichten
+# Set up environment variables
 cp .env.example .env
 
-# Datenbank starten
+# Start the database
 docker compose up -d db
 
-# Dependencies installieren
+# Install dependencies
 npm install
 
-# Datenbank-Schema anwenden
+# Apply database migrations
 npx prisma migrate dev
 
-# Seed-Daten laden
+# Seed with sample data
 npx prisma db seed
 
-# Entwicklungsserver starten
+# Start the dev server
 npm run dev
 ```
 
-Die App läuft dann unter [http://localhost:3000](http://localhost:3000).
+The app runs at [http://localhost:3000](http://localhost:3000).
 
-### Nützliche Befehle
+### Useful Commands
 
 ```bash
-npm run dev          # Entwicklungsserver
-npm run build        # Production Build
-npm run lint         # Linting
-npm run test         # Tests
-npx prisma studio    # Datenbank-GUI
-npx prisma migrate dev  # Neue Migration erstellen
+npm run dev              # Dev server (Turbopack)
+npm run build            # Production build
+npm run lint             # Linting
+npm run test             # Run tests
+npx prisma studio        # Database GUI
+npx prisma migrate dev   # Create new migration
+npm run import:groups     # Import groups from CSV
 ```
 
-## Projektstruktur
+## Project Structure
 
 ```
 src/
-├── app/              # Next.js App Router (Seiten + API)
-├── components/       # React-Komponenten
-├── lib/              # Hilfsfunktionen, Algorithmus, DB-Client
-└── types/            # TypeScript-Typen
+├── app/
+│   ├── (public)/           # Public pages (landing, pilot intro)
+│   ├── (fullscreen)/       # Full-screen layouts (survey)
+│   ├── (admin)/            # Admin dashboard (protected)
+│   └── api/
+│       ├── auth/           # Auth.js handler
+│       └── pilot/
+│           ├── submit/     # Survey submission endpoint
+│           └── export/     # Data export endpoint
+├── components/
+│   ├── survey/             # Survey orchestration & shared components
+│   │   ├── SurveyRouter.tsx        # Main flow controller (phases)
+│   │   ├── useSurveyState.ts       # Answer state management hook
+│   │   ├── PrimingScreen.tsx       # Context-setting intro screen
+│   │   ├── VariantTransition.tsx   # Between-block transition
+│   │   ├── MidSurveyReminder.tsx   # Halfway encouragement
+│   │   ├── PreferenceQuestion.tsx  # "Which variant did you prefer?"
+│   │   ├── DimensionHeader.tsx     # Dimension label + priming
+│   │   └── question-inputs/       # Reusable input components
+│   ├── variants/
+│   │   ├── scroll/ScrollSurvey.tsx
+│   │   ├── classic/ClassicSurvey.tsx
+│   │   ├── swipe/SwipeSurvey.tsx
+│   │   ├── chat/ChatSurvey.tsx
+│   │   └── types.ts               # Shared variant interface
+│   ├── ui/                 # shadcn/ui components
+│   └── shared/             # Shared layout components
+├── lib/
+│   ├── pilot-questions.ts          # 60 pilot questions + 10 dimensions
+│   ├── pilot-variant-order.ts      # Block generation & variant shuffling
+│   ├── pilot-statistics.ts         # Psychometric analysis
+│   ├── dimension-priming.ts        # Contextual frames per dimension
+│   ├── matching.ts                 # Client-side matching algorithm
+│   ├── rate-limit.ts               # In-memory rate limiter
+│   ├── db.ts                       # Prisma singleton
+│   └── auth.ts                     # Auth.js configuration
+└── types/                  # Shared TypeScript types
+
 prisma/
-├── schema.prisma     # Datenmodell
-├── seed.ts           # Beispieldaten
-└── migrations/       # DB-Migrationen
+├── schema.prisma           # Data model
+├── seed.ts                 # Sample data
+└── migrations/             # Database migrations
 ```
 
-## Deployment auf Vercel
+## Architecture
 
-### 1. Projekt verbinden
+### Matching Algorithm
 
-- Vercel-Account erstellen und GitHub-Repository verbinden
-- Vercel erkennt Next.js automatisch – keine spezielle Konfiguration nötig
+```
+score(User, Group) = Σ weight_i × similarity(user_answer_i, group_profile_i) / Σ weight_i
+```
 
-### 2. Postgres-Datenbank erstellen
+Similarity functions by question type:
+- **Likert / Slider:** `1 - |user - group| / max_range`
+- **Yes/No / Single Choice:** `1` if equal, `0` otherwise
+- **Multi Choice:** Jaccard index (`|intersection| / |union|`)
 
-- Im Vercel-Dashboard unter **Storage** → **Create Database** → **Postgres**
-- Die `DATABASE_URL` wird automatisch als Environment Variable gesetzt
+Results are normalized to 0–100% and sorted descending. All computation runs client-side.
 
-### 3. Environment Variables setzen
+### Pilot Survey Flow
 
-Unter **Settings** → **Environment Variables** folgende Werte setzen:
+```
+Priming → [Block 1] → Mid-Reminder → [Block 2] → [Block 3] → [Block 4]
+       → Demographics → Feedback → Variant Preference → Done
+```
 
-| Variable | Beschreibung |
-| --- | --- |
-| `DATABASE_URL` | Wird automatisch von Vercel Postgres gesetzt |
-| `NEXTAUTH_SECRET` | Zufälliger String (`openssl rand -base64 32`) |
-| `NEXTAUTH_URL` | Deine Vercel-Domain (z.B. `https://fomo.vercel.app`) |
-| `APP_MODE` | `pilot`, `collect` oder `live` |
-| `PILOT_EXPORT_KEY` | Zufälliger String für den Daten-Export |
+Each block uses a different randomized UI variant. Dimensions are grouped into 4 blocks (2–3 dimensions each), and questions within each block are presented using that block's assigned variant.
 
-### 4. Deployen
+### Data Model
 
-- Push auf `main` löst automatisch einen Deploy aus
-- Der `postinstall`-Hook generiert den Prisma Client beim Build
+The schema supports both the **pilot study** (PilotDimension, PilotSurveyQuestion, PilotSession, PilotAnswer) and the **production quiz** (Question, QuestionOption, GroupProfile, Group, Category). Groups have 65+ boolean attributes for fine-grained matching.
 
-### 5. Datenbank initialisieren
+## Environment Variables
 
-Nach dem ersten Deploy die Datenbank einrichten (einmalig):
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `NEXTAUTH_SECRET` | Yes | Random string (`openssl rand -base64 32`) |
+| `NEXTAUTH_URL` | Yes | App URL (e.g., `http://localhost:3000`) |
+| `APP_MODE` | Yes | `pilot`, `collect`, or `live` |
+| `PILOT_EXPORT_KEY` | For export | Bearer token for `/api/pilot/export` |
+
+## Deployment
+
+### Vercel
+
+1. Connect the GitHub repository in the Vercel dashboard
+2. Create a Postgres database under **Storage**
+3. Set environment variables under **Settings → Environment Variables**
+4. Push to `main` to trigger automatic deployment
+5. Run `npx prisma migrate deploy` and `npx prisma db seed` locally against the production DB (one-time)
+
+### Docker
 
 ```bash
-# Migrationen anwenden
-npx prisma migrate deploy
-
-# Seed-Daten laden
-npx prisma db seed
+# Start everything (database + app)
+docker compose up -d
 ```
 
-> **Tipp:** Diese Befehle lokal ausführen, mit der `DATABASE_URL` der Vercel-Datenbank. Die Connection-URL findest du unter **Storage** → **Postgres** → **.env.local**.
+The production app container is defined in `docker-compose.yml` (currently commented out — uncomment when ready).
 
-## Lizenz
+## Contributing
 
-Dieses Projekt steht unter der [GNU Affero General Public License v3.0](LICENSE).
+Contributions are welcome! Please:
 
-Das bedeutet: Du darfst den Code nutzen, ändern und weiterverbreiten. Wenn du eine modifizierte Version als Webservice betreibst, musst du den Quellcode deiner Änderungen veröffentlichen.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feat/my-feature`)
+3. Use [conventional commits](https://www.conventionalcommits.org/) in English (`feat:`, `fix:`, `docs:`, etc.)
+4. Add `// SPDX-License-Identifier: AGPL-3.0-only` to every new source file
+5. Ensure `npm run build` passes
+6. Open a Pull Request
 
-## Mitwirken
+### Coding Conventions
 
-Beiträge sind willkommen! Bitte lies dir die [Contributing Guidelines](CONTRIBUTING.md) durch, bevor du einen Pull Request erstellst.
+- Functional components with TypeScript
+- Server Components by default, `"use client"` only when needed
+- German UI text, English code and comments
+- Zod validation for API inputs
+- Mobile-first design (80% of users are on mobile)
 
-## Kontakt
+## License
 
-Ein Projekt von [EUER NAME] in Kooperation mit dem [StuRa TU Dresden](https://www.stura.tu-dresden.de/).
+This project is licensed under the [GNU Affero General Public License v3.0](LICENSE).
+
+You may use, modify, and distribute this code. If you run a modified version as a web service, you must publish the source code of your changes.
+
+## Contact
+
+A project by [Yeti](https://github.com/SubTVic) in cooperation with the [StuRa TU Dresden](https://www.stura.tu-dresden.de/).

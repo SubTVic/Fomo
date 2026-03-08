@@ -72,9 +72,10 @@ export function SurveyRouter({ dimensions, questions, groupNames = [] }: SurveyR
     // Quick preview: max 2 questions per dimension
     const seen = new Map<string, number>();
     return allQuestions.filter((q) => {
-      const count = seen.get(q.dimensionId) ?? 0;
+      const dimId = q.dimensionId ?? "";
+      const count = seen.get(dimId) ?? 0;
       if (count >= 2) return false;
-      seen.set(q.dimensionId, count + 1);
+      seen.set(dimId, count + 1);
       return true;
     });
   }, [currentBlock, questions, isQuickPreview]);

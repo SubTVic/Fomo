@@ -36,24 +36,10 @@ export function QuizContainer({ questions }: QuizContainerProps) {
     }
   }
 
-  function handleSkip() {
-    if (!currentQuestion) return;
-    if (isLast) {
-      dispatch({ type: "COMPLETE" });
-      const params = new URLSearchParams();
-      for (const [id, val] of Object.entries(state.answers)) {
-        params.set(id, Array.isArray(val) ? val.join(",") : val);
-      }
-      router.push(`/results?${params.toString()}`);
-    } else {
-      dispatch({ type: "SKIP", questionId: currentQuestion.id });
-    }
-  }
-
   if (!currentQuestion) return null;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex min-h-[360px] flex-col gap-8 transition-all duration-200">
       <ProgressBar current={state.currentIndex + 1} total={questions.length} />
 
       <QuestionCard
@@ -71,32 +57,16 @@ export function QuizContainer({ questions }: QuizContainerProps) {
           {isLast ? "Ergebnisse ansehen" : "Weiter"}
         </button>
 
-        <div className="flex justify-between">
-          {state.currentIndex > 0 ? (
-            <button
-              onClick={() => dispatch({ type: "PREV" })}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Zurück
-            </button>
-          ) : (
-            <span />
-          )}
+        {state.currentIndex > 0 && (
           <button
-            onClick={handleSkip}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            onClick={() => dispatch({ type: "PREV" })}
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors text-center"
           >
-            Überspringen
+            Zurück
           </button>
-        </div>
+        )}
       </div>
 
-      {state.skipped.length > 0 && (
-        <p className="text-center text-xs text-muted-foreground">
-          {state.skipped.length} Frage{state.skipped.length > 1 ? "n" : ""} übersprungen – das
-          Ergebnis wird etwas ungenauer.
-        </p>
-      )}
     </div>
   );
 }

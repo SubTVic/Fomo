@@ -83,6 +83,49 @@ prisma/
 └── migrations/       # DB-Migrationen
 ```
 
+## Deployment auf Vercel
+
+### 1. Projekt verbinden
+
+- Vercel-Account erstellen und GitHub-Repository verbinden
+- Vercel erkennt Next.js automatisch – keine spezielle Konfiguration nötig
+
+### 2. Postgres-Datenbank erstellen
+
+- Im Vercel-Dashboard unter **Storage** → **Create Database** → **Postgres**
+- Die `DATABASE_URL` wird automatisch als Environment Variable gesetzt
+
+### 3. Environment Variables setzen
+
+Unter **Settings** → **Environment Variables** folgende Werte setzen:
+
+| Variable | Beschreibung |
+| --- | --- |
+| `DATABASE_URL` | Wird automatisch von Vercel Postgres gesetzt |
+| `NEXTAUTH_SECRET` | Zufälliger String (`openssl rand -base64 32`) |
+| `NEXTAUTH_URL` | Deine Vercel-Domain (z.B. `https://fomo.vercel.app`) |
+| `APP_MODE` | `pilot`, `collect` oder `live` |
+| `PILOT_EXPORT_KEY` | Zufälliger String für den Daten-Export |
+
+### 4. Deployen
+
+- Push auf `main` löst automatisch einen Deploy aus
+- Der `postinstall`-Hook generiert den Prisma Client beim Build
+
+### 5. Datenbank initialisieren
+
+Nach dem ersten Deploy die Datenbank einrichten (einmalig):
+
+```bash
+# Migrationen anwenden
+npx prisma migrate deploy
+
+# Seed-Daten laden
+npx prisma db seed
+```
+
+> **Tipp:** Diese Befehle lokal ausführen, mit der `DATABASE_URL` der Vercel-Datenbank. Die Connection-URL findest du unter **Storage** → **Postgres** → **.env.local**.
+
 ## Lizenz
 
 Dieses Projekt steht unter der [GNU Affero General Public License v3.0](LICENSE).

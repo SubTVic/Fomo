@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// Admin API: list groups pending verification
+// Admin API: list groups (supports filtering for invite generation)
 
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
@@ -12,9 +12,16 @@ export async function GET() {
   }
 
   const groups = await db.group.findMany({
-    where: { isVerified: false, registeredVia: "survey" },
-    include: { category: true },
-    orderBy: { registeredAt: "desc" },
+    where: { isActive: true },
+    select: {
+      id: true,
+      name: true,
+      contactEmail: true,
+      registrationStatus: true,
+      registeredVia: true,
+      isVerified: true,
+    },
+    orderBy: { name: "asc" },
   });
 
   return NextResponse.json({ groups });

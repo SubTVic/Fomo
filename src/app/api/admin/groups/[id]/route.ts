@@ -104,6 +104,29 @@ export async function PUT(
   return NextResponse.json({ ok: true, group: updated });
 }
 
+// DELETE: remove a group
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+
+  const group = await db.group.findUnique({ where: { id } });
+  if (!group) {
+    return NextResponse.json({ error: "Group not found" }, { status: 404 });
+  }
+
+  // Cascade deletes related records (invites, profiles) due to schema onDelete: Cascade
+  await db.group.delete({ where: { id } });
+
+  return NextResponse.json({ ok: true });
+}
+
 // PATCH: toggle isActive
 export async function PATCH(
   _req: NextRequest,

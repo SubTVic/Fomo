@@ -85,13 +85,25 @@ model Group {
   motto             String?   // Slogan der Gruppe
   foundedYear       Int?
 
+  // ─── Scraper & Registration ──────────────────────────────────
+  // JSON: {career: {value:1, confidence:0.8, reason:"..."}, ...}
+  scraperAttributes   Json?
+  // JSON: {career: 1, tech: 0, ...} — final confirmed binary values
+  confirmedAttributes Json?
+  // "invited" | "submitted" | "verified"
+  registrationStatus  String?
+  submittedAt         DateTime?
+  verifiedAt          DateTime?
+
   category     Category          @relation(fields: [categoryId], references: [id])
   profiles     GroupProfile[]
   pilotAnswers GroupPilotAnswer[]
+  invites      GroupInvite[]
 
   @@index([categoryId])
   @@index([isActive])
   @@index([registeredVia])
+  @@index([registrationStatus])
   @@map("groups")
 }
 
@@ -107,6 +119,23 @@ model GroupPilotAnswer {
   @@unique([groupId, questionId])
   @@index([groupId])
   @@map("group_pilot_answers")
+}
+
+// ─── Gruppen-Einladung (Token-basierte Registrierung) ────────────
+
+model GroupInvite {
+  id        String    @id @default(cuid())
+  token     String    @unique // Random 32-char token
+  groupId   String
+  email     String
+  createdAt DateTime  @default(now())
+  expiresAt DateTime  // e.g. 30 days after creation
+  usedAt    DateTime?
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId])
+  @@map("group_invites")
 }
 
 // ─── Quiz-Fragen ─────────────────────────────────────────────────

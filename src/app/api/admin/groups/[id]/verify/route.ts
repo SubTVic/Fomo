@@ -21,9 +21,14 @@ export async function PATCH(
     return NextResponse.json({ error: "Group not found" }, { status: 404 });
   }
 
+  const nowVerified = !group.isVerified;
   const updated = await db.group.update({
     where: { id },
-    data: { isVerified: !group.isVerified },
+    data: {
+      isVerified: nowVerified,
+      registrationStatus: nowVerified ? "verified" : group.registrationStatus,
+      verifiedAt: nowVerified ? new Date() : null,
+    },
   });
 
   return NextResponse.json({ ok: true, isVerified: updated.isVerified });

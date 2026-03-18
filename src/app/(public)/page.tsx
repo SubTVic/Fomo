@@ -110,6 +110,9 @@ function PilotCta({ cfg }: { cfg: Record<string, string> }) {
           {cfg.pilot_button}
         </Link>
         <span className="text-[11px] text-muted-foreground">{cfg.pilot_duration}</span>
+        <Link href="/demo" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
+          Sponsor-Demo ansehen →
+        </Link>
       </div>
     </div>
   );
@@ -139,6 +142,9 @@ function CollectCta({ cfg, groupCount }: { cfg: Record<string, string>; groupCou
             {cfg.pilot_button}
           </Link>
           <span className="text-[11px] text-muted-foreground">{cfg.pilot_duration}</span>
+          <Link href="/demo" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
+            Sponsor-Demo ansehen →
+          </Link>
         </div>
       </div>
 
@@ -193,6 +199,9 @@ function LiveCta({ groupCount }: { groupCount: number }) {
             Quiz starten
           </Link>
           <span className="text-[11px] text-muted-foreground">~ 10 Min &middot; Anonym &middot; Im Browser</span>
+          <Link href="/demo" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
+            Sponsor-Demo ansehen →
+          </Link>
         </div>
       </div>
 

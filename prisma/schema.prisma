@@ -258,6 +258,35 @@ model QuizSession {
   @@map("quiz_sessions")
 }
 
+// ─── Quiz-Thesen (Live-Quiz) ──────────────────────────────────────
+
+model QuizThesis {
+  id         String   @id @default(cuid())
+  text       String   @db.Text       // Thesis statement shown to users
+  shortTitle String   @db.VarChar(50) // Short label, e.g. "Zeitaufwand"
+  order      Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  attributes QuizThesisAttribute[]
+
+  @@map("quiz_theses")
+}
+
+model QuizThesisAttribute {
+  id        String  @id @default(cuid())
+  thesisId  String
+  attribute String  // e.g. "career", "timeLow", "networking"
+  isInverse Boolean @default(false)
+
+  thesis QuizThesis @relation(fields: [thesisId], references: [id], onDelete: Cascade)
+
+  @@unique([thesisId, attribute])
+  @@index([thesisId])
+  @@map("quiz_thesis_attributes")
+}
+
 // ─── Pilot-Fragebogen (Dimensionen & Fragen) ─────────────────────
 // Pilot survey questions are managed via the admin dashboard
 

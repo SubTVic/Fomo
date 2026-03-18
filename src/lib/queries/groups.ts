@@ -1,31 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { db } from "@/lib/db";
-import type { GroupWithCategory, GroupWithProfile } from "@/types";
+import type { GroupWithCategory } from "@/types";
 
 // All active groups with their category (for overview page)
 export async function getActiveGroups(): Promise<GroupWithCategory[]> {
   return db.group.findMany({
     where: { isActive: true },
     include: { category: true },
-    orderBy: { name: "asc" },
-  });
-}
-
-// All active groups with full profiles (for client-side matching)
-export async function getGroupsWithProfiles(): Promise<GroupWithProfile[]> {
-  return db.group.findMany({
-    where: { isActive: true },
-    include: {
-      category: true,
-      profiles: {
-        include: {
-          question: {
-            include: { options: true },
-          },
-        },
-      },
-    },
     orderBy: { name: "asc" },
   });
 }

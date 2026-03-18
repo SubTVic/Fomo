@@ -3,10 +3,8 @@
 import { db } from "@/lib/db";
 
 export default async function AdminDashboard() {
-  const [groupCount, questionCount, sessionCount, pilotCount] = await Promise.all([
+  const [groupCount, pilotCount] = await Promise.all([
     db.group.count({ where: { isActive: true } }),
-    db.question.count(),
-    db.quizSession.count({ where: { completedAt: { not: null } } }),
     db.pilotSession.count({ where: { completedAt: { not: null } } }),
   ]);
 
@@ -15,8 +13,6 @@ export default async function AdminDashboard() {
       <h1 className="mb-8 font-heading text-2xl uppercase">Dashboard</h1>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Aktive Gruppen" value={groupCount} href="/admin/groups" />
-        <StatCard label="Quiz-Fragen" value={questionCount} href="/admin/questions" />
-        <StatCard label="Abgeschlossene Quizzes" value={sessionCount} />
         <StatCard label="Pilot-Sessions" value={pilotCount} href="/admin/pilot" />
       </div>
     </div>

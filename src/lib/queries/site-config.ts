@@ -31,7 +31,7 @@ export const SITE_DEFAULTS: Record<string, string> = {
   image_4_alt: "Elbflorace",
   image_5_src: "/images/groups/Star.jpeg",
   image_5_alt: "STAR Dresden",
-  image_6_src: "/images/groups/Yeti.jpeg",
+  image_6_src: "/images/groups/YETI.jpg",
   image_6_alt: "YETI",
 };
 

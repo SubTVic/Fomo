@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { getAllGroupsForAdmin } from "@/lib/queries/groups";
 import { ImportGroupsButton } from "./ImportGroupsButton";
+import { ScraperImportButton } from "./ScraperImportButton";
 import { VerifyButton } from "./VerifyButton";
 import { GenerateInvitesButton } from "./GenerateInvitesButton";
 import { InviteButton } from "./InviteButton";
@@ -81,6 +82,7 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
             + Neue Gruppe
           </Link>
           <GenerateInvitesButton />
+          <ScraperImportButton />
           <ImportGroupsButton />
         </div>
       </div>

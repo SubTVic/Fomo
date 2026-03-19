@@ -109,19 +109,13 @@ export function ClassicSurvey({
           </div>
         </div>
 
-        <div className="flex items-center justify-between mt-8">
+        <div className="flex items-center justify-start mt-8">
           <button
             onClick={() => setLocalIdx((i) => Math.max(0, i - 1))}
             disabled={isFirst}
             className="text-sm font-medium opacity-60 hover:opacity-100 disabled:invisible"
           >
             ← Zurück
-          </button>
-          <button
-            onClick={advance}
-            className="text-sm font-medium opacity-60 hover:opacity-100"
-          >
-            These überspringen →
           </button>
         </div>
       </main>

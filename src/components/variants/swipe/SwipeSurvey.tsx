@@ -203,19 +203,13 @@ export function SwipeSurvey({
       </div>
 
       {/* Navigation */}
-      <div className="flex-shrink-0 px-6 pb-6 flex items-center justify-between">
+      <div className="flex-shrink-0 px-6 pb-6 flex items-center justify-start">
         <button
           onClick={() => setLocalIdx((i) => Math.max(0, i - 1))}
           disabled={isFirst}
           className="text-sm text-white/50 hover:text-white/80 disabled:invisible"
         >
           ← Zurück
-        </button>
-        <button
-          onClick={advance}
-          className="text-sm text-white/50 hover:text-white/80"
-        >
-          Überspringen →
         </button>
       </div>
     </div>

@@ -339,10 +339,9 @@ export function computeStats({ preparedData, questions, dimensions }: ComputeSta
           missingCount++;
         } else {
           validValues.push(v);
-          // For distribution, use original (un-inverted) value
-          // Actually the spec says distribution shows raw counts, but values are already inverted.
-          // We'll show distribution of the inverted values for consistency.
-          const key = String(v) as "1" | "3" | "5";
+          // Distribution shows raw (un-inverted) answers so it reflects what the user actually clicked
+          const rawV = q.isInverse ? 6 - v : v;
+          const key = String(rawV) as "1" | "3" | "5";
           if (key in dist) dist[key]++;
         }
       }

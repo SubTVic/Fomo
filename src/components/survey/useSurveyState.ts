@@ -110,13 +110,15 @@ export function useSurveyState(questions: PilotQuestion[], dimensions: Dimension
 
   // Derived values
   const totalAnswered = Object.keys(state.answers).length;
-  const progress = Math.round((totalAnswered / questions.length) * 100);
+  const progress = questions.length > 0 ? Math.round((totalAnswered / questions.length) * 100) : 0;
+  // Guard against empty questions array (e.g. no active quiz theses in DB)
+  const EMPTY_QUESTION: PilotQuestion = { id: "__none__", dimensionId: null, text: "" };
   const currentQuestion: PilotQuestion =
-    questions[state.currentQuestionIndex] ?? questions[0];
+    questions[state.currentQuestionIndex] ?? questions[0] ?? EMPTY_QUESTION;
   const currentDimension: Dimension = currentQuestion.dimensionId
     ? getDimension(dimensions, currentQuestion.dimensionId)
     : dimensions[0];
-  const currentDimIndex = dimensions.findIndex((d) => d.id === currentDimension.id);
+  const currentDimIndex = dimensions.findIndex((d) => d.id === currentDimension?.id);
 
   return {
     state,

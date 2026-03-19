@@ -56,6 +56,25 @@ export function QuizRouter({ theses, groups, variant }: QuizRouterProps) {
   // Noop — quiz doesn't submit to server
   const handleSubmit = useCallback(async () => {}, []);
 
+  if (theses.length === 0) {
+    return (
+      <div className="flex min-h-[100dvh] items-center justify-center px-6" style={{ background: "#ADD8E6" }}>
+        <div className="w-full max-w-sm border-4 border-[#1a2a35] bg-white p-8 text-center">
+          <div className="text-4xl mb-4">🚧</div>
+          <h2
+            className="text-lg font-bold uppercase text-[#1a2a35] mb-3"
+            style={{ fontFamily: "'Archivo Black', sans-serif" }}
+          >
+            Quiz coming soon
+          </h2>
+          <p className="text-sm text-[#5a7a8a]">
+            Das Quiz wird gerade vorbereitet. Schau bald wieder vorbei!
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (phase === "welcome") {
     return <QuizWelcome onStart={() => setPhase("quiz")} questionCount={theses.length} />;
   }

@@ -9,9 +9,9 @@ import { getDimensionPriming } from "@/lib/dimension-priming";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 const SWIPE_OPTIONS = [
-  { value: "1", label: "Nein", emoji: "👎" },
-  { value: "3", label: "Egal", emoji: "😐" },
-  { value: "5", label: "Ja", emoji: "👍" },
+  { value: "1", label: "Stimme nicht zu" },
+  { value: "3", label: "Neutral" },
+  { value: "5", label: "Stimme zu" },
 ];
 
 export function SwipeSurvey({
@@ -168,21 +168,20 @@ export function SwipeSurvey({
         {/* Answer buttons */}
         <div className="flex flex-col gap-2 w-full max-w-sm">
           <div className="flex gap-3">
-            {SWIPE_OPTIONS.map(({ value, label, emoji }) => {
+            {SWIPE_OPTIONS.map(({ value, label }) => {
               const isSelected = currentValue === value;
               return (
                 <button
                   key={value}
                   onClick={() => handleAnswer(value)}
                   aria-label={label}
-                  className={`flex-1 flex flex-col items-center gap-1 rounded-xl border py-4 text-sm font-bold transition-all duration-150 active:scale-95 ${
+                  className={`flex-1 rounded-xl border py-4 text-xs font-bold transition-all duration-150 active:scale-95 ${
                     isSelected
-                      ? "bg-[#ADD8E6] border-[#ADD8E6] text-white scale-105"
-                      : "bg-white/10 border-white/20 hover:bg-white/20"
+                      ? "bg-white border-white text-[#1a2a35] scale-105"
+                      : "bg-white/10 border-white/20 text-white hover:bg-white/20"
                   }`}
                 >
-                  <span className="text-2xl">{emoji}</span>
-                  <span className="text-xs">{label}</span>
+                  {label}
                 </button>
               );
             })}

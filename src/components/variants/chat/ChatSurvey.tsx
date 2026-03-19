@@ -9,9 +9,9 @@ import { getDimensionPriming } from "@/lib/dimension-priming";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 const LIKERT_CHAT = [
-  { value: "1", emoji: "👎", label: "Nein" },
-  { value: "3", emoji: "😐", label: "Egal" },
-  { value: "5", emoji: "👍", label: "Ja" },
+  { value: "1", label: "Stimme nicht zu" },
+  { value: "3", label: "Neutral" },
+  { value: "5", label: "Stimme zu" },
 ];
 
 interface ChatMessage {
@@ -212,14 +212,13 @@ export function ChatSurvey({
       <div className="flex-shrink-0 border-t border-white/10 bg-[#202c33] p-3">
         <div className={isTyping ? "opacity-40 pointer-events-none" : ""}>
           <div className="flex gap-2">
-            {LIKERT_CHAT.map(({ value, emoji, label }) => (
+            {LIKERT_CHAT.map(({ value, label }) => (
               <button
                 key={value}
                 onClick={() => handleAnswer(value)}
-                className="flex-1 flex flex-col items-center gap-0.5 rounded-xl bg-[#2a3942] border border-white/10 py-2.5 text-xs font-medium hover:bg-[#ADD8E6]/20 hover:border-[#ADD8E6]/50 transition-colors active:scale-95"
+                className="flex-1 rounded-xl bg-[#2a3942] border border-white/10 py-2.5 text-xs font-medium text-white/70 hover:bg-[#ADD8E6]/20 hover:border-[#ADD8E6]/50 transition-colors active:scale-95"
               >
-                <span className="text-lg">{emoji}</span>
-                <span className="text-white/70">{label}</span>
+                {label}
               </button>
             ))}
           </div>

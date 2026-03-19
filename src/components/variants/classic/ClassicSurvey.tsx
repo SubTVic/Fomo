@@ -10,9 +10,9 @@ import type { SurveyVariantProps } from "@/components/variants/types";
 
 // Maps Likert 1-5 to 3-option display (Zustimmung/Neutral/Ablehnung)
 const CLASSIC_OPTIONS = [
-  { label: "Stimme zu", value: "5", color: "border-green-400 hover:bg-green-50", selectedColor: "bg-green-500 border-green-500 text-white", icon: "✓" },
-  { label: "Neutral", value: "3", color: "border-gray-300 hover:bg-gray-50", selectedColor: "bg-gray-500 border-gray-500 text-white", icon: "─" },
-  { label: "Stimme nicht zu", value: "1", color: "border-red-400 hover:bg-red-50", selectedColor: "bg-red-500 border-red-500 text-white", icon: "✗" },
+  { label: "Stimme zu", value: "5" },
+  { label: "Neutral", value: "3" },
+  { label: "Stimme nicht zu", value: "1" },
 ];
 
 export function ClassicSurvey({
@@ -77,18 +77,19 @@ export function ClassicSurvey({
           <p className="text-xl font-bold leading-snug">&ldquo;{question.text}&rdquo;</p>
 
           <div className="flex flex-col gap-3">
-            {CLASSIC_OPTIONS.map(({ label, value, color, selectedColor, icon }) => {
+            {CLASSIC_OPTIONS.map(({ label, value }) => {
               const isSelected = currentValue === value;
               return (
                 <button
                   key={value}
                   onClick={() => handleSelect(value)}
-                  className={`flex items-center gap-3 rounded-xl border-2 px-5 py-4 text-left font-bold transition-all duration-150 active:scale-[0.98] ${
-                    isSelected ? selectedColor : `bg-white/80 ${color}`
+                  className={`rounded-xl border-2 px-5 py-4 text-left font-bold transition-all duration-150 active:scale-[0.98] ${
+                    isSelected
+                      ? "bg-[#1a2a35] border-[#1a2a35] text-white"
+                      : "bg-white/80 border-gray-300 text-gray-800 hover:bg-gray-50"
                   }`}
                 >
-                  <span className="text-xl w-7 text-center">{icon}</span>
-                  <span>{label}</span>
+                  {label}
                 </button>
               );
             })}

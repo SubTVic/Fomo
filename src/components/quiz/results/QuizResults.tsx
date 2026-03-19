@@ -2,7 +2,7 @@
 // Wahl-O-Mat style results container with overview and comparison tabs
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { QuizMatchResult, QuizThesisData } from "@/lib/quiz/types";
 import { ResultCard } from "./ResultCard";
 import { ComparisonTable } from "./ComparisonTable";
@@ -18,6 +18,27 @@ export function QuizResults({ results, theses, answeredCount, onRestart }: QuizR
   const [tab, setTab] = useState<"overview" | "compare">("overview");
   const [showAll, setShowAll] = useState(false);
   const [compareIds, setCompareIds] = useState<Set<string>>(new Set());
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = useCallback(async () => {
+    const top3 = results.slice(0, 3).map((r) => r.group.name).join(", ");
+    const text = `Meine Top-Gruppen bei FOMO: ${top3}`;
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ title: "Mein FOMO-Ergebnis", text, url: window.location.href });
+        return;
+      } catch {
+        // User cancelled or API not available — fall through to clipboard
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard also unavailable — silently ignore
+    }
+  }, [results]);
 
   const displayedResults = showAll ? results : results.slice(0, 8);
 
@@ -107,13 +128,27 @@ export function QuizResults({ results, theses, answeredCount, onRestart }: QuizR
         </div>
 
         {/* Footer */}
-        <div className="mt-4 text-center">
+        <div className="mt-4 space-y-3">
           <button
-            onClick={onRestart}
-            className="text-sm text-[#4a7a8a] underline underline-offset-2 hover:text-[#1a2a35] transition-colors"
+            onClick={handleShare}
+            className="w-full border-4 border-[#1a2a35] bg-[#1a2a35] py-3 text-sm font-bold uppercase tracking-wide text-[#ADD8E6] hover:bg-[#2a3a45] transition-colors"
           >
-            Quiz wiederholen
+            {copied ? "Link kopiert!" : "Ergebnis teilen"}
           </button>
+          <div className="flex items-center justify-center gap-6">
+            <button
+              onClick={onRestart}
+              className="text-sm text-[#4a7a8a] underline underline-offset-2 hover:text-[#1a2a35] transition-colors"
+            >
+              Quiz wiederholen
+            </button>
+            <a
+              href="/groups"
+              className="text-sm text-[#4a7a8a] underline underline-offset-2 hover:text-[#1a2a35] transition-colors"
+            >
+              Alle Gruppen ansehen
+            </a>
+          </div>
         </div>
       </div>
     </div>

@@ -24,14 +24,25 @@ export async function GET(request: NextRequest) {
   const format =
     request.nextUrl.searchParams.get("format") === "csv" ? "csv" : "json";
 
-  const sessions = await db.pilotSession.findMany({
-    include: { answers: true },
-    orderBy: { startedAt: "desc" },
-  });
+  const limit = Math.min(
+    Number(request.nextUrl.searchParams.get("limit")) || 500,
+    1000,
+  );
+  const offset = Number(request.nextUrl.searchParams.get("offset")) || 0;
+
+  const [total, sessions] = await Promise.all([
+    db.pilotSession.count(),
+    db.pilotSession.findMany({
+      include: { answers: true },
+      orderBy: { startedAt: "desc" },
+      take: limit,
+      skip: offset,
+    }),
+  ]);
 
   // --- JSON export ---
   if (format === "json") {
-    return NextResponse.json({ total: sessions.length, sessions });
+    return NextResponse.json({ total, limit, offset, sessions });
   }
 
   // --- CSV export ---
@@ -95,6 +106,9 @@ export async function GET(request: NextRequest) {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
       "Content-Disposition": `attachment; filename="pilot-export-${today}.csv"`,
+      "X-Total-Count": String(total),
+      "X-Offset": String(offset),
+      "X-Limit": String(limit),
     },
   });
 }

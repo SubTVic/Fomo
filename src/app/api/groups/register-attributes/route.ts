@@ -54,13 +54,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (invite.usedAt) {
-    return NextResponse.json(
-      { error: "Dieser Einladungslink wurde bereits verwendet." },
-      { status: 409 },
-    );
-  }
-
   // Map confirmed attributes to the boolean columns on Group
   const booleanUpdates: Record<string, boolean> = {};
   const attrToPrismaField: Record<string, string> = {
@@ -99,27 +92,34 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Save
   const now = new Date();
 
-  await db.$transaction([
-    db.groupInvite.update({
-      where: { id: invite.id },
-      data: { usedAt: now },
-    }),
-    db.group.update({
-      where: { id: invite.groupId },
-      data: {
-        ...booleanUpdates,
-        confirmedAttributes: JSON.parse(JSON.stringify(confirmedAttributes)),
-        registrationStatus: "submitted",
-        submittedAt: now,
-        isVerified: false,
-        ...(shortDescription ? { shortDescription } : {}),
-        ...(websiteUrl ? { websiteUrl } : {}),
-      },
-    }),
-  ]);
+  // M2 fix: atomically claim the token — updateMany with usedAt: null ensures
+  // only one concurrent request can succeed (second gets count=0 → 409).
+  const claimed = await db.groupInvite.updateMany({
+    where: { id: invite.id, usedAt: null },
+    data: { usedAt: now },
+  });
+
+  if (claimed.count === 0) {
+    return NextResponse.json(
+      { error: "Dieser Einladungslink wurde bereits verwendet." },
+      { status: 409 },
+    );
+  }
+
+  await db.group.update({
+    where: { id: invite.groupId },
+    data: {
+      ...booleanUpdates,
+      confirmedAttributes: JSON.parse(JSON.stringify(confirmedAttributes)),
+      registrationStatus: "submitted",
+      submittedAt: now,
+      isVerified: false,
+      ...(shortDescription ? { shortDescription } : {}),
+      ...(websiteUrl ? { websiteUrl } : {}),
+    },
+  });
 
   return NextResponse.json({ success: true });
 }

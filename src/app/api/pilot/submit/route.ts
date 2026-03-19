@@ -21,7 +21,7 @@ const SubmitSchema = z.object({
   variantOrder: z.array(variantEnum).length(4).optional(),
   preferredVariant: variantEnum.optional(),
   preferenceReason: z.string().max(2000).optional(),
-  answers: z.record(z.string(), z.union([z.string(), z.array(z.string())])),
+  answers: z.record(z.string(), z.string()),
   demographic: z.object({
     semester: z.string().nullable(),
     isMember: z.string().nullable(),
@@ -67,21 +67,15 @@ export async function POST(req: NextRequest) {
     const metaValidValues = META_QUESTIONS[questionId];
     if (metaValidValues) {
       // Meta-question: validate against its own value set
-      const v = Array.isArray(value) ? value : [value];
-      for (const val of v) {
-        if (!metaValidValues.has(val)) {
-          invalidValues.push(`${questionId}=${val}`);
-        }
+      if (!metaValidValues.has(value)) {
+        invalidValues.push(`${questionId}=${value}`);
       }
     } else if (!validQuestionIds.has(questionId)) {
       invalidIds.push(questionId);
     } else {
       // Regular question: validate against Likert values
-      const v = Array.isArray(value) ? value : [value];
-      for (const val of v) {
-        if (!VALID_ANSWER_VALUES.has(val)) {
-          invalidValues.push(`${questionId}=${val}`);
-        }
+      if (!VALID_ANSWER_VALUES.has(value)) {
+        invalidValues.push(`${questionId}=${value}`);
       }
     }
   }
@@ -111,7 +105,7 @@ export async function POST(req: NextRequest) {
         answers: {
           create: Object.entries(answers).map(([questionId, value]) => ({
             questionId,
-            value: Array.isArray(value) ? value.join(",") : value,
+            value,
           })),
         },
       },

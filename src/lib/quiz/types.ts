@@ -20,6 +20,12 @@ export interface QuizGroupData {
   instagramUrl: string | null;
   contactEmail: string | null;
   attributes: Record<string, boolean>;
+  nextEventTitle: string | null;
+  nextEventDate: string | null;
+  nextEventTime: string | null;
+  nextEventLocation: string | null;
+  nextEventUrl: string | null;
+  nextEventIsOpen: boolean;
 }
 
 export interface AttributeMatch {

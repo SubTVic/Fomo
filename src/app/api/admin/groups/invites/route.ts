@@ -3,6 +3,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import crypto from "crypto";
@@ -39,27 +40,39 @@ export async function POST(req: NextRequest) {
   }
 
   const results = [];
+  const errors: { groupId: string; error: string }[] = [];
 
   for (const invite of parsed.data.invites) {
     const token = crypto.randomBytes(16).toString("hex"); // 32 chars
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + invite.expiresInDays);
 
-    const created = await db.groupInvite.create({
-      data: {
-        token,
-        groupId: invite.groupId,
-        email: invite.email,
-        expiresAt,
-      },
-    });
+    let created;
+    try {
+      created = await db.groupInvite.create({
+        data: {
+          token,
+          groupId: invite.groupId,
+          email: invite.email,
+          expiresAt,
+        },
+      });
+    } catch (err) {
+      // M5: catch foreign key violation (group doesn't exist)
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2003") {
+        errors.push({ groupId: invite.groupId, error: "Group not found" });
+        continue;
+      }
+      throw err;
+    }
 
-    // Set group registration status to "invited" if not already further along
-    await db.group.update({
-      where: { id: invite.groupId },
-      data: {
-        registrationStatus: "invited",
+    // H1 fix: only advance to "invited" if not already submitted or verified
+    await db.group.updateMany({
+      where: {
+        id: invite.groupId,
+        registrationStatus: { notIn: ["submitted", "verified"] },
       },
+      data: { registrationStatus: "invited" },
     });
 
     results.push({
@@ -70,7 +83,11 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  return NextResponse.json({ success: true, invites: results });
+  return NextResponse.json({
+    success: true,
+    invites: results,
+    ...(errors.length > 0 && { errors }),
+  });
 }
 
 // GET: List all invites (admin overview)

@@ -60,6 +60,12 @@ export async function getQuizGroups(): Promise<QuizGroupData[]> {
     attributes: Object.fromEntries(
       MATCHING_ATTRS.map((attr) => [attr, g[attr] as boolean])
     ),
+    nextEventTitle: g.nextEventTitle,
+    nextEventDate: g.nextEventDate,
+    nextEventTime: g.nextEventTime,
+    nextEventLocation: g.nextEventLocation,
+    nextEventUrl: g.nextEventUrl,
+    nextEventIsOpen: g.nextEventIsOpen,
   }));
 }
 

@@ -96,7 +96,6 @@ model Group {
   verifiedAt          DateTime?
 
   category     Category          @relation(fields: [categoryId], references: [id])
-  profiles     GroupProfile[]
   pilotAnswers GroupPilotAnswer[]
   invites      GroupInvite[]
 
@@ -136,80 +135,6 @@ model GroupInvite {
 
   @@index([groupId])
   @@map("group_invites")
-}
-
-// ─── Quiz-Fragen ─────────────────────────────────────────────────
-
-enum QuestionType {
-  LIKERT        // 5-point scale (stimme nicht zu ↔ stimme voll zu)
-  SINGLE_CHOICE // One answer from multiple options
-  MULTI_CHOICE  // Multiple answers possible
-  YES_NO        // Binary yes/no
-  SLIDER        // Numeric value on a range
-}
-
-model Question {
-  id          String       @id @default(cuid())
-  text        String       // The question text shown to users
-  type        QuestionType
-  order       Int          @default(0)
-  isRequired  Boolean      @default(true)
-  helpText    String?      // Optional explanation shown below the question
-  categoryTag String?      // Thematic tag, e.g. "politics", "social", "time"
-  weight      Float        @default(1.0) // Default weight for matching
-  // For SLIDER type: defines the range
-  sliderMin   Int?         @default(0)
-  sliderMax   Int?         @default(100)
-  sliderStep  Int?         @default(1)
-  sliderMinLabel String?   // e.g. "Gar nicht wichtig"
-  sliderMaxLabel String?   // e.g. "Sehr wichtig"
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-
-  options  QuestionOption[]
-  profiles GroupProfile[]
-
-  @@map("questions")
-}
-
-model QuestionOption {
-  id         String @id @default(cuid())
-  questionId String
-  label      String // Display text, e.g. "Sport & Bewegung"
-  value      String // Stored value for matching, e.g. "sport"
-  order      Int    @default(0)
-
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-
-  @@index([questionId])
-  @@map("question_options")
-}
-
-// ─── Matching-Profile ────────────────────────────────────────────
-
-model GroupProfile {
-  id         String @id @default(cuid())
-  groupId    String
-  questionId String
-
-  // The group's "answer" to this question.
-  // For LIKERT: "1"-"5"
-  // For YES_NO: "0" or "1"
-  // For SLIDER: numeric string, e.g. "75"
-  // For SINGLE_CHOICE: the option value, e.g. "sport"
-  // For MULTI_CHOICE: comma-separated values, e.g. "sport,culture,tech"
-  answerValue String
-
-  // Optional per-question weight override for this group
-  weight Float @default(1.0)
-
-  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-
-  @@unique([groupId, questionId])
-  @@index([groupId])
-  @@index([questionId])
-  @@map("group_profiles")
 }
 
 // ─── Admin & Auth ────────────────────────────────────────────────

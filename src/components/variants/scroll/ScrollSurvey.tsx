@@ -67,7 +67,7 @@ export function ScrollSurvey({
                     isActive
                       ? "bg-primary text-primary-foreground"
                       : answered
-                        ? "bg-green-100 text-green-800"
+                        ? "bg-[#ADD8E6]/30 text-[#1a2a35]"
                         : "bg-muted/50 text-muted-foreground hover:bg-muted"
                   }`}
                 >
@@ -94,10 +94,15 @@ export function ScrollSurvey({
 
         {dimQuestions.map((q, i) => (
           <div key={q.id} className="flex flex-col gap-3">
-            <p className="font-medium leading-snug">
-              <span className="text-muted-foreground text-sm mr-2">F{i + 1}</span>
-              {q.text}
-            </p>
+            <div>
+              <p className="font-medium leading-snug">
+                <span className="text-muted-foreground text-sm mr-2">F{i + 1}</span>
+                {q.text}
+              </p>
+              {q.hint && (
+                <p className="text-sm text-muted-foreground mt-1">{q.hint}</p>
+              )}
+            </div>
             <LikertBase
               questionId={q.id}
               value={answers[q.id] as string | undefined}

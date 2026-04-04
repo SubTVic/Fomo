@@ -23,13 +23,25 @@ export default async function PilotSurveyPage() {
     }),
   ]);
 
-  // Exclude standalone items (no dimension) from the survey flow
-  const surveyQuestions = questions.filter((q) => q.dimensionId !== null);
+  const standaloneQuestions = questions.filter((q) => q.dimensionId === null);
+  const dimensionQuestions = questions.filter((q) => q.dimensionId !== null);
   const groupNames = groups.map((g) => g.name);
+
+  // Treat standalone questions as their own dimension so they get included in a block
+  const allDimensions = standaloneQuestions.length > 0
+    ? [...dimensions, { id: "__standalone__", label: "Sonstiges", emoji: "📌", description: "Weitere Fragen", blockIndex: dimensions.at(-1)?.blockIndex ?? 3 }]
+    : dimensions;
+  const allQuestions = standaloneQuestions.length > 0
+    ? [...dimensionQuestions, ...standaloneQuestions.map((q) => ({ ...q, dimensionId: "__standalone__" }))]
+    : dimensionQuestions;
 
   return (
     <Suspense>
-      <SurveyRouter dimensions={dimensions} questions={surveyQuestions} groupNames={groupNames} />
+      <SurveyRouter
+        dimensions={allDimensions}
+        questions={allQuestions}
+        groupNames={groupNames}
+      />
     </Suspense>
   );
 }

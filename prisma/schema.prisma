@@ -193,6 +193,7 @@ model QuizThesis {
   id         String   @id @default(cuid())
   text       String   @db.Text       // Thesis statement shown to users
   shortTitle String   @db.VarChar(50) // Short label, e.g. "Zeitaufwand"
+  hint       String?  @db.VarChar(200) // Visible explanation below the thesis, e.g. "z.B. Religion, Philosophie, Ethik"
   order      Int      @default(0)
   isActive   Boolean  @default(true)
   createdAt  DateTime @default(now())

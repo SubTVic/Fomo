@@ -45,6 +45,7 @@ export function QuizRouter({ theses, groups, variant }: QuizRouterProps) {
     id: t.id,
     dimensionId: "quiz",
     text: t.text,
+    hint: t.hint ?? undefined,
   }));
 
   const surveyState = useSurveyState(syntheticQuestions, [syntheticDimension]);

@@ -28,7 +28,8 @@ interface Props {
   initialStandalone: Question[];
 }
 
-const BLOCK_LABELS = ["Block 1", "Block 2", "Block 3", "Block 4"];
+const MAX_BLOCKS = 10;
+const BLOCK_LABELS = Array.from({ length: MAX_BLOCKS }, (_, i) => `Block ${i + 1}`);
 
 export function DimensionManager({ initialDimensions, initialStandalone }: Props) {
   const router = useRouter();

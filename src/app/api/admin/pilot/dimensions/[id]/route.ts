@@ -9,7 +9,7 @@ const UpdateSchema = z.object({
   label: z.string().min(1).max(200).optional(),
   emoji: z.string().max(10).optional(),
   description: z.string().max(500).optional(),
-  blockIndex: z.number().int().min(0).max(3).optional(),
+  blockIndex: z.number().int().min(0).max(9).optional(),
   order: z.number().int().min(0).optional(),
 });
 

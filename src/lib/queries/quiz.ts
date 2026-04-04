@@ -26,6 +26,7 @@ export async function getActiveQuizTheses(): Promise<QuizThesisData[]> {
     id: t.id,
     text: t.text,
     shortTitle: t.shortTitle,
+    hint: t.hint,
     order: t.order,
     attributes: t.attributes,
   }));

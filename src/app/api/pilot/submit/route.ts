@@ -18,7 +18,7 @@ const variantEnum = z.enum(["scroll", "classic", "swipe", "chat"]);
 const SubmitSchema = z.object({
   // Multi-variant flow sends variantOrder array; legacy sends variant string
   variant: variantEnum.optional(),
-  variantOrder: z.array(variantEnum).length(4).optional(),
+  variantOrder: z.array(variantEnum).min(1).optional(),
   preferredVariant: variantEnum.optional(),
   preferenceReason: z.string().max(2000).optional(),
   answers: z.record(z.string(), z.string()),

@@ -25,7 +25,7 @@ const DimensionSchema = z.object({
   label: z.string().min(1).max(200),
   emoji: z.string().max(10).default(""),
   description: z.string().max(500).default(""),
-  blockIndex: z.number().int().min(0).max(3).default(0),
+  blockIndex: z.number().int().min(0).max(9).default(0),
   order: z.number().int().min(0).default(0),
   questions: z.array(QuestionSchema).default([]),
 });

@@ -74,7 +74,12 @@ export function ClassicSurvey({
             totalDimensions={blockDimensions.length}
             compact
           />
-          <p className="text-xl font-bold leading-snug">&ldquo;{question.text}&rdquo;</p>
+          <div>
+            <p className="text-xl font-bold leading-snug">&ldquo;{question.text}&rdquo;</p>
+            {question.hint && (
+              <p className="text-sm text-gray-600 mt-1.5">{question.hint}</p>
+            )}
+          </div>
 
           <div className="flex flex-col gap-3">
             {CLASSIC_OPTIONS.map(({ label, value }) => {
@@ -113,7 +118,7 @@ export function ClassicSurvey({
           <button
             onClick={() => setLocalIdx((i) => Math.max(0, i - 1))}
             disabled={isFirst}
-            className="text-sm font-medium opacity-60 hover:opacity-100 disabled:invisible"
+            className="rounded-xl border-2 border-gray-300 px-4 py-2.5 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all disabled:invisible"
           >
             ← Zurück
           </button>

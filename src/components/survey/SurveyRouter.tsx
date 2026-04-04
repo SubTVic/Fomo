@@ -32,13 +32,22 @@ const VARIANT_COMPONENTS: Record<VariantKey, typeof ScrollSurvey> = {
 
 type RouterPhase = "priming" | "transition" | "block" | "midreminder" | "demographic" | "feedback" | "preference" | "done";
 
+const STANDALONE_DIM: Dimension = {
+  id: "__standalone",
+  label: "Allgemeine Fragen",
+  emoji: "📝",
+  description: "Noch ein paar allgemeine Fragen zu dir",
+  blockIndex: -1,
+};
+
 interface SurveyRouterProps {
   dimensions: Dimension[];
   questions: PilotQuestion[];
+  standaloneQuestions?: PilotQuestion[];
   groupNames?: string[];
 }
 
-export function SurveyRouter({ dimensions, questions, groupNames = [] }: SurveyRouterProps) {
+export function SurveyRouter({ dimensions, questions, standaloneQuestions = [], groupNames = [] }: SurveyRouterProps) {
   const searchParams = useSearchParams();
   const previewParam = searchParams.get("preview");
   const isPreview = previewParam === "true" || previewParam === "quick";
@@ -50,35 +59,54 @@ export function SurveyRouter({ dimensions, questions, groupNames = [] }: SurveyR
   const [routerPhase, setRouterPhase] = useState<RouterPhase>("priming");
   const [shownMidReminder, setShownMidReminder] = useState(false);
 
-  const surveyState = useSurveyState(questions, dimensions);
+  const allQuestions = useMemo(() => [...questions, ...standaloneQuestions], [questions, standaloneQuestions]);
+  const surveyState = useSurveyState(allQuestions, dimensions);
 
   // Generate blocks on client only to avoid hydration mismatch (Math.random)
   const [blocks, setBlocks] = useState<Block[] | null>(null);
-  useEffect(() => { setBlocks(generateBlocks(dimensions)); }, [dimensions]);
+  useEffect(() => {
+    const dimBlocks = generateBlocks(dimensions);
+    // Append standalone questions as an extra block (if any)
+    if (standaloneQuestions.length > 0) {
+      dimBlocks.push({
+        index: dimBlocks.length,
+        dimensionIds: [STANDALONE_DIM.id],
+        variant: dimBlocks[dimBlocks.length - 1]?.variant === "classic" ? "scroll" : "classic",
+      });
+    }
+    setBlocks(dimBlocks);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dimensions, standaloneQuestions.length]);
 
   const variantOrder = useMemo(() => blocks ? getVariantOrder(blocks) : [], [blocks]);
 
   const currentBlock = blocks ? blocks[currentBlockIdx] : null;
 
   // Resolve dimensions and questions for the current block
+  const isStandaloneBlock = currentBlock?.dimensionIds.includes(STANDALONE_DIM.id) ?? false;
   const blockDimensions: Dimension[] = useMemo(
-    () => currentBlock ? currentBlock.dimensionIds.map((id) => dimensions.find((d) => d.id === id)!).filter(Boolean) : [],
-    [currentBlock, dimensions],
+    () => {
+      if (!currentBlock) return [];
+      if (isStandaloneBlock) return [STANDALONE_DIM];
+      return currentBlock.dimensionIds.map((id) => dimensions.find((d) => d.id === id)!).filter(Boolean);
+    },
+    [currentBlock, dimensions, isStandaloneBlock],
   );
   const blockQuestions: PilotQuestion[] = useMemo(() => {
     if (!currentBlock) return [];
-    const allQuestions = currentBlock.dimensionIds.flatMap((id) => getQuestionsForDimension(questions, id));
-    if (!isQuickPreview) return allQuestions;
+    if (isStandaloneBlock) return standaloneQuestions;
+    const dimQuestions = currentBlock.dimensionIds.flatMap((id) => getQuestionsForDimension(questions, id));
+    if (!isQuickPreview) return dimQuestions;
     // Quick preview: max 2 questions per dimension
     const seen = new Map<string, number>();
-    return allQuestions.filter((q) => {
+    return dimQuestions.filter((q) => {
       const dimId = q.dimensionId ?? "";
       const count = seen.get(dimId) ?? 0;
       if (count >= 2) return false;
       seen.set(dimId, count + 1);
       return true;
     });
-  }, [currentBlock, questions, isQuickPreview]);
+  }, [currentBlock, questions, standaloneQuestions, isQuickPreview, isStandaloneBlock]);
 
   const onBlockComplete = useCallback(() => {
     if (!blocks) return;

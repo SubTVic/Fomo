@@ -10,7 +10,8 @@ Das Projekt wird vom StuRa TU Dresden finanziert (3.000€) und soll im Septembe
 
 ## Phasen-Überblick
 
-### Phase 1: Pilot-Umfrage (JETZT – März/April 2026)
+### Phase 1: Pilot-Umfrage (✅ abgeschlossen – März 2026)
+
 **Ziel:** 60 Kandidaten-Fragen an Studierenden testen, statistisch die besten ~20 identifizieren.
 **Was gebaut wird:** Landing Page, 4 Quiz-Varianten (scroll, classic, swipe, chat), Admin-Dashboard mit Statistiken, CSV-Export.
 **Warum 4 Varianten:** Wir wissen nicht welches UI-Erlebnis die höchste Abschlussrate hat. Die Varianten sind ein A/B-Test – am Ende gewinnt eine.
@@ -94,19 +95,20 @@ Farben:
 
 Stilistik: Brutalist-Poster-Ästhetik mit dicken Borders (4px solid #1a2a35), Uppercase-Headlines, klarem Grid-Layout. Die Landing Page sieht aus wie ein gestaltetes Plakat.
 
-## Matching-Algorithmus (Vorschau)
+## Matching-Algorithmus
 
 ```
-score(User, Group) = Σ weight_i × similarity(user_answer_i, group_profile_i)
+score(User, Group) = Σ weight_i × similarity_i / Σ weight_i
 
-Likert:       similarity = 1 - |user - group| / 4
-Slider:       similarity = 1 - |user - group| / range
-YesNo:        similarity = 1 wenn gleich, 0 wenn verschieden
-SingleChoice: similarity = 1 wenn gleich, 0 sonst
-MultiChoice:  similarity = Jaccard-Index (|Schnitt| / |Vereinigung|)
+Antwort-Mapping:  Zustimmung → 1.0, Neutral → 0.5, Ablehnung → 0.0
+Gewicht:          weight = |normalized - 0.5| × 2  (Neutral = 0, wird ignoriert)
+Similarity:       1 - |userValue - groupAttribute|  (mit Inverse-Support)
+Minimum:          ≥ 5 nicht-neutrale Antworten, sonst keine Ergebnisse
 
-Ergebnis: Top 5-10 Gruppen, normalisiert auf 0-100%
+Ergebnis: Alle Gruppen, normalisiert auf 0-100%, sortiert absteigend
 ```
+
+Alles client-side — keine Nutzerdaten an den Server. Details in `CLAUDE-pläne/LIVE-QUIZ-PLAN.md`.
 
 ## Gamification-Backlog (NICHT JETZT BAUEN – aber architektonisch vorbereiten)
 
@@ -137,14 +139,12 @@ Diese Dateien im Repo enthalten detaillierte Implementierungspläne:
 
 | Datei | Inhalt | Status |
 |-------|--------|--------|
-| PILOT-IMPLEMENTATION-PLAN.md | Pilot-Umfrage: Seiten, API, DB | Aktiv |
-| IMPORT-GROUPS-PLAN.md | CSV-Import der 83 Hochschulgruppen | Aktiv |
-| VARIANT-SYSTEM-PLAN.md | 4 Layout-Varianten (scroll/classic/swipe/chat) | Aktiv |
-| SURVEY-PRIMING-PLAN.md | Priming-Screen, Dimensions-Header, Mid-Survey Reminder | Aktiv |
-| LIVE-QUIZ-PLAN.md | Live-Quiz: 20 Fragen, Matching-Algorithmus, Ergebnisseite | **Aktiv** |
-| GROUPS-SURVEY-PLAN.md | Hochschulgruppen-Registrierung: Thesen + Attribut-Korrektur | **Aktiv** |
-| PILOT-TO-LIVE-PLAN.md | Übergang Pilot → Live-Quiz | Noch nicht starten |
-| TESTING-PLAN.md | Vollständiger Test & Cleanup | Nach Implementierung |
-| CODE-AUDIT-PLAN.md | Sicherheits- und Qualitäts-Audit | Nach Implementierung |
+| ACTION-PLAN.md | Bugs + Tech Debt (1.1, 2.1, 3.2, 3.4 erledigt; 1.2, 2.2, 2.3, 3.1, 3.3 offen) | Teilweise erledigt |
+| VARIANT-SYSTEM-PLAN.md | 4 Layout-Varianten (scroll/classic/swipe/chat), useSurveyState-Hook | ✅ Implementiert — Referenz |
+| LIVE-QUIZ-PLAN.md | Live-Quiz: 20 Thesen, Matching, Ergebnisseite, Hint-System | Aktiv – Phase 3 |
+| GROUPS-SURVEY-PLAN.md | Hochschulgruppen-Registrierung: Token-Flow, 20 Attribute, Checkliste | Aktiv – Phase 2 (April/Mai 2026) |
+| prompt-architecture-review.md | Architektur-Analyse: Datenfluss, State-Management, Varianten-Kopplung | Referenz |
+| prompt-bug-audit.md | Sicherheits-/Korrektheits-Audit-Checkliste für alle API-Routen | TODO – nach Implementierung |
+| prompt-check-inverse-items.md | Testanleitung für inverse Items (isInverse-Flag) | TODO – für Pilot-Testing |
 
 Lies die CLAUDE.md und dann alle aktiven Plan-Dateien im Ordner `CLAUDE-pläne/` bevor du mit der Implementierung anfängst. Bei Widersprüchen zwischen Plänen gilt: diese CLAUDE.md hat Priorität.

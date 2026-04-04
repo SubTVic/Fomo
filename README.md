@@ -16,8 +16,9 @@ Answer ~20 questions about your interests, values, and time budget, and get pers
 - **Weighted scoring** with support for Likert, Yes/No, Single/Multi Choice, and Slider questions
 - **Top results** normalized to 0–100% match score
 
-### Pilot Study (Current Phase)
-FOMO is currently running a **pilot study** to validate the question set and test 4 different UI variants:
+### Pilot Study (Completed)
+
+FOMO ran a **pilot study** (March 2026) to validate the question set and test 4 different UI variants:
 
 | Variant | Style | Description |
 |---------|-------|-------------|
@@ -117,24 +118,28 @@ npm run import:groups     # Import groups from CSV
 src/
 ├── app/
 │   ├── (public)/           # Public pages (landing, pilot intro)
-│   ├── (fullscreen)/       # Full-screen layouts (survey)
-│   ├── (admin)/            # Admin dashboard (protected)
+│   ├── (fullscreen)/       # Full-screen layouts
+│   │   ├── pilot/          # Pilot survey route
+│   │   └── quiz/           # Live quiz route
+│   ├── admin/              # Admin dashboard (protected)
 │   └── api/
 │       ├── auth/           # Auth.js handler
-│       └── pilot/
-│           ├── submit/     # Survey submission endpoint
-│           └── export/     # Data export endpoint
+│       ├── pilot/          # Pilot submission & export
+│       └── admin/quiz/     # Quiz thesis & variant management
 ├── components/
 │   ├── survey/             # Survey orchestration & shared components
-│   │   ├── SurveyRouter.tsx        # Main flow controller (phases)
+│   │   ├── SurveyRouter.tsx        # Pilot flow controller
 │   │   ├── useSurveyState.ts       # Answer state management hook
-│   │   ├── PrimingScreen.tsx       # Context-setting intro screen
-│   │   ├── VariantTransition.tsx   # Between-block transition
-│   │   ├── MidSurveyReminder.tsx   # Halfway encouragement
-│   │   ├── PreferenceQuestion.tsx  # "Which variant did you prefer?"
 │   │   ├── DimensionHeader.tsx     # Dimension label + priming
-│   │   └── question-inputs/       # Reusable input components
-│   ├── variants/
+│   │   └── question-inputs/        # Reusable input components (LikertBase etc.)
+│   ├── quiz/               # Live quiz components
+│   │   ├── QuizRouter.tsx          # Quiz orchestrator (welcome → quiz → results)
+│   │   ├── QuizWelcome.tsx         # Welcome screen
+│   │   └── results/               # Result display
+│   │       ├── QuizResults.tsx     # Results container (overview + comparison tabs)
+│   │       ├── ResultCard.tsx      # Individual group card with CTA buttons
+│   │       └── ComparisonTable.tsx # Side-by-side group comparison
+│   ├── variants/           # UI variants (shared between pilot & quiz)
 │   │   ├── scroll/ScrollSurvey.tsx
 │   │   ├── classic/ClassicSurvey.tsx
 │   │   ├── swipe/SwipeSurvey.tsx
@@ -143,11 +148,13 @@ src/
 │   ├── ui/                 # shadcn/ui components
 │   └── shared/             # Shared layout components
 ├── lib/
-│   ├── pilot-questions.ts          # 60 pilot questions + 10 dimensions
-│   ├── pilot-variant-order.ts      # Block generation & variant shuffling
-│   ├── pilot-statistics.ts         # Psychometric analysis
+│   ├── quiz/                       # Live quiz logic
+│   │   ├── types.ts                # QuizThesisData, QuizGroupData, etc.
+│   │   ├── matching.ts             # Client-side matching algorithm
+│   │   └── attribute-labels.ts     # German labels for group attributes
+│   ├── queries/quiz.ts             # Server-side quiz queries
+│   ├── pilot-questions.ts          # Pilot question/dimension types
 │   ├── dimension-priming.ts        # Contextual frames per dimension
-│   ├── matching.ts                 # Client-side matching algorithm
 │   ├── rate-limit.ts               # In-memory rate limiter
 │   ├── db.ts                       # Prisma singleton
 │   └── auth.ts                     # Auth.js configuration
@@ -164,13 +171,13 @@ prisma/
 ### Matching Algorithm
 
 ```
-score(User, Group) = Σ weight_i × similarity(user_answer_i, group_profile_i) / Σ weight_i
+score(User, Group) = Σ weight_i × similarity(user_answer_i, group_attribute_i) / Σ weight_i
 ```
 
-Similarity functions by question type:
-- **Likert / Slider:** `1 - |user - group| / max_range`
-- **Yes/No / Single Choice:** `1` if equal, `0` otherwise
-- **Multi Choice:** Jaccard index (`|intersection| / |union|`)
+- **3 answer options:** Agree (1.0), Neutral (0.5), Disagree (0.0)
+- **Weight:** `|normalized - 0.5| × 2` — Neutral answers have zero weight (ignored)
+- **Similarity:** `1 - |userValue - groupAttribute|` (with inverse support)
+- **Minimum threshold:** ≥ 5 non-neutral answers required, otherwise no results shown
 
 Results are normalized to 0–100% and sorted descending. All computation runs client-side.
 
@@ -185,7 +192,7 @@ Each block uses a different randomized UI variant. Dimensions are grouped into 4
 
 ### Data Model
 
-The schema supports both the **pilot study** (PilotDimension, PilotSurveyQuestion, PilotSession, PilotAnswer) and the **production quiz** (Question, QuestionOption, GroupProfile, Group, Category). Groups have 65+ boolean attributes for fine-grained matching.
+The schema supports both the **pilot study** (PilotDimension, PilotSurveyQuestion, PilotSession, PilotAnswer) and the **production quiz** (QuizThesis, QuizThesisAttribute, Group, Category). Groups have 17 boolean matching attributes. Each QuizThesis maps to one or more group attributes (optionally inverse). Theses can have an optional `hint` field for inline explanation text.
 
 ## Environment Variables
 

@@ -15,6 +15,7 @@ export interface PilotQuestion {
   dimensionId: string | null; // "D1" or null for standalone items
   text: string; // Statement in first person (Ich-Form)
   isInverse?: boolean; // true if item is reverse-coded
+  hint?: string; // Visible explanation below the question text
 }
 
 // Helper: get dimension object by id from an array

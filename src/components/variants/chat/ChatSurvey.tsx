@@ -80,7 +80,7 @@ export function ChatSurvey({
         {
           id: `q-${question.id}`,
           from: "bot",
-          text: question.text,
+          text: question.hint ? `${question.text}\n💡 ${question.hint}` : question.text,
         },
       ]);
     }, 600);
@@ -101,6 +101,19 @@ export function ChatSurvey({
     }, 400);
     return () => clearTimeout(timer);
   }, [blockQuestions.length]);
+
+  function handleBack() {
+    if (localIdx <= 0 || isAdvancing.current) return;
+    const prevQuestion = blockQuestions[localIdx - 1];
+    // Remove previous question + answer + current question from chat history
+    // so the effect can re-add the previous question cleanly (no duplicate keys)
+    setMessages((prev) => {
+      const questionIdx = prev.findIndex((m) => m.id === `q-${prevQuestion.id}`);
+      return questionIdx >= 0 ? prev.slice(0, questionIdx) : prev;
+    });
+    setLocalIdx((i) => i - 1);
+    setHasShownCurrent(localIdx - 2);
+  }
 
   function handleAnswer(value: string) {
     if (isAdvancing.current) return;
@@ -210,6 +223,15 @@ export function ChatSurvey({
 
       {/* Answer buttons — always mounted, disabled while typing */}
       <div className="flex-shrink-0 border-t border-white/10 bg-[#202c33] p-3">
+        {localIdx > 0 && (
+          <button
+            onClick={handleBack}
+            disabled={isTyping}
+            className="mb-2 rounded-xl border border-white/20 px-3 py-1.5 text-xs font-medium text-white/60 hover:bg-white/10 hover:text-white/80 transition-all disabled:opacity-40"
+          >
+            ← Zurück
+          </button>
+        )}
         <div className={isTyping ? "opacity-40 pointer-events-none" : ""}>
           <div className="flex gap-2">
             {LIKERT_CHAT.map(({ value, label }) => (

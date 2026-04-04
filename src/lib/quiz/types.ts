@@ -5,6 +5,7 @@ export interface QuizThesisData {
   id: string;
   text: string;
   shortTitle: string;
+  hint: string | null;
   order: number;
   attributes: { attribute: string; isInverse: boolean }[];
 }

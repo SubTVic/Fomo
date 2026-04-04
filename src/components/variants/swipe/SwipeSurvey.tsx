@@ -132,13 +132,13 @@ export function SwipeSurvey({
         {/* Swipe hints */}
         <div className="flex items-center justify-between w-full max-w-sm">
           <span
-            className="text-red-400 font-bold text-sm transition-opacity duration-150"
+            className="text-[#ADD8E6] font-bold text-sm transition-opacity duration-150"
             style={{ opacity: swipeOpacityLeft }}
           >
             ← NEIN
           </span>
           <span
-            className="text-green-400 font-bold text-sm transition-opacity duration-150"
+            className="text-[#ADD8E6] font-bold text-sm transition-opacity duration-150"
             style={{ opacity: swipeOpacityRight }}
           >
             JA →
@@ -158,6 +158,9 @@ export function SwipeSurvey({
           onPointerCancel={handlePointerUp}
         >
           <p className="text-base font-semibold leading-relaxed">{question.text}</p>
+          {question.hint && (
+            <p className="text-sm text-gray-500 mt-1.5">{question.hint}</p>
+          )}
           {currentValue && (
             <div className="mt-4 text-sm text-muted-foreground">
               Deine Antwort: <strong>{currentValue === "0" ? "Frage nicht verstanden" : (SWIPE_OPTIONS.find(o => o.value === currentValue)?.label ?? currentValue)}</strong>
@@ -207,7 +210,7 @@ export function SwipeSurvey({
         <button
           onClick={() => setLocalIdx((i) => Math.max(0, i - 1))}
           disabled={isFirst}
-          className="text-sm text-white/50 hover:text-white/80 disabled:invisible"
+          className="rounded-xl border border-white/30 px-4 py-2.5 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white transition-all disabled:invisible"
         >
           ← Zurück
         </button>

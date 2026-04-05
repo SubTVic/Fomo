@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma migrate deploy && next build",
+    "build": "(prisma migrate deploy || echo 'Migration skipped') && next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest",

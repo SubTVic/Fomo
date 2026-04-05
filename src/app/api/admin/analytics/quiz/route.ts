@@ -57,14 +57,13 @@ export async function GET(req: NextRequest) {
   for (const s of sessionsWithMatches) {
     const matches = s.topMatches as { groupId: string; score: number }[] | null;
     if (!matches) continue;
-    // Count only the #1 match per session
-    if (matches.length > 0) {
-      const top = matches[0];
-      if (!groupMatchCounts[top.groupId]) {
-        groupMatchCounts[top.groupId] = { count: 0, totalScore: 0 };
+    // Count all top matches per session (up to 5)
+    for (const match of matches) {
+      if (!groupMatchCounts[match.groupId]) {
+        groupMatchCounts[match.groupId] = { count: 0, totalScore: 0 };
       }
-      groupMatchCounts[top.groupId].count++;
-      groupMatchCounts[top.groupId].totalScore += top.score;
+      groupMatchCounts[match.groupId].count++;
+      groupMatchCounts[match.groupId].totalScore += match.score;
     }
   }
 

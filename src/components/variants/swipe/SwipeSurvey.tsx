@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Swipe variant: Tinder-style, one card per question, swipe or tap to answer
-// In multi-variant mode, only shows the assigned blockQuestions
 
 "use client";
 
 import { useRef, useState, useCallback } from "react";
-import { getDimensionPriming } from "@/lib/dimension-priming";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 const SWIPE_OPTIONS = [
@@ -27,7 +25,6 @@ export function SwipeSurvey({
   const question = blockQuestions[localIdx] ?? blockQuestions[0];
   const currentValue = answers[question.id] as string | undefined;
   const dimension = blockDimensions.find((d) => d.id === question.dimensionId) ?? blockDimensions[0];
-  const dimIdx = blockDimensions.findIndex((d) => d.id === question.dimensionId);
 
   // Drag/swipe state
   const [dragX, setDragX] = useState(0);
@@ -98,26 +95,15 @@ export function SwipeSurvey({
         </span>
       </header>
 
-      {/* Dimension context — custom dark-theme styling */}
-      <div className="px-4 py-2 flex-shrink-0">
-        <div className="flex items-start gap-2 rounded-lg bg-white/10 border border-white/15 px-3 py-2.5">
-          <span className="text-lg flex-shrink-0">{dimension.emoji}</span>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-white/90">
-              {dimension.label}
-              <span className="ml-1.5 text-xs font-normal text-white/50">
-                ({(dimIdx >= 0 ? dimIdx : 0) + 1}/{blockDimensions.length})
-              </span>
-            </p>
-            {(() => {
-              const priming = getDimensionPriming(dimension.id);
-              return priming ? (
-                <p className="text-xs text-white/60 mt-0.5">{priming.context}</p>
-              ) : null;
-            })()}
+      {/* Dimension context */}
+      {dimension && (
+        <div className="px-4 py-2 flex-shrink-0">
+          <div className="flex items-center gap-2 rounded-lg bg-white/10 border border-white/15 px-3 py-2.5">
+            <span className="text-lg">{dimension.emoji}</span>
+            <span className="text-sm font-semibold text-white/90">{dimension.label}</span>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Progress */}
       <div className="h-0.5 bg-white/10 flex-shrink-0">

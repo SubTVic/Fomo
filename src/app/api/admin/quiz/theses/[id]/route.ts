@@ -6,16 +6,20 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { z } from "zod";
+import { ALL_ATTRIBUTE_KEYS } from "@/lib/quiz/attribute-labels";
+
+const attributeSchema = z.object({
+  attribute: z.enum(ALL_ATTRIBUTE_KEYS as [string, ...string[]]),
+  isInverse: z.boolean().default(false),
+});
 
 const updateSchema = z.object({
   text: z.string().min(1).max(500).optional(),
   shortTitle: z.string().min(1).max(50).optional(),
+  hint: z.string().max(200).optional(),
   order: z.number().int().min(0).optional(),
   isActive: z.boolean().optional(),
-  attributes: z.array(z.object({
-    attribute: z.string().min(1),
-    isInverse: z.boolean().default(false),
-  })).optional(),
+  attributes: z.array(attributeSchema).optional(),
 });
 
 export async function PUT(

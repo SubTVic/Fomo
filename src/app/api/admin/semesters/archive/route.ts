@@ -4,6 +4,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { RegistrationStatus } from "@prisma/client";
 import { z } from "zod";
 
 const ArchiveSchema = z.object({
@@ -107,8 +108,8 @@ export async function POST(req: NextRequest) {
 
   // Reset group registration status for the new semester
   await db.group.updateMany({
-    where: { isActive: true, registrationStatus: "verified" },
-    data: { registrationStatus: "invited" },
+    where: { isActive: true, registrationStatus: RegistrationStatus.VERIFIED },
+    data: { registrationStatus: RegistrationStatus.INVITED },
   });
 
   return NextResponse.json({

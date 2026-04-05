@@ -35,7 +35,7 @@ export function GenerateInvitesButton() {
 
       // Filter to groups that have emails and haven't been invited yet
       const toInvite = groups.filter(
-        (g) => g.contactEmail && (!g.registrationStatus || g.registrationStatus === "invited"),
+        (g) => g.contactEmail && (!g.registrationStatus || g.registrationStatus === "INVITED"),
       );
 
       if (toInvite.length === 0) {

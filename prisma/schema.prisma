@@ -94,34 +94,18 @@ model Group {
   scraperAttributes   Json?
   // JSON: {career: 1, tech: 0, ...} — final confirmed binary values
   confirmedAttributes Json?
-  // "invited" | "submitted" | "verified"
-  registrationStatus  String?
+  registrationStatus  RegistrationStatus?
   submittedAt         DateTime?
   verifiedAt          DateTime?
 
-  category     Category          @relation(fields: [categoryId], references: [id])
-  pilotAnswers GroupPilotAnswer[]
-  invites      GroupInvite[]
+  category Category     @relation(fields: [categoryId], references: [id])
+  invites  GroupInvite[]
 
   @@index([categoryId])
   @@index([isActive])
   @@index([registeredVia])
   @@index([registrationStatus])
   @@map("groups")
-}
-
-// Answers from groups to pilot survey questions (bridges pilot ↔ quiz)
-model GroupPilotAnswer {
-  id         String @id @default(cuid())
-  groupId    String
-  questionId String // e.g. "D1Q1"
-  value      String // "1"-"5"
-
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-
-  @@unique([groupId, questionId])
-  @@index([groupId])
-  @@map("group_pilot_answers")
 }
 
 // ─── Gruppen-Einladung (Token-basierte Registrierung) ────────────
@@ -146,6 +130,12 @@ model GroupInvite {
 enum AdminRole {
   SUPER_ADMIN // StuRa staff, full access
   EDITOR      // Can edit groups and questions
+}
+
+enum RegistrationStatus {
+  INVITED
+  SUBMITTED
+  VERIFIED
 }
 
 model Admin {
@@ -189,6 +179,8 @@ model QuizSession {
   // No personal data, no IP, no user agent
 
   @@index([semester])
+  @@index([completedAt])
+  @@index([startedAt])
   @@map("quiz_sessions")
 }
 
@@ -259,78 +251,3 @@ model QuizThesisVersion {
   @@map("quiz_thesis_versions")
 }
 
-// ─── Pilot-Fragebogen (Dimensionen & Fragen) ─────────────────────
-// Pilot survey questions are managed via the admin dashboard
-
-model PilotDimension {
-  id          String @id  // "D1", "D2", etc.
-  label       String      // "Zeitbudget & Verbindlichkeit"
-  emoji       String @default("")
-  description String @default("")
-  blockIndex  Int    @default(0) // 0–3: which variant block this dimension belongs to
-  order       Int    @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  questions PilotSurveyQuestion[]
-
-  @@map("pilot_dimensions")
-}
-
-model PilotSurveyQuestion {
-  id          String   @id  // "D1Q1", "D1Q2", etc. or "S1" for standalone
-  dimensionId String?       // null = standalone item (no dimension)
-  text        String   @db.Text
-  order       Int      @default(0)
-  isInverse   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  dimension PilotDimension? @relation(fields: [dimensionId], references: [id], onDelete: Cascade)
-
-  @@index([dimensionId])
-  @@map("pilot_survey_questions")
-}
-
-// ─── Pilot-Umfrage (Sessions & Antworten) ────────────────────────
-// Responses from the pilot survey (4 UI variants: scroll/classic/swipe/chat)
-
-model PilotSession {
-  id          String    @id @default(cuid())
-  variant     String    // Legacy single-variant or "mixed" for multi-variant flow
-  startedAt   DateTime  @default(now())
-  completedAt DateTime?
-
-  // Multi-variant flow: JSON array of variant keys in the order shown
-  variantOrder     String? // e.g. '["swipe","scroll","chat","classic"]'
-  preferredVariant String? // User's favourite variant, e.g. "swipe"
-  preferenceReason String? @db.Text // Why they preferred it
-
-  // Demographics (collected at the end)
-  semester   String? // e.g. "1", "3", "5+"
-  isMember   String? // "yes" | "no" | "was"
-  groupNames String? // free text, comma-separated
-
-  // Open feedback
-  feedbackConfusing String? @db.Text
-  feedbackMissing   String? @db.Text
-
-  answers PilotAnswer[]
-
-  @@index([variant])
-  @@index([completedAt])
-  @@map("pilot_sessions")
-}
-
-model PilotAnswer {
-  id         String @id @default(cuid())
-  sessionId  String
-  questionId String // e.g. "D1Q1"
-  value      String // Likert "1"-"5" or free text
-
-  session PilotSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-
-  @@unique([sessionId, questionId])
-  @@index([sessionId])
-  @@map("pilot_answers")
-}

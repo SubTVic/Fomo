@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Scroll variant: all questions of a dimension on one screen, dimension tabs on top
-// In multi-variant mode, only shows the assigned blockDimensions/blockQuestions
 
 "use client";
 
 import { useState } from "react";
 import { LikertBase } from "@/components/survey/question-inputs/LikertBase";
-import { DimensionHeader } from "@/components/survey/DimensionHeader";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 export function ScrollSurvey({
@@ -85,11 +83,12 @@ export function ScrollSurvey({
       {/* Questions for current dimension */}
       <main className="flex-1 mx-auto w-full max-w-xl px-4 py-6 flex flex-col gap-8">
         {currentDim && (
-          <DimensionHeader
-            dimension={currentDim}
-            dimIndex={activeDimIdx}
-            totalDimensions={blockDimensions.length}
-          />
+          <div className="rounded-xl border-l-4 border-l-primary bg-muted/30 px-4 py-4">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xl">{currentDim.emoji}</span>
+              <h3 className="text-lg font-bold">{currentDim.label}</h3>
+            </div>
+          </div>
         )}
 
         {dimQuestions.map((q, i) => (

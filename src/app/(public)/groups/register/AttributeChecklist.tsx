@@ -51,6 +51,7 @@ const ATTRIBUTE_GROUPS: { title: string; attributes: AttributeDef[] }[] = [
       { key: "time_low", label: "Wenig Zeit", description: "Engagement mit max. 2h/Woche möglich", group: "structure" },
       { key: "leadership_opportunities", label: "Verantwortung", description: "Führungsrollen möglich", group: "structure" },
       { key: "beginner_friendly", label: "Einsteigerfreundlich", description: "Keine Vorkenntnisse nötig", group: "structure" },
+      { key: "financial_cost", label: "Kosten", description: "Mitgliedsbeitrag oder regelmäßige Kosten", group: "structure" },
       { key: "party", label: "Socializing", description: "Gesellige Events neben Kernaktivität", group: "structure" },
     ],
   },
@@ -63,7 +64,8 @@ const PRISMA_TO_ATTR: Record<string, string> = {
   networking: "networking", arts: "arts", music: "music",
   timeLow: "time_low", handsOn: "hands_on", outdoor: "outdoor",
   international: "international", beginnerFriendly: "beginner_friendly",
-  competitive: "competitive", leadershipOpportunities: "leadership_opportunities",
+  competitive: "competitive", financialCost: "financial_cost",
+  leadershipOpportunities: "leadership_opportunities",
 };
 
 type Attrs = Record<string, 0 | 1>;

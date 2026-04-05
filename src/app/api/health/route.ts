@@ -21,11 +21,11 @@ export async function GET(request: Request) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
+    console.error("Health check failed:", error);
     return NextResponse.json(
       {
         status: "error",
         db: "disconnected",
-        error: error instanceof Error ? error.message : "Unknown error",
         timestamp: new Date().toISOString(),
       },
       { status: 503 }

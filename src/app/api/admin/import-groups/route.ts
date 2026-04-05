@@ -88,6 +88,10 @@ export async function POST() {
   if (!session?.user) {
     return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 });
   }
+  const role = (session.user as { role?: string }).role;
+  if (role !== "SUPER_ADMIN") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   const csvPath = path.resolve(process.cwd(), "data/hg_MERGED.csv");
   if (!fs.existsSync(csvPath)) {

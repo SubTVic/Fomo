@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Chat variant: messenger-style, questions as bot messages with typing indicator
-// In multi-variant mode, only shows the assigned blockQuestions
 
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getDimensionPriming } from "@/lib/dimension-priming";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 const LIKERT_CHAT = [
@@ -38,8 +36,6 @@ export function ChatSurvey({
 
   const question = blockQuestions[localIdx] ?? blockQuestions[0];
   const dimension = blockDimensions.find((d) => d.id === question.dimensionId) ?? blockDimensions[0];
-  const currentValue = answers[question.id] as string | undefined;
-  const alreadyAnswered = currentValue !== undefined;
   const isLast = localIdx === blockQuestions.length - 1;
 
   const blockAnswered = blockQuestions.filter((q) => answers[q.id] !== undefined).length;
@@ -58,13 +54,12 @@ export function ChatSurvey({
     const dimId = question.dimensionId;
     const newMessages: ChatMessage[] = [];
     if (dimId && !shownDimIds.has(dimId)) {
-      const priming = getDimensionPriming(dimId);
       const dim = blockDimensions.find((d) => d.id === dimId);
-      if (dim && priming) {
+      if (dim) {
         newMessages.push({
           id: `dim-${dimId}`,
           from: "bot",
-          text: `${dim.emoji} ${dim.label}\n${priming.context}`,
+          text: `${dim.emoji} ${dim.label}`,
         });
       }
       setShownDimIds((prev) => new Set([...prev, dimId]));
@@ -105,8 +100,6 @@ export function ChatSurvey({
   function handleBack() {
     if (localIdx <= 0 || isAdvancing.current) return;
     const prevQuestion = blockQuestions[localIdx - 1];
-    // Remove previous question + answer + current question from chat history
-    // so the effect can re-add the previous question cleanly (no duplicate keys)
     setMessages((prev) => {
       const questionIdx = prev.findIndex((m) => m.id === `q-${prevQuestion.id}`);
       return questionIdx >= 0 ? prev.slice(0, questionIdx) : prev;
@@ -160,19 +153,13 @@ export function ChatSurvey({
       </div>
 
       {/* Dimension indicator */}
-      {(() => {
-        const priming = dimension ? getDimensionPriming(dimension.id) : null;
-        return (
-          <div className="flex-shrink-0 mx-3 my-2 px-3 py-2.5 rounded-lg bg-[#ADD8E6]/25 border border-[#ADD8E6]/40">
-            <span className="text-sm text-white font-semibold">
-              {dimension.emoji} {dimension.label}
-            </span>
-            {priming && (
-              <p className="text-xs text-[#ADD8E6]/80 mt-1">{priming.reminder}</p>
-            )}
-          </div>
-        );
-      })()}
+      {dimension && (
+        <div className="flex-shrink-0 mx-3 my-2 px-3 py-2.5 rounded-lg bg-[#ADD8E6]/25 border border-[#ADD8E6]/40">
+          <span className="text-sm text-white font-semibold">
+            {dimension.emoji} {dimension.label}
+          </span>
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
@@ -221,7 +208,7 @@ export function ChatSurvey({
         <div ref={bottomRef} />
       </div>
 
-      {/* Answer buttons — always mounted, disabled while typing */}
+      {/* Answer buttons */}
       <div className="flex-shrink-0 border-t border-white/10 bg-[#202c33] p-3">
         {localIdx > 0 && (
           <button

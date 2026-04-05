@@ -12,14 +12,6 @@ export const SITE_DEFAULTS: Record<string, string> = {
   image_caption:
     "Campusradio Dresden · Club 11 · Die Bühne · Elbflorace · STAR Dresden · YETI — 6 von über 100 Hochschulgruppen",
 
-  // Pilot CTA
-  pilot_label: "Pilotstudie",
-  pilot_title: "Hilf uns, FOMO zu bauen",
-  pilot_text:
-    "Wir entwickeln ein Open-Source-Tool für über 100 Hochschulgruppen in Dresden. Euer Feedback formt das Ergebnis — die Umfrage dauert nur ca. 10 Minuten.",
-  pilot_button: "Zur Pilotstudie",
-  pilot_duration: "~ 10 Min · Anonym",
-
   // 6 landing page images (src + alt)
   image_1_src: "/images/groups/Campusradio.jpeg",
   image_1_alt: "Campusradio Dresden",

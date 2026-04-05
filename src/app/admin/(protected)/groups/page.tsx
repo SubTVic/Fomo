@@ -58,14 +58,14 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
     if (filter === "csv") return allGroups.filter((g) => g.registeredVia === "import");
     if (filter === "survey") return allGroups.filter((g) => g.registeredVia === "survey");
     if (filter === "unverified") return allGroups.filter((g) => !g.isVerified);
-    if (filter === "invited") return allGroups.filter((g) => g.registrationStatus === "invited");
-    if (filter === "submitted") return allGroups.filter((g) => g.registrationStatus === "submitted");
-    if (filter === "verified") return allGroups.filter((g) => g.registrationStatus === "verified");
+    if (filter === "invited") return allGroups.filter((g) => g.registrationStatus === "INVITED");
+    if (filter === "submitted") return allGroups.filter((g) => g.registrationStatus === "SUBMITTED");
+    if (filter === "verified") return allGroups.filter((g) => g.registrationStatus === "VERIFIED");
     return allGroups;
   })();
 
-  const submittedCount = allGroups.filter((g) => g.registrationStatus === "submitted").length;
-  const invitedCount = allGroups.filter((g) => g.registrationStatus === "invited").length;
+  const submittedCount = allGroups.filter((g) => g.registrationStatus === "SUBMITTED").length;
+  const invitedCount = allGroups.filter((g) => g.registrationStatus === "INVITED").length;
 
   return (
     <div className="mx-auto max-w-6xl">

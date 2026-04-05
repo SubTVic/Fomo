@@ -1,20 +1,19 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import Link from "next/link";
+import { RegistrationStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 
 export default async function AdminDashboard() {
   const [
     groupCount,
     pendingSubmissions,
-    pilotCount,
     quizSessionsTotal,
     quizSessionsToday,
     currentSemester,
   ] = await Promise.all([
     db.group.count({ where: { isActive: true } }),
-    db.group.count({ where: { registrationStatus: "submitted" } }),
-    db.pilotSession.count({ where: { completedAt: { not: null } } }),
+    db.group.count({ where: { registrationStatus: RegistrationStatus.SUBMITTED } }),
     db.quizSession.count({ where: { completedAt: { not: null } } }),
     db.quizSession.count({
       where: {
@@ -42,11 +41,6 @@ export default async function AdminDashboard() {
         <StatCard label="Offene Einreichungen" value={pendingSubmissions} href="/admin/groups" highlight={pendingSubmissions > 0} />
         <StatCard label="Quiz-Completions (heute)" value={quizSessionsToday} href="/admin/analytics" />
         <StatCard label="Quiz-Completions (gesamt)" value={quizSessionsTotal} href="/admin/analytics" />
-      </div>
-
-      {/* Pilot (will be removed after pilot phase) */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatCard label="Pilot-Sessions" value={pilotCount} href="/admin/pilot" />
       </div>
 
       {/* Quick actions */}

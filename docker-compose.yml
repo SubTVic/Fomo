@@ -8,7 +8,7 @@ services:
       - "${DB_PORT:-5432}:5432"
     environment:
       POSTGRES_USER: fomo
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-fomo_dev}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set}
       POSTGRES_DB: fomo
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -29,8 +29,8 @@ services:
     ports:
       - "${APP_PORT:-3000}:3000"
     environment:
-      DATABASE_URL: postgresql://fomo:${DB_PASSWORD:-fomo_dev}@db:5432/fomo
-      DIRECT_URL: postgresql://fomo:${DB_PASSWORD:-fomo_dev}@db:5432/fomo
+      DATABASE_URL: postgresql://fomo:${DB_PASSWORD:?DB_PASSWORD must be set}@db:5432/fomo
+      DIRECT_URL: postgresql://fomo:${DB_PASSWORD:?DB_PASSWORD must be set}@db:5432/fomo
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
       APP_MODE: ${APP_MODE:-live}
@@ -66,7 +66,7 @@ services:
         sleep 86400;
       done'
     environment:
-      PGPASSWORD: ${DB_PASSWORD:-fomo_dev}
+      PGPASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set}
     logging:
       driver: json-file
       options:

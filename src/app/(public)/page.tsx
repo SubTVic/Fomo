@@ -5,13 +5,7 @@ import Link from "next/link";
 import { getActiveGroupCount } from "@/lib/queries/groups";
 import { getSiteConfig } from "@/lib/queries/site-config";
 
-// APP_MODE controls the landing page behaviour:
-//   "pilot"   → pilot survey CTA (while collecting data from Studis)
-//   "collect" → pilot survey + group registration side by side
-//   "live"    → full quiz (production)
 export const dynamic = "force-dynamic";
-
-const APP_MODE = (process.env.APP_MODE ?? "pilot") as "pilot" | "collect" | "live";
 
 export default async function LandingPage() {
   const [groupCount, cfg] = await Promise.all([
@@ -76,103 +70,15 @@ export default async function LandingPage() {
           {cfg.image_caption}
         </div>
 
-        {/* CTA Section (mode-dependent) */}
-        {APP_MODE === "pilot" && <PilotCta cfg={cfg} />}
-        {APP_MODE === "collect" && <CollectCta cfg={cfg} groupCount={groupCount} />}
-        {APP_MODE === "live" && <LiveCta groupCount={groupCount} />}
+        {/* CTA Section */}
+        <LiveCta groupCount={groupCount} />
 
       </div>
     </div>
   );
 }
 
-// ─── CTA Sections ─────────────────────────────────────────────────────────────
-
-function PilotCta({ cfg }: { cfg: Record<string, string> }) {
-  return (
-    <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
-      <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-          {cfg.pilot_label}
-        </p>
-        <h2 className="font-heading text-[clamp(18px,3vw,28px)] uppercase leading-tight mb-2.5">
-          {cfg.pilot_title}
-        </h2>
-        <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-          {cfg.pilot_text}
-        </p>
-      </div>
-      <div className="flex flex-col items-center sm:items-end gap-2">
-        <Link
-          href="/pilot"
-          className="bg-foreground text-primary-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-[#2a3a45] transition-colors"
-        >
-          {cfg.pilot_button}
-        </Link>
-        <span className="text-[11px] text-muted-foreground">{cfg.pilot_duration}</span>
-        <Link href="/demo" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
-          Unsere Demo ansehen →
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-function CollectCta({ cfg, groupCount }: { cfg: Record<string, string>; groupCount: number }) {
-  return (
-    <div className="border-t-4 border-foreground">
-      {/* Ersti CTA */}
-      <div className="px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-            {cfg.pilot_label}
-          </p>
-          <h2 className="font-heading text-[clamp(18px,3vw,28px)] uppercase leading-tight mb-2.5">
-            {cfg.pilot_title}
-          </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-            {cfg.pilot_text}
-          </p>
-        </div>
-        <div className="flex flex-col items-center sm:items-end gap-2">
-          <Link
-            href="/pilot"
-            className="bg-foreground text-primary-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-[#2a3a45] transition-colors"
-          >
-            {cfg.pilot_button}
-          </Link>
-          <span className="text-[11px] text-muted-foreground">{cfg.pilot_duration}</span>
-          <Link href="/demo" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
-            Unsere Demo ansehen →
-          </Link>
-        </div>
-      </div>
-
-      {/* Group registration CTA */}
-      <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center bg-accent">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-            Hochschulgruppen
-          </p>
-          <h2 className="font-heading text-[clamp(18px,3vw,24px)] uppercase leading-tight mb-2.5">
-            Registriert eure Gruppe
-          </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-            {groupCount} Gruppen sind schon dabei. Registrierung kostenlos, in ~15 Minuten.
-          </p>
-        </div>
-        <div className="flex flex-col items-center sm:items-end gap-2">
-          <Link
-            href="/groups/register"
-            className="border-2 border-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-foreground hover:text-primary-foreground transition-colors"
-          >
-            Gruppe registrieren
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
+// ─── CTA Section ──────────────────────────────────────────────────────────────
 
 function LiveCta({ groupCount }: { groupCount: number }) {
   return (

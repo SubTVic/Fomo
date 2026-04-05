@@ -4,31 +4,15 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import type { PilotQuestion, Dimension } from "@/lib/pilot-questions";
-import { getDimension } from "@/lib/pilot-questions";
+import type { SurveyQuestion, SurveyDimension } from "@/components/variants/types";
 
-export interface SurveyDemographic {
-  semester: string | null;
-  isMember: string | null; // "yes" | "no" | "was"
-  groupNames: string | null;
-}
-
-export interface SurveyFeedback {
-  confusing: string;
-  missing: string;
-}
-
-export type SurveyPhase = "questions" | "demographic" | "feedback" | "preference" | "done";
+export type SurveyPhase = "questions" | "done";
 
 export interface SurveyState {
   answers: Record<string, string | string[]>;
   currentQuestionIndex: number;
   phase: SurveyPhase;
   startTime: number;
-  demographic: SurveyDemographic;
-  feedback: SurveyFeedback;
-  preferredVariant: string | null;
-  preferenceReason: string;
 }
 
 const initialState: SurveyState = {
@@ -36,33 +20,15 @@ const initialState: SurveyState = {
   currentQuestionIndex: 0,
   phase: "questions",
   startTime: Date.now(),
-  demographic: { semester: null, isMember: null, groupNames: null },
-  feedback: { confusing: "", missing: "" },
-  preferredVariant: null,
-  preferenceReason: "",
 };
 
-export function useSurveyState(questions: PilotQuestion[], dimensions: Dimension[]) {
+export function useSurveyState(questions: SurveyQuestion[], dimensions: SurveyDimension[]) {
   const [state, setState] = useState<SurveyState>(initialState);
 
   const setAnswer = useCallback((questionId: string, value: string | string[]) => {
     setState((prev) => ({
       ...prev,
       answers: { ...prev.answers, [questionId]: value },
-    }));
-  }, []);
-
-  const setDemographic = useCallback((field: keyof SurveyDemographic, value: string) => {
-    setState((prev) => ({
-      ...prev,
-      demographic: { ...prev.demographic, [field]: value },
-    }));
-  }, []);
-
-  const setFeedback = useCallback((field: keyof SurveyFeedback, value: string) => {
-    setState((prev) => ({
-      ...prev,
-      feedback: { ...prev.feedback, [field]: value },
     }));
   }, []);
 
@@ -84,20 +50,12 @@ export function useSurveyState(questions: PilotQuestion[], dimensions: Dimension
     setState((prev) => ({ ...prev, phase }));
   }, []);
 
-  const setPreferredVariant = useCallback((variant: string) => {
-    setState((prev) => ({ ...prev, preferredVariant: variant }));
-  }, []);
-
-  const setPreferenceReason = useCallback((reason: string) => {
-    setState((prev) => ({ ...prev, preferenceReason: reason }));
-  }, []);
-
   const next = useCallback(() => {
     setState((prev) => {
       if (prev.currentQuestionIndex < questions.length - 1) {
         return { ...prev, currentQuestionIndex: prev.currentQuestionIndex + 1 };
       }
-      return { ...prev, phase: "demographic" };
+      return { ...prev, phase: "done" };
     });
   }, [questions.length]);
 
@@ -111,12 +69,11 @@ export function useSurveyState(questions: PilotQuestion[], dimensions: Dimension
   // Derived values
   const totalAnswered = Object.keys(state.answers).length;
   const progress = questions.length > 0 ? Math.round((totalAnswered / questions.length) * 100) : 0;
-  // Guard against empty questions array (e.g. no active quiz theses in DB)
-  const EMPTY_QUESTION: PilotQuestion = { id: "__none__", dimensionId: null, text: "" };
-  const currentQuestion: PilotQuestion =
+  const EMPTY_QUESTION: SurveyQuestion = { id: "__none__", dimensionId: null, text: "" };
+  const currentQuestion: SurveyQuestion =
     questions[state.currentQuestionIndex] ?? questions[0] ?? EMPTY_QUESTION;
-  const currentDimension: Dimension = currentQuestion.dimensionId
-    ? getDimension(dimensions, currentQuestion.dimensionId)
+  const currentDimension: SurveyDimension | undefined = currentQuestion.dimensionId
+    ? dimensions.find((d) => d.id === currentQuestion.dimensionId) ?? dimensions[0]
     : dimensions[0];
   const currentDimIndex = dimensions.findIndex((d) => d.id === currentDimension?.id);
 
@@ -124,13 +81,9 @@ export function useSurveyState(questions: PilotQuestion[], dimensions: Dimension
     state,
     setState,
     setAnswer,
-    setDemographic,
-    setFeedback,
     goToQuestion,
     goToDimension,
     setPhase,
-    setPreferredVariant,
-    setPreferenceReason,
     next,
     prev,
     totalAnswered,

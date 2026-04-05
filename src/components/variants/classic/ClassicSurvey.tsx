@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Classic variant: Wahl-O-Mat-style, one question at a time with 3 large buttons
-// In multi-variant mode, only shows the assigned blockQuestions
 
 "use client";
 
 import { useState, useCallback } from "react";
-import { DimensionHeader } from "@/components/survey/DimensionHeader";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
 // Maps Likert 1-5 to 3-option display (Zustimmung/Neutral/Ablehnung)
@@ -33,9 +31,6 @@ export function ClassicSurvey({
 
   const blockAnswered = blockQuestions.filter((q) => answers[q.id] !== undefined).length;
   const blockProgress = Math.round((blockAnswered / blockQuestions.length) * 100);
-
-  // Position within dimension
-  const dimIdx = blockDimensions.findIndex((d) => d.id === question.dimensionId) + 1;
 
   const advance = useCallback(() => {
     if (isLast) onBlockComplete();
@@ -68,12 +63,12 @@ export function ClassicSurvey({
       {/* Question */}
       <main className="flex-1 flex flex-col justify-between p-6 max-w-lg mx-auto w-full">
         <div className="flex flex-col gap-6 mt-4">
-          <DimensionHeader
-            dimension={dimension}
-            dimIndex={dimIdx - 1}
-            totalDimensions={blockDimensions.length}
-            compact
-          />
+          {dimension && (
+            <div className="flex items-center gap-2 rounded-lg bg-black/5 px-3 py-2">
+              <span className="text-lg">{dimension.emoji}</span>
+              <span className="text-sm font-semibold">{dimension.label}</span>
+            </div>
+          )}
           <div>
             <p className="text-xl font-bold leading-snug">&ldquo;{question.text}&rdquo;</p>
             {question.hint && (

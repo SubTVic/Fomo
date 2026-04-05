@@ -8,6 +8,7 @@ import type { QuizMatchResult } from "@/lib/quiz/types";
 interface ResultCardProps {
   result: QuizMatchResult;
   rank: number;
+  isTied?: boolean;
   isComparing: boolean;
   onToggleCompare: () => void;
 }
@@ -26,7 +27,7 @@ function scoreTextColor(score: number): string {
   return "text-red-600";
 }
 
-export function ResultCard({ result, rank, isComparing, onToggleCompare }: ResultCardProps) {
+export function ResultCard({ result, rank, isTied, isComparing, onToggleCompare }: ResultCardProps) {
   const [expanded, setExpanded] = useState(false);
   const { group, score, attributeMatches } = result;
 
@@ -41,8 +42,9 @@ export function ResultCard({ result, rank, isComparing, onToggleCompare }: Resul
         onClick={() => setExpanded(!expanded)}
         className="flex w-full items-center gap-3 text-left"
       >
-        <span className="text-lg shrink-0 w-8 text-center">
+        <span className="text-lg shrink-0 w-8 text-center" title={isTied ? `Geteilter Platz ${rank}` : undefined}>
           {rank <= 3 ? RANK_ICONS[rank - 1] : <span className="text-sm text-[#7a9aaa]">#{rank}</span>}
+          {isTied && <span className="block text-[9px] text-[#7a9aaa] -mt-1">=</span>}
         </span>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">

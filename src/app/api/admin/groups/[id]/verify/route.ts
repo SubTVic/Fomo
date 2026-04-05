@@ -4,7 +4,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { RegistrationStatus } from "@prisma/client";
 
+// SUPER_ADMIN only — verification changes what's visible in the quiz
 export async function PATCH(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -12,6 +14,10 @@ export async function PATCH(
   const session = await auth();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const role = (session.user as { role?: string }).role;
+  if (role !== "SUPER_ADMIN") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const { id } = await params;
@@ -26,7 +32,7 @@ export async function PATCH(
     where: { id },
     data: {
       isVerified: nowVerified,
-      registrationStatus: nowVerified ? "verified" : group.registrationStatus,
+      registrationStatus: nowVerified ? RegistrationStatus.VERIFIED : group.registrationStatus,
       verifiedAt: nowVerified ? new Date() : null,
     },
   });

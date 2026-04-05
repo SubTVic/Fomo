@@ -42,6 +42,16 @@ export function QuizResults({ results, theses, answeredCount, onRestart }: QuizR
 
   const displayedResults = showAll ? results : results.slice(0, 8);
 
+  // Compute ranks with ties: same score = same rank, next rank skips
+  const ranks: number[] = [];
+  for (let i = 0; i < results.length; i++) {
+    if (i === 0 || results[i].score !== results[i - 1].score) {
+      ranks.push(i + 1);
+    } else {
+      ranks.push(ranks[i - 1]);
+    }
+  }
+
   function toggleCompare(groupId: string) {
     setCompareIds((prev) => {
       const next = new Set(prev);
@@ -102,7 +112,8 @@ export function QuizResults({ results, theses, answeredCount, onRestart }: QuizR
                 <ResultCard
                   key={result.group.id}
                   result={result}
-                  rank={i + 1}
+                  rank={ranks[i]}
+                  isTied={i > 0 && ranks[i] === ranks[i - 1]}
                   isComparing={compareIds.has(result.group.id)}
                   onToggleCompare={() => toggleCompare(result.group.id)}
                 />

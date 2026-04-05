@@ -2,6 +2,7 @@
 // Admin API: list and create quiz theses
 
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { z } from "zod";
@@ -59,5 +60,6 @@ export async function POST(req: NextRequest) {
     include: { attributes: true },
   });
 
+  revalidatePath("/quiz");
   return NextResponse.json({ ok: true, thesis }, { status: 201 });
 }

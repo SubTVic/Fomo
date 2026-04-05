@@ -178,30 +178,32 @@ function LiveCta({ groupCount }: { groupCount: number }) {
   return (
     <div className="border-t-4 border-foreground">
       {/* Quiz CTA */}
-      <div className="px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
+      <div className="px-6 py-10 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-            Quiz starten
+            Dein Weg zu deiner Gruppe
           </p>
-          <h2 className="font-heading text-[clamp(18px,3vw,28px)] uppercase leading-tight mb-2.5">
+          <h2 className="font-heading text-[clamp(20px,4vw,32px)] uppercase leading-tight mb-3">
             Finde dein Match
           </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-            Beantworte ~20 Fragen zu deinen Interessen und Werten — wir zeigen dir, welche der{" "}
-            {groupCount} Hochschulgruppen am besten zu dir passen.
+          <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px] mb-4">
+            Beantworte ~20 kurze Fragen zu deinen Interessen und Werten — wir zeigen dir, welche der{" "}
+            <strong className="text-foreground">{groupCount} Hochschulgruppen</strong> am besten zu dir passen.
           </p>
+          <div className="flex flex-wrap gap-3">
+            <Badge icon="⏱" text="3 Minuten" />
+            <Badge icon="🔒" text="100% anonym" />
+            <Badge icon="📱" text="Im Browser" />
+          </div>
         </div>
-        <div className="flex flex-col items-center sm:items-end gap-2">
+        <div className="flex flex-col items-center sm:items-end gap-3">
           <Link
             href="/quiz"
-            className="bg-foreground text-primary-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-[#2a3a45] transition-colors"
+            className="bg-foreground text-primary-foreground px-12 py-5 font-heading text-lg uppercase tracking-wider hover:bg-[#2a3a45] transition-colors"
           >
             Quiz starten
           </Link>
-          <span className="text-[11px] text-muted-foreground">~ 10 Min &middot; Anonym &middot; Im Browser</span>
-          <Link href="/demo" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
-            Unsere Demo ansehen →
-          </Link>
+          <span className="text-[11px] text-muted-foreground">Kostenlos · Keine Anmeldung</span>
         </div>
       </div>
 
@@ -210,17 +212,57 @@ function LiveCta({ groupCount }: { groupCount: number }) {
         <h3 className="font-heading text-lg uppercase mb-6">So funktioniert&apos;s</h3>
         <div className="grid gap-6 sm:grid-cols-3">
           <StepItem number={1} title="Fragen beantworten">
-            ~20 kurze Fragen zu deinen Interessen, Werten und deinem Zeitbudget.
+            ~20 kurze Fragen zu deinen Interessen, Werten und deinem Zeitbudget. Ehrlich antworten — es gibt kein Richtig oder Falsch.
           </StepItem>
           <StepItem number={2} title="Matching berechnen">
-            Unser Algorithmus vergleicht dein Profil mit den Profilen aller Hochschulgruppen — komplett im Browser.
+            Unser Algorithmus vergleicht dein Profil mit allen Hochschulgruppen — komplett in deinem Browser. Keine Daten werden an uns gesendet.
           </StepItem>
           <StepItem number={3} title="Gruppen entdecken">
-            Sieh dir deine Top-Empfehlungen mit Kontaktinfos, Logo und Links an.
+            Sieh deine Top-Empfehlungen mit Match-Prozent, Beschreibung und Kontaktinfos. Direkt zur Website oder Instagram.
           </StepItem>
         </div>
       </div>
+
+      {/* Privacy note */}
+      <div className="border-t-4 border-foreground px-6 py-6 sm:px-8">
+        <div className="flex items-start gap-3">
+          <span className="text-lg">🛡️</span>
+          <div>
+            <h4 className="font-semibold text-sm uppercase tracking-wide mb-1">Datenschutz</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-[500px]">
+              Deine Antworten verlassen niemals deinen Browser. Das Matching passiert lokal auf deinem Gerät — kein Login, keine Cookies, keine Speicherung deiner Ergebnisse.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Explore groups link */}
+      <div className="border-t-4 border-foreground px-6 py-6 sm:px-8 grid gap-4 sm:grid-cols-[1fr_auto] sm:items-center bg-accent">
+        <div>
+          <h3 className="font-heading text-base uppercase mb-1">
+            Lieber selbst stöbern?
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Alle {groupCount} Hochschulgruppen im Überblick — filtere nach Kategorie und Interessen.
+          </p>
+        </div>
+        <Link
+          href="/groups"
+          className="border-2 border-foreground px-8 py-3 font-heading text-sm uppercase tracking-wider text-center hover:bg-foreground hover:text-primary-foreground transition-colors"
+        >
+          Alle Gruppen ansehen
+        </Link>
+      </div>
     </div>
+  );
+}
+
+function Badge({ icon, text }: { icon: string; text: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 border border-foreground/20 px-2.5 py-1 text-xs font-medium text-muted-foreground">
+      <span>{icon}</span>
+      {text}
+    </span>
   );
 }
 

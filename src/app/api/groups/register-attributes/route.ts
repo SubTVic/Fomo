@@ -9,7 +9,7 @@ const ATTRIBUTE_KEYS = [
   "career", "tech", "language", "social_impact", "party", "religion",
   "sports", "networking", "arts", "music", "time_low", "hands_on",
   "outdoor", "international", "beginner_friendly", "competitive",
-  "event_frequency", "leadership_opportunities", "group_size",
+  "event_frequency", "leadership_opportunities", "financial_cost", "group_size",
 ] as const;
 
 const SubmitSchema = z.object({
@@ -75,15 +75,32 @@ export async function POST(req: NextRequest) {
     competitive: "competitive",
     event_frequency: "eventFrequency", // String field, handle below
     leadership_opportunities: "leadershipOpportunities",
+    financial_cost: "financialCost",
     group_size: "groupSize", // String field, handle below
   };
 
-  // Boolean attributes
+  // Boolean attributes (all 17 matching attributes)
   const booleanAttrs = [
     "career", "tech", "social_impact", "party", "religion", "sports",
     "networking", "arts", "music", "time_low", "hands_on", "outdoor",
-    "international", "beginner_friendly", "competitive", "leadership_opportunities",
+    "international", "beginner_friendly", "competitive",
+    "leadership_opportunities", "financial_cost",
   ];
+
+  // Categorical attribute mapping (stored as strings, not booleans)
+  const categoricalUpdates: Record<string, string | null> = {};
+  const categoricalMapping: Record<string, { prismaField: string; trueVal: string; falseVal: string | null }> = {
+    language: { prismaField: "language", trueVal: "both", falseVal: "german" },
+    event_frequency: { prismaField: "eventFrequency", trueVal: "high", falseVal: "low" },
+    group_size: { prismaField: "groupSize", trueVal: "large", falseVal: "small" },
+  };
+
+  for (const [attr, mapping] of Object.entries(categoricalMapping)) {
+    const val = confirmedAttributes[attr as keyof typeof confirmedAttributes];
+    if (val !== undefined) {
+      categoricalUpdates[mapping.prismaField] = val === 1 ? mapping.trueVal : mapping.falseVal;
+    }
+  }
 
   for (const attr of booleanAttrs) {
     const prismaField = attrToPrismaField[attr];
@@ -112,6 +129,7 @@ export async function POST(req: NextRequest) {
     where: { id: invite.groupId },
     data: {
       ...booleanUpdates,
+      ...categoricalUpdates,
       confirmedAttributes: JSON.parse(JSON.stringify(confirmedAttributes)),
       registrationStatus: "submitted",
       submittedAt: now,

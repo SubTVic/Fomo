@@ -1,0 +1,12 @@
+node_modules
+.next
+.env
+.env.local
+.env.production
+.git
+test-results
+tests
+playwright-report
+*.md
+!README.md
+CLAUDE-pläne

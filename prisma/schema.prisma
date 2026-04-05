@@ -176,14 +176,19 @@ model SiteConfig {
 // ─── Analytics (anonymous) ───────────────────────────────────────
 
 model QuizSession {
-  id           String    @id @default(cuid())
-  startedAt    DateTime  @default(now())
-  completedAt  DateTime?
-  questionCount Int      @default(0) // How many questions were answered
-  resultCount  Int       @default(0) // How many results were shown
+  id            String    @id @default(cuid())
+  semester      String?   // e.g. "WS26/27" — for semester comparisons
+  startedAt     DateTime  @default(now())
+  completedAt   DateTime?
+  questionCount Int       @default(0) // How many questions were answered
+  resultCount   Int       @default(0) // How many results were shown
+  answers       Json?     // Anonymous: {thesisId: value} snapshot
+  topMatches    Json?     // Anonymous: [{groupId, score}] top results
+  deviceType    String?   // "mobile" | "desktop"
+  abortedAtQ    Int?      // Question number at which user abandoned (null = completed)
   // No personal data, no IP, no user agent
-  // Just aggregate stats for understanding usage
 
+  @@index([semester])
   @@map("quiz_sessions")
 }
 
@@ -200,6 +205,7 @@ model QuizThesis {
   updatedAt  DateTime @updatedAt
 
   attributes QuizThesisAttribute[]
+  versions   QuizThesisVersion[]
 
   @@map("quiz_theses")
 }
@@ -215,6 +221,42 @@ model QuizThesisAttribute {
   @@unique([thesisId, attribute])
   @@index([thesisId])
   @@map("quiz_thesis_attributes")
+}
+
+// ─── Semester-Archiv (Langzeit-Datenerfassung) ───────────────────
+
+model SemesterArchive {
+  id             String   @id @default(cuid())
+  tag            String   @unique // e.g. "WS26/27", "SS27"
+  startDate      DateTime
+  endDate        DateTime
+  thesisSnapshot Json     // Active theses at archival time
+  statistics     Json     // Aggregated quiz stats
+  groupCount     Int
+  sessionCount   Int
+  completionRate Float
+  createdAt      DateTime @default(now())
+
+  @@map("semester_archives")
+}
+
+// ─── Thesen-Versionierung (für Semester-Vergleiche) ──────────────
+
+model QuizThesisVersion {
+  id                String    @id @default(cuid())
+  thesisId          String
+  text              String    @db.Text
+  hint              String?   @db.VarChar(200)
+  attributeMappings Json      // [{attribute, isInverse}]
+  semesterTag       String
+  validFrom         DateTime
+  validUntil        DateTime?
+  createdAt         DateTime  @default(now())
+
+  thesis QuizThesis @relation(fields: [thesisId], references: [id], onDelete: Cascade)
+
+  @@index([thesisId])
+  @@map("quiz_thesis_versions")
 }
 
 // ─── Pilot-Fragebogen (Dimensionen & Fragen) ─────────────────────

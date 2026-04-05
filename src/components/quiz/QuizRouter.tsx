@@ -2,7 +2,7 @@
 // Main quiz orchestrator: welcome → quiz → results
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import type { QuizThesisData, QuizGroupData, QuizVariant } from "@/lib/quiz/types";
 import type { Dimension, PilotQuestion } from "@/lib/pilot-questions";
 import { useSurveyState } from "@/components/survey/useSurveyState";
@@ -29,8 +29,14 @@ interface QuizRouterProps {
   variant: QuizVariant;
 }
 
+function detectDeviceType(): "mobile" | "desktop" {
+  if (typeof window === "undefined") return "desktop";
+  return window.innerWidth < 768 ? "mobile" : "desktop";
+}
+
 export function QuizRouter({ theses, groups, variant }: QuizRouterProps) {
   const [phase, setPhase] = useState<"welcome" | "quiz" | "results">("welcome");
+  const sessionTracked = useRef(false);
 
   // Create synthetic dimension and questions for the variant adapter
   const syntheticDimension: Dimension = {
@@ -49,6 +55,31 @@ export function QuizRouter({ theses, groups, variant }: QuizRouterProps) {
   }));
 
   const surveyState = useSurveyState(syntheticQuestions, [syntheticDimension]);
+
+  // Track abandonment when user leaves during quiz
+  useEffect(() => {
+    if (phase !== "quiz") return;
+    const handleUnload = () => {
+      if (sessionTracked.current) return;
+      const answeredCount = Object.keys(surveyState.state.answers).length;
+      if (answeredCount === 0) return;
+      // Use sendBeacon for reliability during page unload
+      navigator.sendBeacon(
+        "/api/quiz/session",
+        new Blob(
+          [JSON.stringify({
+            questionCount: answeredCount,
+            resultCount: 0,
+            deviceType: detectDeviceType(),
+            abortedAtQ: answeredCount,
+          })],
+          { type: "application/json" },
+        ),
+      );
+    };
+    window.addEventListener("beforeunload", handleUnload);
+    return () => window.removeEventListener("beforeunload", handleUnload);
+  }, [phase, surveyState.state.answers]);
 
   const handleBlockComplete = useCallback(() => {
     setPhase("results");
@@ -116,6 +147,27 @@ export function QuizRouter({ theses, groups, variant }: QuizRouterProps) {
     }
 
     const results = computeQuizMatches(surveyState.state.answers, theses, groups);
+
+    // Track session anonymously (fire once)
+    if (!sessionTracked.current) {
+      sessionTracked.current = true;
+      const topMatches = results.slice(0, 5).map((r) => ({
+        groupId: r.group.id,
+        score: r.score,
+      }));
+      fetch("/api/quiz/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          answers: surveyState.state.answers,
+          topMatches,
+          questionCount: surveyState.totalAnswered,
+          resultCount: results.length,
+          deviceType: detectDeviceType(),
+        }),
+      }).catch(() => {}); // Silent fail — analytics should never block UX
+    }
+
     return (
       <QuizResults
         results={results}

@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# Local development: only run the database, not the app container.
+# This file is automatically loaded by `docker compose up` when present.
+# For production, rename or delete this file.
+
+services:
+  app:
+    profiles: ["production"]
+  backup:
+    profiles: ["production"]

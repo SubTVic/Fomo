@@ -5,10 +5,10 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     environment:
       POSTGRES_USER: fomo
-      POSTGRES_PASSWORD: fomo_dev
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-fomo_dev}
       POSTGRES_DB: fomo
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -17,20 +17,61 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-  # Production container (uncomment when ready for deployment)
-  # app:
-  #   build: .
-  #   restart: unless-stopped
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     DATABASE_URL: postgresql://fomo:fomo_dev@db:5432/fomo
-  #     NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-  #     NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: postgresql://fomo:${DB_PASSWORD:-fomo_dev}@db:5432/fomo
+      DIRECT_URL: postgresql://fomo:${DB_PASSWORD:-fomo_dev}@db:5432/fomo
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      APP_MODE: ${APP_MODE:-live}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    depends_on:
+      - db
+    volumes:
+      - ./backups:/backups
+    entrypoint: /bin/sh
+    command: >
+      -c 'while true; do
+        echo "[$(date)] Starting backup...";
+        pg_dump -h db -U fomo fomo | gzip > /backups/fomo_$$(date +%Y%m%d_%H%M).sql.gz;
+        echo "[$(date)] Backup complete.";
+        find /backups -name "*.sql.gz" -mtime +30 -delete;
+        sleep 86400;
+      done'
+    environment:
+      PGPASSWORD: ${DB_PASSWORD:-fomo_dev}
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
 
 volumes:
   pgdata:

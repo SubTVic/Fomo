@@ -2,6 +2,7 @@
 // Admin API: update and delete a quiz thesis
 
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { z } from "zod";
@@ -25,7 +26,10 @@ export async function PUT(
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  const existing = await db.quizThesis.findUnique({ where: { id } });
+  const existing = await db.quizThesis.findUnique({
+    where: { id },
+    include: { attributes: true },
+  });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   let body: unknown;
@@ -39,6 +43,28 @@ export async function PUT(
   }
 
   const { attributes, ...data } = parsed.data;
+
+  // Create a version snapshot of the current state before updating
+  let semesterTag = "unknown";
+  try {
+    const config = await db.siteConfig.findUnique({ where: { key: "current_semester" } });
+    if (config?.value) semesterTag = config.value;
+  } catch { /* SiteConfig may not exist */ }
+
+  await db.quizThesisVersion.create({
+    data: {
+      thesisId: existing.id,
+      text: existing.text,
+      hint: existing.hint,
+      attributeMappings: existing.attributes.map((a) => ({
+        attribute: a.attribute,
+        isInverse: a.isInverse,
+      })),
+      semesterTag,
+      validFrom: existing.updatedAt,
+      validUntil: new Date(),
+    },
+  });
 
   const thesis = await db.quizThesis.update({
     where: { id },
@@ -59,6 +85,7 @@ export async function PUT(
     include: { attributes: true },
   });
 
+  revalidatePath("/quiz");
   return NextResponse.json({ ok: true, thesis });
 }
 
@@ -75,5 +102,6 @@ export async function DELETE(
 
   await db.quizThesis.delete({ where: { id } });
 
+  revalidatePath("/quiz");
   return NextResponse.json({ ok: true });
 }

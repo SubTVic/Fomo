@@ -11,6 +11,20 @@ const loginSchema = z.object({
   password: z.string().min(8),
 });
 
+// TODO: Shibboleth/SAML SSO (Phase 2)
+// After ZIH provides IdP metadata, add a custom SAML provider:
+//
+// import { customSAMLProvider } from "./auth-saml";
+// Add to providers array: customSAMLProvider({
+//   issuer: process.env.SSO_ISSUER!,
+//   callbackUrl: process.env.SSO_CALLBACK_URL!,
+//   entryPoint: process.env.SSO_ENTRY_POINT!,
+//   cert: process.env.SSO_CERT!,
+// })
+//
+// The Admin model already has ssoId: String? @unique for SSO linking.
+// On first SSO login: match by email, set ssoId. Subsequent logins: match by ssoId.
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({

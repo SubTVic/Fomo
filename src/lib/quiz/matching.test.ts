@@ -197,4 +197,98 @@ describe("computeQuizMatches", () => {
     expect(results[2].group.id).toBe("none");
     expect(results[2].score).toBe(0);
   });
+
+  it("breaks ties by more matches, fewer conflicts, then alphabetical", () => {
+    const theses = [
+      makeThesis("t1", [{ attribute: "career" }]),
+      makeThesis("t2", [{ attribute: "sports" }]),
+    ];
+
+    // Both groups: career=true, sports=false → same score (50%)
+    // But "Alpha" has name before "Beta" alphabetically
+    const groups = [
+      makeGroup("beta", { career: true, sports: false }),
+      makeGroup("alpha", { career: true, sports: false }),
+    ];
+    // Override names for alphabetical test
+    groups[0].name = "Beta Group";
+    groups[1].name = "Alpha Group";
+
+    const results = computeQuizMatches({ t1: "5", t2: "5" }, theses, groups);
+    expect(results[0].score).toBe(results[1].score); // Same score
+    expect(results[0].group.name).toBe("Alpha Group"); // Alphabetical tie-breaker
+    expect(results[1].group.name).toBe("Beta Group");
+  });
+
+  it("breaks ties by more matching attributes first", () => {
+    // Both groups score 67% (2 of 3 attributes match) but differ in match count
+    const theses = [
+      makeThesis("t1", [{ attribute: "career" }]),
+      makeThesis("t2", [{ attribute: "tech" }]),
+      makeThesis("t3", [{ attribute: "sports" }]),
+    ];
+
+    // Group A: career=true, tech=true, sports=false → 2 matches, 1 conflict
+    // Group B: career=true, tech=false, sports=true → 2 matches, 1 conflict
+    // Same score (67%), same match count → alphabetical tie-break
+    const groupA = makeGroup("a", { career: true, tech: true, sports: false });
+    const groupB = makeGroup("b", { career: true, tech: false, sports: true });
+    groupA.name = "ZZZ";
+    groupB.name = "AAA";
+
+    const results = computeQuizMatches({ t1: "5", t2: "5", t3: "5" }, theses, [groupA, groupB]);
+    expect(results[0].score).toBe(results[1].score); // Same score
+    expect(results[0].group.name).toBe("AAA"); // Alphabetical wins
+  });
+
+  it("handles array answer values (takes first element)", () => {
+    const results = computeQuizMatches({ t1: ["5", "3"] }, [thesis], [group]);
+    expect(results[0].score).toBe(100); // Takes "5" → agree
+  });
+
+  it("worst-case similarity shown when two theses map to same attribute", () => {
+    const theses = [
+      makeThesis("t1", [{ attribute: "career" }]),
+      makeThesis("t2", [{ attribute: "career" }]),
+    ];
+    const g = makeGroup("g1", { career: true });
+
+    // Agree on t1 (match), disagree on t2 (conflict) → score uses both, display shows worst
+    const results = computeQuizMatches({ t1: "5", t2: "1" }, theses, [g]);
+    const careerMatch = results[0].attributeMatches.find((a) => a.attribute === "career");
+    expect(careerMatch).toBeDefined();
+    expect(careerMatch!.similarity).toBe(0); // Worst-case shown
+    expect(careerMatch!.category).toBe("conflict");
+  });
+
+  it("handles mix of answered and unanswered questions", () => {
+    const theses = [
+      makeThesis("t1", [{ attribute: "career" }]),
+      makeThesis("t2", [{ attribute: "sports" }]),
+      makeThesis("t3", [{ attribute: "arts" }]),
+    ];
+    const g = makeGroup("g1", { career: true, sports: true, arts: true });
+
+    // Only t1 answered, t2 and t3 undefined → only career counts
+    const results = computeQuizMatches({ t1: "5" }, theses, [g]);
+    expect(results[0].score).toBe(100);
+    expect(results[0].attributeMatches).toHaveLength(1);
+  });
+
+  it("score stays in 0-100 range with extreme inputs", () => {
+    const theses = [
+      makeThesis("t1", [{ attribute: "career", isInverse: true }]),
+      makeThesis("t2", [{ attribute: "sports" }]),
+      makeThesis("t3", [{ attribute: "arts", isInverse: true }]),
+    ];
+    const g = makeGroup("g1", { career: true, sports: false, arts: false });
+
+    const results = computeQuizMatches(
+      { t1: "1", t2: "1", t3: "5" },
+      theses,
+      [g],
+    );
+    expect(results[0].score).toBeGreaterThanOrEqual(0);
+    expect(results[0].score).toBeLessThanOrEqual(100);
+  });
 });

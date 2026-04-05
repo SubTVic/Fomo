@@ -3,25 +3,21 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import dynamic from "next/dynamic";
 import type { QuizThesisData, QuizGroupData, QuizVariant } from "@/lib/quiz/types";
-import type { Dimension, PilotQuestion } from "@/lib/pilot-questions";
+import type { SurveyDimension, SurveyQuestion } from "@/components/variants/types";
 import { useSurveyState } from "@/components/survey/useSurveyState";
 import { computeQuizMatches } from "@/lib/quiz/matching";
 import { QuizWelcome } from "./QuizWelcome";
 import { QuizResults } from "./results/QuizResults";
 
-// Variant components
-import { ScrollSurvey } from "@/components/variants/scroll/ScrollSurvey";
-import { ClassicSurvey } from "@/components/variants/classic/ClassicSurvey";
-import { SwipeSurvey } from "@/components/variants/swipe/SwipeSurvey";
-import { ChatSurvey } from "@/components/variants/chat/ChatSurvey";
-
+// Lazy-load variant components — only the selected variant is loaded
 const VARIANT_MAP = {
-  classic: ClassicSurvey,
-  scroll: ScrollSurvey,
-  swipe: SwipeSurvey,
-  chat: ChatSurvey,
-} as const;
+  classic: dynamic(() => import("@/components/variants/classic/ClassicSurvey").then((m) => m.ClassicSurvey), { ssr: false }),
+  scroll: dynamic(() => import("@/components/variants/scroll/ScrollSurvey").then((m) => m.ScrollSurvey), { ssr: false }),
+  swipe: dynamic(() => import("@/components/variants/swipe/SwipeSurvey").then((m) => m.SwipeSurvey), { ssr: false }),
+  chat: dynamic(() => import("@/components/variants/chat/ChatSurvey").then((m) => m.ChatSurvey), { ssr: false }),
+};
 
 interface QuizRouterProps {
   theses: QuizThesisData[];
@@ -39,15 +35,14 @@ export function QuizRouter({ theses, groups, variant }: QuizRouterProps) {
   const sessionTracked = useRef(false);
 
   // Create synthetic dimension and questions for the variant adapter
-  const syntheticDimension: Dimension = {
+  const syntheticDimension: SurveyDimension = {
     id: "quiz",
     label: "Quiz",
     emoji: "🎯",
     description: "Finde passende Hochschulgruppen",
-    blockIndex: 0,
   };
 
-  const syntheticQuestions: PilotQuestion[] = theses.map((t) => ({
+  const syntheticQuestions: SurveyQuestion[] = theses.map((t) => ({
     id: t.id,
     dimensionId: "quiz",
     text: t.text,
@@ -165,7 +160,7 @@ export function QuizRouter({ theses, groups, variant }: QuizRouterProps) {
           resultCount: results.length,
           deviceType: detectDeviceType(),
         }),
-      }).catch(() => {}); // Silent fail — analytics should never block UX
+      }).catch((err) => console.error("[quiz-analytics]", err));
     }
 
     return (

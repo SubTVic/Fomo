@@ -4,6 +4,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { RegistrationStatus } from "@prisma/client";
+import { isRateLimited, getClientKey } from "@/lib/rate-limit";
 
 const ATTRIBUTE_KEYS = [
   "career", "tech", "language", "social_impact", "party", "religion",
@@ -20,6 +22,11 @@ const SubmitSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const clientKey = getClientKey(req.headers);
+  if (isRateLimited(`register-attrs:${clientKey}`, 10, 60_000)) {
+    return NextResponse.json({ error: "Zu viele Anfragen. Bitte warte kurz." }, { status: 429 });
+  }
+
   let body: unknown;
   try {
     body = await req.json();
@@ -111,33 +118,44 @@ export async function POST(req: NextRequest) {
 
   const now = new Date();
 
-  // M2 fix: atomically claim the token — updateMany with usedAt: null ensures
-  // only one concurrent request can succeed (second gets count=0 → 409).
-  const claimed = await db.groupInvite.updateMany({
-    where: { id: invite.id, usedAt: null },
-    data: { usedAt: now },
-  });
+  // Atomically claim the token AND update group in a single transaction.
+  // Prevents partial state where invite is claimed but attributes not saved.
+  try {
+    await db.$transaction(async (tx) => {
+      // M2 fix: updateMany with usedAt: null ensures only one concurrent
+      // request can succeed (second gets count=0 → abort).
+      const claimed = await tx.groupInvite.updateMany({
+        where: { id: invite.id, usedAt: null },
+        data: { usedAt: now },
+      });
 
-  if (claimed.count === 0) {
-    return NextResponse.json(
-      { error: "Dieser Einladungslink wurde bereits verwendet." },
-      { status: 409 },
-    );
+      if (claimed.count === 0) {
+        throw new Error("ALREADY_CLAIMED");
+      }
+
+      await tx.group.update({
+        where: { id: invite.groupId },
+        data: {
+          ...booleanUpdates,
+          ...categoricalUpdates,
+          confirmedAttributes: confirmedAttributes,
+          registrationStatus: RegistrationStatus.SUBMITTED,
+          submittedAt: now,
+          isVerified: false,
+          ...(shortDescription ? { shortDescription } : {}),
+          ...(websiteUrl ? { websiteUrl } : {}),
+        },
+      });
+    });
+  } catch (err) {
+    if (err instanceof Error && err.message === "ALREADY_CLAIMED") {
+      return NextResponse.json(
+        { error: "Dieser Einladungslink wurde bereits verwendet." },
+        { status: 409 },
+      );
+    }
+    throw err;
   }
-
-  await db.group.update({
-    where: { id: invite.groupId },
-    data: {
-      ...booleanUpdates,
-      ...categoricalUpdates,
-      confirmedAttributes: JSON.parse(JSON.stringify(confirmedAttributes)),
-      registrationStatus: "submitted",
-      submittedAt: now,
-      isVerified: false,
-      ...(shortDescription ? { shortDescription } : {}),
-      ...(websiteUrl ? { websiteUrl } : {}),
-    },
-  });
 
   return NextResponse.json({ success: true });
 }

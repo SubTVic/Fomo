@@ -3,7 +3,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
+import { Prisma, RegistrationStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import crypto from "crypto";
@@ -42,20 +42,30 @@ export async function POST(req: NextRequest) {
   const results = [];
   const errors: { groupId: string; error: string }[] = [];
 
-  for (const invite of parsed.data.invites) {
+  // Prepare all invite data upfront to batch DB operations
+  const inviteData = parsed.data.invites.map((invite) => {
     const token = crypto.randomBytes(16).toString("hex"); // 32 chars
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + invite.expiresInDays);
+    return { ...invite, token, expiresAt };
+  });
 
-    let created;
+  // Create invites individually (needed for FK error handling per invite)
+  for (const invite of inviteData) {
     try {
-      created = await db.groupInvite.create({
+      await db.groupInvite.create({
         data: {
-          token,
+          token: invite.token,
           groupId: invite.groupId,
           email: invite.email,
-          expiresAt,
+          expiresAt: invite.expiresAt,
         },
+      });
+      results.push({
+        groupId: invite.groupId,
+        email: invite.email,
+        token: invite.token,
+        expiresAt: invite.expiresAt.toISOString(),
       });
     } catch (err) {
       // M5: catch foreign key violation (group doesn't exist)
@@ -65,21 +75,18 @@ export async function POST(req: NextRequest) {
       }
       throw err;
     }
+  }
 
-    // H1 fix: only advance to "invited" if not already submitted or verified
+  // H1 fix: batch-update registration status — only advance to "invited"
+  // if not already submitted or verified. Single query instead of N queries.
+  const successGroupIds = results.map((r) => r.groupId);
+  if (successGroupIds.length > 0) {
     await db.group.updateMany({
       where: {
-        id: invite.groupId,
-        registrationStatus: { notIn: ["submitted", "verified"] },
+        id: { in: successGroupIds },
+        registrationStatus: { notIn: [RegistrationStatus.SUBMITTED, RegistrationStatus.VERIFIED] },
       },
-      data: { registrationStatus: "invited" },
-    });
-
-    results.push({
-      groupId: invite.groupId,
-      email: invite.email,
-      token: created.token,
-      expiresAt: created.expiresAt.toISOString(),
+      data: { registrationStatus: RegistrationStatus.INVITED },
     });
   }
 

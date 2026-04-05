@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { z } from "zod";
+import { slugify } from "@/lib/utils";
 
 const createGroupSchema = z.object({
   name: z.string().min(1).max(200),
@@ -13,17 +14,6 @@ const createGroupSchema = z.object({
   contactEmail: z.string().email().optional().or(z.literal("")),
   websiteUrl: z.string().url().optional().or(z.literal("")),
 });
-
-function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/ä/g, "ae")
-    .replace(/ö/g, "oe")
-    .replace(/ü/g, "ue")
-    .replace(/ß/g, "ss")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
 
 export async function POST(req: NextRequest) {
   const session = await auth();

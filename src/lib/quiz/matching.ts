@@ -27,14 +27,29 @@ export function computeQuizMatches(
 ): QuizMatchResult[] {
   return groups
     .map((group) => computeSingleMatch(answers, theses, group))
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => {
+      // Primary: higher score first
+      if (b.score !== a.score) return b.score - a.score;
+      // Tie-breaker 1: more matching attributes
+      const aMatches = a.attributeMatches.filter((m) => m.category === "match").length;
+      const bMatches = b.attributeMatches.filter((m) => m.category === "match").length;
+      if (bMatches !== aMatches) return bMatches - aMatches;
+      // Tie-breaker 2: fewer conflicts
+      const aConflicts = a.attributeMatches.filter((m) => m.category === "conflict").length;
+      const bConflicts = b.attributeMatches.filter((m) => m.category === "conflict").length;
+      if (aConflicts !== bConflicts) return aConflicts - bConflicts;
+      // Tie-breaker 3: alphabetical
+      return a.group.name.localeCompare(b.group.name, "de");
+    });
 }
+
+const VALID_ANSWERS = new Set([1, 3, 5]);
 
 function normalizeAnswer(raw: string | string[] | undefined): number | null {
   if (raw === undefined || raw === "0") return null;
   const val = typeof raw === "string" ? raw : raw[0];
   const num = parseInt(val, 10);
-  if (isNaN(num)) return null;
+  if (!VALID_ANSWERS.has(num)) return null;
   // Map 1→0.0, 3→0.5, 5→1.0
   return (num - 1) / 4;
 }
@@ -67,7 +82,7 @@ function computeSingleMatch(
       weightSum += weight;
       scoreSum += weight * similarity;
 
-      // Track per-attribute match (first thesis wins for display)
+      // Track per-attribute match — use worst-case similarity if multiple theses map to the same attribute
       if (!seenAttributes.has(mapping.attribute)) {
         seenAttributes.add(mapping.attribute);
         attributeMatches.push({
@@ -78,6 +93,13 @@ function computeSingleMatch(
           similarity,
           category: similarity >= 0.75 ? "match" : similarity <= 0.25 ? "conflict" : "partial",
         });
+      } else {
+        const existing = attributeMatches.find((a) => a.attribute === mapping.attribute);
+        if (existing && similarity < existing.similarity) {
+          existing.similarity = similarity;
+          existing.userAgrees = effectiveUser >= 0.5;
+          existing.category = similarity >= 0.75 ? "match" : similarity <= 0.25 ? "conflict" : "partial";
+        }
       }
     }
   }

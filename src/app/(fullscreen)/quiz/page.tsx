@@ -3,8 +3,7 @@
 import { getActiveQuizTheses, getQuizGroups, getQuizVariant } from "@/lib/queries/quiz";
 import { QuizRouter } from "@/components/quiz/QuizRouter";
 
-// Revalidate every hour — theses and group data change rarely
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export default async function QuizPage() {
   const [theses, groups, variant] = await Promise.all([

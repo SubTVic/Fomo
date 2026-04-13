@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { getPilotDimensionsWithQuestions, getStandaloneQuestions } from "@/lib/queries/pilot";
 import { DimensionManager } from "./DimensionManager";

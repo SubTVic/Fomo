@@ -352,6 +352,14 @@ export function PilotDashboardClient({ stats, recentSessions, feedback }: Props)
             labels={VARIANT_LABELS}
           />
         </div>
+        {Object.keys(demographics.hsgCounts).length > 0 && (
+          <div className="border-t-2 border-foreground px-6 pb-6 pt-4">
+            <p className="mb-3 text-sm text-muted-foreground">
+              Hochschulgruppen-Mitglieder ({Object.values(demographics.hsgCounts).reduce((a, b) => a + b, 0)} Nennungen)
+            </p>
+            <HsgCountTable data={demographics.hsgCounts} />
+          </div>
+        )}
       </details>
 
       {/* ── Dimension Overview ─────────────────────────────────── */}
@@ -871,6 +879,28 @@ function ItemRow({
         </tr>
       )}
     </>
+  );
+}
+
+function HsgCountTable({ data }: { data: Record<string, number> }) {
+  const sorted = Object.entries(data).sort(([, a], [, b]) => b - a);
+  const max = sorted[0]?.[1] ?? 1;
+
+  return (
+    <div className="grid gap-1">
+      {sorted.map(([name, count]) => (
+        <div key={name} className="flex items-center gap-2 text-sm">
+          <span className="w-40 shrink-0 truncate text-xs" title={name}>{name}</span>
+          <div className="flex-1 h-4 bg-muted border border-foreground/20">
+            <div
+              className="h-full bg-foreground/70 transition-all"
+              style={{ width: `${(count / max) * 100}%` }}
+            />
+          </div>
+          <span className="w-6 text-right tabular-nums text-xs">{count}</span>
+        </div>
+      ))}
+    </div>
   );
 }
 

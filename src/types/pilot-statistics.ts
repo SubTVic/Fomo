@@ -16,6 +16,7 @@ export interface PilotStatisticsResponse {
     semester: Record<string, number>;
     membership: Record<string, number>;
     preferredVariant: Record<string, number>;
+    hsgCounts: Record<string, number>;
   };
 
   items: ItemStats[];

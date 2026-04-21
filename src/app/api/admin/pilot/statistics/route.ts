@@ -37,6 +37,7 @@ export async function computePilotStatistics(filter?: StatsFilter): Promise<Pilo
         completedAt: true,
         semester: true,
         isMember: true,
+        groupNames: true,
         preferredVariant: true,
         _count: { select: { answers: true } },
       },
@@ -87,10 +88,17 @@ export async function computePilotStatistics(filter?: StatsFilter): Promise<Pilo
   const membership: Record<string, number> = {};
   const preferredVariant: Record<string, number> = {};
 
+  const hsgCounts: Record<string, number> = {};
+
   for (const s of allCompleted) {
     if (s.semester) semester[s.semester] = (semester[s.semester] ?? 0) + 1;
     if (s.isMember) membership[s.isMember] = (membership[s.isMember] ?? 0) + 1;
     if (s.preferredVariant) preferredVariant[s.preferredVariant] = (preferredVariant[s.preferredVariant] ?? 0) + 1;
+    if (s.groupNames) {
+      for (const name of s.groupNames.split(",").map((n) => n.trim()).filter(Boolean)) {
+        hsgCounts[name] = (hsgCounts[name] ?? 0) + 1;
+      }
+    }
   }
 
   // ── Statistical Analysis ────────────────────────────────────
@@ -125,7 +133,7 @@ export async function computePilotStatistics(filter?: StatsFilter): Promise<Pilo
       avgDurationMinutes: Math.round(avgDurationMinutes * 10) / 10,
       avgQuestionsAnswered: Math.round(avgQuestionsAnswered),
     },
-    demographics: { semester, membership, preferredVariant },
+    demographics: { semester, membership, preferredVariant, hsgCounts },
     items,
     dimensions: dimensionStats,
     redundancies,

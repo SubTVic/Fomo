@@ -10,27 +10,31 @@ Das Projekt wird vom StuRa TU Dresden finanziert (3.000€) und soll im Septembe
 
 ## Phasen-Überblick
 
-### Phase 1: Pilot-Umfrage (✅ abgeschlossen – März 2026)
+### Phase 1: Pilot-Umfrage (✅ abgeschlossen – Mai 2026)
 
-**Ziel:** 60 Kandidaten-Fragen an Studierenden testen, statistisch die besten ~20 identifizieren.
-**Was gebaut wird:** Landing Page, 4 Quiz-Varianten (scroll, classic, swipe, chat), Admin-Dashboard mit Statistiken, CSV-Export.
-**Warum 4 Varianten:** Wir wissen nicht welches UI-Erlebnis die höchste Abschlussrate hat. Die Varianten sind ein A/B-Test – am Ende gewinnt eine.
-**Warum Priming:** Ohne Kontextrahmen beantworten Leute die Fragen aus allgemeiner Perspektive statt aus Hochschulgruppen-Sicht. Das verzerrt die statistische Auswertung.
+**Ergebnis:** 67 Sessions, Classic-Variante gewinnt (45%), Working Set v1.1 eingefroren (17 Items).
+
+**Was gebaut wurde:** Landing Page, 4 Quiz-Varianten (scroll, classic, swipe, chat), Admin-Dashboard mit Statistiken, CSV-Export.
 
 ### Phase 2: Hochschulgruppen-Registrierung (April/Mai 2026)
-**Ziel:** Die ~83 Gruppen bestätigen/korrigieren ihre 20 binären Attribute auf einer Checkliste.
+
+**Ziel:** Die ~83 Gruppen bestätigen/korrigieren ihre 17 binären Attribute auf einer Checkliste.
+
 **Was gebaut wird:** Token-basierte Einladungslinks, Attribut-Checkliste (vom Scraper vorausgefüllt), Admin-Verifizierung.
+
 **Wichtig:** Die Gruppen werden auf Attribut-Ebene eingeordnet, nicht auf Fragen-Ebene. Die Studierenden-Fragen können sich ändern ohne dass die Gruppen nochmal ran müssen.
 
 ### Phase 3: Matching & Ergebnisse (Mai–Juli 2026)
+
 **Ziel:** Studenten-Antworten mit Gruppen-Profilen matchen, Empfehlungen anzeigen.
-**Was gebaut wird:** Matching-Algorithmus (client-side), Ergebnisseite mit Top 5-10 Gruppen.
-**Client-side Matching:** Der Algorithmus läuft komplett im Browser. Keine Nutzerdaten werden an den Server geschickt. Das ist ein bewusstes Design-Prinzip für DSGVO-Konformität und Vertrauen.
-**Gamification-Potenzial:** Die Ergebnisseite ist der Ort wo Gamification am meisten bringt – Reveal-Animationen, Share-Funktion, "Dein Profil"-Radar-Chart, Badge-System ("Du bist ein Teamplayer!"). Das kommt aber erst wenn die Basis steht.
+
+**Was gebaut wird:** Matching-Algorithmus (client-side, läuft im Browser), Ergebnisseite mit Top 5-10 Gruppen.
+
+**Client-side Matching:** Keine Nutzerdaten werden an den Server geschickt — DSGVO-konform by design.
 
 ### Phase 4: Launch (August/September 2026)
+
 **Ziel:** APP_MODE=live umschalten, Gewinner-Variante als Default, StuRa-Abnahme.
-**Was gebaut wird:** Finales Polishing, Deployment auf Uni-Server, Monitoring.
 
 ## Tech-Stack
 
@@ -38,7 +42,7 @@ Das Projekt wird vom StuRa TU Dresden finanziert (3.000€) und soll im Septembe
 - **Styling:** Tailwind CSS + shadcn/ui
 - **Datenbank:** PostgreSQL 16 (lokal Docker, Production Vercel Postgres)
 - **ORM:** Prisma
-- **Auth:** Auth.js (NextAuth v5) – Phase 1: Credentials, Phase 2: SAML/SSO
+- **Auth:** Auth.js (NextAuth v5) – Credentials, Phase 4: SAML/SSO
 - **Deployment:** Vercel (Pilot/Collect), später Uni-Server (Docker)
 - **Testing:** Vitest + Playwright
 - **Lizenz:** AGPL-3.0
@@ -48,33 +52,26 @@ Das Projekt wird vom StuRa TU Dresden finanziert (3.000€) und soll im Septembe
 1. **Mobile-first:** 80% der Nutzer sind auf dem Handy. Jede Seite muss auf 375px gut aussehen.
 2. **Client-side Matching:** Fragen + Gruppenprofile werden einmal geladen, Matching im Browser. Keine Nutzerdaten an den Server.
 3. **Kein localStorage/sessionStorage:** Kann SecurityError in Sandbox-Umgebungen werfen. State nur über React State oder URL-Parameter.
-4. **Varianten-System:** UI-Logik ist komplett getrennt von Business-Logik. Alle Varianten teilen sich denselben useSurveyState-Hook. So kann eine Variante gelöscht werden ohne die andere zu beeinflussen.
-5. **APP_MODE:** Umgebungsvariable steuert was die App zeigt (pilot/collect/live). Kein Code-Umbau nötig beim Phasenwechsel.
-6. **Seed-Daten auf Deutsch:** Die App ist für TU Dresden, alle UI-Texte und Daten auf Deutsch.
-7. **SPDX-Header:** Jede Quellcode-Datei braucht `// SPDX-License-Identifier: AGPL-3.0-only`.
+4. **APP_MODE:** Umgebungsvariable steuert was die App zeigt (pilot/collect/live). Kein Code-Umbau nötig beim Phasenwechsel.
+5. **Seed-Daten auf Deutsch:** Die App ist für TU Dresden, alle UI-Texte und Daten auf Deutsch.
+6. **SPDX-Header:** Jede Quellcode-Datei braucht `// SPDX-License-Identifier: AGPL-3.0-only`.
 
 ## Design-Philosophie
 
 **Das Quiz soll sich anfühlen wie eine App, nicht wie eine Umfrage.**
 
 Die Zielgruppe nutzt TikTok, Instagram, Tinder. Sie erwarten:
+
 - Sofortige Reaktion auf Input (keine Ladezeiten, keine Seitenreloads)
 - Animationen und Micro-Interactions (Buttons die reagieren, Karten die sliden)
 - Visuelles Feedback (Fortschrittsbalken, Farben die sich ändern, Emojis)
 - Kurze Texte, große Touch-Targets, ein Gedanke pro Screen
 
-**Aber:** Die Umfrage muss trotzdem statistisch valide sein. Das heißt:
-- Priming-Screen der den Kontext "Hochschulgruppen" setzt
-- Dimensions-Header die den Kontext in jedem Block auffrischen
-- Mid-Survey Reminder bei der Halbzeit
-- Priming-Check am Ende (hat die Person wirklich an Hochschulgruppen gedacht?)
-- Keine Suggestivfragen, keine sozialen Erwünschtheitseffekte
-
 Spaß und Wissenschaftlichkeit sind kein Widerspruch – das ist die zentrale Designaufgabe.
 
 ## Farbschema & Typografie (Light Blue Theme)
 
-```
+```text
 Fonts:
   Headlines:      'Archivo Black', sans-serif
   Body:           'Lexend', wght 300–700
@@ -93,36 +90,33 @@ Farben:
   Placeholder bg: linear-gradient(135deg, #e8f4f8, #d4eaf0)
 ```
 
-Stilistik: Brutalist-Poster-Ästhetik mit dicken Borders (4px solid #1a2a35), Uppercase-Headlines, klarem Grid-Layout. Die Landing Page sieht aus wie ein gestaltetes Plakat.
+Stilistik: Brutalist-Poster-Ästhetik mit dicken Borders (4px solid #1a2a35), Uppercase-Headlines, klarem Grid-Layout.
 
 ## Matching-Algorithmus
 
+```text
+score(User, Group) = Σ effWeight_i × similarity_i / Σ effWeight_i
+
+effWeight_i  = userWeight_i × attrWeight_attr × (1 / itemCount_attr)
+
+userWeight:  |normalized - 0.5| × 2  (Neutral = 0, wird ignoriert)
+attrWeight:  2 × min(yes, no) / n    (50/50-Split = 1.0, alle gleich = 0.0)
+itemCount:   Anzahl Items auf dieses Attribut (verhindert Mehrfachzählung)
+Similarity:  1 - |userValue - groupAttribute|  (mit Inverse-Support)
+Minimum:     ≥ 5 nicht-neutrale Antworten, sonst keine Ergebnisse
 ```
-score(User, Group) = Σ weight_i × similarity_i / Σ weight_i
 
-Antwort-Mapping:  Zustimmung → 1.0, Neutral → 0.5, Ablehnung → 0.0
-Gewicht:          weight = |normalized - 0.5| × 2  (Neutral = 0, wird ignoriert)
-Similarity:       1 - |userValue - groupAttribute|  (mit Inverse-Support)
-Minimum:          ≥ 5 nicht-neutrale Antworten, sonst keine Ergebnisse
-
-Ergebnis: Alle Gruppen, normalisiert auf 0-100%, sortiert absteigend
-```
-
-Alles client-side — keine Nutzerdaten an den Server. Details in `CLAUDE-pläne/LIVE-QUIZ-PLAN.md`.
+Alles client-side — keine Nutzerdaten an den Server. Implementierung: `src/lib/quiz/matching.ts`.
 
 ## Gamification-Backlog (NICHT JETZT BAUEN – aber architektonisch vorbereiten)
 
 Diese Features kommen nach dem Pilot, wenn die Basis steht und wir Daten haben:
 
 - **Ergebnis-Reveal:** Karten werden einzeln aufgedeckt mit Countdown/Animation
-- **Persönlichkeits-Profil:** Radar-Chart mit den 10 Dimensionen ("Du bist ein kreativer Teamplayer!")
+- **Persönlichkeits-Profil:** Radar-Chart ("Du bist ein kreativer Teamplayer!")
 - **Badges:** "Der Entdecker" (viele internationale Gruppen), "Der Macher" (hands-on), etc.
 - **Share-Cards:** Generierte Bilder für Instagram Stories ("Mein FOMO-Ergebnis")
-- **Streak/Progress:** "Du hast 10/20 Fragen geschafft!" mit Konfetti-Animation
-- **Sound-Effects:** Subtile Sounds bei Swipe/Klick (optional, default aus)
 - **Leaderboard:** "X Erstis haben heute FOMO gemacht" als Social Proof
-
-**Architektonische Vorbereitung:** Die Ergebnisseite sollte so gebaut werden, dass MatchResult-Objekte leicht um zusätzliche Daten ergänzt werden können (Badges, Dimension-Scores für Radar-Chart, etc.). Die Share-Funktion sollte einen Hook haben, in den später Bild-Generierung eingehängt werden kann.
 
 ## Coding-Konventionen
 
@@ -135,16 +129,15 @@ Diese Features kommen nach dem Pilot, wenn die Basis steht und wir Daten haben:
 
 ## Aktive Plan-Dateien
 
-Diese Dateien im Repo enthalten detaillierte Implementierungspläne:
-
 | Datei | Inhalt | Status |
-|-------|--------|--------|
-| ACTION-PLAN.md | Bugs + Tech Debt (1.1, 2.1, 3.2, 3.4 erledigt; 1.2, 2.2, 2.3, 3.1, 3.3 offen) | Teilweise erledigt |
-| VARIANT-SYSTEM-PLAN.md | 4 Layout-Varianten (scroll/classic/swipe/chat), useSurveyState-Hook | ✅ Implementiert — Referenz |
-| LIVE-QUIZ-PLAN.md | Live-Quiz: 20 Thesen, Matching, Ergebnisseite, Hint-System | Aktiv – Phase 3 |
-| GROUPS-SURVEY-PLAN.md | Hochschulgruppen-Registrierung: Token-Flow, 20 Attribute, Checkliste | Aktiv – Phase 2 (April/Mai 2026) |
-| prompt-architecture-review.md | Architektur-Analyse: Datenfluss, State-Management, Varianten-Kopplung | Referenz |
-| prompt-bug-audit.md | Sicherheits-/Korrektheits-Audit-Checkliste für alle API-Routen | TODO – nach Implementierung |
-| prompt-check-inverse-items.md | Testanleitung für inverse Items (isInverse-Flag) | TODO – für Pilot-Testing |
+| --- | --- | --- |
+| FOMO-Algorithmus-Fixes-Plan.md | Algorithmus-Fixes, Working Set v2, Validierung | ✅ Aktiv – ab 05.05.2026 |
 
-Lies die CLAUDE.md und dann alle aktiven Plan-Dateien im Ordner `CLAUDE-pläne/` bevor du mit der Implementierung anfängst. Bei Widersprüchen zwischen Plänen gilt: diese CLAUDE.md hat Priorität.
+Archivierte Pläne (nicht mehr aktiv, aber als Referenz in `CLAUDE-pläne/archiv/`):
+
+- `FOMO-Phase2-Plan-Claude-Code.md` — Phase-2-Hauptplan (abgelöst)
+- `VARIANT-SYSTEM-PLAN.md` — Varianten-System (implementiert)
+- `LIVE-QUIZ-PLAN.md` — von Phase-2-Plan abgelöst
+- `ACTION-PLAN.md` — Phase-1-Bugs (erledigt)
+
+Lies die CLAUDE.md und dann `CLAUDE-pläne/FOMO-Algorithmus-Fixes-Plan.md` bevor du mit der Implementierung anfängst. Bei Widersprüchen gilt: diese CLAUDE.md hat Priorität.

@@ -15,19 +15,62 @@ import { getAttributeLabel } from "./attribute-labels";
  *   "0" = Nicht verstanden      → skipped
  *   undefined                   → skipped
  *
- * Weight = |normalized - 0.5| × 2  (neutral = 0 weight, agree/disagree = 1.0)
+ * User weight = |normalized - 0.5| × 2  (neutral = 0, agree/disagree = 1.0)
+ * Attribute weight = 2 × min(yes, no) / n  (50/50 split = 1.0, all-same = 0.0)
+ * Item count normalization = 1 / itemCount_attr  (prevents multi-item attributes from
+ *   dominating the score — see ALGORITHM-FIXES.md Track A1)
+ * Effective weight = user weight × attribute weight × (1 / itemCount_attr)
  * Similarity per attribute = 1 - |effectiveUserValue - groupAttr|
- *   where effectiveUserValue is flipped (1-value) for inverse mappings
- * Score = Σ(weight × similarity) / Σ(weight), normalized to 0-100%
+ * Score = Σ(effectiveWeight × similarity) / Σ(effectiveWeight), normalized to 0-100%
  */
 export function computeQuizMatches(
   answers: Record<string, string | string[]>,
   theses: QuizThesisData[],
   groups: QuizGroupData[],
 ): QuizMatchResult[] {
+  const attrWeights = computeAttributeWeights(groups);
+  const itemCounts = computeItemCountsPerAttribute(theses);
+
   return groups
-    .map((group) => computeSingleMatch(answers, theses, group))
+    .map((group) => computeSingleMatch(answers, theses, group, attrWeights, itemCounts))
     .sort((a, b) => b.score - a.score);
+}
+
+/**
+ * Count how many theses map to each attribute.
+ * Used to normalize effective weight so multi-item attributes don't dominate.
+ * See CLAUDE-pläne/FOMO-Algorithmus-Fixes-Plan.md Track A1.
+ */
+export function computeItemCountsPerAttribute(theses: QuizThesisData[]): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const thesis of theses) {
+    for (const mapping of thesis.attributes) {
+      counts[mapping.attribute] = (counts[mapping.attribute] ?? 0) + 1;
+    }
+  }
+  return counts;
+}
+
+/**
+ * Compute discriminative power per attribute across all groups.
+ * Attributes where all groups are the same get weight 0 (e.g. leadershipOpportunities=100%).
+ * Attributes with ~50/50 split get weight 1.0 (most discriminating).
+ */
+function computeAttributeWeights(groups: QuizGroupData[]): Record<string, number> {
+  const n = groups.length;
+  if (n === 0) return {};
+
+  const weights: Record<string, number> = {};
+  const attrs = groups.length > 0 ? Object.keys(groups[0].attributes) : [];
+
+  for (const attr of attrs) {
+    const yes = groups.filter((g) => g.attributes[attr] === true).length;
+    const no = n - yes;
+    const balance = Math.min(yes, no) / n;
+    weights[attr] = balance * 2; // 0.0–1.0
+  }
+
+  return weights;
 }
 
 function normalizeAnswer(raw: string | string[] | undefined): number | null {
@@ -43,6 +86,8 @@ function computeSingleMatch(
   answers: Record<string, string | string[]>,
   theses: QuizThesisData[],
   group: QuizGroupData,
+  attrWeights: Record<string, number>,
+  itemCounts: Record<string, number>,
 ): QuizMatchResult {
   let weightSum = 0;
   let scoreSum = 0;
@@ -53,19 +98,24 @@ function computeSingleMatch(
     const normalized = normalizeAnswer(answers[thesis.id]);
     if (normalized === null) continue;
 
-    const weight = Math.abs(normalized - 0.5) * 2;
-    if (weight < 0.001) continue; // Neutral → skip
+    const userWeight = Math.abs(normalized - 0.5) * 2;
+    if (userWeight < 0.001) continue; // Neutral → skip
 
     for (const mapping of thesis.attributes) {
       const groupAttr = group.attributes[mapping.attribute];
       if (groupAttr === undefined) continue;
 
+      const attrWeight = attrWeights[mapping.attribute] ?? 1;
+      // Normalize by item count so attributes with multiple theses don't dominate
+      const itemCount = itemCounts[mapping.attribute] ?? 1;
+      const effectiveWeight = userWeight * attrWeight * (1 / itemCount);
+
       const groupVal = groupAttr ? 1 : 0;
       const effectiveUser = mapping.isInverse ? 1 - normalized : normalized;
       const similarity = 1 - Math.abs(effectiveUser - groupVal);
 
-      weightSum += weight;
-      scoreSum += weight * similarity;
+      weightSum += effectiveWeight;
+      scoreSum += effectiveWeight * similarity;
 
       // Track per-attribute match (first thesis wins for display)
       if (!seenAttributes.has(mapping.attribute)) {

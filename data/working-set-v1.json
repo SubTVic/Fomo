@@ -1,0 +1,164 @@
+{
+  "_meta": {
+    "version": "v1.1",
+    "frozenAt": "2026-05-04",
+    "updatedAt": "2026-05-05",
+    "totalItems": 17,
+    "note": "Working Set v1.1: 2 Items entfernt (WS-D9Q5, WS-D6Q4), D3Q4 reformuliert. Items werden in Working Set v2 ersetzt."
+  },
+  "items": [
+    {
+      "id": "WS-D7Q3",
+      "pilotQuestionId": "D7Q3",
+      "text": "Interkultureller Austausch ist für mich ein wesentlicher Mehrwert einer Gruppe.",
+      "shortTitle": "Interkulturalität",
+      "hint": null,
+      "order": 1,
+      "attributes": [{ "attribute": "international", "isInverse": false }]
+    },
+    {
+      "id": "WS-D5Q5",
+      "pilotQuestionId": "D5Q5",
+      "text": "Ich möchte meine kreativen Fähigkeiten aktiv in einer Hochschulgruppe einbringen.",
+      "shortTitle": "Kreativität",
+      "hint": "z.B. Musik, Theater, Design, Fotografie, Schreiben",
+      "order": 2,
+      "attributes": [{ "attribute": "arts", "isInverse": false }]
+    },
+    {
+      "id": "WS-D8Q3",
+      "pilotQuestionId": "D8Q3",
+      "text": "Ich möchte in Rankings, Bestenlisten oder Meisterschaften auftreten.",
+      "shortTitle": "Kompetitivität",
+      "hint": "z.B. Wettbewerbe, Hackathons, Sportligen, Debattiermeisterschaften",
+      "order": 3,
+      "attributes": [{ "attribute": "competitive", "isInverse": false }]
+    },
+    {
+      "id": "WS-D1Q1",
+      "pilotQuestionId": "D1Q1",
+      "text": "Ich kann mir vorstellen, mehr als 5 Stunden pro Woche für eine Hochschulgruppe aufzuwenden.",
+      "shortTitle": "Zeitbudget",
+      "hint": null,
+      "order": 4,
+      "attributes": [{ "attribute": "timeLow", "isInverse": true }]
+    },
+    {
+      "id": "WS-D1Q5",
+      "pilotQuestionId": "D1Q5",
+      "text": "Ich möchte in einer Gruppe Verantwortung übernehmen, z.B. als Projektleiterin oder im Vorstand.",
+      "shortTitle": "Führungsrolle",
+      "hint": null,
+      "order": 5,
+      "attributes": [{ "attribute": "leadershipOpportunities", "isInverse": false }]
+    },
+    {
+      "id": "WS-D2Q1",
+      "pilotQuestionId": "D2Q1",
+      "text": "Ich lerne lieber durch praktisches Tun als durch Theorie und Diskussion.",
+      "shortTitle": "Hands-on",
+      "hint": null,
+      "order": 6,
+      "attributes": [{ "attribute": "handsOn", "isInverse": false }]
+    },
+    {
+      "id": "WS-D2Q5",
+      "pilotQuestionId": "D2Q5",
+      "text": "Strategische Planung und konzeptionelle Arbeit machen mir genauso viel Spaß wie die Umsetzung.",
+      "shortTitle": "Konzeptarbeit",
+      "hint": null,
+      "order": 7,
+      "attributes": [{ "attribute": "handsOn", "isInverse": true }]
+    },
+    {
+      "id": "WS-D3Q1",
+      "pilotQuestionId": "D3Q1",
+      "text": "Ich suche eine Hochschulgruppe vor allem, um neue Freundschaften zu schließen.",
+      "shortTitle": "Freundschaften",
+      "hint": null,
+      "order": 8,
+      "attributes": [{ "attribute": "networking", "isInverse": false }]
+    },
+    {
+      "id": "WS-D3Q4",
+      "pilotQuestionId": "D3Q4",
+      "text": "Ich suche eine Gruppe, in der ich viele neue Leute aus verschiedenen Bereichen kennenlernen kann.",
+      "shortTitle": "Neue Leute kennenlernen",
+      "hint": null,
+      "order": 9,
+      "attributes": [{ "attribute": "networking", "isInverse": false }]
+    },
+    {
+      "id": "WS-D4Q3",
+      "pilotQuestionId": "D4Q3",
+      "text": "Ich interessiere mich für Hochschulpolitik und studentische Mitbestimmung.",
+      "shortTitle": "Hochschulpolitik",
+      "hint": null,
+      "order": 10,
+      "attributes": [{ "attribute": "party", "isInverse": false }]
+    },
+    {
+      "id": "WS-D4Q4",
+      "pilotQuestionId": "D4Q4",
+      "text": "Ich möchte mich für benachteiligte oder marginalisierte Gruppen einsetzen.",
+      "shortTitle": "Soziales Engagement",
+      "hint": null,
+      "order": 11,
+      "attributes": [{ "attribute": "socialImpact", "isInverse": false }]
+    },
+    {
+      "id": "WS-D6Q3",
+      "pilotQuestionId": "D6Q3",
+      "text": "Nachhaltigkeit und ökologisches Handeln sind für mich unverzichtbare Gruppenmerkmale.",
+      "shortTitle": "Nachhaltigkeit",
+      "hint": null,
+      "order": 12,
+      "attributes": [{ "attribute": "socialImpact", "isInverse": false }]
+    },
+    {
+      "id": "WS-D9Q4",
+      "pilotQuestionId": "D9Q4",
+      "text": "Analoge Aktivitäten ziehe ich digitalen vor.",
+      "shortTitle": "Analog statt Digital",
+      "hint": "z.B. Basteln, Kochen, Sport, Outdoor-Aktionen",
+      "order": 13,
+      "attributes": [{ "attribute": "outdoor", "isInverse": false }]
+    },
+    {
+      "id": "WS-D10-NEW",
+      "pilotQuestionId": null,
+      "text": "Ich bevorzuge Gruppen, in denen ich auch ohne Vorerfahrung sofort mitmachen kann, gegenüber Gruppen mit höheren Einstiegsanforderungen.",
+      "shortTitle": "Einstiegsfreundlich",
+      "hint": null,
+      "order": 14,
+      "attributes": [{ "attribute": "beginnerFriendly", "isInverse": false }]
+    },
+    {
+      "id": "WS-S1",
+      "pilotQuestionId": null,
+      "text": "Es ist mir wichtig, in der Gruppe anderen Menschen direkt helfen zu können.",
+      "shortTitle": "Altruismus",
+      "hint": "z.B. Beratung, Notfallhilfe, Ehrenamt",
+      "order": 15,
+      "attributes": [{ "attribute": "socialImpact", "isInverse": false }]
+    },
+    {
+      "id": "WS-S2",
+      "pilotQuestionId": null,
+      "text": "Ich will in der Gruppe auf ein konkretes Ziel mit klarem Zeitplan hinarbeiten.",
+      "shortTitle": "Zielorientierung",
+      "hint": "z.B. Wettbewerb, Produkt, Veranstaltung mit Deadline",
+      "order": 16,
+      "attributes": [{ "attribute": "competitive", "isInverse": false }]
+    },
+    {
+      "id": "WS-S3",
+      "pilotQuestionId": null,
+      "text": "Ich verbringe Gruppenzeit am liebsten draußen.",
+      "shortTitle": "Outdoor",
+      "hint": "z.B. Klettern, Radfahren, Wandern, Reiten",
+      "order": 17,
+      "attributes": [{ "attribute": "outdoor", "isInverse": false }]
+    }
+  ]
+}

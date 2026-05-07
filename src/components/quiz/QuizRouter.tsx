@@ -2,37 +2,25 @@
 // Main quiz orchestrator: welcome → quiz → results
 "use client";
 
-import { useState, useCallback } from "react";
-import type { QuizThesisData, QuizGroupData, QuizVariant } from "@/lib/quiz/types";
+import { useState, useCallback, useRef } from "react";
+import type { QuizThesisData, QuizGroupData } from "@/lib/quiz/types";
 import type { Dimension, PilotQuestion } from "@/lib/pilot-questions";
 import { useSurveyState } from "@/components/survey/useSurveyState";
-import { computeQuizMatches } from "@/lib/quiz/matching";
+import { computeQuizMatches, computeV2Match } from "@/lib/quiz/matching";
+import { STUDY2_ITEMS } from "@/lib/study2/items";
 import { QuizWelcome } from "./QuizWelcome";
 import { QuizResults } from "./results/QuizResults";
-
-// Variant components
-import { ScrollSurvey } from "@/components/variants/scroll/ScrollSurvey";
 import { ClassicSurvey } from "@/components/variants/classic/ClassicSurvey";
-import { SwipeSurvey } from "@/components/variants/swipe/SwipeSurvey";
-import { ChatSurvey } from "@/components/variants/chat/ChatSurvey";
-
-const VARIANT_MAP = {
-  classic: ClassicSurvey,
-  scroll: ScrollSurvey,
-  swipe: SwipeSurvey,
-  chat: ChatSurvey,
-} as const;
 
 interface QuizRouterProps {
   theses: QuizThesisData[];
   groups: QuizGroupData[];
-  variant: QuizVariant;
 }
 
-export function QuizRouter({ theses, groups, variant }: QuizRouterProps) {
+export function QuizRouter({ theses, groups }: QuizRouterProps) {
   const [phase, setPhase] = useState<"welcome" | "quiz" | "results">("welcome");
+  const startedAt = useRef<number | null>(null);
 
-  // Create synthetic dimension and questions for the variant adapter
   const syntheticDimension: Dimension = {
     id: "quiz",
     label: "Quiz",
@@ -50,12 +38,29 @@ export function QuizRouter({ theses, groups, variant }: QuizRouterProps) {
 
   const surveyState = useSurveyState(syntheticQuestions, [syntheticDimension]);
 
+  const handleSubmit = useCallback(async () => {
+    if (!startedAt.current) return;
+    const answeredCount = Object.values(surveyState.state.answers).filter(
+      (v) => v === "1" || v === "5"
+    ).length;
+    await fetch("/api/quiz/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        startedAt: startedAt.current,
+        completedAt: Date.now(),
+        questionCount: answeredCount,
+        resultCount: 0,
+      }),
+    }).catch(() => {
+      // Fire-and-forget — tracking failure must not block the user
+    });
+  }, [surveyState.state.answers]);
+
   const handleBlockComplete = useCallback(() => {
     setPhase("results");
-  }, []);
-
-  // Noop — quiz doesn't submit to server
-  const handleSubmit = useCallback(async () => {}, []);
+    handleSubmit();
+  }, [handleSubmit]);
 
   if (theses.length === 0) {
     return (
@@ -77,11 +82,18 @@ export function QuizRouter({ theses, groups, variant }: QuizRouterProps) {
   }
 
   if (phase === "welcome") {
-    return <QuizWelcome onStart={() => setPhase("quiz")} questionCount={theses.length} />;
+    return (
+      <QuizWelcome
+        onStart={() => {
+          startedAt.current = Date.now();
+          setPhase("quiz");
+        }}
+        questionCount={theses.length}
+      />
+    );
   }
 
   if (phase === "results") {
-    // Count non-neutral answers (value "1" or "5" → weight > 0)
     const effectiveAnswerCount = Object.values(surveyState.state.answers).filter(
       (v) => v === "1" || v === "5",
     ).length;
@@ -115,7 +127,42 @@ export function QuizRouter({ theses, groups, variant }: QuizRouterProps) {
       );
     }
 
-    const results = computeQuizMatches(surveyState.state.answers, theses, groups);
+    // Build thesis → WS2 item mapping through shared attributes (first match per thesis)
+    const attrToItemId: Record<string, string> = {};
+    for (const item of STUDY2_ITEMS) {
+      for (const a of item.attributes) {
+        if (!attrToItemId[a.attribute]) attrToItemId[a.attribute] = item.id;
+      }
+    }
+    const thesisToItemMap: Record<string, string> = {};
+    for (const thesis of theses) {
+      for (const a of thesis.attributes) {
+        if (attrToItemId[a.attribute]) {
+          thesisToItemMap[thesis.id] = attrToItemId[a.attribute];
+          break;
+        }
+      }
+    }
+
+    const results = groups
+      .map((group) => {
+        if (group.selfRating?.answers?.length) {
+          const score = computeV2Match(
+            surveyState.state.answers,
+            thesisToItemMap,
+            group.selfRating.answers,
+            [], // no filter step in quiz
+            group.selfRating.filterSelections,
+          );
+          return { group, score, attributeMatches: [] };
+        }
+        return null; // will be replaced by legacy match below
+      })
+      .map((v2result, i) => {
+        if (v2result !== null) return v2result;
+        return computeQuizMatches(surveyState.state.answers, theses, [groups[i]])[0];
+      })
+      .sort((a, b) => b.score - a.score);
     return (
       <QuizResults
         results={results}
@@ -134,11 +181,8 @@ export function QuizRouter({ theses, groups, variant }: QuizRouterProps) {
     );
   }
 
-  // Quiz phase — render the selected variant
-  const VariantComponent = VARIANT_MAP[variant];
-
   return (
-    <VariantComponent
+    <ClassicSurvey
       {...surveyState}
       onSubmit={handleSubmit}
       isSubmitting={false}

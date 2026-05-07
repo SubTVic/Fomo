@@ -27,6 +27,11 @@ export interface QuizGroupData {
   nextEventLocation: string | null;
   nextEventUrl: string | null;
   nextEventIsOpen: boolean;
+  selfRating?: {
+    raterCount: number;
+    filterSelections: string[];
+    answers: Array<{ itemId: string; value: number }>;
+  } | null;
 }
 
 export interface AttributeMatch {
@@ -44,11 +49,3 @@ export interface QuizMatchResult {
   attributeMatches: AttributeMatch[];
 }
 
-export type QuizVariant = "classic" | "scroll" | "swipe" | "chat";
-
-export const QUIZ_VARIANTS: { value: QuizVariant; label: string; emoji: string }[] = [
-  { value: "classic", label: "Classic", emoji: "📋" },
-  { value: "scroll", label: "Scroll", emoji: "📜" },
-  { value: "swipe", label: "Swipe", emoji: "👆" },
-  { value: "chat", label: "Chat", emoji: "💬" },
-];

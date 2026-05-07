@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// Server-side queries for the live quiz
+// Server-side queries for the live quiz.
+// Set DATA_SOURCE=json in .env to load from local JSON files (no DB needed).
 
-import { db } from "@/lib/db";
-import type { QuizThesisData, QuizGroupData, QuizVariant } from "@/lib/quiz/types";
+import type { QuizThesisData, QuizGroupData } from "@/lib/quiz/types";
 
 const MATCHING_ATTRS = [
   "career", "tech", "socialImpact", "party", "religion", "sports",
@@ -11,17 +11,65 @@ const MATCHING_ATTRS = [
   "leadershipOpportunities",
 ] as const;
 
-export async function getActiveQuizTheses(): Promise<QuizThesisData[]> {
+const USE_JSON = process.env.DATA_SOURCE === "json";
+
+// ─── JSON fallback ────────────────────────────────────────────
+
+async function getThesesFromJson(): Promise<QuizThesisData[]> {
+  const { default: ws } = await import("../../../data/working-set-v1.json");
+  return ws.items.map((t) => ({
+    id: t.id,
+    text: t.text,
+    shortTitle: t.shortTitle,
+    hint: t.hint ?? null,
+    order: t.order,
+    attributes: t.attributes,
+  }));
+}
+
+async function getGroupsFromJson(): Promise<QuizGroupData[]> {
+  const { default: profiles } = await import("../../../data/hsg-profiles-scraped.json");
+  return (profiles as ScrapedProfile[])
+    .map((p) => ({
+      id: p.id,
+      name: p.name,
+      slug: p.id,
+      shortDescription: p.shortDescription ?? "",
+      longDescription: null,
+      categoryName: "Hochschulgruppe",
+      websiteUrl: p.website ?? null,
+      instagramUrl: null,
+      contactEmail: null,
+      attributes: Object.fromEntries(
+        MATCHING_ATTRS.map((attr) => [attr, p.attributes[attr] === true])
+      ),
+      nextEventTitle: null,
+      nextEventDate: null,
+      nextEventTime: null,
+      nextEventLocation: null,
+      nextEventUrl: null,
+      nextEventIsOpen: false,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+interface ScrapedProfile {
+  id: string;
+  name: string;
+  shortDescription?: string;
+  website?: string | null;
+  attributes: Record<string, boolean | string | null>;
+}
+
+// ─── DB queries ───────────────────────────────────────────────
+
+async function getThesesFromDb(): Promise<QuizThesisData[]> {
+  const { db } = await import("@/lib/db");
   const theses = await db.quizThesis.findMany({
     where: { isActive: true },
-    include: {
-      attributes: {
-        select: { attribute: true, isInverse: true },
-      },
-    },
+    include: { attributes: { select: { attribute: true, isInverse: true } } },
     orderBy: { order: "asc" },
   });
-
   return theses.map((t) => ({
     id: t.id,
     text: t.text,
@@ -32,22 +80,16 @@ export async function getActiveQuizTheses(): Promise<QuizThesisData[]> {
   }));
 }
 
-export async function getAllQuizThesesForAdmin() {
-  return db.quizThesis.findMany({
-    include: {
-      attributes: true,
-    },
-    orderBy: { order: "asc" },
-  });
-}
-
-export async function getQuizGroups(): Promise<QuizGroupData[]> {
+async function getGroupsFromDb(): Promise<QuizGroupData[]> {
+  const { db } = await import("@/lib/db");
   const groups = await db.group.findMany({
     where: { isActive: true },
-    include: { category: { select: { name: true } } },
+    include: {
+      category: { select: { name: true } },
+      selfRating: { include: { answers: true } },
+    },
     orderBy: { name: "asc" },
   });
-
   return groups.map((g) => ({
     id: g.id,
     name: g.name,
@@ -67,16 +109,32 @@ export async function getQuizGroups(): Promise<QuizGroupData[]> {
     nextEventLocation: g.nextEventLocation,
     nextEventUrl: g.nextEventUrl,
     nextEventIsOpen: g.nextEventIsOpen,
+    selfRating: g.selfRating
+      ? {
+          raterCount: g.selfRating.raterCount,
+          filterSelections: Array.isArray(g.selfRating.filterSelections)
+            ? (g.selfRating.filterSelections as string[])
+            : [],
+          answers: g.selfRating.answers.map((a) => ({ itemId: a.itemId, value: a.value })),
+        }
+      : null,
   }));
 }
 
-export async function getQuizVariant(): Promise<QuizVariant> {
-  const config = await db.siteConfig.findUnique({
-    where: { key: "quiz_variant" },
+// ─── Public API ───────────────────────────────────────────────
+
+export async function getActiveQuizTheses(): Promise<QuizThesisData[]> {
+  return USE_JSON ? getThesesFromJson() : getThesesFromDb();
+}
+
+export async function getQuizGroups(): Promise<QuizGroupData[]> {
+  return USE_JSON ? getGroupsFromJson() : getGroupsFromDb();
+}
+
+export async function getAllQuizThesesForAdmin() {
+  const { db } = await import("@/lib/db");
+  return db.quizThesis.findMany({
+    include: { attributes: true },
+    orderBy: { order: "asc" },
   });
-  const val = config?.value;
-  if (val === "classic" || val === "scroll" || val === "swipe" || val === "chat") {
-    return val;
-  }
-  return "classic";
 }

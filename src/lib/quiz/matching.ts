@@ -82,6 +82,51 @@ function normalizeAnswer(raw: string | string[] | undefined): number | null {
   return (num - 1) / 4;
 }
 
+/**
+ * V2 matching: mean-absolute-distance over WS2 item vectors.
+ * Used when a group has a GroupSelfRating; fallback to computeSingleMatch otherwise.
+ * User answers come from the quiz as "1"|"3"|"5" and are converted to -1|0|1.
+ */
+export function computeV2Match(
+  userAnswers: Record<string, string | string[]>,  // raw quiz answers (thesis id → "1"|"3"|"5")
+  thesisToItemMap: Record<string, string>,         // thesisId → WS2 itemId
+  groupAnswers: Array<{ itemId: string; value: number }>,
+  filterSelections: string[],       // user's filter choices (attribute IDs)
+  groupFilterSelections: string[],  // group's filter choices (attribute IDs)
+): number {
+  // Hard constraint: if both user and group have filter selections and there is no overlap → 0
+  if (filterSelections.length > 0 && groupFilterSelections.length > 0) {
+    const hasOverlap = filterSelections.some((f) => groupFilterSelections.includes(f));
+    if (!hasOverlap) return 0;
+  }
+
+  const groupMap = Object.fromEntries(groupAnswers.map((a) => [a.itemId, a.value]));
+
+  // Convert quiz answers from "1"/"3"/"5" scale to -1/0/1
+  const userVec: Record<string, number> = {};
+  for (const [thesisId, itemId] of Object.entries(thesisToItemMap)) {
+    const raw = userAnswers[thesisId];
+    if (!raw) continue;
+    const val = typeof raw === "string" ? raw : raw[0];
+    const num = parseInt(val, 10);
+    if (isNaN(num) || num === 0) continue;
+    // 5 → 1, 3 → 0, 1 → -1
+    userVec[itemId] = num === 5 ? 1 : num === 1 ? -1 : 0;
+  }
+
+  // Only use items where user has non-neutral answer
+  const activeItems = Object.entries(userVec).filter(([, v]) => v !== 0);
+  if (activeItems.length === 0) return 50;
+
+  const totalDist = activeItems.reduce((sum, [itemId, u]) => {
+    const g = groupMap[itemId] ?? 0;
+    return sum + Math.abs(u - g); // max distance = 2
+  }, 0);
+
+  const maxDist = activeItems.length * 2;
+  return Math.round((1 - totalDist / maxDist) * 100);
+}
+
 function computeSingleMatch(
   answers: Record<string, string | string[]>,
   theses: QuizThesisData[],

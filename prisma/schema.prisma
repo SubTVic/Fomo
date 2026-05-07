@@ -98,10 +98,16 @@ model Group {
   submittedAt         DateTime?
   verifiedAt          DateTime?
 
+  // Optional: self-registration that may be a duplicate of an existing group
+  duplicateOfGroupId String?
+  duplicateOf        Group?  @relation("GroupDuplicate", fields: [duplicateOfGroupId], references: [id], onDelete: SetNull)
+  duplicates         Group[] @relation("GroupDuplicate")
+
   category       Category          @relation(fields: [categoryId], references: [id])
   pilotAnswers   GroupPilotAnswer[]
   invites        GroupInvite[]
   study2Sessions Study2Session[]
+  selfRating     GroupSelfRating?
 
   @@index([categoryId])
   @@index([isActive])
@@ -341,4 +347,35 @@ model Study2Answer {
   @@unique([sessionId, itemId])
   @@index([sessionId])
   @@map("study2_answers")
+}
+
+// ─── Gruppen-Selbst-Rating (Phase 2, WS2-Items) ──────────────────
+
+model GroupSelfRating {
+  id           String   @id @default(cuid())
+  groupId      String   @unique    // overwrite on re-submit
+  token        String              // welcher GroupInvite-Token genutzt wurde
+  submittedAt  DateTime @default(now())
+  raterCount   Int      @default(1) // 1 / 2 / 3+ Personen
+
+  filterSelections Json?           // z.B. ["handsOn","music"]
+
+  group   Group                  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  answers GroupSelfRatingAnswer[]
+
+  @@index([groupId])
+  @@map("group_self_ratings")
+}
+
+model GroupSelfRatingAnswer {
+  id       String @id @default(cuid())
+  ratingId String
+  itemId   String  // "WS2-01" … "WS2-21"
+  value    Int     // -1 | 0 | 1
+
+  rating GroupSelfRating @relation(fields: [ratingId], references: [id], onDelete: Cascade)
+
+  @@unique([ratingId, itemId])
+  @@index([ratingId])
+  @@map("group_self_rating_answers")
 }

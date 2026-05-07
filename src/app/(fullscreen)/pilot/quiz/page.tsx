@@ -24,6 +24,7 @@ export default function Study2QuizPage() {
   const [groupSearch, setGroupSearch] = useState("");
   const [groupId, setGroupId] = useState<string | null>(null);
   const [groupNameFreeText, setGroupNameFreeText] = useState("");
+  const [noGroup, setNoGroup] = useState(false);
   const [filterSelections, setFilterSelections] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Record<string, Study2AnswerValue>>({});
   const [semester, setSemester] = useState<(typeof SEMESTER_OPTIONS)[number] | "">("");
@@ -98,10 +99,12 @@ export default function Study2QuizPage() {
             search={groupSearch}
             onSearch={setGroupSearch}
             groupId={groupId}
-            onPickGroup={setGroupId}
+            onPickGroup={(id) => { setGroupId(id); setNoGroup(false); }}
             freeText={groupNameFreeText}
-            onFreeText={setGroupNameFreeText}
-            canContinue={Boolean(groupId) || groupNameFreeText.trim().length > 0}
+            onFreeText={(s) => { setGroupNameFreeText(s); setNoGroup(false); }}
+            noGroup={noGroup}
+            onNoGroup={() => { setNoGroup(true); setGroupId(null); setGroupNameFreeText(""); }}
+            canContinue={Boolean(groupId) || groupNameFreeText.trim().length > 0 || noGroup}
             onNext={() => setStep("filter")}
           />
         )}
@@ -261,6 +264,8 @@ function GroupStep(props: {
   onPickGroup: (id: string | null) => void;
   freeText: string;
   onFreeText: (s: string) => void;
+  noGroup: boolean;
+  onNoGroup: () => void;
   canContinue: boolean;
   onNext: () => void;
 }) {
@@ -316,6 +321,19 @@ function GroupStep(props: {
             maxLength={200}
             className="w-full border-2 border-foreground bg-background px-3 py-2 text-sm"
           />
+        </div>
+        <div className="border-t-2 border-foreground/30 pt-4 mt-4">
+          <button
+            type="button"
+            onClick={props.onNoGroup}
+            className={`w-full border-2 border-dashed border-foreground px-4 py-3 text-sm transition-colors ${
+              props.noGroup
+                ? "bg-foreground text-primary-foreground"
+                : "bg-background text-muted-foreground hover:bg-accent hover:text-foreground"
+            }`}
+          >
+            Ich bin in keiner Gruppe
+          </button>
         </div>
       </PaddedBlock>
       <NavRow onNext={props.onNext} nextDisabled={!props.canContinue} />

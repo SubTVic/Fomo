@@ -8,11 +8,26 @@ import { useState, useCallback } from "react";
 import { DimensionHeader } from "@/components/survey/DimensionHeader";
 import type { SurveyVariantProps } from "@/components/variants/types";
 
-// Maps Likert 1-5 to 3-option display (Zustimmung/Neutral/Ablehnung)
+// Maps Likert 1-5 to 3-option display — neutral styling, no bias symbols
 const CLASSIC_OPTIONS = [
-  { label: "Stimme zu", value: "5" },
-  { label: "Neutral", value: "3" },
-  { label: "Stimme nicht zu", value: "1" },
+  {
+    label: "Ja",
+    value: "5",
+    base: "bg-[#1a2a35] text-white border-[#1a2a35]",
+    selected: "ring-2 ring-offset-2 ring-[#1a2a35]",
+  },
+  {
+    label: "Egal",
+    value: "3",
+    base: "bg-white text-[#1a2a35] border-[#1a2a35]",
+    selected: "ring-2 ring-offset-2 ring-[#1a2a35]",
+  },
+  {
+    label: "Nein",
+    value: "1",
+    base: "bg-[#ADD8E6] text-[#1a2a35] border-[#1a2a35]",
+    selected: "ring-2 ring-offset-2 ring-[#1a2a35]",
+  },
 ];
 
 export function ClassicSurvey({
@@ -82,17 +97,13 @@ export function ClassicSurvey({
           </div>
 
           <div className="flex flex-col gap-3">
-            {CLASSIC_OPTIONS.map(({ label, value }) => {
+            {CLASSIC_OPTIONS.map(({ label, value, base, selected }) => {
               const isSelected = currentValue === value;
               return (
                 <button
                   key={value}
                   onClick={() => handleSelect(value)}
-                  className={`rounded-xl border-2 px-5 py-4 text-left font-bold transition-all duration-150 active:scale-[0.98] ${
-                    isSelected
-                      ? "bg-[#1a2a35] border-[#1a2a35] text-white"
-                      : "bg-white/80 border-gray-300 text-gray-800 hover:bg-gray-50"
-                  }`}
+                  className={`rounded-xl border-2 px-5 py-4 text-left font-bold transition-all duration-150 active:scale-[0.98] ${base} ${isSelected ? selected : "opacity-90 hover:opacity-100"}`}
                 >
                   {label}
                 </button>

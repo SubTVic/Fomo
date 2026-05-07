@@ -201,7 +201,7 @@ The schema covers the **production quiz** (QuizThesis, QuizThesisAttribute, Grou
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
 | `NEXTAUTH_SECRET` | Yes | Random string (`openssl rand -base64 32`) |
 | `NEXTAUTH_URL` | Yes | App URL (e.g., `http://localhost:3000`) |
-| `APP_MODE` | Yes | `pilot`, `collect`, or `live` |
+| `APP_LIVE` | No | `true` switches landing CTA to live quiz; default `false` shows prelaunch CTAs |
 | `ANTHROPIC_API_KEY` | Scraper only | API key for AI-based group profile scraping |
 
 ## Deployment

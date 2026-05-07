@@ -5,13 +5,12 @@ import Link from "next/link";
 import { getActiveGroupCount } from "@/lib/queries/groups";
 import { getSiteConfig } from "@/lib/queries/site-config";
 
-// APP_MODE controls the landing page behaviour:
-//   "pilot"   → pilot survey CTA (while collecting data from Studis)
-//   "collect" → pilot survey + group registration side by side
-//   "live"    → full quiz (production)
+// APP_LIVE controls the landing page CTAs:
+//   false (default) → Prelaunch (Studie 2 + Prototyp + Gruppen-Registrierung)
+//   true            → Live quiz CTA
 export const dynamic = "force-dynamic";
 
-const APP_MODE = (process.env.APP_MODE ?? "pilot") as "pilot" | "collect" | "live";
+const APP_LIVE = process.env.APP_LIVE === "true";
 
 export default async function LandingPage() {
   const [groupCount, cfg] = await Promise.all([
@@ -19,21 +18,17 @@ export default async function LandingPage() {
     getSiteConfig(),
   ]);
 
-  // Build image array from config
   const groupImages = [1, 2, 3, 4, 5, 6].map((n) => ({
     src: cfg[`image_${n}_src`],
     alt: cfg[`image_${n}_alt`],
   }));
 
-  // Render hero title with line breaks
   const heroLines = cfg.hero_title.split("\n");
   const subtitleLines = cfg.hero_subtitle.split("\n");
 
   return (
     <div className="flex flex-col items-center px-4 py-6 sm:px-6">
-      {/* Poster Card */}
       <div className="w-full max-w-[1000px] border-4 border-foreground bg-card">
-        {/* Poster Header */}
         <div className="bg-foreground text-primary-foreground px-6 py-6 sm:px-8 sm:py-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <h1 className="font-heading text-[clamp(26px,5vw,52px)] uppercase leading-none">
             {heroLines.map((line, i) => (
@@ -53,7 +48,6 @@ export default async function LandingPage() {
           </div>
         </div>
 
-        {/* Image Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 border-t-4 border-foreground">
           {groupImages.map((img, i) => (
             <div
@@ -71,67 +65,34 @@ export default async function LandingPage() {
           ))}
         </div>
 
-        {/* Image Caption */}
         <div className="border-t-4 border-foreground px-6 py-2.5 sm:px-8 text-[11px] text-muted-foreground italic tracking-wide">
           {cfg.image_caption}
         </div>
 
-        {/* CTA Section (mode-dependent) */}
-        {APP_MODE === "pilot" && <PilotCta cfg={cfg} />}
-        {APP_MODE === "collect" && <CollectCta cfg={cfg} groupCount={groupCount} />}
-        {APP_MODE === "live" && <LiveCta groupCount={groupCount} />}
-
+        {APP_LIVE ? (
+          <LiveCta groupCount={groupCount} />
+        ) : (
+          <PrelaunchCta groupCount={groupCount} />
+        )}
       </div>
     </div>
   );
 }
 
-// ─── CTA Sections ─────────────────────────────────────────────────────────────
-
-function PilotCta({ cfg }: { cfg: Record<string, string> }) {
+function PrelaunchCta({ groupCount }: { groupCount: number }) {
   return (
-    <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
-      <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-          {cfg.pilot_label}
-        </p>
-        <h2 className="font-heading text-[clamp(18px,3vw,28px)] uppercase leading-tight mb-2.5">
-          {cfg.pilot_title}
-        </h2>
-        <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-          {cfg.pilot_text}
-        </p>
-      </div>
-      <div className="flex flex-col items-center sm:items-end gap-2">
-        <Link
-          href="/pilot"
-          className="bg-foreground text-primary-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-[#2a3a45] transition-colors"
-        >
-          {cfg.pilot_button}
-        </Link>
-        <span className="text-[11px] text-muted-foreground">{cfg.pilot_duration}</span>
-        <Link href="/demo" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
-          Unsere Demo ansehen →
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-function CollectCta({ cfg, groupCount }: { cfg: Record<string, string>; groupCount: number }) {
-  return (
-    <div className="border-t-4 border-foreground">
-      {/* Ersti CTA */}
-      <div className="px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
+    <>
+      {/* Studie 2 — primary */}
+      <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-            {cfg.pilot_label}
+            Studie für Mitglieder
           </p>
           <h2 className="font-heading text-[clamp(18px,3vw,28px)] uppercase leading-tight mb-2.5">
-            {cfg.pilot_title}
+            Hilf uns, FOMO zu kalibrieren
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-            {cfg.pilot_text}
+            Du bist in einer Hochschulgruppe? Hilf uns, FOMO zu kalibrieren — ~5 Minuten.
           </p>
         </div>
         <div className="flex flex-col items-center sm:items-end gap-2">
@@ -139,17 +100,38 @@ function CollectCta({ cfg, groupCount }: { cfg: Record<string, string>; groupCou
             href="/pilot"
             className="bg-foreground text-primary-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-[#2a3a45] transition-colors"
           >
-            {cfg.pilot_button}
+            Studie starten
           </Link>
-          <span className="text-[11px] text-muted-foreground">{cfg.pilot_duration}</span>
-          <Link href="/demo" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
-            Unsere Demo ansehen →
+          <span className="text-[11px] text-muted-foreground">~5 Min · Anonym</span>
+        </div>
+      </div>
+
+      {/* Prototyp — secondary */}
+      <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center bg-accent">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
+            Prototyp
+          </p>
+          <h2 className="font-heading text-[clamp(18px,3vw,24px)] uppercase leading-tight mb-2.5">
+            Prototyp ansehen
+          </h2>
+          <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
+            So sieht das fertige Quiz schon aus. Achtung: Fragen, Layout und Matching sind
+            noch Work-in-Progress.
+          </p>
+        </div>
+        <div className="flex flex-col items-center sm:items-end gap-2">
+          <Link
+            href="/quiz"
+            className="border-2 border-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-foreground hover:text-primary-foreground transition-colors"
+          >
+            Prototyp öffnen
           </Link>
         </div>
       </div>
 
-      {/* Group registration CTA */}
-      <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center bg-accent">
+      {/* Gruppen-Registrierung — secondary */}
+      <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
             Hochschulgruppen
@@ -170,14 +152,13 @@ function CollectCta({ cfg, groupCount }: { cfg: Record<string, string>; groupCou
           </Link>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function LiveCta({ groupCount }: { groupCount: number }) {
   return (
     <div className="border-t-4 border-foreground">
-      {/* Quiz CTA */}
       <div className="px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
@@ -205,7 +186,6 @@ function LiveCta({ groupCount }: { groupCount: number }) {
         </div>
       </div>
 
-      {/* How it works */}
       <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 bg-accent">
         <h3 className="font-heading text-lg uppercase mb-6">So funktioniert&apos;s</h3>
         <div className="grid gap-6 sm:grid-cols-3">

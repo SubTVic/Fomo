@@ -19,6 +19,10 @@ interface GroupData {
   name: string;
   shortDescription: string;
   websiteUrl: string | null;
+  contactEmail: string | null;
+  instagramUrl: string | null;
+  memberCount: number | null;
+  foundedYear: number | null;
   selfRating?: {
     raterCount: number;
     filterSelections: string[];
@@ -84,6 +88,10 @@ export function GroupSelfRatingQuiz() {
   const [raterCount, setRaterCount] = useState<1 | 2 | 3>(1);
   const [description, setDescription] = useState("");
   const [website, setWebsite] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [instagramUrl, setInstagramUrl] = useState("");
+  const [memberCount, setMemberCount] = useState("");
+  const [foundedYear, setFoundedYear] = useState("");
 
   useEffect(() => {
     if (!token) {
@@ -105,6 +113,10 @@ export function GroupSelfRatingQuiz() {
         setGroup(g);
         setDescription(g.shortDescription);
         setWebsite(g.websiteUrl ?? "");
+        setContactEmail(g.contactEmail ?? "");
+        setInstagramUrl(g.instagramUrl ?? "");
+        setMemberCount(g.memberCount ? String(g.memberCount) : "");
+        setFoundedYear(g.foundedYear ? String(g.foundedYear) : "");
 
         // Pre-fill from previous selfRating if it exists
         if (g.selfRating?.answers?.length) {
@@ -173,6 +185,10 @@ export function GroupSelfRatingQuiz() {
           raterCount,
           shortDescription: description.trim(),
           websiteUrl: website.trim() || undefined,
+          contactEmail: contactEmail.trim() || undefined,
+          instagramUrl: instagramUrl.trim() || undefined,
+          memberCount: memberCount ? parseInt(memberCount, 10) : undefined,
+          foundedYear: foundedYear ? parseInt(foundedYear, 10) : undefined,
         }),
       });
       const data = await res.json();
@@ -395,20 +411,29 @@ export function GroupSelfRatingQuiz() {
           </div>
           <div className="px-6 py-6 sm:px-8 flex flex-col gap-5">
             <p className="text-sm text-muted-foreground">
-              Optional: Passt eure Kurzbeschreibung und Website an, bevor ihr absendet.
+              Füllt die Informationen zu eurer Gruppe aus — je vollständiger, desto besser das Matching.
             </p>
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium">Kurzbeschreibung</label>
+              <label className="text-sm font-medium">Kurzbeschreibung <span className="text-muted-foreground font-normal">(Pflicht)</span></label>
               <textarea
                 rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 maxLength={200}
+                placeholder="Was macht eure Gruppe aus? Was bietet ihr neuen Mitgliedern?"
                 className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors resize-none"
               />
-              <span className="text-xs text-muted-foreground">
-                {description.trim().length}/200 Zeichen
-              </span>
+              <span className="text-xs text-muted-foreground">{description.trim().length}/200 Zeichen</span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">Kontakt-E-Mail</label>
+              <input
+                type="email"
+                value={contactEmail}
+                onChange={(e) => setContactEmail(e.target.value)}
+                placeholder="kontakt@beispiel.de"
+                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+              />
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">Website</label>
@@ -419,6 +444,42 @@ export function GroupSelfRatingQuiz() {
                 placeholder="https://…"
                 className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
               />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">Instagram</label>
+              <input
+                type="url"
+                value={instagramUrl}
+                onChange={(e) => setInstagramUrl(e.target.value)}
+                placeholder="https://instagram.com/euregruppe"
+                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium">Mitgliederzahl</label>
+                <input
+                  type="number"
+                  value={memberCount}
+                  onChange={(e) => setMemberCount(e.target.value)}
+                  placeholder="z.B. 25"
+                  min={1}
+                  max={10000}
+                  className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium">Gründungsjahr</label>
+                <input
+                  type="number"
+                  value={foundedYear}
+                  onChange={(e) => setFoundedYear(e.target.value)}
+                  placeholder="z.B. 2010"
+                  min={1900}
+                  max={new Date().getFullYear()}
+                  className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                />
+              </div>
             </div>
             <button
               onClick={() => setStep({ type: "raterCount" })}

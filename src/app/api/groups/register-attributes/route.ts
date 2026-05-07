@@ -19,6 +19,10 @@ const SubmitSchema = z.object({
   confirmedAttributes: z.record(z.enum(ATTRIBUTE_KEYS), z.union([z.literal(0), z.literal(1)])).optional(),
   shortDescription: z.string().min(10).max(200).optional(),
   websiteUrl: z.string().url().optional().or(z.literal("")),
+  contactEmail: z.string().email().optional().or(z.literal("")),
+  instagramUrl: z.string().url().optional().or(z.literal("")),
+  memberCount: z.number().int().min(1).max(10000).optional(),
+  foundedYear: z.number().int().min(1900).max(new Date().getFullYear()).optional(),
   // v2: WS2-Self-Rating
   ws2Answers: z.array(z.object({
     itemId: z.string().regex(/^WS2-\d{2}$/),
@@ -44,7 +48,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { token, confirmedAttributes, shortDescription, websiteUrl, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
+  const { token, confirmedAttributes, shortDescription, websiteUrl, contactEmail, instagramUrl, memberCount, foundedYear, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
 
   // Validate the token
   const invite = await db.groupInvite.findUnique({
@@ -128,6 +132,10 @@ export async function POST(req: NextRequest) {
       isVerified: false,
       ...(shortDescription ? { shortDescription } : {}),
       ...(websiteUrl ? { websiteUrl } : {}),
+      ...(contactEmail ? { contactEmail } : {}),
+      ...(instagramUrl ? { instagramUrl } : {}),
+      ...(memberCount !== undefined ? { memberCount } : {}),
+      ...(foundedYear !== undefined ? { foundedYear } : {}),
     },
   });
 
@@ -175,6 +183,10 @@ export async function GET(req: NextRequest) {
           name: true,
           shortDescription: true,
           websiteUrl: true,
+          contactEmail: true,
+          instagramUrl: true,
+          memberCount: true,
+          foundedYear: true,
           scraperAttributes: true,
           confirmedAttributes: true,
           registrationStatus: true,

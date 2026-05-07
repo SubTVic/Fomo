@@ -2,6 +2,7 @@
 // API: Submit confirmed attributes via invite token (no login needed)
 
 import { NextRequest, NextResponse } from "next/server";
+import { RegistrationStatus } from "@prisma/client";
 import { z } from "zod";
 import { db } from "@/lib/db";
 
@@ -14,9 +15,17 @@ const ATTRIBUTE_KEYS = [
 
 const SubmitSchema = z.object({
   token: z.string().min(1),
-  confirmedAttributes: z.record(z.enum(ATTRIBUTE_KEYS), z.union([z.literal(0), z.literal(1)])),
+  // legacy (optional, beibehalten für Rückwärtskompatibilität)
+  confirmedAttributes: z.record(z.enum(ATTRIBUTE_KEYS), z.union([z.literal(0), z.literal(1)])).optional(),
   shortDescription: z.string().min(10).max(200).optional(),
   websiteUrl: z.string().url().optional().or(z.literal("")),
+  // v2: WS2-Self-Rating
+  ws2Answers: z.array(z.object({
+    itemId: z.string().regex(/^WS2-\d{2}$/),
+    value: z.union([z.literal(-1), z.literal(0), z.literal(1)]),
+  })).min(1).max(25).optional(),
+  ws2FilterSelections: z.array(z.string()).max(8).optional(),
+  raterCount: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -35,7 +44,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { token, confirmedAttributes, shortDescription, websiteUrl } = parsed.data;
+  const { token, confirmedAttributes, shortDescription, websiteUrl, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
 
   // Validate the token
   const invite = await db.groupInvite.findUnique({
@@ -59,7 +68,7 @@ export async function POST(req: NextRequest) {
   const attrToPrismaField: Record<string, string> = {
     career: "career",
     tech: "tech",
-    language: "language", // This is actually a string field, handle below
+    language: "language",
     social_impact: "socialImpact",
     party: "party",
     religion: "religion",
@@ -73,28 +82,29 @@ export async function POST(req: NextRequest) {
     international: "international",
     beginner_friendly: "beginnerFriendly",
     competitive: "competitive",
-    event_frequency: "eventFrequency", // String field, handle below
+    event_frequency: "eventFrequency",
     leadership_opportunities: "leadershipOpportunities",
-    group_size: "groupSize", // String field, handle below
+    group_size: "groupSize",
   };
 
-  // Boolean attributes
   const booleanAttrs = [
     "career", "tech", "social_impact", "party", "religion", "sports",
     "networking", "arts", "music", "time_low", "hands_on", "outdoor",
     "international", "beginner_friendly", "competitive", "leadership_opportunities",
   ];
 
-  for (const attr of booleanAttrs) {
-    const prismaField = attrToPrismaField[attr];
-    if (prismaField && confirmedAttributes[attr as keyof typeof confirmedAttributes] !== undefined) {
-      booleanUpdates[prismaField] = confirmedAttributes[attr as keyof typeof confirmedAttributes] === 1;
+  if (confirmedAttributes) {
+    for (const attr of booleanAttrs) {
+      const prismaField = attrToPrismaField[attr];
+      if (prismaField && confirmedAttributes[attr as keyof typeof confirmedAttributes] !== undefined) {
+        booleanUpdates[prismaField] = confirmedAttributes[attr as keyof typeof confirmedAttributes] === 1;
+      }
     }
   }
 
   const now = new Date();
 
-  // M2 fix: atomically claim the token — updateMany with usedAt: null ensures
+  // Atomically claim the token — updateMany with usedAt: null ensures
   // only one concurrent request can succeed (second gets count=0 → 409).
   const claimed = await db.groupInvite.updateMany({
     where: { id: invite.id, usedAt: null },
@@ -112,14 +122,39 @@ export async function POST(req: NextRequest) {
     where: { id: invite.groupId },
     data: {
       ...booleanUpdates,
-      confirmedAttributes: JSON.parse(JSON.stringify(confirmedAttributes)),
-      registrationStatus: "submitted",
+      ...(confirmedAttributes ? { confirmedAttributes: JSON.parse(JSON.stringify(confirmedAttributes)) } : {}),
+      registrationStatus: RegistrationStatus.SUBMITTED,
       submittedAt: now,
       isVerified: false,
       ...(shortDescription ? { shortDescription } : {}),
       ...(websiteUrl ? { websiteUrl } : {}),
     },
   });
+
+  if (ws2Answers && ws2Answers.length > 0) {
+    await db.groupSelfRating.upsert({
+      where: { groupId: invite.groupId },
+      create: {
+        groupId: invite.groupId,
+        token,
+        raterCount: raterCount ?? 1,
+        filterSelections: ws2FilterSelections ?? [],
+        answers: {
+          create: ws2Answers.map(({ itemId, value }) => ({ itemId, value })),
+        },
+      },
+      update: {
+        token,
+        submittedAt: now,
+        raterCount: raterCount ?? 1,
+        filterSelections: ws2FilterSelections ?? [],
+        answers: {
+          deleteMany: {},
+          create: ws2Answers.map(({ itemId, value }) => ({ itemId, value })),
+        },
+      },
+    });
+  }
 
   return NextResponse.json({ success: true });
 }
@@ -150,6 +185,10 @@ export async function GET(req: NextRequest) {
           international: true, beginnerFriendly: true, competitive: true,
           leadershipOpportunities: true, financialCost: true,
           language: true, eventFrequency: true, groupSize: true,
+          // V2 self-rating for pre-filling
+          selfRating: {
+            include: { answers: true },
+          },
         },
       },
     },

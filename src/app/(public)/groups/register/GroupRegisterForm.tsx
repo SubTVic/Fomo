@@ -3,6 +3,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { STUDY2_ITEMS, STUDY2_FILTER } from "@/lib/study2/items";
+import type { Study2AnswerValue } from "@/lib/study2/items";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -15,7 +17,7 @@ interface FormData {
   foundedYear: string;
   motto: string;
 
-  // Step 2: Kontakt
+  // Step 2: Kontakt & Präsenz
   contactEmail: string;
   contactPerson: string;
   contactPersonRole: string;
@@ -28,8 +30,10 @@ interface FormData {
   language: string;
   onboardingInfo: string;
 
-  // Step 4: Profil (answers)
-  answers: Record<string, string>;
+  // Step 4: WS2-Profil
+  ws2Answers: Record<string, Study2AnswerValue>;
+  ws2FilterSelections: string[];
+  raterCount: 1 | 2 | 3;
 
   // Step 5: Einverständnis
   dataConsent: boolean;
@@ -51,7 +55,9 @@ const INITIAL: FormData = {
   meetingSchedule: "",
   language: "",
   onboardingInfo: "",
-  answers: {},
+  ws2Answers: Object.fromEntries(STUDY2_ITEMS.map((i) => [i.id, 0 as Study2AnswerValue])),
+  ws2FilterSelections: [],
+  raterCount: 1,
   dataConsent: false,
 };
 
@@ -69,51 +75,20 @@ const CATEGORIES = [
   "Sonstiges",
 ];
 
-const LIKERT_OPTIONS = [
-  { value: "1", label: "Trifft gar nicht zu" },
-  { value: "2", label: "Trifft eher nicht zu" },
-  { value: "3", label: "Neutral" },
-  { value: "4", label: "Trifft eher zu" },
-  { value: "5", label: "Trifft voll zu" },
-];
-
-const STEPS = [
-  "Stammdaten",
-  "Kontakt & Präsenz",
-  "Struktur",
-  "Quiz-Profil",
-  "Abschluss",
-];
-
-// ─── Types for props ─────────────────────────────────────────────────────────
-
-interface DimensionData {
-  id: string;
-  label: string;
-  emoji: string;
-  description: string;
-}
-
-interface QuestionData {
-  id: string;
-  dimensionId: string;
-  text: string;
-}
-
-interface GroupRegisterFormProps {
-  dimensions: DimensionData[];
-  questions: QuestionData[];
-}
+const STEPS = ["Stammdaten", "Kontakt & Präsenz", "Struktur", "Gruppencheck", "Abschluss"];
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export function GroupRegisterForm({ dimensions, questions }: GroupRegisterFormProps) {
+export function GroupRegisterForm() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>(INITIAL);
+  // For step 4: track the current item index (including intro + filter screens)
+  // quizScreen: "intro" | "filter" | number (item index 0-20)
+  const [quizScreen, setQuizScreen] = useState<QuizScreen>("intro");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState<{
     success: boolean;
-    slug?: string;
     error?: string;
   } | null>(null);
 
@@ -121,36 +96,33 @@ export function GroupRegisterForm({ dimensions, questions }: GroupRegisterFormPr
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function setAnswer(questionId: string, value: string) {
+  function setWs2Answer(itemId: string, value: Study2AnswerValue) {
     setForm((prev) => ({
       ...prev,
-      answers: { ...prev.answers, [questionId]: value },
+      ws2Answers: { ...prev.ws2Answers, [itemId]: value },
     }));
   }
 
-  // ── Validation ──────────────────────────────────────────────────────────
-  function canAdvance(): boolean {
-    if (step === 1) {
-      return (
-        form.name.trim().length >= 2 &&
-        form.categoryName !== "" &&
-        form.shortDescription.trim().length >= 10 &&
-        form.shortDescription.trim().length <= 200
-      );
-    }
-    if (step === 2) {
-      return form.contactEmail.includes("@");
-    }
-    if (step === 3) return true;
-    if (step === 4) return true;
-    if (step === 5) return form.dataConsent;
-    return false;
+  function toggleFilter(attribute: string) {
+    setForm((prev) => ({
+      ...prev,
+      ws2FilterSelections: prev.ws2FilterSelections.includes(attribute)
+        ? prev.ws2FilterSelections.filter((f) => f !== attribute)
+        : [...prev.ws2FilterSelections, attribute],
+    }));
   }
+
+  const [quizDone, setQuizDone] = useState(false);
 
   // ── Submit ───────────────────────────────────────────────────────────────
   async function handleSubmit() {
     setIsSubmitting(true);
     try {
+      const ws2Answers = STUDY2_ITEMS.map((item) => ({
+        itemId: item.id,
+        value: form.ws2Answers[item.id] ?? 0,
+      }));
+
       const payload = {
         name: form.name.trim(),
         categoryName: form.categoryName,
@@ -167,7 +139,9 @@ export function GroupRegisterForm({ dimensions, questions }: GroupRegisterFormPr
         meetingSchedule: form.meetingSchedule.trim() || undefined,
         language: form.language || undefined,
         onboardingInfo: form.onboardingInfo.trim() || undefined,
-        answers: form.answers,
+        ws2Answers,
+        ws2FilterSelections: form.ws2FilterSelections,
+        raterCount: form.raterCount,
         dataConsent: "ja" as const,
       };
 
@@ -179,9 +153,12 @@ export function GroupRegisterForm({ dimensions, questions }: GroupRegisterFormPr
 
       const data = await res.json();
       if (res.ok && data.success) {
-        setSubmitResult({ success: true, slug: data.slug });
+        setSubmitResult({ success: true });
       } else {
-        setSubmitResult({ success: false, error: data.error ?? "Unbekannter Fehler" });
+        const detail = data.details?.fieldErrors
+          ? " (" + Object.entries(data.details.fieldErrors).map(([k, v]) => `${k}: ${(v as string[]).join(", ")}`).join("; ") + ")"
+          : "";
+        setSubmitResult({ success: false, error: (data.error ?? "Unbekannter Fehler") + detail });
       }
     } catch {
       setSubmitResult({ success: false, error: "Netzwerkfehler – bitte erneut versuchen." });
@@ -199,11 +176,30 @@ export function GroupRegisterForm({ dimensions, questions }: GroupRegisterFormPr
           Eure Gruppe wurde gespeichert und wird nach der Prüfung durch das FOMO-Team
           freigeschaltet. Wir melden uns per E-Mail.
         </p>
-        <Link href="/groups" className="bg-foreground px-8 py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors">
+        <Link
+          href="/groups"
+          className="bg-foreground px-8 py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
+        >
           Zur Gruppenübersicht
         </Link>
       </div>
     );
+  }
+
+  function canAdvance(): boolean {
+    if (step === 1) {
+      return (
+        form.name.trim().length >= 2 &&
+        form.categoryName !== "" &&
+        form.shortDescription.trim().length >= 10 &&
+        form.shortDescription.trim().length <= 200
+      );
+    }
+    if (step === 2) return form.contactEmail.includes("@");
+    if (step === 3) return true;
+    if (step === 4) return quizDone;
+    if (step === 5) return form.dataConsent;
+    return false;
   }
 
   return (
@@ -231,80 +227,73 @@ export function GroupRegisterForm({ dimensions, questions }: GroupRegisterFormPr
         </div>
 
         <div className="px-6 py-8 sm:px-8">
-        {step === 1 && (
-          <Step1
-            form={form}
-            set={set}
-          />
-        )}
-        {step === 2 && (
-          <Step2
-            form={form}
-            set={set}
-          />
-        )}
-        {step === 3 && (
-          <Step3
-            form={form}
-            set={set}
-          />
-        )}
-        {step === 4 && (
-          <Step4
-            answers={form.answers}
-            setAnswer={setAnswer}
-            questions={questions}
-            dimensions={dimensions}
-          />
-        )}
-        {step === 5 && (
-          <Step5
-            form={form}
-            set={set}
-            error={submitResult?.error}
-          />
-        )}
-
-        {/* Navigation */}
-        <div className="mt-10 flex items-center justify-between">
-          {step > 1 ? (
-            <button
-              onClick={() => setStep((s) => s - 1)}
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              ← Zurück
-            </button>
-          ) : (
-            <Link href="/groups" className="text-sm text-muted-foreground hover:text-foreground">
-              ← Abbrechen
-            </Link>
+          {step === 1 && <Step1 form={form} set={set} />}
+          {step === 2 && <Step2 form={form} set={set} />}
+          {step === 3 && <Step3 form={form} set={set} />}
+          {step === 4 && (
+            <Step4
+              form={form}
+              quizScreen={quizScreen}
+              setQuizScreen={setQuizScreen}
+              setWs2Answer={setWs2Answer}
+              toggleFilter={toggleFilter}
+              onDone={() => setQuizDone(true)}
+              set={set}
+            />
+          )}
+          {step === 5 && (
+            <Step5 form={form} set={set} error={submitResult?.error} />
           )}
 
-          {step < 5 ? (
-            <button
-              onClick={() => setStep((s) => s + 1)}
-              disabled={!canAdvance()}
-              className="bg-foreground px-8 py-2.5 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors disabled:opacity-40"
-            >
-              Weiter
-            </button>
-          ) : (
-            <button
-              onClick={handleSubmit}
-              disabled={isSubmitting || !canAdvance()}
-              className="bg-foreground px-8 py-2.5 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors disabled:opacity-40"
-            >
-              {isSubmitting ? "Wird gespeichert…" : "Absenden"}
-            </button>
+          {/* Navigation — only show outside the quiz item flow */}
+          {(step !== 4 || quizDone) && (
+            <div className="mt-10 flex items-center justify-between">
+              {step > 1 ? (
+                <button
+                  onClick={() => {
+                    if (step === 5) {
+                      // going back to step 4 resets quiz completion so user can re-do
+                      setQuizDone(false);
+                      setQuizScreen("intro");
+                    }
+                    setStep((s) => s - 1);
+                  }}
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  ← Zurück
+                </button>
+              ) : (
+                <Link href="/groups" className="text-sm text-muted-foreground hover:text-foreground">
+                  ← Abbrechen
+                </Link>
+              )}
+
+              {step < 5 ? (
+                <button
+                  onClick={() => setStep((s) => s + 1)}
+                  disabled={!canAdvance()}
+                  className="bg-foreground px-8 py-2.5 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors disabled:opacity-40"
+                >
+                  Weiter
+                </button>
+              ) : (
+                <button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting || !canAdvance()}
+                  className="bg-foreground px-8 py-2.5 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors disabled:opacity-40"
+                >
+                  {isSubmitting ? "Wird gespeichert…" : "Absenden"}
+                </button>
+              )}
+            </div>
           )}
-        </div>
         </div>
       </div>
     </div>
   );
 }
 
-// ─── Step components ──────────────────────────────────────────────────────────
+// ─── Step 1: Stammdaten ───────────────────────────────────────────────────────
 
 function Step1({
   form,
@@ -336,9 +325,7 @@ function Step1({
         >
           <option value="">Bitte wählen…</option>
           {CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
+            <option key={c} value={c}>{c}</option>
           ))}
         </select>
       </Field>
@@ -392,6 +379,8 @@ function Step1({
     </div>
   );
 }
+
+// ─── Step 2: Kontakt ──────────────────────────────────────────────────────────
 
 function Step2({
   form,
@@ -458,6 +447,8 @@ function Step2({
   );
 }
 
+// ─── Step 3: Struktur ─────────────────────────────────────────────────────────
+
 function Step3({
   form,
   set,
@@ -478,8 +469,8 @@ function Step3({
               onClick={() => set("memberCount", range)}
               className={`border-2 px-4 py-2 text-sm font-medium transition-colors ${
                 form.memberCount === range
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "border-border hover:bg-muted"
+                  ? "border-foreground bg-foreground text-primary-foreground"
+                  : "border-foreground/30 hover:border-foreground/60"
               }`}
             >
               {range}
@@ -511,8 +502,8 @@ function Step3({
               onClick={() => set("language", value)}
               className={`flex-1 border-2 px-3 py-2 text-sm font-medium transition-colors ${
                 form.language === value
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "border-border hover:bg-muted"
+                  ? "border-foreground bg-foreground text-primary-foreground"
+                  : "border-foreground/30 hover:border-foreground/60"
               }`}
             >
               {label}
@@ -534,72 +525,226 @@ function Step3({
   );
 }
 
+// ─── Step 4: Gruppencheck (WS2-Items) ─────────────────────────────────────────
+
+type QuizScreen = "intro" | "filter" | "rater" | number;
+
 function Step4({
-  answers,
-  setAnswer,
-  questions,
-  dimensions,
+  form,
+  quizScreen,
+  setQuizScreen,
+  setWs2Answer,
+  toggleFilter,
+  onDone,
+  set,
 }: {
-  answers: Record<string, string>;
-  setAnswer: (id: string, v: string) => void;
-  questions: QuestionData[];
-  dimensions: DimensionData[];
+  form: FormData;
+  quizScreen: QuizScreen;
+  setQuizScreen: (s: QuizScreen) => void;
+  setWs2Answer: (itemId: string, value: Study2AnswerValue) => void;
+  toggleFilter: (attribute: string) => void;
+  onDone: () => void;
+  set: <K extends keyof FormData>(k: K, v: FormData[K]) => void;
 }) {
-  const answered = Object.keys(answers).length;
+  const totalItems = STUDY2_ITEMS.length;
+
+  // ── Intro ──
+  if (quizScreen === "intro") {
+    return (
+      <div className="flex flex-col gap-6">
+        <h2 className="font-heading text-lg uppercase">Gruppencheck</h2>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Beantwortet 21 kurze Aussagen aus Sicht eurer Gruppe. Das dauert ~3 Minuten und ist die
+          Grundlage für das Matching.
+        </p>
+        <blockquote className="border-l-4 border-foreground pl-4 italic text-sm">
+          &bdquo;Mitglieder unserer Gruppe würden dieser Aussage zustimmen.&ldquo;
+        </blockquote>
+        <button
+          onClick={() => setQuizScreen("filter")}
+          className="w-full bg-foreground py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
+        >
+          Jetzt starten
+        </button>
+      </div>
+    );
+  }
+
+  // ── Filter ──
+  if (quizScreen === "filter") {
+    return (
+      <div className="flex flex-col gap-4">
+        <h2 className="font-heading text-lg uppercase">Aktivitäten</h2>
+        <p className="text-sm text-muted-foreground">
+          Welche Aktivitäten stehen bei euch im Vordergrund?{" "}
+          <span className="text-xs">(Mehrfachauswahl · nicht Pflicht)</span>
+        </p>
+        <div className="flex flex-col gap-2">
+          {STUDY2_FILTER.options.map((opt) => {
+            const isOn = form.ws2FilterSelections.includes(opt.attribute);
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => toggleFilter(opt.attribute)}
+                className={`flex items-center gap-3 px-3 py-2.5 border-2 text-left text-sm transition-colors ${
+                  isOn
+                    ? "border-foreground bg-foreground/5 font-medium"
+                    : "border-foreground/20 hover:border-foreground/50"
+                }`}
+              >
+                <span
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center border-2 text-xs font-bold transition-colors ${
+                    isOn
+                      ? "border-foreground bg-foreground text-primary-foreground"
+                      : "border-foreground/30"
+                  }`}
+                >
+                  {isOn ? "✓" : ""}
+                </span>
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
+        <button
+          onClick={() => setQuizScreen(0)}
+          className="w-full bg-foreground py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
+        >
+          Weiter zu den Fragen →
+        </button>
+      </div>
+    );
+  }
+
+  // ── Rater screen (must come before item index cast) ──
+  if (quizScreen === "rater") {
+    const options: { label: string; value: 1 | 2 | 3 }[] = [
+      { label: "Ich allein", value: 1 },
+      { label: "Zu zweit", value: 2 },
+      { label: "3 oder mehr Personen", value: 3 },
+    ];
+    return (
+      <div className="flex flex-col gap-4">
+        <h2 className="font-heading text-lg uppercase">Fast geschafft!</h2>
+        <p className="text-sm text-muted-foreground">
+          Wie viele Personen haben die Antworten gemeinsam erarbeitet?
+        </p>
+        {options.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => set("raterCount", opt.value)}
+            className={`w-full px-4 py-3 border-2 text-sm font-medium text-left transition-colors ${
+              form.raterCount === opt.value
+                ? "border-foreground bg-foreground text-primary-foreground"
+                : "border-foreground/30 hover:border-foreground hover:bg-foreground/5"
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
+        <button
+          onClick={onDone}
+          className="mt-2 w-full bg-foreground py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
+        >
+          Weiter zum Abschluss →
+        </button>
+        <button
+          onClick={() => setQuizScreen(totalItems - 1)}
+          className="text-xs text-center text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+        >
+          ← Zurück
+        </button>
+      </div>
+    );
+  }
+
+  // ── Item ──
+  const itemIndex = quizScreen as number;
+  const item = STUDY2_ITEMS[itemIndex];
+  if (!item) return null; // guard against unexpected state
+
+  const current = form.ws2Answers[item.id] ?? 0;
+  const itemNum = itemIndex + 1;
+
+  function handleAnswer(value: Study2AnswerValue) {
+    setWs2Answer(item.id, value);
+    if (itemIndex < totalItems - 1) {
+      setTimeout(() => setQuizScreen(itemIndex + 1), 180);
+    } else {
+      setTimeout(() => setQuizScreen("rater"), 180);
+    }
+  }
+
+  const answerBtns: { label: string; value: Study2AnswerValue }[] = [
+    { label: "Stimme nicht zu", value: -1 },
+    { label: "Neutral", value: 0 },
+    { label: "Stimme zu", value: 1 },
+  ];
+
   return (
-    <div className="flex flex-col gap-8">
-      <div>
-        <h2 className="font-heading text-lg uppercase">Quiz-Profil</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Beantwortet die folgenden Aussagen aus Sicht eurer Gruppe. Je ehrlicher, desto besser
-          das Matching.
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {answered} / {questions.length} beantwortet
-        </p>
+    <div className="flex flex-col gap-4">
+      {/* Progress */}
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-muted-foreground uppercase tracking-wider">
+          Frage {itemNum} von {totalItems}
+        </span>
+        <div className="h-1.5 w-32 bg-foreground/10 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-foreground transition-all duration-300"
+            style={{ width: `${Math.round((itemNum / totalItems) * 100)}%` }}
+          />
+        </div>
       </div>
 
-      {dimensions.map((dim) => {
-        const dimQuestions = questions.filter((q) => q.dimensionId === dim.id);
-        return (
-          <div key={dim.id} className="flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">{dim.emoji}</span>
-              <div>
-                <p className="font-semibold text-sm">{dim.label}</p>
-                <p className="text-xs text-muted-foreground">{dim.description}</p>
-              </div>
-            </div>
-            {dimQuestions.map((q) => (
-              <div key={q.id} className="border-2 border-foreground/20 bg-card p-4">
-                <p className="text-sm font-medium mb-3">&ldquo;{q.text}&rdquo;</p>
-                <div className="flex gap-1.5 flex-wrap">
-                  {LIKERT_OPTIONS.map(({ value, label }) => (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => setAnswer(q.id, value)}
-                      className={`flex-1 min-w-[56px] border-2 py-2 text-xs font-medium transition-colors ${
-                        answers[q.id] === value
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border hover:bg-muted"
-                      }`}
-                    >
-                      {value}
-                      <span className="hidden sm:block text-[10px] opacity-70 mt-0.5 leading-tight">
-                        {label}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        );
-      })}
+      <p className="text-[11px] text-muted-foreground italic">
+        Mitglieder unserer Gruppe würden zustimmen:
+      </p>
+      <p className="font-heading text-base uppercase leading-snug">{item.text}</p>
+
+      <div className="flex flex-col gap-2 mt-2">
+        {answerBtns.map(({ label, value }) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => handleAnswer(value)}
+            className={`w-full px-4 py-3 border-2 text-sm font-medium text-left transition-colors ${
+              current === value
+                ? "border-foreground bg-foreground text-primary-foreground"
+                : "border-foreground/30 hover:border-foreground hover:bg-foreground/5"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex justify-between pt-1">
+        <button
+          onClick={() =>
+            itemIndex === 0 ? setQuizScreen("filter") : setQuizScreen(itemIndex - 1)
+          }
+          className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+        >
+          ← Zurück
+        </button>
+        <button
+          onClick={() =>
+            itemIndex < totalItems - 1
+              ? setQuizScreen(itemIndex + 1)
+              : setQuizScreen("rater")
+          }
+          className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+        >
+          Überspringen →
+        </button>
+      </div>
     </div>
   );
 }
+
+// ─── Step 5: Abschluss ────────────────────────────────────────────────────────
 
 function Step5({
   form,
@@ -639,16 +784,20 @@ function Step5({
           type="checkbox"
           checked={form.dataConsent}
           onChange={(e) => set("dataConsent", e.target.checked)}
-          className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
+          className="mt-0.5 h-4 w-4 border-border accent-primary"
         />
         <span className="text-sm">
           Ich stimme der Nutzung der Daten für FOMO zu und bestätige, dass ich berechtigt bin,
-          diese Gruppe zu registrieren. *
+          diese Gruppe zu registrieren.{" "}
+          <span className="text-muted-foreground">*</span>
         </span>
       </label>
+      <p className="text-xs text-muted-foreground">
+        * Pflichtfeld. Die Informationen zu Datenschutz und Nutzung stehen oben.
+      </p>
 
       {error && (
-        <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <p className="border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           Fehler: {error}
         </p>
       )}
@@ -656,7 +805,7 @@ function Step5({
   );
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Field helper ─────────────────────────────────────────────────────────────
 
 function Field({
   label,

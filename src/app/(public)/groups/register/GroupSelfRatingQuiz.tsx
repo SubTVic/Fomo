@@ -1,0 +1,500 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { STUDY2_ITEMS, STUDY2_FILTER } from "@/lib/study2/items";
+import type { Study2AnswerValue } from "@/lib/study2/items";
+
+type Step =
+  | { type: "intro" }
+  | { type: "filter" }
+  | { type: "item"; index: number }
+  | { type: "description" }
+  | { type: "raterCount" };
+
+interface GroupData {
+  id: string;
+  name: string;
+  shortDescription: string;
+  websiteUrl: string | null;
+  selfRating?: {
+    raterCount: number;
+    filterSelections: string[];
+    answers: Array<{ itemId: string; value: number }>;
+  } | null;
+}
+
+// ─── Progress bar ──────────────────────────────────────────────────────────
+
+function ProgressBar({ current, total }: { current: number; total: number }) {
+  return (
+    <div className="w-full h-1.5 bg-foreground/10">
+      <div
+        className="h-full bg-foreground transition-all duration-300"
+        style={{ width: `${Math.round((current / total) * 100)}%` }}
+      />
+    </div>
+  );
+}
+
+// ─── Answer button ─────────────────────────────────────────────────────────
+
+function AnswerButton({
+  label,
+  value,
+  current,
+  onClick,
+}: {
+  label: string;
+  value: Study2AnswerValue;
+  current: Study2AnswerValue;
+  onClick: (v: Study2AnswerValue) => void;
+}) {
+  const isSelected = current === value;
+  return (
+    <button
+      type="button"
+      onClick={() => onClick(value)}
+      className={`w-full px-4 py-3.5 border-2 text-sm font-medium text-left transition-colors ${
+        isSelected
+          ? "border-foreground bg-foreground text-primary-foreground"
+          : "border-foreground/30 hover:border-foreground hover:bg-foreground/5"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+// ─── Main component ────────────────────────────────────────────────────────
+
+export function GroupSelfRatingQuiz() {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
+  const [loadStatus, setLoadStatus] = useState<"loading" | "error" | "ready">("loading");
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "done">("idle");
+  const [error, setError] = useState("");
+  const [group, setGroup] = useState<GroupData | null>(null);
+  const [step, setStep] = useState<Step>({ type: "intro" });
+  const [answers, setAnswers] = useState<Record<string, Study2AnswerValue>>({});
+  const [filterSelections, setFilterSelections] = useState<string[]>([]);
+  const [raterCount, setRaterCount] = useState<1 | 2 | 3>(1);
+  const [description, setDescription] = useState("");
+  const [website, setWebsite] = useState("");
+
+  useEffect(() => {
+    if (!token) {
+      setLoadStatus("error");
+      setError("Kein Einladungslink gefunden. Bitte nutze den Link aus deiner E-Mail.");
+      return;
+    }
+
+    async function load() {
+      try {
+        const res = await fetch(`/api/groups/register-attributes?token=${encodeURIComponent(token!)}`);
+        const data = await res.json();
+        if (!res.ok) {
+          setLoadStatus("error");
+          setError(data.error ?? "Unbekannter Fehler");
+          return;
+        }
+        const g = data.group as GroupData;
+        setGroup(g);
+        setDescription(g.shortDescription);
+        setWebsite(g.websiteUrl ?? "");
+
+        // Pre-fill from previous selfRating if it exists
+        if (g.selfRating?.answers?.length) {
+          const prev: Record<string, Study2AnswerValue> = {};
+          for (const a of g.selfRating.answers) {
+            prev[a.itemId] = a.value as Study2AnswerValue;
+          }
+          setAnswers(prev);
+          setFilterSelections(
+            Array.isArray(g.selfRating.filterSelections) ? g.selfRating.filterSelections : []
+          );
+          setRaterCount((g.selfRating.raterCount as 1 | 2 | 3) ?? 1);
+        } else {
+          // Initialize all items to 0 (neutral)
+          const init: Record<string, Study2AnswerValue> = {};
+          for (const item of STUDY2_ITEMS) {
+            init[item.id] = 0;
+          }
+          setAnswers(init);
+        }
+
+        setLoadStatus("ready");
+      } catch {
+        setLoadStatus("error");
+        setError("Netzwerkfehler – bitte erneut versuchen.");
+      }
+    }
+
+    load();
+  }, [token]);
+
+  const toggleFilter = useCallback((filterId: string) => {
+    setFilterSelections((prev) =>
+      prev.includes(filterId) ? prev.filter((f) => f !== filterId) : [...prev, filterId]
+    );
+  }, []);
+
+  const setAnswer = useCallback((itemId: string, value: Study2AnswerValue) => {
+    setAnswers((prev) => ({ ...prev, [itemId]: value }));
+    // Auto-advance to next item
+    const idx = STUDY2_ITEMS.findIndex((i) => i.id === itemId);
+    if (idx < STUDY2_ITEMS.length - 1) {
+      setTimeout(() => setStep({ type: "item", index: idx + 1 }), 180);
+    } else {
+      setTimeout(() => setStep({ type: "description" }), 180);
+    }
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
+    if (!token) return;
+    setSubmitStatus("submitting");
+
+    const ws2Answers = STUDY2_ITEMS.map((item) => ({
+      itemId: item.id,
+      value: answers[item.id] ?? 0,
+    }));
+
+    try {
+      const res = await fetch("/api/groups/register-attributes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token,
+          ws2Answers,
+          ws2FilterSelections: filterSelections,
+          raterCount,
+          shortDescription: description.trim(),
+          websiteUrl: website.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSubmitStatus("done");
+      } else {
+        setSubmitStatus("idle");
+        setError(data.error ?? "Fehler beim Speichern.");
+      }
+    } catch {
+      setSubmitStatus("idle");
+      setError("Netzwerkfehler – bitte erneut versuchen.");
+    }
+  }, [token, answers, filterSelections, raterCount, description, website]);
+
+  // ── Error ──
+  if (loadStatus === "error") {
+    return (
+      <div className="flex flex-col items-center px-4 py-20 text-center">
+        <div className="w-full max-w-[520px] border-4 border-foreground bg-card px-6 py-10 sm:px-8">
+          <h1 className="font-heading text-xl uppercase mb-4">Fehler</h1>
+          <p className="text-muted-foreground text-sm">{error}</p>
+          <Link
+            href="/"
+            className="mt-6 inline-block text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
+          >
+            Zur Startseite
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Loading ──
+  if (loadStatus === "loading") {
+    return (
+      <div className="flex items-center justify-center py-20 text-muted-foreground">
+        Einladung wird geladen…
+      </div>
+    );
+  }
+
+  // ── Done ──
+  if (submitStatus === "done") {
+    return (
+      <div className="flex flex-col items-center px-4 py-20 text-center">
+        <div className="w-full max-w-[520px] border-4 border-foreground bg-card px-6 py-10 sm:px-8">
+          <h1 className="font-heading text-xl uppercase mb-4">Profil gespeichert!</h1>
+          <p className="text-muted-foreground text-sm">
+            Danke! Euer Profil ist jetzt hinterlegt und wird vom FOMO-Team geprüft.
+          </p>
+          <Link
+            href="/groups"
+            className="mt-6 inline-block bg-foreground px-6 py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
+          >
+            Zur Gruppenübersicht
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const totalSteps = 2 + STUDY2_ITEMS.length + 2; // filter + items + description + raterCount (intro not counted)
+
+  function currentStepIndex(): number {
+    if (step.type === "filter") return 1;
+    if (step.type === "item") return 2 + step.index;
+    if (step.type === "description") return 2 + STUDY2_ITEMS.length;
+    if (step.type === "raterCount") return 2 + STUDY2_ITEMS.length + 1;
+    return 0;
+  }
+
+  // ── Intro ──
+  if (step.type === "intro") {
+    return (
+      <div className="flex flex-col items-center px-4 py-6 sm:px-6">
+        <div className="w-full max-w-[560px] border-4 border-foreground bg-card">
+          <div className="bg-foreground text-primary-foreground px-6 py-5 sm:px-8">
+            <h1 className="font-heading text-xl uppercase">Gruppencheck</h1>
+            <p className="mt-1 text-sm text-primary-foreground/60">{group?.name}</p>
+          </div>
+          <div className="px-6 py-8 sm:px-8 flex flex-col gap-6">
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Bitte beantwortet die folgenden 21 Aussagen aus Sicht eurer Gruppe. Stellt euch vor,
+              ein typisches Mitglied spricht:
+            </p>
+            <blockquote className="border-l-4 border-foreground pl-4 italic text-sm">
+              &bdquo;Mitglieder unserer Gruppe würden dieser Aussage zustimmen.&ldquo;
+            </blockquote>
+            <p className="text-sm text-muted-foreground">
+              Das dauert etwa 5 Minuten. Eure Antworten werden direkt als Matching-Profil für das
+              FOMO-Quiz verwendet.
+            </p>
+            <button
+              onClick={() => setStep({ type: "filter" })}
+              className="w-full bg-foreground py-4 font-heading text-base uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
+            >
+              Jetzt starten
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Filter ──
+  if (step.type === "filter") {
+    return (
+      <div className="flex flex-col items-center px-4 py-6 sm:px-6">
+        <div className="w-full max-w-[560px] border-4 border-foreground bg-card">
+          <ProgressBar current={currentStepIndex()} total={totalSteps} />
+          <div className="bg-foreground text-primary-foreground px-6 py-5 sm:px-8">
+            <p className="text-xs uppercase tracking-wider text-primary-foreground/50 mb-1">
+              Aktivitäten
+            </p>
+            <h2 className="font-heading text-lg uppercase leading-snug">
+              Welche Aktivitäten stehen bei euch im Vordergrund?
+            </h2>
+            <p className="mt-1 text-xs text-primary-foreground/50">Mehrfachauswahl · nicht Pflicht</p>
+          </div>
+          <div className="px-6 py-6 sm:px-8 flex flex-col gap-2">
+            {STUDY2_FILTER.options.map((opt) => {
+              const isOn = filterSelections.includes(opt.attribute);
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => toggleFilter(opt.attribute)}
+                  className={`flex items-center gap-3 px-3 py-3 border-2 text-left text-sm transition-colors ${
+                    isOn
+                      ? "border-foreground bg-foreground/5 font-medium"
+                      : "border-foreground/20 hover:border-foreground/50"
+                  }`}
+                >
+                  <span
+                    className={`flex h-5 w-5 shrink-0 items-center justify-center border-2 text-xs font-bold transition-colors ${
+                      isOn
+                        ? "border-foreground bg-foreground text-primary-foreground"
+                        : "border-foreground/30"
+                    }`}
+                  >
+                    {isOn ? "✓" : ""}
+                  </span>
+                  {opt.label}
+                </button>
+              );
+            })}
+            <button
+              onClick={() => setStep({ type: "item", index: 0 })}
+              className="mt-4 w-full bg-foreground py-4 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
+            >
+              Weiter zu den Fragen →
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Item ──
+  if (step.type === "item") {
+    const item = STUDY2_ITEMS[step.index];
+    const current = answers[item.id] ?? 0;
+    const itemNum = step.index + 1;
+
+    return (
+      <div className="flex flex-col items-center px-4 py-6 sm:px-6">
+        <div className="w-full max-w-[560px] border-4 border-foreground bg-card">
+          <ProgressBar current={currentStepIndex()} total={totalSteps} />
+          <div className="bg-foreground text-primary-foreground px-6 py-5 sm:px-8">
+            <p className="text-xs uppercase tracking-wider text-primary-foreground/50 mb-1">
+              Frage {itemNum} von {STUDY2_ITEMS.length}
+            </p>
+            <p className="text-xs text-primary-foreground/60 mb-2 italic">
+              Mitglieder unserer Gruppe würden zustimmen:
+            </p>
+            <h2 className="font-heading text-lg uppercase leading-snug">{item.text}</h2>
+          </div>
+          <div className="px-6 py-6 sm:px-8 flex flex-col gap-2">
+            <AnswerButton label="Stimme nicht zu" value={-1} current={current} onClick={(v) => setAnswer(item.id, v)} />
+            <AnswerButton label="Neutral" value={0} current={current} onClick={(v) => setAnswer(item.id, v)} />
+            <AnswerButton label="Stimme zu" value={1} current={current} onClick={(v) => setAnswer(item.id, v)} />
+            <div className="flex justify-between pt-2">
+              <button
+                onClick={() =>
+                  step.index === 0
+                    ? setStep({ type: "filter" })
+                    : setStep({ type: "item", index: step.index - 1 })
+                }
+                className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+              >
+                ← Zurück
+              </button>
+              <button
+                onClick={() =>
+                  step.index < STUDY2_ITEMS.length - 1
+                    ? setStep({ type: "item", index: step.index + 1 })
+                    : setStep({ type: "description" })
+                }
+                className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+              >
+                Überspringen →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Description / Website ──
+  if (step.type === "description") {
+    return (
+      <div className="flex flex-col items-center px-4 py-6 sm:px-6">
+        <div className="w-full max-w-[560px] border-4 border-foreground bg-card">
+          <ProgressBar current={currentStepIndex()} total={totalSteps} />
+          <div className="bg-foreground text-primary-foreground px-6 py-5 sm:px-8">
+            <h2 className="font-heading text-xl uppercase">Gruppeninfo</h2>
+            <p className="mt-1 text-xs text-primary-foreground/50">{group?.name}</p>
+          </div>
+          <div className="px-6 py-6 sm:px-8 flex flex-col gap-5">
+            <p className="text-sm text-muted-foreground">
+              Optional: Passt eure Kurzbeschreibung und Website an, bevor ihr absendet.
+            </p>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">Kurzbeschreibung</label>
+              <textarea
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                maxLength={200}
+                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors resize-none"
+              />
+              <span className="text-xs text-muted-foreground">
+                {description.trim().length}/200 Zeichen
+              </span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">Website</label>
+              <input
+                type="url"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                placeholder="https://…"
+                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+              />
+            </div>
+            <button
+              onClick={() => setStep({ type: "raterCount" })}
+              className="w-full bg-foreground py-4 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
+            >
+              Weiter →
+            </button>
+            <button
+              onClick={() => setStep({ type: "item", index: STUDY2_ITEMS.length - 1 })}
+              className="text-xs text-center text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+            >
+              ← Zurück
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Rater count ──
+  if (step.type === "raterCount") {
+    const options: { label: string; value: 1 | 2 | 3 }[] = [
+      { label: "Ich allein", value: 1 },
+      { label: "Zu zweit", value: 2 },
+      { label: "3 oder mehr Personen", value: 3 },
+    ];
+
+    return (
+      <div className="flex flex-col items-center px-4 py-6 sm:px-6">
+        <div className="w-full max-w-[560px] border-4 border-foreground bg-card">
+          <ProgressBar current={currentStepIndex()} total={totalSteps} />
+          <div className="bg-foreground text-primary-foreground px-6 py-5 sm:px-8">
+            <h2 className="font-heading text-xl uppercase leading-snug">
+              Wie viele Personen haben die Antworten gemeinsam erarbeitet?
+            </h2>
+          </div>
+          <div className="px-6 py-6 sm:px-8 flex flex-col gap-3">
+            {options.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setRaterCount(opt.value)}
+                className={`w-full px-4 py-3.5 border-2 text-sm font-medium text-left transition-colors ${
+                  raterCount === opt.value
+                    ? "border-foreground bg-foreground text-primary-foreground"
+                    : "border-foreground/30 hover:border-foreground hover:bg-foreground/5"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+
+            {error && (
+              <p className="border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                {error}
+              </p>
+            )}
+
+            <button
+              onClick={handleSubmit}
+              disabled={submitStatus === "submitting"}
+              className="mt-2 w-full bg-foreground py-4 font-heading text-base uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors disabled:opacity-40"
+            >
+              {submitStatus === "submitting" ? "Wird gespeichert…" : "Profil speichern"}
+            </button>
+            <button
+              onClick={() => setStep({ type: "description" })}
+              className="text-xs text-center text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
+            >
+              ← Zurück
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}

@@ -2,9 +2,51 @@
 // API: register a Hochschulgruppe via the group survey form
 
 import { NextRequest, NextResponse } from "next/server";
+import { RegistrationStatus } from "@prisma/client";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { isRateLimited, getClientKey } from "@/lib/rate-limit";
+
+function normalizeName(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function bigrams(s: string): Set<string> {
+  const set = new Set<string>();
+  for (let i = 0; i < s.length - 1; i++) set.add(s.slice(i, i + 2));
+  return set;
+}
+
+function jaccardSimilarity(a: string, b: string): number {
+  const ba = bigrams(a);
+  const bb = bigrams(b);
+  if (ba.size === 0 && bb.size === 0) return 1;
+  let intersection = 0;
+  for (const bg of ba) if (bb.has(bg)) intersection++;
+  return intersection / (ba.size + bb.size - intersection);
+}
+
+// Returns the best-matching existing group ID if similarity > 0.55, else null
+async function findDuplicateGroup(name: string, excludeId: string): Promise<string | null> {
+  const normalized = normalizeName(name);
+  const existing = await db.group.findMany({
+    where: { id: { not: excludeId }, registeredVia: { not: "survey" } },
+    select: { id: true, name: true },
+  });
+  let bestId: string | null = null;
+  let bestScore = 0.55; // threshold
+  for (const g of existing) {
+    const score = jaccardSimilarity(normalized, normalizeName(g.name));
+    if (score > bestScore) {
+      bestScore = score;
+      bestId = g.id;
+    }
+  }
+  return bestId;
+}
 
 const RegisterSchema = z.object({
   // Stammdaten
@@ -19,17 +61,22 @@ const RegisterSchema = z.object({
   contactEmail: z.string().email(),
   contactPerson: z.string().max(100).optional(),
   contactPersonRole: z.string().max(100).optional(),
-  websiteUrl: z.string().url().optional().or(z.literal("")),
+  websiteUrl: z.string().max(500).optional(),
   instagramUrl: z.string().max(200).optional(),
 
   // Struktur
-  memberCount: z.string().optional(), // e.g. "1-10", "11-25", "26-50", "51-100", "100+"
+  memberCount: z.string().optional(),
   meetingSchedule: z.string().max(200).optional(),
   language: z.enum(["german", "both", "english"]).optional(),
   onboardingInfo: z.string().max(2000).optional(),
 
-  // Quiz-Profil
-  answers: z.record(z.string(), z.string()),
+  // WS2-Profil
+  ws2Answers: z.array(z.object({
+    itemId: z.string().regex(/^WS2-\d{2}$/),
+    value: z.union([z.literal(-1), z.literal(0), z.literal(1)]),
+  })).min(1).max(25).optional(),
+  ws2FilterSelections: z.array(z.string()).max(8).optional(),
+  raterCount: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
 
   // Einverständnis
   dataConsent: z.literal("ja"),
@@ -96,7 +143,9 @@ export async function POST(req: NextRequest) {
     meetingSchedule,
     language,
     onboardingInfo,
-    answers,
+    ws2Answers,
+    ws2FilterSelections,
+    raterCount,
   } = parsed.data;
 
   try {
@@ -130,16 +179,36 @@ export async function POST(req: NextRequest) {
         onboardingInfo: onboardingInfo || null,
         registeredVia: "survey",
         registeredAt: new Date(),
-        isActive: true,
+        registrationStatus: RegistrationStatus.SUBMITTED,
+        submittedAt: new Date(),
+        isActive: false,   // admin must activate after review
         isVerified: false,
-        pilotAnswers: {
-          create: Object.entries(answers).map(([questionId, value]) => ({
-            questionId,
-            value,
-          })),
-        },
       },
     });
+
+    // Check for duplicate existing group (fire after creation to have excludeId)
+    const duplicateId = await findDuplicateGroup(name, group.id);
+    if (duplicateId) {
+      await db.group.update({
+        where: { id: group.id },
+        data: { duplicateOfGroupId: duplicateId },
+      });
+    }
+
+    // Save WS2 self-rating if provided
+    if (ws2Answers && ws2Answers.length > 0) {
+      await db.groupSelfRating.create({
+        data: {
+          groupId: group.id,
+          token: "self-register",
+          raterCount: raterCount ?? 1,
+          filterSelections: ws2FilterSelections ?? [],
+          answers: {
+            create: ws2Answers.map(({ itemId, value }) => ({ itemId, value })),
+          },
+        },
+      });
+    }
 
     return NextResponse.json({ success: true, groupId: group.id, slug: group.slug });
   } catch {

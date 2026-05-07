@@ -79,7 +79,7 @@ async function main() {
         where: { id: dbGroup.id },
         data: {
           scraperAttributes: JSON.parse(JSON.stringify(scraperGroup.attributes)),
-          registrationStatus: "invited",
+          registrationStatus: "INVITED",
         },
       });
 

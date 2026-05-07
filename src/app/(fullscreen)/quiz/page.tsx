@@ -15,8 +15,8 @@ export default async function QuizPage() {
     <>
       <div className="sticky top-0 z-50 bg-yellow-50 border-b-2 border-foreground px-4 py-2 text-xs text-foreground text-center">
         ⚠️ <strong>Prototyp</strong> — Fragen, Layout und Matching sind noch in Arbeit. Feedback gern an{" "}
-        <a href="mailto:fomo@stura.tu-dresden.de" className="underline">
-          fomo@stura.tu-dresden.de
+        <a href="mailto:victor.kling@yeti-dresden.org" className="underline">
+          victor.kling@yeti-dresden.org
         </a>
       </div>
       <QuizRouter theses={theses} groups={groups} />

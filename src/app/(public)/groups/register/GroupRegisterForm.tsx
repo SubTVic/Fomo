@@ -763,7 +763,7 @@ function Step5({
         <p className="font-semibold text-foreground mb-2">Logo nachreichen</p>
         <p>
           Ihr könnt euer Logo per E-Mail an{" "}
-          <span className="font-medium text-foreground">fomo@stura.tu-dresden.de</span> schicken.
+          <span className="font-medium text-foreground">victor.kling@yeti-dresden.org</span> schicken.
           Betreff: &ldquo;Logo – {form.name || "Gruppenname"}&rdquo;. Erlaubt sind PNG oder SVG,
           mindestens 200×200 px.
         </p>

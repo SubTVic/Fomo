@@ -13,6 +13,7 @@
 //  - sets registrationStatus = "invited" if not already submitted/verified
 
 import { NextRequest, NextResponse } from "next/server";
+import { RegistrationStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { z } from "zod";
@@ -159,7 +160,7 @@ export async function POST(req: NextRequest) {
             ...catFields,
             scraperAttributes: attrs as object,
             // Keep existing registration status unless it's null
-            registrationStatus: existing.registrationStatus ?? "invited",
+            registrationStatus: existing.registrationStatus ?? RegistrationStatus.INVITED,
           },
         });
       } else {
@@ -174,7 +175,7 @@ export async function POST(req: NextRequest) {
             categoryId: defaultCategory.id,
             registeredVia: "import",
             registeredAt: new Date(),
-            registrationStatus: "invited",
+            registrationStatus: RegistrationStatus.INVITED,
             ...boolFields,
             ...catFields,
             scraperAttributes: attrs as object,

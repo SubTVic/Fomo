@@ -4,7 +4,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ALL_ATTRIBUTE_KEYS, getAttributeLabel } from "@/lib/quiz/attribute-labels";
-import { QUIZ_VARIANTS, type QuizVariant } from "@/lib/quiz/types";
 
 interface ThesisAttribute {
   id: string;
@@ -26,7 +25,6 @@ interface Thesis {
 
 interface Props {
   initialTheses: Thesis[];
-  initialVariant: QuizVariant;
 }
 
 const IMPORT_TEMPLATE = JSON.stringify(
@@ -51,23 +49,13 @@ const IMPORT_TEMPLATE = JSON.stringify(
   2,
 );
 
-export function QuizThesisManager({ initialTheses, initialVariant }: Props) {
+export function QuizThesisManager({ initialTheses }: Props) {
   const router = useRouter();
-  const [variant, setVariant] = useState(initialVariant);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [saving, setSaving] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
-
-  async function handleVariantChange(v: QuizVariant) {
-    setVariant(v);
-    await fetch("/api/admin/quiz/variant", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ variant: v }),
-    });
-  }
 
   async function handleDelete(id: string) {
     if (!confirm("These wirklich löschen?")) return;
@@ -124,29 +112,6 @@ export function QuizThesisManager({ initialTheses, initialVariant }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* Variant selector */}
-      <div className="border-2 border-foreground bg-card p-4">
-        <label className="block text-sm font-medium mb-2">Aktive Quiz-Variante</label>
-        <div className="flex gap-2 flex-wrap">
-          {QUIZ_VARIANTS.map((v) => (
-            <button
-              key={v.value}
-              onClick={() => handleVariantChange(v.value)}
-              className={`rounded border-2 px-4 py-2 text-sm font-medium transition-colors ${
-                variant === v.value
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-foreground hover:bg-muted/40"
-              }`}
-            >
-              {v.emoji} {v.label}
-            </button>
-          ))}
-        </div>
-        <p className="mt-2 text-xs text-muted-foreground">
-          Nutzer sehen das Quiz unter <code>/quiz</code> in dieser Variante.
-        </p>
-      </div>
-
       {/* Thesis list */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">{initialTheses.length} Thesen</p>

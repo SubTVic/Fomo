@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { GroupEditForm } from "./GroupEditForm";
 import { ToggleActiveButton } from "./ToggleActiveButton";
+import { MergeButton } from "./MergeButton";
 
 interface AdminGroupDetailPageProps {
   params: Promise<{ id: string }>;
@@ -20,7 +21,11 @@ export default async function AdminGroupDetailPage({
   const [group, categories] = await Promise.all([
     db.group.findUnique({
       where: { id },
-      include: { category: true },
+      include: {
+        category: true,
+        duplicateOf: { select: { id: true, name: true } },
+        duplicates: { select: { id: true, name: true, registeredVia: true } },
+      },
     }),
     db.category.findMany({ orderBy: { name: "asc" } }),
   ]);
@@ -66,6 +71,57 @@ export default async function AdminGroupDetailPage({
         </div>
         <ToggleActiveButton groupId={group.id} isActive={group.isActive} />
       </div>
+
+      {/* Duplicate warning: this group IS a duplicate of an existing one */}
+      {group.duplicateOf && (
+        <div className="mb-4 border-2 border-purple-400 bg-purple-50 px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-purple-800">
+              Mögliches Duplikat erkannt
+            </p>
+            <p className="text-xs text-purple-700 mt-0.5">
+              Diese selbstregistrierte Gruppe ähnelt stark:{" "}
+              <a
+                href={`/admin/groups/${group.duplicateOf.id}`}
+                className="underline font-medium"
+              >
+                {group.duplicateOf.name}
+              </a>
+            </p>
+          </div>
+          <MergeButton
+            sourceGroupId={group.id}
+            targetGroupId={group.duplicateOf.id}
+            targetGroupName={group.duplicateOf.name}
+          />
+        </div>
+      )}
+
+      {/* Reverse: this existing group has self-registered duplicates pointing at it */}
+      {group.duplicates.length > 0 && (
+        <div className="mb-4 border-2 border-orange-300 bg-orange-50 px-5 py-4">
+          <p className="text-sm font-semibold text-orange-800 mb-2">
+            Selbstregistrierte Anwärter ({group.duplicates.length})
+          </p>
+          <div className="flex flex-col gap-2">
+            {group.duplicates.map((dup) => (
+              <div key={dup.id} className="flex items-center justify-between gap-3">
+                <a
+                  href={`/admin/groups/${dup.id}`}
+                  className="text-sm text-orange-700 underline"
+                >
+                  {dup.name}
+                </a>
+                <MergeButton
+                  sourceGroupId={dup.id}
+                  targetGroupId={group.id}
+                  targetGroupName={group.name}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Edit form */}
       <div className="border-2 border-foreground bg-card p-6">

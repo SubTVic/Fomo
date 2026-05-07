@@ -3,7 +3,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
+import { Prisma, RegistrationStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import crypto from "crypto";
@@ -70,9 +70,9 @@ export async function POST(req: NextRequest) {
     await db.group.updateMany({
       where: {
         id: invite.groupId,
-        registrationStatus: { notIn: ["submitted", "verified"] },
+        registrationStatus: { notIn: [RegistrationStatus.SUBMITTED, RegistrationStatus.VERIFIED] },
       },
-      data: { registrationStatus: "invited" },
+      data: { registrationStatus: RegistrationStatus.INVITED },
     });
 
     results.push({

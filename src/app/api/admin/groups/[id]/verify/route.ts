@@ -2,6 +2,7 @@
 // Admin API: verify (or unverify) a group
 
 import { NextRequest, NextResponse } from "next/server";
+import { RegistrationStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
@@ -26,7 +27,7 @@ export async function PATCH(
     where: { id },
     data: {
       isVerified: nowVerified,
-      registrationStatus: nowVerified ? "verified" : group.registrationStatus,
+      registrationStatus: nowVerified ? RegistrationStatus.VERIFIED : group.registrationStatus,
       verifiedAt: nowVerified ? new Date() : null,
     },
   });

@@ -1,0 +1,145 @@
+{
+  "_meta": {
+    "version": "v1",
+    "createdAt": "2026-05-04",
+    "note": "Single Source of Truth für Gruppen-Attribute. Wird vom Scraper als Prompt-Grundlage verwendet. Jedes Attribut mappt auf mindestens eine Quiz-These in working-set-v1.json."
+  },
+  "attributes": [
+    {
+      "id": "career",
+      "label": "Karriere & Berufsorientierung",
+      "definition": "Die Gruppe fördert explizit beruflich-fachliche Kompetenzen oder Networking, die einen direkten Karrierebezug haben. Erkennungsmerkmale: Unternehmenskooperationen, Bewerbungstraining, Fachvorträge von Firmen, Karrieremessen, Praktikums-Vermittlung.",
+      "positive_examples": ["VWI Dresden", "bonding Hochschulgruppe", "AIESEC"],
+      "negative_examples": ["Studententheater", "Campusradio Dresden"],
+      "matchedToQuestionIds": []
+    },
+    {
+      "id": "tech",
+      "label": "Technologie & Digital",
+      "definition": "Die Gruppe arbeitet primär mit digitalen Technologien oder IT-Systemen. Erkennungsmerkmale: Coding, Software-Entwicklung, digitale Projekte, Online-Kollaboration als Hauptarbeitsmodus, keine oder wenige Präsenztreffen erforderlich.",
+      "positive_examples": ["Bits & Bäume TU Dresden", "404 University Esports"],
+      "negative_examples": ["Elbflorace (analog Werkstatt)", "Campusradio (Präsenz-Studio)"],
+      "matchedToQuestionIds": ["WS-D9Q5"]
+    },
+    {
+      "id": "socialImpact",
+      "label": "Soziale Wirkung & Engagement",
+      "definition": "Die Gruppe hat einen expliziten sozialen oder gesellschaftlichen Auftrag: Hilfe für andere, Umweltschutz, Menschenrechte, Chancengleichheit, gemeinnützige Projekte. Reine Interessengruppen ohne Außenwirkung zählen nicht.",
+      "positive_examples": ["Nightline Dresden", "UNICEF Hochschulgruppe", "Greenpeace Hochschulgruppe"],
+      "negative_examples": ["404 University Esports", "Debattierclub (ohne sozialen Fokus)"],
+      "matchedToQuestionIds": ["WS-D4Q4", "WS-D6Q3", "WS-S1"]
+    },
+    {
+      "id": "party",
+      "label": "Hochschulpolitik & Mitbestimmung",
+      "definition": "Die Gruppe engagiert sich in studentischer Selbstverwaltung, Hochschulpolitik oder politischer Bildung. Erkennungsmerkmale: StuRa-Nähe, Fachschaftsarbeit, politische Debatten, Campuspolitik, Engagement in Gremien.",
+      "positive_examples": ["Studentenrat TU Dresden", "Junge Liberale"],
+      "negative_examples": ["AEGEE (kulturell, nicht politisch)", "Elbflorace"],
+      "matchedToQuestionIds": ["WS-D4Q3"]
+    },
+    {
+      "id": "religion",
+      "label": "Weltanschauung & Werte-Gemeinschaft",
+      "definition": "Die Gruppe ist durch eine gemeinsame Weltanschauung, spirituelle Überzeugung, Philosophie oder geteilte Werteidentität geprägt. Erkennungsmerkmale: religiöse Bindung, ethische Grundsätze als Gruppenidentität, philosophische Ausrichtung.",
+      "positive_examples": ["SMD (Studentenmission Deutschland)", "KHG (Katholische Hochschulgemeinde)", "ESG"],
+      "negative_examples": ["Robotik AG", "404 University Esports"],
+      "matchedToQuestionIds": ["WS-D6Q4"]
+    },
+    {
+      "id": "sports",
+      "label": "Sport & Bewegung",
+      "definition": "Die Hauptaktivität der Gruppe ist Sport oder körperliche Bewegung. Erkennungsmerkmale: regelmäßiges Training, Wettkampfteilnahme im Sportbereich, Sportveranstaltungen.",
+      "positive_examples": ["USV Klettern", "Hochschulsport TU Dresden", "Reitsportgruppe"],
+      "negative_examples": ["Elbflorace (Motorsport-Technik, kein Körpersport)", "404 Esports (digital)"],
+      "matchedToQuestionIds": []
+    },
+    {
+      "id": "networking",
+      "label": "Netzwerken & Community",
+      "definition": "Die Gruppe legt besonderen Wert auf das Kennenlernen vieler Menschen, Community-Building und soziale Events. Erkennungsmerkmale: große aktive Mitgliederzahl, regelmäßige Socializing-Events, offene Community-Struktur.",
+      "positive_examples": ["AEGEE Dresden", "AIESEC", "bonding"],
+      "negative_examples": ["Nightline (klein, anonym)", "Robotik AG (kleines Team)"],
+      "matchedToQuestionIds": ["WS-D3Q1", "WS-D3Q4"]
+    },
+    {
+      "id": "arts",
+      "label": "Kreativität & Kunst",
+      "definition": "Die Gruppe ist künstlerisch oder kreativ ausgerichtet: Musik, Theater, Film, Fotografie, Design, Literatur, bildende Künste. Erkennungsmerkmale: künstlerische Produktion oder Aufführung als Hauptzweck.",
+      "positive_examples": ["Uni Big Band Dresden", "Studententheater", "Campusradio", "Die Bühne"],
+      "negative_examples": ["Robotik AG", "Nightline", "AEGEE"],
+      "matchedToQuestionIds": ["WS-D5Q5"]
+    },
+    {
+      "id": "music",
+      "label": "Musik",
+      "definition": "Die Gruppe macht gemeinsam Musik: als Band, Chor, Orchester oder DJ-Kollektiv. Enger als 'arts' — ausschließlich auf Musik fokussiert.",
+      "positive_examples": ["Uni Big Band Dresden", "Hochschulchor TU Dresden"],
+      "negative_examples": ["Studententheater (Theater, nicht Musik)", "Campusradio (Sprache/Medien)"],
+      "matchedToQuestionIds": []
+    },
+    {
+      "id": "timeLow",
+      "label": "Niedriges Zeitbudget",
+      "definition": "Die Gruppe ist für Studierende mit wenig Zeit geeignet: kein festes wöchentliches Training, keine hohe Verbindlichkeit, Teilnahme auch sporadisch möglich. Erkennungsmerkmale: 'come as you can', keine Pflichtanwesenheit, Projektteilnahme nach Verfügbarkeit.",
+      "positive_examples": ["UNICEF Hochschulgruppe (projektbasiert)", "Greenpeace Hochschulgruppe"],
+      "negative_examples": ["Elbflorace (wöchentliche Pflichttermine)", "USV Klettern (regelmäßiges Training)"],
+      "matchedToQuestionIds": ["WS-D1Q1"]
+    },
+    {
+      "id": "handsOn",
+      "label": "Hands-on & Praktisch",
+      "definition": "Die Gruppe arbeitet hauptsächlich praktisch-handwerklich oder technisch-bauend, nicht konzeptionell oder diskursiv. Erkennungsmerkmale: Werkstattarbeit, Konstruktion, Basteln, Reparieren, Bauen mit Händen oder Maschinen.",
+      "positive_examples": ["Elbflorace (Fahrzeugbau)", "Robotik AG (Roboter bauen)", "Repair Café"],
+      "negative_examples": ["Debattierclub (rein diskursiv)", "UNICEF (Kampagnenarbeit)"],
+      "matchedToQuestionIds": ["WS-D2Q1", "WS-D2Q5"]
+    },
+    {
+      "id": "outdoor",
+      "label": "Outdoor & Draußen",
+      "definition": "Die Gruppenaktivitäten finden hauptsächlich im Freien oder in der Natur statt. Erkennungsmerkmale: Klettern, Wandern, Radfahren, Paddeln, Reiten, Outdoor-Events als Kernaktivität.",
+      "positive_examples": ["USV Klettern", "Hochschulsport Kanu", "Reitsportgruppe TU Dresden"],
+      "negative_examples": ["404 University Esports", "Uni Big Band", "Nightline"],
+      "matchedToQuestionIds": ["WS-D9Q4", "WS-S3"]
+    },
+    {
+      "id": "international",
+      "label": "Internationalität & Interkultur",
+      "definition": "Die Gruppe hat einen expliziten internationalen Fokus: internationale Mitglieder, fremdsprachige Kommunikation, Auslandsprogramme oder interkultureller Austausch als Kernelement.",
+      "positive_examples": ["AEGEE Dresden", "AIESEC", "ESN (Erasmus Student Network)"],
+      "negative_examples": ["Debattierclub (deutschsprachig, lokal)", "Campusradio Dresden"],
+      "matchedToQuestionIds": ["WS-D7Q3"]
+    },
+    {
+      "id": "beginnerFriendly",
+      "label": "Einstiegsfreundlich",
+      "definition": "Die Gruppe nimmt Mitglieder ohne Vorerfahrung auf und begleitet sie aktiv. Erkennungsmerkmale: explizites Onboarding, Schnuppertreffen, keine Vorkenntnisse erforderlich, aktive Begleitung von Neueinsteigern.",
+      "positive_examples": ["Nightline (Schulung inklusive)", "Greenteam", "AEGEE"],
+      "negative_examples": ["Elbflorace (Ingenieurstudium vorausgesetzt)", "Debattierclub Fortgeschrittene"],
+      "matchedToQuestionIds": ["WS-D10-NEW"]
+    },
+    {
+      "id": "competitive",
+      "label": "Kompetitiv & Zielorientiert",
+      "definition": "Die Gruppe nimmt an Wettbewerben teil oder arbeitet auf ein ambitioniertes, messbares Ziel hin. Erkennungsmerkmale: Turnierteilnahme, Ranglisten, Meisterschaften, Hackathons, Rennen, Preisverleihungen als Ziel.",
+      "positive_examples": ["Elbflorace (Formula Student)", "404 University Esports (Ligen)", "Debattierclub (Turniere)"],
+      "negative_examples": ["Greenteam (kein Wettbewerb)", "Nightline", "AEGEE"],
+      "matchedToQuestionIds": ["WS-D8Q3", "WS-S2"]
+    },
+    {
+      "id": "financialCost",
+      "label": "Finanzielle Kosten",
+      "definition": "Die Mitgliedschaft oder Teilnahme ist mit nennenswerten Kosten verbunden (Mitgliedsbeitrag, Ausrüstung, Reisekosten). Erkennungsmerkmale: Beiträge >20€/Semester, teure Ausrüstungspflicht, regelmäßige Reisekosten.",
+      "positive_examples": ["Reitsportgruppe (Pferdehaltung)", "USV Klettern (Kletterkurs)"],
+      "negative_examples": ["Nightline (kostenlos)", "AEGEE (günstiger Mitgliedsbeitrag)"],
+      "matchedToQuestionIds": []
+    },
+    {
+      "id": "leadershipOpportunities",
+      "label": "Führungs- & Verantwortungsrollen",
+      "definition": "Die Gruppe bietet explizit Möglichkeiten, Verantwortung zu übernehmen: Vorstandsarbeit, Projektleitung, Teamführung, Bereichsverantwortung. Erkennungsmerkmale: demokratische Strukturen, wählbare Ämter, flache Hierarchie mit echten Verantwortungsmöglichkeiten.",
+      "positive_examples": ["AEGEE (Vorstandsstruktur)", "Elbflorace (Projektleiter)", "AIESEC"],
+      "negative_examples": ["404 Esports (Gaming, keine Führungsstruktur)", "USV Klettern"],
+      "matchedToQuestionIds": ["WS-D1Q5"]
+    }
+  ]
+}

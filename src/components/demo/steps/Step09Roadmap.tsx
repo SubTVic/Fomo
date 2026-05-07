@@ -6,17 +6,17 @@ import type { StepProps } from "./types";
 const TIMELINE = [
   {
     phase: "Phase 1",
-    date: "März – April 2026",
+    date: "März – Mai 2026",
     title: "Pilot-Studie",
-    status: "now",
-    items: ["4 Quiz-Layouts live", "60 Kandidatenfragen", "Abschlussrate messen", "Beste Fragen identifizieren"],
+    status: "done",
+    items: ["67 Sessions abgeschlossen", "Classic-Layout gewinnt (45%)", "Working Set v1.1 eingefroren", "19 finale Quiz-Fragen"],
   },
   {
     phase: "Phase 2",
-    date: "April – Mai 2026",
+    date: "Mai – Juni 2026",
     title: "Gruppen-Registrierung",
-    status: "soon",
-    items: ["84 Gruppen erhalten Token-Links", "Selbstauskunft zu 17 Attributen", "Admin verifiziert Profile", "Algorithmus kalibriert"],
+    status: "now",
+    items: ["83 Gruppen erhalten Token-Links", "Selbstauskunft zu 17 Attributen", "Admin verifiziert Profile", "Algorithmus kalibriert"],
   },
   {
     phase: "Phase 3",
@@ -54,7 +54,7 @@ export function Step09Roadmap({}: StepProps) {
         >
           Roadmap
         </h2>
-        <p className="mt-2 text-sm text-[#5a7a8a]">Von der Pilot-Studie zum Launch — September 2026.</p>
+        <p className="mt-2 text-sm text-[#5a7a8a]">Phase 1 abgeschlossen · Phase 2 läuft · Launch September 2026.</p>
       </div>
 
       {/* Timeline */}
@@ -63,22 +63,29 @@ export function Step09Roadmap({}: StepProps) {
           <div
             key={t.phase}
             className={`border-4 p-4 ${
-              t.status === "now"
+              t.status === "done"
+                ? "border-green-600 bg-green-50"
+                : t.status === "now"
                 ? "border-[#1a2a35] bg-[#1a2a35] text-white"
-                : t.status === "soon"
-                ? "border-[#1a2a35] bg-white"
                 : "border-[#1a2a35]/30 bg-white opacity-80"
             }`}
           >
             <div className="flex items-center justify-between gap-2 mb-2">
               <div className="flex items-center gap-2">
+                {t.status === "done" && (
+                  <span className="rounded-full bg-green-600 px-2 py-0.5 text-[9px] font-bold text-white uppercase">
+                    ✓ Abgeschlossen
+                  </span>
+                )}
                 {t.status === "now" && (
-                  <span className="rounded-full bg-green-500 px-2 py-0.5 text-[9px] font-bold text-white uppercase">
+                  <span className="rounded-full bg-[#ADD8E6] px-2 py-0.5 text-[9px] font-bold text-[#1a2a35] uppercase">
                     Jetzt
                   </span>
                 )}
                 <span
-                  className={`text-xs font-bold uppercase tracking-wide ${t.status === "now" ? "text-[#ADD8E6]" : "text-[#5a7a8a]"}`}
+                  className={`text-xs font-bold uppercase tracking-wide ${
+                    t.status === "done" ? "text-green-700" : t.status === "now" ? "text-[#ADD8E6]" : "text-[#5a7a8a]"
+                  }`}
                 >
                   {t.phase} · {t.date}
                 </span>
@@ -87,9 +94,9 @@ export function Step09Roadmap({}: StepProps) {
             <p className={`font-bold text-sm ${t.status === "now" ? "text-white" : "text-[#1a2a35]"}`}>
               {t.title}
             </p>
-            <ul className={`mt-2 grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs ${t.status === "now" ? "text-[#ADD8E6]/80" : "text-[#5a7a8a]"}`}>
+            <ul className={`mt-2 grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs ${t.status === "now" ? "text-[#ADD8E6]/80" : t.status === "done" ? "text-green-700/70" : "text-[#5a7a8a]"}`}>
               {t.items.map((item) => (
-                <li key={item}>· {item}</li>
+                <li key={item}>{t.status === "done" ? "✓" : "·"} {item}</li>
               ))}
             </ul>
           </div>

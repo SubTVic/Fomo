@@ -28,7 +28,10 @@ export async function getActiveGroupCount(): Promise<number> {
 // All groups including inactive (for admin)
 export async function getAllGroupsForAdmin() {
   return db.group.findMany({
-    include: { category: true },
+    include: {
+      category: true,
+      duplicateOf: { select: { id: true, name: true } },
+    },
     orderBy: [{ isActive: "desc" }, { name: "asc" }],
   });
 }

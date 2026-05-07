@@ -514,6 +514,27 @@
       "text": "Ich bevorzuge kleine Gruppen mit weniger als 20 aktiven Mitgliedern.",
       "order": 3,
       "isInverse": false
+    },
+    {
+      "id": "S4",
+      "dimensionId": null,
+      "text": "Ich möchte in einer Gruppe auf ein konkretes Ziel mit einem klaren Zeitplan hinarbeiten.",
+      "order": 4,
+      "isInverse": false
+    },
+    {
+      "id": "S5",
+      "dimensionId": null,
+      "text": "Mir ist es wichtig, anderen Menschen direkt und praktisch helfen zu können.",
+      "order": 5,
+      "isInverse": false
+    },
+    {
+      "id": "S6",
+      "dimensionId": null,
+      "text": "Ich bin gerne draußen unterwegs und bevorzuge Aktivitäten im Freien.",
+      "order": 6,
+      "isInverse": false
     }
   ]
 }

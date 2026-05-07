@@ -152,6 +152,19 @@ function PrelaunchCta({ groupCount }: { groupCount: number }) {
           </Link>
         </div>
       </div>
+
+      {/* Browse CTA */}
+      <div className="border-t-4 border-foreground px-6 py-6 sm:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <p className="text-sm text-muted-foreground">
+          Lieber selbst stöbern? Schau dir alle Hochschulgruppen direkt an.
+        </p>
+        <Link
+          href="/groups"
+          className="shrink-0 border-2 border-foreground px-6 py-3 font-heading text-sm uppercase tracking-wider hover:bg-foreground hover:text-primary-foreground transition-colors text-center"
+        >
+          Alle Gruppen anzeigen →
+        </Link>
+      </div>
     </>
   );
 }
@@ -182,6 +195,9 @@ function LiveCta({ groupCount }: { groupCount: number }) {
           <span className="text-[11px] text-muted-foreground">~ 10 Min &middot; Anonym &middot; Im Browser</span>
           <Link href="/demo" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
             Unsere Demo ansehen →
+          </Link>
+          <Link href="/groups" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
+            Oder alle Gruppen anzeigen →
           </Link>
         </div>
       </div>

@@ -94,14 +94,14 @@ model Group {
   scraperAttributes   Json?
   // JSON: {career: 1, tech: 0, ...} — final confirmed binary values
   confirmedAttributes Json?
-  // "invited" | "submitted" | "verified"
-  registrationStatus  String?
+  registrationStatus  RegistrationStatus?
   submittedAt         DateTime?
   verifiedAt          DateTime?
 
-  category     Category          @relation(fields: [categoryId], references: [id])
-  pilotAnswers GroupPilotAnswer[]
-  invites      GroupInvite[]
+  category       Category          @relation(fields: [categoryId], references: [id])
+  pilotAnswers   GroupPilotAnswer[]
+  invites        GroupInvite[]
+  study2Sessions Study2Session[]
 
   @@index([categoryId])
   @@index([isActive])
@@ -142,6 +142,12 @@ model GroupInvite {
 }
 
 // ─── Admin & Auth ────────────────────────────────────────────────
+
+enum RegistrationStatus {
+  INVITED
+  SUBMITTED
+  VERIFIED
+}
 
 enum AdminRole {
   SUPER_ADMIN // StuRa staff, full access
@@ -291,4 +297,48 @@ model PilotAnswer {
   @@unique([sessionId, questionId])
   @@index([sessionId])
   @@map("pilot_answers")
+}
+
+// ─── Studie 2 (Mitglieder-Validierung) ───────────────────────────
+
+model Study2Session {
+  id                  String    @id @default(cuid())
+  startedAt           DateTime  @default(now())
+  completedAt         DateTime?
+
+  // Pflicht: Mitglied einer Gruppe
+  groupId             String?   // FK auf Group, null wenn nur Freitext
+  groupNameFreeText   String?   // Fallback wenn Gruppe nicht in DB
+
+  // Filter-Antwort (Multi-Select, JSON-Array von attribute-IDs)
+  filterSelections    Json?     // z.B. ["handsOn","music"]
+
+  // Demografie
+  semester            String?   // "1","2","3","4","5","6+"
+  studyField          String?   // freier Studiengang-Text
+  isMember            String?   @default("yes") // immer "yes" hier, aber konsistent mit Pilot 1
+
+  // Optionales Freitext-Feedback (wie Pilot 1)
+  feedbackConfusing   String?   @db.Text
+  feedbackMissing     String?   @db.Text
+
+  group   Group?           @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  answers Study2Answer[]
+
+  @@index([groupId])
+  @@index([completedAt])
+  @@map("study2_sessions")
+}
+
+model Study2Answer {
+  id         String  @id @default(cuid())
+  sessionId  String
+  itemId     String  // z.B. "WS2-01"
+  value      Int     // -1 | 0 | 1
+
+  session Study2Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, itemId])
+  @@index([sessionId])
+  @@map("study2_answers")
 }

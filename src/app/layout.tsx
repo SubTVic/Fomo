@@ -26,8 +26,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const umamiWebsiteId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
+
   return (
     <html lang="de" suppressHydrationWarning>
+      <head>
+        {umamiWebsiteId && (
+          <script
+            defer
+            src="https://cloud.umami.is/script.js"
+            data-website-id={umamiWebsiteId}
+          />
+        )}
+      </head>
       <body className={`${archivoBlack.variable} ${lexend.variable} antialiased`}>{children}</body>
     </html>
   );

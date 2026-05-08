@@ -14,6 +14,11 @@ type Step =
   | { type: "description" }
   | { type: "raterCount" };
 
+interface Category {
+  id: string;
+  name: string;
+}
+
 interface GroupData {
   id: string;
   name: string;
@@ -23,6 +28,8 @@ interface GroupData {
   instagramUrl: string | null;
   memberCount: number | null;
   foundedYear: number | null;
+  categoryId: string;
+  category: Category;
   selfRating?: {
     raterCount: number;
     filterSelections: string[];
@@ -92,6 +99,8 @@ export function GroupSelfRatingQuiz() {
   const [instagramUrl, setInstagramUrl] = useState("");
   const [memberCount, setMemberCount] = useState("");
   const [foundedYear, setFoundedYear] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     if (!token) {
@@ -117,6 +126,8 @@ export function GroupSelfRatingQuiz() {
         setInstagramUrl(g.instagramUrl ?? "");
         setMemberCount(g.memberCount ? String(g.memberCount) : "");
         setFoundedYear(g.foundedYear ? String(g.foundedYear) : "");
+        setCategoryId(g.categoryId);
+        setCategories(data.categories ?? []);
 
         // Pre-fill from previous selfRating if it exists
         if (g.selfRating?.answers?.length) {
@@ -189,6 +200,7 @@ export function GroupSelfRatingQuiz() {
           instagramUrl: instagramUrl.trim() || undefined,
           memberCount: memberCount ? parseInt(memberCount, 10) : undefined,
           foundedYear: foundedYear ? parseInt(foundedYear, 10) : undefined,
+          categoryId: categoryId || undefined,
         }),
       });
       const data = await res.json();
@@ -368,9 +380,9 @@ export function GroupSelfRatingQuiz() {
             <h2 className="font-heading text-lg uppercase leading-snug">{item.text}</h2>
           </div>
           <div className="px-6 py-6 sm:px-8 flex flex-col gap-2">
-            <AnswerButton label="Stimme nicht zu" value={-1} current={current} onClick={(v) => setAnswer(item.id, v)} />
-            <AnswerButton label="Neutral" value={0} current={current} onClick={(v) => setAnswer(item.id, v)} />
             <AnswerButton label="Stimme zu" value={1} current={current} onClick={(v) => setAnswer(item.id, v)} />
+            <AnswerButton label="Neutral" value={0} current={current} onClick={(v) => setAnswer(item.id, v)} />
+            <AnswerButton label="Stimme nicht zu" value={-1} current={current} onClick={(v) => setAnswer(item.id, v)} />
             <div className="flex justify-between pt-2">
               <button
                 onClick={() =>
@@ -413,6 +425,18 @@ export function GroupSelfRatingQuiz() {
             <p className="text-sm text-muted-foreground">
               Füllt die Informationen zu eurer Gruppe aus — je vollständiger, desto besser das Matching.
             </p>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">Kategorie</label>
+              <select
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+              >
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">Kurzbeschreibung <span className="text-muted-foreground font-normal">(Pflicht)</span></label>
               <textarea

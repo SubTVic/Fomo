@@ -23,6 +23,7 @@ const SubmitSchema = z.object({
   instagramUrl: z.string().url().optional().or(z.literal("")),
   memberCount: z.number().int().min(1).max(10000).optional(),
   foundedYear: z.number().int().min(1900).max(new Date().getFullYear()).optional(),
+  categoryId: z.string().cuid().optional(),
   // v2: WS2-Self-Rating
   ws2Answers: z.array(z.object({
     itemId: z.string().regex(/^WS2-\d{2}$/),
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { token, confirmedAttributes, shortDescription, websiteUrl, contactEmail, instagramUrl, memberCount, foundedYear, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
+  const { token, confirmedAttributes, shortDescription, websiteUrl, contactEmail, instagramUrl, memberCount, foundedYear, categoryId, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
 
   // Validate the token
   const invite = await db.groupInvite.findUnique({
@@ -136,6 +137,7 @@ export async function POST(req: NextRequest) {
       ...(instagramUrl ? { instagramUrl } : {}),
       ...(memberCount !== undefined ? { memberCount } : {}),
       ...(foundedYear !== undefined ? { foundedYear } : {}),
+      ...(categoryId ? { categoryId } : {}),
     },
   });
 
@@ -187,6 +189,8 @@ export async function GET(req: NextRequest) {
           instagramUrl: true,
           memberCount: true,
           foundedYear: true,
+          categoryId: true,
+          category: { select: { id: true, name: true } },
           scraperAttributes: true,
           confirmedAttributes: true,
           registrationStatus: true,
@@ -224,8 +228,11 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  const categories = await db.category.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } });
+
   return NextResponse.json({
     group: invite.group,
+    categories,
     email: invite.email,
     expiresAt: invite.expiresAt.toISOString(),
   });

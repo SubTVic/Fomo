@@ -29,11 +29,25 @@ Skala in **A**, **B**, **C** identisch: **3-Stufen** (Stimme zu / Neutral / Stim
 
 ## Validierungs-Metriken
 
-### M1 — Top-K-Recall (Hauptmetrik)
+### M1 — MRR — Mean Reciprocal Rank (Hauptmetrik)
 
-Für jedes Mitglied von Gruppe X: Wird X in den Top-5 / Top-10 Match-Ergebnissen angezeigt, basierend auf den Selbst-Ratings aus B?
+MRR = Ø(1/Rank der eigenen Gruppe) über alle auswertbaren Member-Sessions.
 
-**Erfolgskriterium:** Top-5-Recall ≥ 60 %, Top-10-Recall ≥ 80 %.
+Warum MRR statt Top-K-Recall:
+- Kein willkürlicher Cutoff (Top-5 vs. Top-7 macht für Erstis keinen Unterschied)
+- Misst graduell wie weit oben die eigene Gruppe landet
+- Ähnliche Gruppen die statt der eigenen auftauchen zählen nicht automatisch als Fehler
+- Direkt vergleichbar mit v1-Baseline (MRR=0.197 auf scraped attributes)
+
+**Erfolgskriterium:** MRR ≥ 0.30 (= Gruppe landet im Schnitt in Top 3–4, deutlich besser als Zufall ~0.03 bei 83 Gruppen)
+
+### M1b — Top-10-Recall (Sekundärmetrik)
+
+Anteil Member-Sessions wo eigene Gruppe in Top-10 landet.
+
+**Erfolgskriterium:** Top-10-Recall ≥ 70 %
+
+Top-5-Recall wird ebenfalls ausgegeben, aber **nicht** als Erfolgskriterium verwendet — zu harter Cutoff für ein 83-Gruppen-Set.
 
 ### M2 — Pro-Item-Diskriminierung
 

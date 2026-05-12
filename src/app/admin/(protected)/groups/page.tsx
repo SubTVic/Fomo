@@ -117,8 +117,11 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
             </span>
           )}
         </TabLink>
+        <TabLink href="/admin/groups?filter=verified" active={filter === "verified"}>
+          Verifiziert ({allGroups.filter((g) => g.registrationStatus === RegistrationStatus.VERIFIED).length})
+        </TabLink>
         <TabLink href="/admin/groups?filter=unverified" active={filter === "unverified"}>
-          Unverifiziert
+          Unverifiziert ({allGroups.filter((g) => !g.isVerified).length})
         </TabLink>
       </div>
 

@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import { STUDY2_ITEMS, STUDY2_FILTER } from "@/lib/study2/items";
 import { GroupEditForm } from "./GroupEditForm";
 import { ToggleActiveButton } from "./ToggleActiveButton";
 import { MergeButton } from "./MergeButton";
@@ -25,6 +26,7 @@ export default async function AdminGroupDetailPage({
         category: true,
         duplicateOf: { select: { id: true, name: true } },
         duplicates: { select: { id: true, name: true, registeredVia: true } },
+        selfRating: { include: { answers: true } },
       },
     }),
     db.category.findMany({ orderBy: { name: "asc" } }),
@@ -126,6 +128,64 @@ export default async function AdminGroupDetailPage({
       {/* Edit form */}
       <div className="border-2 border-foreground bg-card p-6">
         <GroupEditForm group={group} categories={categories} />
+      </div>
+
+      {/* Self-Rating Panel */}
+      <div className="mt-6 border-2 border-foreground bg-card p-6">
+        <h2 className="font-heading text-lg uppercase mb-1">Self-Rating (WS2)</h2>
+        {group.selfRating ? (
+          <>
+            <p className="text-xs text-muted-foreground mb-4">
+              Eingereicht:{" "}
+              {new Date(group.selfRating.submittedAt).toLocaleString("de-DE")} ·{" "}
+              {group.selfRating.raterCount === 1
+                ? "1 Person"
+                : group.selfRating.raterCount === 2
+                ? "2 Personen"
+                : "3+ Personen"}
+            </p>
+
+            {/* Filter selections */}
+            <div className="mb-4">
+              <p className="text-sm font-medium mb-1">Aktivitäten (Filter)</p>
+              {(() => {
+                const sel = (group.selfRating.filterSelections as string[] | null) ?? [];
+                if (sel.length === 0) return <p className="text-xs text-muted-foreground">Keine Auswahl</p>;
+                const labels = sel.map(
+                  (attr) => STUDY2_FILTER.options.find((o) => o.attribute === attr)?.label ?? attr
+                );
+                return (
+                  <div className="flex flex-wrap gap-1.5">
+                    {labels.map((l) => (
+                      <span key={l} className="border border-foreground px-2 py-0.5 text-xs font-medium">{l}</span>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Item answers */}
+            <div className="divide-y divide-foreground/10">
+              {STUDY2_ITEMS.map((item) => {
+                const answer = group.selfRating!.answers.find((a) => a.itemId === item.id);
+                const val = answer?.value ?? null;
+                const label =
+                  val === 1 ? "Stimme zu" : val === -1 ? "Stimme nicht zu" : val === 0 ? "Neutral" : "–";
+                const color =
+                  val === 1 ? "text-green-700" : val === -1 ? "text-red-600" : "text-muted-foreground";
+                return (
+                  <div key={item.id} className="flex items-center justify-between gap-4 py-2 text-sm">
+                    <span className="text-muted-foreground w-14 shrink-0 text-xs">{item.id}</span>
+                    <span className="flex-1">{item.text}</span>
+                    <span className={`shrink-0 text-xs font-medium ${color}`}>{label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <p className="text-sm text-muted-foreground">Noch kein Self-Rating abgegeben.</p>
+        )}
       </div>
     </div>
   );

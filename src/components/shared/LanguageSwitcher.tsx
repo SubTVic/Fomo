@@ -2,7 +2,7 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "@/i18n/navigation";
 import { useTransition } from "react";
 
 export function LanguageSwitcher() {
@@ -11,40 +11,42 @@ export function LanguageSwitcher() {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
-  function switchLocale(next: string) {
+  function switchLocale(next: "de" | "en") {
+    if (next === locale) return;
     startTransition(() => {
-      // pathname includes the locale prefix for non-default locales
-      // Strip any existing locale prefix and re-add the new one
-      const withoutLocale = pathname.replace(/^\/(de|en)/, "") || "/";
-      const newPath = next === "de" ? withoutLocale : `/${next}${withoutLocale}`;
-      router.push(newPath);
+      router.replace(pathname, { locale: next });
     });
   }
 
   return (
-    <div className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider">
+    <div
+      className="flex items-center border-2 border-foreground/40 text-xs font-bold uppercase tracking-wider overflow-hidden"
+      aria-label="Sprache / Language"
+    >
       <button
         onClick={() => switchLocale("de")}
-        disabled={isPending}
-        className={`px-1.5 py-0.5 transition-colors ${
+        disabled={isPending || locale === "de"}
+        className={`px-2.5 py-1 transition-colors ${
           locale === "de"
-            ? "text-foreground"
-            : "text-muted-foreground hover:text-foreground"
+            ? "bg-foreground text-primary-foreground"
+            : "hover:bg-foreground/10"
         }`}
         aria-label="Deutsch"
+        aria-pressed={locale === "de"}
       >
         DE
       </button>
-      <span className="text-muted-foreground/40">|</span>
+      <div className="w-px bg-foreground/40 self-stretch" />
       <button
         onClick={() => switchLocale("en")}
-        disabled={isPending}
-        className={`px-1.5 py-0.5 transition-colors ${
+        disabled={isPending || locale === "en"}
+        className={`px-2.5 py-1 transition-colors ${
           locale === "en"
-            ? "text-foreground"
-            : "text-muted-foreground hover:text-foreground"
+            ? "bg-foreground text-primary-foreground"
+            : "hover:bg-foreground/10"
         }`}
         aria-label="English"
+        aria-pressed={locale === "en"}
       >
         EN
       </button>

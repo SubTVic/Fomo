@@ -2,6 +2,7 @@
 "use client";
 
 import { useTranslations, useMessages } from "next-intl";
+import Link from "next/link";
 import type { StepProps } from "./types";
 
 type TimelineEntry = {
@@ -105,12 +106,12 @@ export function Step09Roadmap({}: StepProps) {
           {t("ctaText")}
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
-          <a
+          <Link
             href="/quiz"
             className="rounded border-2 border-[#ADD8E6] px-4 py-2 text-sm font-bold text-[#ADD8E6] hover:bg-[#ADD8E6]/10 transition-colors"
           >
             {t("ctaQuiz")}
-          </a>
+          </Link>
           <a
             href="https://github.com/SubTVic/Fomo"
             target="_blank"

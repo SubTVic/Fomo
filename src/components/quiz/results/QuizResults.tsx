@@ -3,6 +3,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { QuizMatchResult, QuizThesisData } from "@/lib/quiz/types";
 import { ResultCard } from "./ResultCard";
@@ -144,12 +145,12 @@ export function QuizResults({ results, theses, answeredCount, onRestart }: QuizR
             >
               {t("restart")}
             </button>
-            <a
+            <Link
               href="/groups"
               className="text-sm text-[#4a7a8a] underline underline-offset-2 hover:text-[#1a2a35] transition-colors"
             >
               {t("allGroups")}
-            </a>
+            </Link>
           </div>
         </div>
       </div>

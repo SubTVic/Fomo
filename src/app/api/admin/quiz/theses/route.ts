@@ -8,7 +8,10 @@ import { z } from "zod";
 
 const createSchema = z.object({
   text: z.string().min(1).max(500),
+  textEn: z.string().max(500).optional(),
   shortTitle: z.string().min(1).max(50),
+  hint: z.string().max(200).optional(),
+  hintEn: z.string().max(200).optional(),
   order: z.number().int().min(0).default(0),
   attributes: z.array(z.object({
     attribute: z.string().min(1),
@@ -42,12 +45,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 422 });
   }
 
-  const { text, shortTitle, order, attributes } = parsed.data;
+  const { text, textEn, shortTitle, hint, hintEn, order, attributes } = parsed.data;
 
   const thesis = await db.quizThesis.create({
     data: {
       text,
+      textEn: textEn ?? null,
       shortTitle,
+      hint: hint ?? null,
+      hintEn: hintEn ?? null,
       order,
       attributes: {
         create: attributes.map((a) => ({

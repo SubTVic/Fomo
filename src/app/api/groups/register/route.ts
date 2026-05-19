@@ -78,6 +78,12 @@ const RegisterSchema = z.object({
   ws2FilterSelections: z.array(z.string()).max(8).optional(),
   raterCount: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
 
+  // Verantwortliche Person
+  responsibleName: z.string().min(2).max(100),
+  responsibleEmail: z.string().email(),
+  responsibleRole: z.string().max(100).optional(),
+  responsibleConfirmed: z.literal(true),
+
   // Einverständnis
   dataConsent: z.literal("ja"),
 });
@@ -146,6 +152,9 @@ export async function POST(req: NextRequest) {
     ws2Answers,
     ws2FilterSelections,
     raterCount,
+    responsibleName,
+    responsibleEmail,
+    responsibleRole,
   } = parsed.data;
 
   try {
@@ -194,6 +203,18 @@ export async function POST(req: NextRequest) {
         data: { duplicateOfGroupId: duplicateId },
       });
     }
+
+    // Save responsible contact person to the contact list
+    await db.groupContact.create({
+      data: {
+        groupId: group.id,
+        name: responsibleName,
+        email: responsibleEmail,
+        role: responsibleRole || null,
+        isResponsible: true,
+        source: "self-registration",
+      },
+    });
 
     // Save WS2 self-rating if provided
     if (ws2Answers && ws2Answers.length > 0) {

@@ -10,7 +10,17 @@ export default async function AdminDashboard() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <h1 className="mb-8 font-heading text-2xl uppercase">Dashboard</h1>
+      <div className="mb-8 flex items-center justify-between">
+        <h1 className="font-heading text-2xl uppercase">Dashboard</h1>
+        <a
+          href="/api/admin/backup"
+          download
+          className="rounded-lg border bg-card px-4 py-2 text-sm font-medium hover:bg-muted/40 transition-colors"
+          title="Vollständiges JSON-Backup aller Tabellen herunterladen"
+        >
+          Backup herunterladen
+        </a>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Aktive Gruppen" value={groupCount} href="/admin/groups" />
         <StatCard label="Pilot-Sessions" value={pilotCount} href="/admin/pilot" />

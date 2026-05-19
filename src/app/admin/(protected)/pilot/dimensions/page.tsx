@@ -15,8 +15,10 @@ export default async function PilotDimensionsPage() {
   const serializedDimensions = dimensions.map((d) => ({
     id: d.id,
     label: d.label,
+    labelEn: d.labelEn ?? null,
     emoji: d.emoji,
     description: d.description,
+    descriptionEn: d.descriptionEn ?? null,
     blockIndex: d.blockIndex,
     order: d.order,
     questions: d.questions.map((q) => ({

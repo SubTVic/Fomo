@@ -3,6 +3,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import { useTranslations } from "next-intl";
 import type { QuizThesisData, QuizGroupData } from "@/lib/quiz/types";
 import type { Dimension, PilotQuestion } from "@/lib/pilot-questions";
 import { useSurveyState } from "@/components/survey/useSurveyState";
@@ -18,6 +19,7 @@ interface QuizRouterProps {
 }
 
 export function QuizRouter({ theses, groups }: QuizRouterProps) {
+  const t = useTranslations("quiz");
   const [phase, setPhase] = useState<"welcome" | "quiz" | "results">("welcome");
   const startedAt = useRef<number | null>(null);
 
@@ -71,11 +73,9 @@ export function QuizRouter({ theses, groups }: QuizRouterProps) {
             className="text-lg font-bold uppercase text-[#1a2a35] mb-3"
             style={{ fontFamily: "'Archivo Black', sans-serif" }}
           >
-            Quiz coming soon
+            {t("comingSoonTitle")}
           </h2>
-          <p className="text-sm text-[#5a7a8a]">
-            Das Quiz wird gerade vorbereitet. Schau bald wieder vorbei!
-          </p>
+          <p className="text-sm text-[#5a7a8a]">{t("comingSoonText")}</p>
         </div>
       </div>
     );
@@ -107,20 +107,20 @@ export function QuizRouter({ theses, groups }: QuizRouterProps) {
               className="text-lg font-bold uppercase text-[#1a2a35] mb-3"
               style={{ fontFamily: "'Archivo Black', sans-serif" }}
             >
-              Zu viele neutrale Antworten
+              {t("tooNeutralTitle")}
             </h2>
             <p className="text-sm text-[#5a7a8a] mb-6">
-              Du hast nur {effectiveAnswerCount} von {theses.length} Fragen klar beantwortet.
-              Das reicht nicht für ein sinnvolles Matching — alle Gruppen würden gleich gut passen.
+              {t("tooNeutralText", { answered: effectiveAnswerCount, total: theses.length })}
             </p>
-            <p className="text-sm text-[#5a7a8a] mb-6">
-              Bitte geh zurück und beantworte mindestens 5 Fragen mit <strong>Ja</strong> oder <strong>Nein</strong>.
-            </p>
+            <p
+              className="text-sm text-[#5a7a8a] mb-6"
+              dangerouslySetInnerHTML={{ __html: t("tooNeutralHint") }}
+            />
             <button
               onClick={() => setPhase("quiz")}
               className="w-full bg-[#1a2a35] text-[#ADD8E6] py-3 text-sm font-bold uppercase tracking-wide hover:bg-[#2a3a45] transition-colors"
             >
-              Zurück zu den Fragen
+              {t("backToQuestions")}
             </button>
           </div>
         </div>

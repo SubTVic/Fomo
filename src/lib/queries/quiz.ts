@@ -2,7 +2,7 @@
 // Server-side queries for the live quiz.
 // Set DATA_SOURCE=json in .env to load from local JSON files (no DB needed).
 
-import type { QuizThesisData, QuizGroupData } from "@/lib/quiz/types";
+import type { QuizThesisData, QuizGroupData, QuizThesisRaw } from "@/lib/quiz/types";
 
 const MATCHING_ATTRS = [
   "career", "tech", "socialImpact", "party", "religion", "sports",
@@ -63,7 +63,7 @@ interface ScrapedProfile {
 
 // ─── DB queries ───────────────────────────────────────────────
 
-async function getThesesFromDb(): Promise<QuizThesisData[]> {
+async function getThesesFromDb(): Promise<QuizThesisRaw[]> {
   const { db } = await import("@/lib/db");
   const theses = await db.quizThesis.findMany({
     where: { isActive: true },
@@ -73,8 +73,10 @@ async function getThesesFromDb(): Promise<QuizThesisData[]> {
   return theses.map((t) => ({
     id: t.id,
     text: t.text,
+    textEn: t.textEn ?? null,
     shortTitle: t.shortTitle,
-    hint: t.hint,
+    hint: t.hint ?? null,
+    hintEn: t.hintEn ?? null,
     order: t.order,
     attributes: t.attributes,
   }));
@@ -123,8 +125,18 @@ async function getGroupsFromDb(): Promise<QuizGroupData[]> {
 
 // ─── Public API ───────────────────────────────────────────────
 
-export async function getActiveQuizTheses(): Promise<QuizThesisData[]> {
-  return USE_JSON ? getThesesFromJson() : getThesesFromDb();
+function applyLocale(theses: QuizThesisRaw[], locale: string): QuizThesisData[] {
+  if (locale !== "en") return theses;
+  return theses.map((t) => ({
+    ...t,
+    text: t.textEn || t.text,
+    hint: t.hintEn || t.hint,
+  }));
+}
+
+export async function getActiveQuizTheses(locale = "de"): Promise<QuizThesisData[]> {
+  const raw = await (USE_JSON ? getThesesFromJson() : getThesesFromDb());
+  return applyLocale(raw as QuizThesisRaw[], locale);
 }
 
 export async function getQuizGroups(): Promise<QuizGroupData[]> {

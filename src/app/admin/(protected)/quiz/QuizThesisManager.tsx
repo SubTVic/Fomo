@@ -15,7 +15,10 @@ interface ThesisAttribute {
 interface Thesis {
   id: string;
   text: string;
+  textEn: string | null;
   shortTitle: string;
+  hint: string | null;
+  hintEn: string | null;
   order: number;
   isActive: boolean;
   attributes: ThesisAttribute[];
@@ -216,6 +219,9 @@ export function QuizThesisManager({ initialTheses }: Props) {
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground">{thesis.text}</p>
+                    {thesis.textEn && (
+                      <p className="text-xs text-muted-foreground/60 italic mt-0.5">EN: {thesis.textEn}</p>
+                    )}
                     {thesis.attributes.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
                         {thesis.attributes.map((a) => (
@@ -263,7 +269,10 @@ interface ThesisFormProps {
   thesis?: Thesis;
   onSave: (data: {
     text: string;
+    textEn?: string;
     shortTitle: string;
+    hint?: string;
+    hintEn?: string;
     order: number;
     isActive?: boolean;
     attributes: { attribute: string; isInverse: boolean }[];
@@ -274,6 +283,9 @@ interface ThesisFormProps {
 
 function ThesisForm({ thesis, onSave, onCancel, saving }: ThesisFormProps) {
   const [text, setText] = useState(thesis?.text ?? "");
+  const [textEn, setTextEn] = useState(thesis?.textEn ?? "");
+  const [hint, setHint] = useState(thesis?.hint ?? "");
+  const [hintEn, setHintEn] = useState(thesis?.hintEn ?? "");
   const [shortTitle, setShortTitle] = useState(thesis?.shortTitle ?? "");
   const [order, setOrder] = useState(thesis?.order ?? 0);
   const [isActive, setIsActive] = useState(thesis?.isActive ?? true);
@@ -297,7 +309,12 @@ function ThesisForm({ thesis, onSave, onCancel, saving }: ThesisFormProps) {
     const attributes = ALL_ATTRIBUTE_KEYS
       .filter((key) => selectedAttrs[key])
       .map((key) => ({ attribute: key, isInverse: !!inverseAttrs[key] }));
-    onSave({ text, shortTitle, order, isActive, attributes });
+    onSave({
+      text, textEn: textEn || undefined,
+      shortTitle,
+      hint: hint || undefined, hintEn: hintEn || undefined,
+      order, isActive, attributes,
+    });
   }
 
   return (
@@ -337,16 +354,50 @@ function ThesisForm({ thesis, onSave, onCancel, saving }: ThesisFormProps) {
         )}
       </div>
 
-      <div>
-        <label className="block text-xs font-medium mb-1">These (Ich-Form)</label>
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          required
-          rows={2}
-          className="w-full rounded border-2 border-foreground px-2 py-1.5 text-sm bg-background resize-y"
-          placeholder="Ich kann mir vorstellen, mehr als 5 Stunden pro Woche..."
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-medium mb-1">These DE (Ich-Form)</label>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            required
+            rows={2}
+            className="w-full rounded border-2 border-foreground px-2 py-1.5 text-sm bg-background resize-y"
+            placeholder="Ich kann mir vorstellen, mehr als 5 Stunden pro Woche..."
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium mb-1">These EN (optional)</label>
+          <textarea
+            value={textEn}
+            onChange={(e) => setTextEn(e.target.value)}
+            rows={2}
+            className="w-full rounded border-2 border-foreground/40 px-2 py-1.5 text-sm bg-background resize-y"
+            placeholder="I can imagine spending more than 5 hours per week..."
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-medium mb-1">Hinweis DE (optional)</label>
+          <input
+            value={hint}
+            onChange={(e) => setHint(e.target.value)}
+            maxLength={200}
+            className="w-full rounded border-2 border-foreground/40 px-2 py-1.5 text-sm bg-background"
+            placeholder="z.B. Religion, Philosophie, Ethik"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium mb-1">Hinweis EN (optional)</label>
+          <input
+            value={hintEn}
+            onChange={(e) => setHintEn(e.target.value)}
+            maxLength={200}
+            className="w-full rounded border-2 border-foreground/40 px-2 py-1.5 text-sm bg-background"
+            placeholder="e.g. Religion, Philosophy, Ethics"
+          />
+        </div>
       </div>
 
       <div>

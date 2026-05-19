@@ -35,7 +35,13 @@ interface FormData {
   ws2FilterSelections: string[];
   raterCount: 1 | 2 | 3;
 
-  // Step 5: Einverständnis
+  // Step 5: Verantwortliche Person
+  responsibleName: string;
+  responsibleEmail: string;
+  responsibleRole: string;
+  responsibleConfirmed: boolean;
+
+  // Step 6: Einverständnis
   dataConsent: boolean;
 }
 
@@ -58,6 +64,10 @@ const INITIAL: FormData = {
   ws2Answers: Object.fromEntries(STUDY2_ITEMS.map((i) => [i.id, 0 as Study2AnswerValue])),
   ws2FilterSelections: [],
   raterCount: 1,
+  responsibleName: "",
+  responsibleEmail: "",
+  responsibleRole: "",
+  responsibleConfirmed: false,
   dataConsent: false,
 };
 
@@ -75,7 +85,14 @@ const CATEGORIES = [
   "Sonstiges",
 ];
 
-const STEPS = ["Stammdaten", "Kontakt & Präsenz", "Struktur", "Gruppencheck", "Abschluss"];
+const STEPS = [
+  "Stammdaten",
+  "Kontakt & Präsenz",
+  "Struktur",
+  "Gruppencheck",
+  "Verantwortliche Person",
+  "Abschluss",
+];
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -142,6 +159,10 @@ export function GroupRegisterForm() {
         ws2Answers,
         ws2FilterSelections: form.ws2FilterSelections,
         raterCount: form.raterCount,
+        responsibleName: form.responsibleName.trim(),
+        responsibleEmail: form.responsibleEmail.trim(),
+        responsibleRole: form.responsibleRole.trim() || undefined,
+        responsibleConfirmed: form.responsibleConfirmed,
         dataConsent: "ja" as const,
       };
 
@@ -198,7 +219,14 @@ export function GroupRegisterForm() {
     if (step === 2) return form.contactEmail.includes("@");
     if (step === 3) return true;
     if (step === 4) return quizDone;
-    if (step === 5) return form.dataConsent;
+    if (step === 5) {
+      return (
+        form.responsibleName.trim().length >= 2 &&
+        form.responsibleEmail.includes("@") &&
+        form.responsibleConfirmed
+      );
+    }
+    if (step === 6) return form.dataConsent;
     return false;
   }
 
@@ -241,8 +269,9 @@ export function GroupRegisterForm() {
               set={set}
             />
           )}
-          {step === 5 && (
-            <Step5 form={form} set={set} error={submitResult?.error} />
+          {step === 5 && <Step5Responsible form={form} set={set} />}
+          {step === 6 && (
+            <Step6 form={form} set={set} error={submitResult?.error} />
           )}
 
           {/* Navigation — only show outside the quiz item flow */}
@@ -268,7 +297,7 @@ export function GroupRegisterForm() {
                 </Link>
               )}
 
-              {step < 5 ? (
+              {step < 6 ? (
                 <button
                   onClick={() => setStep((s) => s + 1)}
                   disabled={!canAdvance()}
@@ -744,9 +773,75 @@ function Step4({
   );
 }
 
-// ─── Step 5: Abschluss ────────────────────────────────────────────────────────
+// ─── Step 5: Verantwortliche Person ───────────────────────────────────────────
 
-function Step5({
+function Step5Responsible({
+  form,
+  set,
+}: {
+  form: FormData;
+  set: <K extends keyof FormData>(k: K, v: FormData[K]) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-6">
+      <h2 className="font-heading text-lg uppercase">Verantwortliche Person</h2>
+
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        Wir brauchen eine Ansprechperson, die für die Gruppe verantwortlich ist und die
+        Registrierung bestätigt. Diese Daten werden nicht öffentlich angezeigt – sie dienen
+        nur dem FOMO-Team für Rückfragen.
+      </p>
+
+      <Field label="Name *">
+        <input
+          type="text"
+          value={form.responsibleName}
+          onChange={(e) => set("responsibleName", e.target.value)}
+          placeholder="Vor- und Nachname"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+        />
+      </Field>
+
+      <Field label="E-Mail *" hint="Persönliche oder Funktions-E-Mail">
+        <input
+          type="email"
+          value={form.responsibleEmail}
+          onChange={(e) => set("responsibleEmail", e.target.value)}
+          placeholder="name@beispiel.de"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+        />
+      </Field>
+
+      <Field label="Rolle in der Gruppe">
+        <input
+          type="text"
+          value={form.responsibleRole}
+          onChange={(e) => set("responsibleRole", e.target.value)}
+          placeholder="z.B. Vorsitzende:r, Vorstand"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+        />
+      </Field>
+
+      <label className="flex items-start gap-3 cursor-pointer border-2 border-foreground/20 bg-accent p-4">
+        <input
+          type="checkbox"
+          checked={form.responsibleConfirmed}
+          onChange={(e) => set("responsibleConfirmed", e.target.checked)}
+          className="mt-0.5 h-4 w-4 border-border accent-primary"
+        />
+        <span className="text-sm leading-relaxed">
+          Ich bin verantwortliche Person bei dieser Gruppe und darf sie nach außen
+          repräsentieren. <span className="text-muted-foreground">*</span>
+        </span>
+      </label>
+      <p className="text-xs text-muted-foreground">* Pflichtfeld</p>
+    </div>
+  );
+}
+
+// ─── Step 6: Abschluss ────────────────────────────────────────────────────────
+
+function Step6({
   form,
   set,
   error,

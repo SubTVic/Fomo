@@ -12,9 +12,10 @@ Answer ~20 questions about your interests, values, and time budget, and get pers
 
 | Phase | Status | Description |
 | --- | --- | --- |
-| Phase 1: Pilot Study | ✅ Abgeschlossen | 67 Sessions, Classic-Variante gewinnt (45%), Working Set v1.1 eingefroren |
-| Phase 2: Group Registration | 🔄 Deployment ausstehend | Code fertig — Token-System, Scraper, Algorithmus-Fixes |
-| Phase 3: Matching & Results | ⏳ Geplant | Ergebnisseite polish, Gamification, Sponsor-Demo |
+| Phase 1: Pilot Study | ✅ Abgeschlossen | 104 Sessions, Classic-Variante gewinnt (45%), Working Set v1.1 eingefroren |
+| Phase 2: Group Registration | 🔄 Aktiv | Token-Einladungen, Selbst-Registrierung, Scraper-Import, i18n DE/EN ✅ |
+| Studie 2: Member Validation | 🔄 Aktiv | `/pilot` live, Daten werden erhoben (Ziel: ≥60 Sessions) |
+| Phase 3: Matching & Results | ⏳ Geplant | nach Studie-2-Auswertung, Working Set v3 |
 | Phase 4: Launch | ⏳ Geplant | September 2026, Erstsemester-Woche TU Dresden |
 
 Offene Aufgaben: siehe [TODO.md](TODO.md)
@@ -28,11 +29,13 @@ Offene Aufgaben: siehe [TODO.md](TODO.md)
 - **Weighted scoring** with inverse mapping and per-attribute item-count normalization
 - **Top results** normalized to 0–100% match score
 
-### Group Profiles
+### Group Profiles & Registration
 
 - **83 TU Dresden student groups** from the StuRa directory
 - **AI-scraped attributes** via Anthropic API with web search — 17 boolean matching attributes per group
-- **Token-based verification** — groups review and correct their scraped profile via a secure invite link
+- **Token-based invite links** — groups review and correct their scraped profile via a secure link (email optional)
+- **Self-registration flow** — 6-step form for groups not yet in the system, including a responsible-person confirmation with contact list storage
+- **Admin contact list** — all responsible contacts saved with consent confirmation, exportable as CSV
 
 ### Pilot Study (Completed — May 2026)
 
@@ -45,7 +48,7 @@ FOMO ran a **pilot study** to validate the question set and test 4 different UI 
 | 👆 Swipe | Tinder-style | Drag or swipe cards left/right to answer |
 | 💬 Chat | Messenger | Questions appear as bot messages with emoji reply buttons |
 
-**Result:** Classic won with 45% preference. 67 sessions completed, Working Set v1.1 frozen.
+**Result:** Classic won with 45% preference. 104 sessions completed, Working Set v1.1 frozen.
 
 ### Security
 
@@ -60,6 +63,7 @@ FOMO ran a **pilot study** to validate the question set and test 4 different UI 
 | --- | --- |
 | Framework | [Next.js 15](https://nextjs.org/) (App Router, TypeScript) |
 | Styling | [Tailwind CSS 4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) |
+| i18n | [next-intl](https://next-intl-docs.vercel.app/) (DE/EN, `localePrefix: "as-needed"`) |
 | Database | [PostgreSQL 16](https://www.postgresql.org/) via [Prisma ORM](https://www.prisma.io/) |
 | Auth | [Auth.js v5](https://authjs.dev/) (Credentials, Phase 4: TU Dresden Shibboleth/SAML) |
 | Validation | [Zod](https://zod.dev/) |
@@ -123,14 +127,17 @@ npx tsx scripts/validation/item-discrimination-analysis.ts --output data/item-em
 ```text
 src/
 ├── app/
-│   ├── (public)/           # Public pages (landing, group register)
-│   │   └── groups/register/        # Token-based group attribute confirmation
-│   ├── (fullscreen)/quiz/  # Live quiz route
+│   ├── [locale]/           # i18n routes (DE/EN)
+│   │   └── (public)/       # Public pages (landing, group register)
+│   │       └── groups/register/    # Token-based & self-registration (6-step form)
 │   ├── admin/              # Admin dashboard (protected)
+│   │   └── (protected)/
+│   │       ├── contacts/   # Contact list (responsible persons, CSV export)
+│   │       └── groups/     # Group management, invite links, verify
 │   └── api/
 │       ├── auth/           # Auth.js handler
 │       ├── groups/         # Group registration & attribute submission
-│       └── admin/          # Admin: groups, invites, scraper import, verify
+│       └── admin/          # Admin: groups, invites, scraper import, verify, backup
 ├── components/
 │   ├── quiz/               # Live quiz components
 │   │   ├── QuizRouter.tsx          # Quiz orchestrator (welcome → quiz → results)
@@ -192,7 +199,9 @@ Results are normalized to 0–100% and sorted descending. All computation runs c
 
 ### Data Model
 
-The schema covers the **production quiz** (QuizThesis, QuizThesisAttribute, Group, Category, GroupInvite) and retains pilot study tables (PilotSession, PilotAnswer) for archival. Groups have 17 boolean matching attributes. Each QuizThesis maps to one or more group attributes (optionally inverse) and can carry an optional `hint` field shown inline.
+The schema covers the **production quiz** (QuizThesis, QuizThesisAttribute, Group, Category, GroupInvite) and retains pilot study tables (PilotSession, PilotAnswer) for archival. Groups have 17 boolean matching attributes. Each QuizThesis maps to one or more group attributes (optionally inverse) and carries optional `hint`/`textEn`/`hintEn` fields for bilingual display.
+
+**GroupContact** stores responsible persons who self-registered a group (`isResponsible: true`, `source: "self-registration"`). The admin dashboard exposes a contact list view with CSV export and a one-click JSON backup of the entire database.
 
 ## Environment Variables
 
@@ -203,6 +212,7 @@ The schema covers the **production quiz** (QuizThesis, QuizThesisAttribute, Grou
 | `NEXTAUTH_URL` | Yes | App URL (e.g., `http://localhost:3000`) |
 | `APP_LIVE` | No | `true` switches landing CTA to live quiz; default `false` shows prelaunch CTAs |
 | `ANTHROPIC_API_KEY` | Scraper only | API key for AI-based group profile scraping |
+| `DIRECT_URL` | Vercel only | Direct (non-pooled) DB connection for migrations |
 
 ## Deployment
 
@@ -250,4 +260,4 @@ You may use, modify, and distribute this code. If you run a modified version as 
 
 ## Contact
 
-A project by [Yeti](https://github.com/SubTVic) in cooperation with the [StuRa TU Dresden](https://www.stura.tu-dresden.de/).
+A project by [Yeti](yeti-dresden.org) in cooperation with the [StuRa TU Dresden](https://www.stura.tu-dresden.de/).

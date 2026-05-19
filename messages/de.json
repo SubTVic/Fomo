@@ -1,0 +1,574 @@
+{
+  "common": {
+    "back": "← Zurück",
+    "skip": "Überspringen →",
+    "next": "Weiter →",
+    "save": "Speichern",
+    "loading": "Wird geladen…",
+    "saving": "Wird gespeichert…",
+    "error": "Fehler",
+    "networkError": "Netzwerkfehler – bitte erneut versuchen.",
+    "home": "Zur Startseite",
+    "allGroups": "Zur Gruppenübersicht",
+    "anonymous": "Anonym",
+    "openSource": "Open Source"
+  },
+  "nav": {
+    "allGroups": "Alle Gruppen"
+  },
+  "footer": {
+    "a": "Ein",
+    "project": "Projekt",
+    "poweredBy": "powered by",
+    "tagline": "Über 100 Hochschulgruppen. Eine Stadt. Ein Tool."
+  },
+  "landing": {
+    "prelaunch": {
+      "studyLabel": "Studie für Mitglieder",
+      "studyTitle": "Hilf uns, FOMO zu kalibrieren",
+      "studyText": "Du bist in einer Hochschulgruppe? Hilf uns, FOMO zu kalibrieren — ~5 Minuten.",
+      "studyButton": "Studie starten",
+      "studyMeta": "~5 Min · Anonym",
+      "protoLabel": "Prototyp",
+      "protoTitle": "Prototyp ansehen",
+      "protoText": "So sieht das fertige Quiz schon aus. Achtung: Fragen, Layout und Matching sind noch Work-in-Progress.",
+      "protoButton": "Prototyp öffnen",
+      "groupsLabel": "Hochschulgruppen",
+      "groupsTitle": "Registriert eure Gruppe",
+      "groupsText": "{count} Gruppen sind schon dabei. Registrierung kostenlos, in ~15 Minuten.",
+      "groupsButton": "Gruppe registrieren",
+      "browseText": "Lieber selbst stöbern? Schau dir alle Hochschulgruppen direkt an.",
+      "browseButton": "Alle Gruppen anzeigen →"
+    },
+    "live": {
+      "quizLabel": "Quiz starten",
+      "quizTitle": "Finde dein Match",
+      "quizText": "Beantworte ~20 Fragen zu deinen Interessen und Werten — wir zeigen dir, welche der {count} Hochschulgruppen am besten zu dir passen.",
+      "quizButton": "Quiz starten",
+      "quizMeta": "~ 10 Min · Anonym · Im Browser",
+      "demoLink": "Unsere Demo ansehen →",
+      "allGroupsLink": "Oder alle Gruppen anzeigen →",
+      "howTitle": "So funktioniert's",
+      "step1Title": "Fragen beantworten",
+      "step1Text": "~20 kurze Fragen zu deinen Interessen, Werten und deinem Zeitbudget.",
+      "step2Title": "Matching berechnen",
+      "step2Text": "Unser Algorithmus vergleicht dein Profil mit den Profilen aller Hochschulgruppen — komplett im Browser.",
+      "step3Title": "Gruppen entdecken",
+      "step3Text": "Sieh dir deine Top-Empfehlungen mit Kontaktinfos, Logo und Links an."
+    }
+  },
+  "groups": {
+    "metaLabel": "Hochschulgruppen",
+    "heroTitle": "Deine Hochschulgruppe auf FOMO",
+    "heroText": "Erstis suchen euch – lasst euch finden. Registriert eure Gruppe, füllt euer Profil aus und werdet Teil des Matchings.",
+    "registerButton": "Gruppe registrieren",
+    "statStudents": "Erstis pro Jahr",
+    "statGroups": "Gruppen dabei",
+    "statFree": "kostenlos",
+    "statFreeLabel": "& in ~15 min",
+    "browseTitle": "Alle Hochschulgruppen",
+    "browseSubtitle": "{count} Gruppen an der TU Dresden",
+    "filterAll": "Alle",
+    "germanContentNotice": ""
+  },
+  "register": {
+    "steps": ["Stammdaten", "Kontakt & Präsenz", "Struktur", "Gruppencheck", "Verantwortliche Person", "Abschluss"],
+    "categories": [
+      "Politik & Gesellschaft",
+      "Sport & Bewegung",
+      "Kunst & Kultur",
+      "Musik",
+      "Technik & Wissenschaft",
+      "Nachhaltigkeit",
+      "Internationales",
+      "Soziales Engagement",
+      "Glaube & Spiritualität",
+      "Wirtschaft & Karriere",
+      "Sonstiges"
+    ],
+    "step1": {
+      "title": "Stammdaten",
+      "subtitle": "Grundlegende Informationen über eure Gruppe",
+      "name": "Name der Gruppe",
+      "namePlaceholder": "z.B. YETI Dresden",
+      "category": "Kategorie",
+      "categoryPlaceholder": "Wähle eine Kategorie…",
+      "shortDesc": "Kurzbeschreibung",
+      "shortDescHint": "max. 200 Zeichen — erscheint bei Suchergebnissen",
+      "shortDescPlaceholder": "Was macht eure Gruppe aus?",
+      "longDesc": "Ausführliche Beschreibung",
+      "longDescHint": "optional",
+      "longDescPlaceholder": "Geschichte, Aktivitäten, was ihr anbietet…",
+      "foundedYear": "Gründungsjahr",
+      "foundedYearPlaceholder": "z.B. 2010",
+      "motto": "Motto / Slogan",
+      "mottoPlaceholder": "optional"
+    },
+    "step2": {
+      "title": "Kontakt & Präsenz",
+      "contactEmail": "Kontakt-E-Mail (öffentlich)",
+      "contactEmailPlaceholder": "kontakt@beispiel.de",
+      "contactPerson": "Ansprechperson (intern, nicht öffentlich)",
+      "contactPersonPlaceholder": "Name",
+      "contactPersonRole": "Rolle",
+      "contactPersonRolePlaceholder": "z.B. Vorsitzende:r",
+      "website": "Website",
+      "websitePlaceholder": "https://…",
+      "instagram": "Instagram"
+    },
+    "step3": {
+      "title": "Struktur",
+      "memberCount": "Mitgliederzahl",
+      "memberCountPlaceholder": "z.B. 25",
+      "meetingSchedule": "Regelmäßige Treffen",
+      "meetingSchedulePlaceholder": "z.B. Jeden Dienstag 19 Uhr",
+      "language": "Gruppensprache",
+      "languageGerman": "Deutsch",
+      "languageBoth": "Deutsch & Englisch",
+      "languageEnglish": "Englisch",
+      "onboardingInfo": "Wie kommt man rein?",
+      "onboardingInfoPlaceholder": "Gibt es eine Probezeit, Aufnahmeprüfung, offene Treffen…?"
+    },
+    "step4": {
+      "title": "Gruppencheck",
+      "subtitle": "Wie würde ein typisches Mitglied eurer Gruppe die folgenden Aussagen bewerten?"
+    },
+    "step5": {
+      "title": "Verantwortliche Person",
+      "name": "Name",
+      "namePlaceholder": "Vollständiger Name",
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "deine@email.de",
+      "role": "Rolle / Funktion",
+      "rolePlaceholder": "z.B. Vorsitzende:r",
+      "confirm": "Ich bestätige, dass ich berechtigt bin, diese Gruppe zu registrieren.",
+      "raterCount": "Wie viele Personen haben die Antworten im Gruppencheck gemeinsam erarbeitet?",
+      "alone": "Ich allein",
+      "two": "Zu zweit",
+      "threeOrMore": "3 oder mehr Personen"
+    },
+    "step6": {
+      "title": "Abschluss",
+      "consent": "Ich bin damit einverstanden, dass die Angaben im FOMO-Tool der TU Dresden gespeichert und für das Gruppen-Matching verwendet werden.",
+      "submitButton": "Gruppe registrieren",
+      "submitting": "Wird gespeichert…",
+      "successTitle": "Registrierung eingegangen!",
+      "successText": "Danke! Eure Gruppe wurde erfolgreich registriert. Das FOMO-Team prüft eure Angaben und meldet sich bei euch.",
+      "successBack": "Zur Startseite"
+    },
+    "nav": {
+      "prev": "← Zurück",
+      "next": "Weiter →",
+      "of": "von"
+    },
+    "validation": {
+      "nameRequired": "Gruppenname ist Pflicht.",
+      "categoryRequired": "Bitte wähle eine Kategorie.",
+      "shortDescRequired": "Kurzbeschreibung ist Pflicht.",
+      "shortDescTooLong": "Kurzbeschreibung darf max. 200 Zeichen lang sein.",
+      "emailInvalid": "Bitte gib eine gültige E-Mail ein.",
+      "responsibleNameRequired": "Name der verantwortlichen Person ist Pflicht.",
+      "responsibleEmailRequired": "E-Mail der verantwortlichen Person ist Pflicht.",
+      "responsibleRoleRequired": "Bitte gib deine Rolle an.",
+      "responsibleConfirmRequired": "Bitte bestätige deine Berechtigung.",
+      "consentRequired": "Bitte stimme der Datenverarbeitung zu.",
+      "saveFailed": "Fehler beim Speichern. Bitte versuche es erneut."
+    },
+    "ws2": {
+      "agree": "Stimme zu",
+      "neutral": "Neutral / Weiß nicht",
+      "disagree": "Stimme nicht zu",
+      "filterTitle": "Aktivitätstypen (optional)",
+      "filterSubtitle": "Welche Aktivitäten stehen bei euch im Vordergrund?",
+      "filterMulti": "Mehrfachauswahl möglich"
+    }
+  },
+  "selfrating": {
+    "loading": "Einladung wird geladen…",
+    "noToken": "Kein Einladungslink gefunden. Bitte nutze den Link aus deiner E-Mail.",
+    "unknownError": "Unbekannter Fehler",
+    "title": "Gruppencheck",
+    "intro": {
+      "text": "Bitte beantwortet die folgenden 21 Aussagen aus Sicht eurer Gruppe. Stellt euch vor, ein typisches Mitglied spricht:",
+      "quote": "„Mitglieder unserer Gruppe würden dieser Aussage zustimmen."",
+      "duration": "Das dauert etwa 5 Minuten. Eure Antworten werden direkt als Matching-Profil für das FOMO-Quiz verwendet.",
+      "startButton": "Jetzt starten"
+    },
+    "filter": {
+      "label": "Aktivitäten",
+      "title": "Welche Aktivitäten stehen bei euch im Vordergrund?",
+      "multi": "Mehrfachauswahl · nicht Pflicht",
+      "continueButton": "Weiter zu den Fragen →"
+    },
+    "item": {
+      "questionOf": "Frage {current} von {total}",
+      "memberWouldAgree": "Mitglieder unserer Gruppe würden zustimmen:",
+      "agree": "Stimme zu",
+      "neutral": "Neutral",
+      "disagree": "Stimme nicht zu"
+    },
+    "description": {
+      "title": "Gruppeninfo",
+      "text": "Füllt die Informationen zu eurer Gruppe aus — je vollständiger, desto besser das Matching.",
+      "category": "Kategorie",
+      "shortDesc": "Kurzbeschreibung",
+      "shortDescRequired": "(Pflicht)",
+      "shortDescPlaceholder": "Was macht eure Gruppe aus? Was bietet ihr neuen Mitgliedern?",
+      "shortDescChars": "{count}/200 Zeichen",
+      "contactEmail": "Kontakt-E-Mail",
+      "website": "Website",
+      "instagram": "Instagram",
+      "memberCount": "Mitgliederzahl",
+      "foundedYear": "Gründungsjahr",
+      "continueButton": "Weiter →",
+      "backButton": "← Zurück"
+    },
+    "raterCount": {
+      "question": "Wie viele Personen haben die Antworten gemeinsam erarbeitet?",
+      "alone": "Ich allein",
+      "two": "Zu zweit",
+      "threeOrMore": "3 oder mehr Personen",
+      "submitButton": "Profil speichern",
+      "submitting": "Wird gespeichert…"
+    },
+    "done": {
+      "title": "Profil gespeichert!",
+      "text": "Danke! Euer Profil ist jetzt hinterlegt und wird vom FOMO-Team geprüft.",
+      "allGroupsButton": "Zur Gruppenübersicht"
+    }
+  },
+  "attributeChecklist": {
+    "groups": {
+      "activity": "Aktivitätstyp",
+      "social": "Soziales & Werte",
+      "career": "Karriere & Vernetzung",
+      "structure": "Struktur & Zugang"
+    },
+    "attributes": {
+      "hands_on": "Hands-on",
+      "hands_on_desc": "Praktisch: Bauen, programmieren, gestalten",
+      "outdoor": "Outdoor",
+      "outdoor_desc": "Regelmäßig Aktivitäten im Freien",
+      "tech": "Technologie",
+      "tech_desc": "Coding, IT, digitale Systeme als Kern",
+      "sports": "Sport",
+      "sports_desc": "Sportliche Aktivitäten als Kernbestandteil",
+      "arts": "Kreativ",
+      "arts_desc": "Künstlerische/kreative Aktivitäten",
+      "music": "Musik",
+      "music_desc": "Musik als Kernaktivität",
+      "social_impact": "Gesellschaft",
+      "social_impact_desc": "Soziales/politisches Engagement",
+      "religion": "Religion",
+      "religion_desc": "Religiöse/weltanschauliche Ausrichtung",
+      "international": "International",
+      "international_desc": "Internationale Mitglieder, interkulturell",
+      "language": "Sprache",
+      "language_desc": "Kommunikation (auch) auf Englisch",
+      "career": "Karriere",
+      "career_desc": "Unternehmenskontakte, Mentoring",
+      "networking": "Networking",
+      "networking_desc": "Explizit Kontakte knüpfen als Zweck",
+      "competitive": "Wettbewerb",
+      "competitive_desc": "Turniere, Rankings, Competitions",
+      "group_size": "Große Gruppe",
+      "group_size_desc": "Mehr als 20 aktive Mitglieder",
+      "event_frequency": "Regelmäßig",
+      "event_frequency_desc": "Treffen/Events mind. 2× pro Monat",
+      "time_low": "Wenig Zeit",
+      "time_low_desc": "Engagement mit max. 2h/Woche möglich",
+      "leadership_opportunities": "Verantwortung",
+      "leadership_opportunities_desc": "Führungsrollen möglich",
+      "beginner_friendly": "Einsteigerfreundlich",
+      "beginner_friendly_desc": "Keine Vorkenntnisse nötig",
+      "party": "Socializing",
+      "party_desc": "Gesellige Events neben Kernaktivität"
+    },
+    "loading": "Gruppe wird geladen…",
+    "loadError": "Einladungslink ungültig oder abgelaufen.",
+    "noToken": "Kein Einladungslink. Bitte nutze den Link aus deiner E-Mail.",
+    "title": "Attribut-Checkliste",
+    "intro": "Bitte überprüfe und korrigiere die folgenden Attribute für eure Gruppe. Die Angaben aus dem Scraper sind vorausgefüllt.",
+    "scraperHint": "Vom Scraper erkannt",
+    "saveButton": "Speichern & abschicken",
+    "saving": "Wird gespeichert…",
+    "successTitle": "Gespeichert!",
+    "successText": "Eure Angaben wurden gespeichert.",
+    "backToHome": "Zur Startseite"
+  },
+  "pilot": {
+    "metaLabel": "Studie für Mitglieder",
+    "title": "Hilf uns, FOMO besser zu machen",
+    "who": {
+      "title": "Wer wird gesucht",
+      "text": "Du bist Mitglied einer Hochschulgruppe an der TU Dresden? Dann brauchen wir dich."
+    },
+    "why": {
+      "title": "Warum wir dich brauchen",
+      "text": "Wir wollen prüfen, ob unser Quiz dich tatsächlich zu deiner Gruppe matchen würde. Dafür beantwortest du 20 Fragen wie ein Erstsemester, der gerade nach einer Gruppe sucht. So können wir messen, welche Fragen funktionieren und welche raus müssen."
+    },
+    "data": {
+      "title": "Was passiert mit den Daten",
+      "text": "Komplett anonym. Kein Account. Keine personenbezogenen Daten. Wir speichern nur deine Antworten und welche Gruppe du angegeben hast."
+    },
+    "duration": {
+      "title": "Dauer",
+      "text": "~5 Minuten."
+    },
+    "reward": {
+      "title": "Was du bekommst",
+      "text": "Am Ende zeigen wir dir, welche der ~80 Hochschulgruppen am besten zu deinen Antworten passen — und ob deine eigene Gruppe darunter ist."
+    },
+    "startButton": "Studie starten",
+    "meta": "Anonym · Im Browser · ~5 Min"
+  },
+  "quiz": {
+    "comingSoonTitle": "Quiz coming soon",
+    "comingSoonText": "Das Quiz wird gerade vorbereitet. Schau bald wieder vorbei!",
+    "tooNeutralTitle": "Zu viele neutrale Antworten",
+    "tooNeutralText": "Du hast nur {answered} von {total} Fragen klar beantwortet. Das reicht nicht für ein sinnvolles Matching — alle Gruppen würden gleich gut passen.",
+    "tooNeutralHint": "Bitte geh zurück und beantworte mindestens 5 Fragen mit <strong>Ja</strong> oder <strong>Nein</strong>.",
+    "backToQuestions": "Zurück zu den Fragen",
+    "protoWarning": "⚠️ <strong>Prototyp</strong> — Fragen, Layout und Matching sind noch in Arbeit. Feedback gern an",
+    "welcome": {
+      "subtitle": "Finde deine Hochschulgruppen",
+      "intro": "Beantworte {count} kurze Thesen und finde heraus, welche Hochschulgruppen an der TU Dresden am besten zu dir passen.",
+      "agreeLabel": "Stimme zu — du findest das gut",
+      "neutralLabel": "Neutral — ist dir egal",
+      "disagreeLabel": "Stimme nicht zu — eher nicht",
+      "meta1": "~ 3 Min",
+      "meta2": "Anonym",
+      "meta3": "Keine Daten gespeichert",
+      "startButton": "Quiz starten"
+    },
+    "classic": {
+      "yes": "Ja",
+      "neutral": "Egal",
+      "no": "Nein",
+      "confusedLabel": "Ich hab die Frage nicht verstanden",
+      "confusedHint": "Hilft uns, unklare Fragen zu verbessern",
+      "back": "← Zurück"
+    }
+  },
+  "results": {
+    "title": "Deine Ergebnisse",
+    "answeredOf": "{answered} / {total} Thesen beantwortet — {count} Gruppen gematcht",
+    "tabOverview": "Übersicht",
+    "tabCompare": "Vergleich",
+    "showAll": "Alle {count} Gruppen anzeigen",
+    "share": "Ergebnis teilen",
+    "linkCopied": "Link kopiert!",
+    "restart": "Quiz wiederholen",
+    "allGroups": "Alle Gruppen ansehen",
+    "card": {
+      "match": "Passt",
+      "partial": "Teilweise",
+      "conflict": "Passt weniger",
+      "openForAll": "Offen für alle",
+      "details": "Details",
+      "email": "E-Mail schreiben",
+      "website": "Website",
+      "instagram": "Instagram",
+      "compare": "Vergleichen",
+      "comparing": "✓ Verglichen"
+    },
+    "comparison": {
+      "attributeHeader": "Attribut",
+      "remove": "entfernen",
+      "empty": "Wähle Gruppen in der Übersicht zum Vergleichen aus (max. 8)."
+    }
+  },
+  "attributes": {
+    "career": "Karriere & Beruf",
+    "tech": "Technik & Digital",
+    "socialImpact": "Gesellschaftliches Engagement",
+    "party": "Feiern & Socializing",
+    "religion": "Glaube & Weltanschauung",
+    "sports": "Sport & Bewegung",
+    "networking": "Netzwerken",
+    "arts": "Kunst & Kreativität",
+    "music": "Musik",
+    "timeLow": "Geringer Zeitaufwand",
+    "handsOn": "Hands-on & Praktisch",
+    "outdoor": "Outdoor & Analog",
+    "international": "International",
+    "beginnerFriendly": "Einsteigerfreundlich",
+    "competitive": "Wettbewerb",
+    "financialCost": "Kosten",
+    "leadershipOpportunities": "Verantwortung übernehmen"
+  },
+  "demo": {
+    "stepLabels": ["Intro", "Algorithmus", "Persona Max", "Ergebnis Max", "Persona Lena", "Ergebnis Lena", "Vergleich", "4 Layouts", "Admin", "Roadmap"],
+    "nav": {
+      "back": "← Zurück",
+      "next": "Weiter →"
+    },
+    "step0": {
+      "subtitle": "Find Our Matching Organizations",
+      "stat1Value": "6.300",
+      "stat1Label": "neue Erstsemester pro Jahr an der TU Dresden",
+      "stat2Value": "100+",
+      "stat2Label": "Hochschulgruppen — Vereine, Clubs, Initiativen",
+      "stat3Value": "Keine",
+      "stat3Label": "strukturierte Möglichkeiten, die richtige zu finden",
+      "solutionLabel": "Die Lösung",
+      "solution": "Ein Quiz das in 3 Minuten ermittelt, welche Hochschulgruppen zu dir passen — wie Wahl-O-Mat, aber für das Campusleben.",
+      "scaleTitle": "Das gleiche Problem — überall in Deutschland",
+      "scale1": "~30.000",
+      "scale1Label": "Erstis/Jahr\nUni Leipzig",
+      "scale2": "~45.000",
+      "scale2Label": "Erstis/Jahr\nTU München",
+      "scale3": "~500.000",
+      "scale3Label": "Erstis/Jahr\nDeutschland",
+      "openSource": "FOMO ist Open Source — jede Hochschule kann es für sich deployen.",
+      "sponsor": "Ein Projekt des",
+      "org": "StuRa TU Dresden",
+      "launch": "Launch: September 2026",
+      "startButton": "Tour starten →"
+    },
+    "step1": {
+      "stepLabel": "Schritt 2",
+      "title": "Wie der Algorithmus funktioniert",
+      "exampleLabel": "Beispiel-These",
+      "agreeLabel": "Stimme zu",
+      "neutralLabel": "Neutral",
+      "disagreeLabel": "Stimme nicht zu",
+      "weightLabel": "Gewichtung dieser Frage:",
+      "weightNeutral": "0% — Neutral zählt nicht. Die Frage wird ignoriert.",
+      "weightPositive": "{pct}% — Je klarer die Meinung, desto mehr Einfluss.",
+      "step1Title": "Antwort → Wert",
+      "step1Body": "Stimme zu = 1.0\nNeutral = 0.5\nNicht zu = 0.0",
+      "step2Title": "Abstand × Gewicht",
+      "step2Body": "Wie ähnlich ist deine Antwort zum Gruppen-Profil? Je stärker deine Meinung, desto mehr zählt die Frage.",
+      "step3Title": "Score 0–100%",
+      "step3Body": "Alle {count} Fragen summiert → Gruppen nach Übereinstimmung sortiert.",
+      "importantLabel": "Wichtig",
+      "important": "Jede Hochschulgruppe hat ein binäres Profil aus 17 Attributen (z.B. hands-on, international, Wettbewerb). Der Algorithmus läuft komplett im Browser — keine Nutzerdaten werden gespeichert. DSGVO-konform by design.",
+      "hint": "→ Im nächsten Schritt siehst du zwei echte Personas und ihre Ergebnisse"
+    },
+    "step2": {
+      "stepLabel": "Schritt 3",
+      "title": "Persona {emoji} {name}",
+      "answersLabel": "So würde {name} die {count} Fragen beantworten:",
+      "hint": "→ Nächster Schritt: welche Gruppen empfiehlt FOMO für {name}?"
+    },
+    "step3": {
+      "stepLabel": "Schritt 4",
+      "title": "Ergebnis für {emoji} {name}",
+      "allGroupsLabel": "Alle {count} Gruppen — sortiert nach Übereinstimmung",
+      "whyLabel": "Warum diese Gruppen?",
+      "why": "{name} hat Wettbewerbe und praktisches Tun stark bewertet — FOMO gewichtet diese Fragen höher und findet Gruppen mit den Attributen competitive, hands-on und career."
+    },
+    "step4": {
+      "stepLabel": "Schritt 5",
+      "title": "Persona {emoji} {name}",
+      "answersLabel": "So würde {name} die {count} Fragen beantworten:",
+      "hint": "→ Nächster Schritt: welche Gruppen empfiehlt FOMO für {name}?"
+    },
+    "step5": {
+      "stepLabel": "Schritt 6",
+      "title": "Ergebnis für {emoji} {name}",
+      "allGroupsLabel": "Alle {count} Gruppen — sortiert nach Übereinstimmung",
+      "whyLabel": "Warum andere Gruppen?",
+      "why": "{name} hat soziales Engagement, Kreativität und Gemeinschaft stark bewertet — FOMO findet Gruppen mit den Attributen socialImpact, arts und beginnerFriendly."
+    },
+    "step7": {
+      "stepLabel": "Schritt 8",
+      "title": "Die Pilot-Studie",
+      "subtitle": "Bevor FOMO live geht, testen wir welches Quiz-Layout die höchste Abschlussrate hat. Dafür werden 4 Varianten an echten Studierenden getestet.",
+      "layouts": {
+        "classic": { "name": "Classic", "emoji": "📋", "desc": "Eine Frage pro Screen, 3 große Buttons. Bewährtes Wahl-O-Mat-Prinzip. Maximale Fokussierung." },
+        "swipe":   { "name": "Swipe",   "emoji": "👆", "desc": "Tinder-Style Karten. Links wischen = Nein, Rechts = Ja, Hoch = Neutral. Für mobile-native Nutzer." },
+        "scroll":  { "name": "Scroll",  "emoji": "📜", "desc": "Alle Fragen auf einmal sichtbar, nach Themen gruppiert. Für Nutzer die erst einen Überblick wollen." },
+        "chat":    { "name": "Chat",    "emoji": "💬", "desc": "WhatsApp-Style Dialog. FOMO stellt Fragen, du antwortest. Persönlichste Erfahrung." }
+      },
+      "measuresTitle": "Was die Studie misst",
+      "measure1Title": "Fragenqualität",
+      "measure1Desc": "Welche der 60 Fragen haben die höchste Aussagekraft?",
+      "measure2Title": "Abschlussrate",
+      "measure2Desc": "Welches Layout bringt Nutzer ans Ende?",
+      "measure3Title": "Zeit",
+      "measure3Desc": "Wie lange braucht man pro Layout?",
+      "measure4Title": "Präferenz",
+      "measure4Desc": "Welches Layout mögen Nutzer am liebsten?"
+    },
+    "step8": {
+      "stepLabel": "Schritt 9",
+      "title": "Admin-Panel",
+      "subtitle": "Vollständiges CMS für StuRa-Redakteure — ohne Programmierkenntnisse.",
+      "screenshots": {
+        "groups": "Gruppen-Verwaltung",
+        "quiz": "Quiz-Editor",
+        "pilot": "Pilot-Statistiken"
+      },
+      "features": {
+        "manageGroups": "Gruppen verwalten",
+        "manageGroupsDesc": "{count} Hochschulgruppen mit Profilen, Kontaktdaten und 17 Matching-Attributen",
+        "quizTheses": "Quiz-Thesen",
+        "quizThesesDesc": "{count} Thesen erstellen, bearbeiten, per JSON importieren",
+        "layout": "Layout wählen",
+        "layoutDesc": "Aktive Quiz-Variante per Klick umschalten",
+        "stats": "Pilot-Statistiken",
+        "statsDesc": "Abschlussraten, Antwort-Heatmaps, CSV-Export",
+        "invites": "Einladungen",
+        "invitesDesc": "Token-basierte Links an Gruppen senden zur Selbstregistrierung",
+        "verify": "Verifizierung",
+        "verifyDesc": "Gruppen-Profile nach Selbstauskunft manuell freigeben"
+      },
+      "prev": "Vorheriges",
+      "nextLabel": "Nächstes",
+      "tech": "Next.js 15, PostgreSQL, Prisma ORM, Auth.js. Deployed via Docker Compose — läuft auf dem Uni-Server ohne externe Abhängigkeiten. Open Source (AGPL-3.0).",
+      "techLabel": "Technisch:"
+    },
+    "step9": {
+      "stepLabel": "Schritt 10",
+      "title": "Roadmap",
+      "subtitle": "Phase 1 abgeschlossen · Phase 2 läuft · Launch September 2026.",
+      "timeline": [
+        {
+          "phase": "Phase 1",
+          "date": "März – Mai 2026",
+          "title": "Pilot-Studie",
+          "status": "done",
+          "items": ["67 Sessions abgeschlossen", "Classic-Layout gewinnt (45%)", "Working Set v1.1 eingefroren", "19 finale Quiz-Fragen"]
+        },
+        {
+          "phase": "Phase 2",
+          "date": "Mai – Juni 2026",
+          "title": "Gruppen-Registrierung",
+          "status": "now",
+          "items": ["83 Gruppen erhalten Token-Links", "Selbstauskunft zu 17 Attributen", "Admin verifiziert Profile", "Algorithmus kalibriert"]
+        },
+        {
+          "phase": "Phase 3",
+          "date": "Mai – August 2026",
+          "title": "Live-Quiz + Matching",
+          "status": "planned",
+          "items": ["~20 finale Fragen live", "Echtzeit-Matching im Browser", "Ergebnisseite mit Top-Gruppen", "Wahl-O-Mat Vergleichstabelle"]
+        },
+        {
+          "phase": "Phase 4",
+          "date": "September 2026",
+          "title": "Launch zur Erstsemester-Woche",
+          "status": "planned",
+          "items": ["6.300 Erstis als Zielgruppe", "Integration StuRa-Website", "Gamification: Badges, Share-Cards", "Monitoring & Auswertung"]
+        }
+      ],
+      "done": "✓ Abgeschlossen",
+      "now": "Jetzt",
+      "futureTitle": "Geplante Features (nach Launch)",
+      "future": [
+        { "emoji": "🎯", "title": "Radar-Chart", "desc": "Persönlichkeitsprofil mit 8 Dimensionen" },
+        { "emoji": "🃏", "title": "Share-Cards", "desc": "Ergebnis als Instagram-Story teilen" },
+        { "emoji": "📅", "title": "Event-Übersicht", "desc": "Personalisierte Veranstaltungsempfehlungen basierend auf dem Quiz-Ergebnis" },
+        { "emoji": "🏫", "title": "Andere Hochschulen", "desc": "Leipzig, Chemnitz, bundesweit skalierbar" },
+        { "emoji": "🔗", "title": "SSO-Login", "desc": "TU-Account direkt, keine Extra-Registrierung" },
+        { "emoji": "📱", "title": "Native App", "desc": "iOS/Android — langfristige Vision" }
+      ],
+      "ctaTitle": "Interesse an FOMO?",
+      "ctaText": "Eine Idee aus der Hochschulgruppe YETI Dresden — im Auftrag des StuRa TU Dresden.",
+      "ctaQuiz": "Quiz starten",
+      "ctaGithub": "GitHub →"
+    }
+  }
+}

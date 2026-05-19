@@ -10,7 +10,7 @@ import crypto from "crypto";
 
 const InviteSchema = z.object({
   groupId: z.string().min(1),
-  email: z.string().email(),
+  email: z.string().email().optional().nullable(),
   expiresInDays: z.number().int().min(1).max(90).default(30),
 });
 
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         data: {
           token,
           groupId: invite.groupId,
-          email: invite.email,
+          email: invite.email ?? null,
           expiresAt,
         },
       });

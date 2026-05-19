@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { YetiBadge } from "./YetiBadge";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export function Navbar() {
+  const t = useTranslations("nav");
   return (
     <header className="w-full">
       <div className="mx-auto flex max-w-[1000px] items-center justify-between px-4 py-4 sm:px-6">
@@ -15,8 +17,10 @@ export function Navbar() {
             href="/groups"
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
-            Alle Gruppen
+            {t("allGroups")}
           </Link>
+          <span className="text-muted-foreground">|</span>
+          <LanguageSwitcher />
           <span className="text-muted-foreground">|</span>
           <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider">
             <YetiBadge />

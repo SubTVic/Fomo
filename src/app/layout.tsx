@@ -18,7 +18,7 @@ const lexend = Lexend({
 export const metadata: Metadata = {
   title: "FOMO – Find Our Matching Organizations",
   description:
-    "Finde die Hochschulgruppe, die zu dir passt. Beantworte ~20 Fragen und erhalte personalisierte Empfehlungen für Hochschulgruppen an der TU Dresden.",
+    "Find the student group that fits you. Answer ~20 questions and get personalised recommendations for student groups at TU Dresden.",
 };
 
 export default function RootLayout({

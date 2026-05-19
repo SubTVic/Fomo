@@ -3,6 +3,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { QuizMatchResult } from "@/lib/quiz/types";
 
 interface ResultCardProps {
@@ -27,6 +28,7 @@ function scoreTextColor(score: number): string {
 }
 
 export function ResultCard({ result, rank, isComparing, onToggleCompare }: ResultCardProps) {
+  const t = useTranslations("results.card");
   const [expanded, setExpanded] = useState(false);
   const { group, score, attributeMatches } = result;
 
@@ -73,7 +75,7 @@ export function ResultCard({ result, rank, isComparing, onToggleCompare }: Resul
           {/* Attribute badges */}
           {matches.length > 0 && (
             <div>
-              <span className="text-xs font-medium text-green-700 uppercase">Passt</span>
+              <span className="text-xs font-medium text-green-700 uppercase">{t("match")}</span>
               <div className="mt-1 flex flex-wrap gap-1">
                 {matches.map((a) => (
                   <span key={a.attribute} className="rounded-full bg-green-100 text-green-800 px-2 py-0.5 text-[10px] font-medium">
@@ -85,7 +87,7 @@ export function ResultCard({ result, rank, isComparing, onToggleCompare }: Resul
           )}
           {partials.length > 0 && (
             <div>
-              <span className="text-xs font-medium text-[#7a9aaa] uppercase">Teilweise</span>
+              <span className="text-xs font-medium text-[#7a9aaa] uppercase">{t("partial")}</span>
               <div className="mt-1 flex flex-wrap gap-1">
                 {partials.map((a) => (
                   <span key={a.attribute} className="rounded-full bg-[#e8f4f8] text-[#5a7a8a] px-2 py-0.5 text-[10px] font-medium">
@@ -97,7 +99,7 @@ export function ResultCard({ result, rank, isComparing, onToggleCompare }: Resul
           )}
           {conflicts.length > 0 && (
             <div>
-              <span className="text-xs font-medium text-red-600 uppercase">Passt weniger</span>
+              <span className="text-xs font-medium text-red-600 uppercase">{t("conflict")}</span>
               <div className="mt-1 flex flex-wrap gap-1">
                 {conflicts.map((a) => (
                   <span key={a.attribute} className="rounded-full bg-red-100 text-red-800 px-2 py-0.5 text-[10px] font-medium">
@@ -122,7 +124,7 @@ export function ResultCard({ result, rank, isComparing, onToggleCompare }: Resul
                   </p>
                   {group.nextEventIsOpen && (
                     <span className="inline-block mt-1 rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-medium text-green-700">
-                      Offen für alle
+                      {t("openForAll")}
                     </span>
                   )}
                 </div>
@@ -134,7 +136,7 @@ export function ResultCard({ result, rank, isComparing, onToggleCompare }: Resul
                     onClick={(e) => e.stopPropagation()}
                     className="shrink-0 text-xs text-[#5a8a9a] underline underline-offset-2 hover:text-[#1a2a35]"
                   >
-                    Details
+                    {t("details")}
                   </a>
                 )}
               </div>
@@ -149,7 +151,7 @@ export function ResultCard({ result, rank, isComparing, onToggleCompare }: Resul
                 onClick={(e) => e.stopPropagation()}
                 className="rounded border-2 border-[#1a2a35] bg-[#1a2a35] px-3 py-1.5 text-xs font-bold text-[#ADD8E6] hover:bg-[#2a3a45] transition-colors"
               >
-                E-Mail schreiben
+                {t("email")}
               </a>
             )}
             {group.websiteUrl && (
@@ -160,7 +162,7 @@ export function ResultCard({ result, rank, isComparing, onToggleCompare }: Resul
                 onClick={(e) => e.stopPropagation()}
                 className="rounded border border-[#1a2a35]/20 px-3 py-1.5 text-xs hover:bg-[#f0f4f6] transition-colors"
               >
-                Website
+                {t("website")}
               </a>
             )}
             {group.instagramUrl && (
@@ -171,7 +173,7 @@ export function ResultCard({ result, rank, isComparing, onToggleCompare }: Resul
                 onClick={(e) => e.stopPropagation()}
                 className="rounded border border-[#1a2a35]/20 px-3 py-1.5 text-xs hover:bg-[#f0f4f6] transition-colors"
               >
-                Instagram
+                {t("instagram")}
               </a>
             )}
             <button
@@ -182,7 +184,7 @@ export function ResultCard({ result, rank, isComparing, onToggleCompare }: Resul
                   : "border-[#1a2a35]/20 hover:bg-[#f0f4f6]"
               }`}
             >
-              {isComparing ? "✓ Verglichen" : "Vergleichen"}
+              {isComparing ? t("comparing") : t("compare")}
             </button>
           </div>
         </div>

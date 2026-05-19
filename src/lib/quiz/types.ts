@@ -10,6 +10,11 @@ export interface QuizThesisData {
   attributes: { attribute: string; isInverse: boolean }[];
 }
 
+export interface QuizThesisRaw extends QuizThesisData {
+  textEn: string | null;
+  hintEn: string | null;
+}
+
 export interface QuizGroupData {
   id: string;
   name: string;

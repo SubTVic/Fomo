@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { STUDY2_ITEMS, STUDY2_FILTER } from "@/lib/study2/items";
 import type { Study2AnswerValue } from "@/lib/study2/items";
 
@@ -84,6 +85,8 @@ function AnswerButton({
 export function GroupSelfRatingQuiz() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const t = useTranslations("selfrating");
+  const tCommon = useTranslations("common");
 
   const [loadStatus, setLoadStatus] = useState<"loading" | "error" | "ready">("loading");
   const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "done">("idle");
@@ -102,10 +105,14 @@ export function GroupSelfRatingQuiz() {
   const [categoryId, setCategoryId] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
 
+  const noTokenMsg = t("noToken");
+  const unknownErrorMsg = t("unknownError");
+  const networkErrorMsg = tCommon("networkError");
+
   useEffect(() => {
     if (!token) {
       setLoadStatus("error");
-      setError("Kein Einladungslink gefunden. Bitte nutze den Link aus deiner E-Mail.");
+      setError(noTokenMsg);
       return;
     }
 
@@ -115,7 +122,7 @@ export function GroupSelfRatingQuiz() {
         const data = await res.json();
         if (!res.ok) {
           setLoadStatus("error");
-          setError(data.error ?? "Unbekannter Fehler");
+          setError(data.error ?? unknownErrorMsg);
           return;
         }
         const g = data.group as GroupData;
@@ -152,12 +159,12 @@ export function GroupSelfRatingQuiz() {
         setLoadStatus("ready");
       } catch {
         setLoadStatus("error");
-        setError("Netzwerkfehler – bitte erneut versuchen.");
+        setError(networkErrorMsg);
       }
     }
 
     load();
-  }, [token]);
+  }, [token, noTokenMsg, unknownErrorMsg, networkErrorMsg]);
 
   const toggleFilter = useCallback((filterId: string) => {
     setFilterSelections((prev) =>
@@ -208,26 +215,26 @@ export function GroupSelfRatingQuiz() {
         setSubmitStatus("done");
       } else {
         setSubmitStatus("idle");
-        setError(data.error ?? "Fehler beim Speichern.");
+        setError(data.error ?? unknownErrorMsg);
       }
     } catch {
       setSubmitStatus("idle");
-      setError("Netzwerkfehler – bitte erneut versuchen.");
+      setError(networkErrorMsg);
     }
-  }, [token, answers, filterSelections, raterCount, description, website]);
+  }, [token, answers, filterSelections, raterCount, description, website, unknownErrorMsg, networkErrorMsg]);
 
   // ── Error ──
   if (loadStatus === "error") {
     return (
       <div className="flex flex-col items-center px-4 py-20 text-center">
         <div className="w-full max-w-[520px] border-4 border-foreground bg-card px-6 py-10 sm:px-8">
-          <h1 className="font-heading text-xl uppercase mb-4">Fehler</h1>
+          <h1 className="font-heading text-xl uppercase mb-4">{tCommon("error")}</h1>
           <p className="text-muted-foreground text-sm">{error}</p>
           <Link
             href="/"
             className="mt-6 inline-block text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
           >
-            Zur Startseite
+            {tCommon("home")}
           </Link>
         </div>
       </div>
@@ -238,7 +245,7 @@ export function GroupSelfRatingQuiz() {
   if (loadStatus === "loading") {
     return (
       <div className="flex items-center justify-center py-20 text-muted-foreground">
-        Einladung wird geladen…
+        {t("loading")}
       </div>
     );
   }
@@ -248,15 +255,15 @@ export function GroupSelfRatingQuiz() {
     return (
       <div className="flex flex-col items-center px-4 py-20 text-center">
         <div className="w-full max-w-[520px] border-4 border-foreground bg-card px-6 py-10 sm:px-8">
-          <h1 className="font-heading text-xl uppercase mb-4">Profil gespeichert!</h1>
+          <h1 className="font-heading text-xl uppercase mb-4">{t("done.title")}</h1>
           <p className="text-muted-foreground text-sm">
-            Danke! Euer Profil ist jetzt hinterlegt und wird vom FOMO-Team geprüft.
+            {t("done.text")}
           </p>
           <Link
             href="/groups"
             className="mt-6 inline-block bg-foreground px-6 py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
           >
-            Zur Gruppenübersicht
+            {t("done.allGroupsButton")}
           </Link>
         </div>
       </div>
@@ -279,26 +286,24 @@ export function GroupSelfRatingQuiz() {
       <div className="flex flex-col items-center px-4 py-6 sm:px-6">
         <div className="w-full max-w-[560px] border-4 border-foreground bg-card">
           <div className="bg-foreground text-primary-foreground px-6 py-5 sm:px-8">
-            <h1 className="font-heading text-xl uppercase">Gruppencheck</h1>
+            <h1 className="font-heading text-xl uppercase">{t("title")}</h1>
             <p className="mt-1 text-sm text-primary-foreground/60">{group?.name}</p>
           </div>
           <div className="px-6 py-8 sm:px-8 flex flex-col gap-6">
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Bitte beantwortet die folgenden 21 Aussagen aus Sicht eurer Gruppe. Stellt euch vor,
-              ein typisches Mitglied spricht:
+              {t("intro.text")}
             </p>
             <blockquote className="border-l-4 border-foreground pl-4 italic text-sm">
-              &bdquo;Mitglieder unserer Gruppe würden dieser Aussage zustimmen.&ldquo;
+              {t("intro.quote")}
             </blockquote>
             <p className="text-sm text-muted-foreground">
-              Das dauert etwa 5 Minuten. Eure Antworten werden direkt als Matching-Profil für das
-              FOMO-Quiz verwendet.
+              {t("intro.duration")}
             </p>
             <button
               onClick={() => setStep({ type: "filter" })}
               className="w-full bg-foreground py-4 font-heading text-base uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
             >
-              Jetzt starten
+              {t("intro.startButton")}
             </button>
           </div>
         </div>
@@ -314,12 +319,12 @@ export function GroupSelfRatingQuiz() {
           <ProgressBar current={currentStepIndex()} total={totalSteps} />
           <div className="bg-foreground text-primary-foreground px-6 py-5 sm:px-8">
             <p className="text-xs uppercase tracking-wider text-primary-foreground/50 mb-1">
-              Aktivitäten
+              {t("filter.label")}
             </p>
             <h2 className="font-heading text-lg uppercase leading-snug">
-              Welche Aktivitäten stehen bei euch im Vordergrund?
+              {t("filter.title")}
             </h2>
-            <p className="mt-1 text-xs text-primary-foreground/50">Mehrfachauswahl · nicht Pflicht</p>
+            <p className="mt-1 text-xs text-primary-foreground/50">{t("filter.multi")}</p>
           </div>
           <div className="px-6 py-6 sm:px-8 flex flex-col gap-2">
             {STUDY2_FILTER.options.map((opt) => {
@@ -352,7 +357,7 @@ export function GroupSelfRatingQuiz() {
               onClick={() => setStep({ type: "item", index: 0 })}
               className="mt-4 w-full bg-foreground py-4 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
             >
-              Weiter zu den Fragen →
+              {t("filter.continueButton")}
             </button>
           </div>
         </div>
@@ -372,17 +377,17 @@ export function GroupSelfRatingQuiz() {
           <ProgressBar current={currentStepIndex()} total={totalSteps} />
           <div className="bg-foreground text-primary-foreground px-6 py-5 sm:px-8">
             <p className="text-xs uppercase tracking-wider text-primary-foreground/50 mb-1">
-              Frage {itemNum} von {STUDY2_ITEMS.length}
+              {t("item.questionOf", { current: itemNum, total: STUDY2_ITEMS.length })}
             </p>
             <p className="text-xs text-primary-foreground/60 mb-2 italic">
-              Mitglieder unserer Gruppe würden zustimmen:
+              {t("item.memberWouldAgree")}
             </p>
             <h2 className="font-heading text-lg uppercase leading-snug">{item.text}</h2>
           </div>
           <div className="px-6 py-6 sm:px-8 flex flex-col gap-2">
-            <AnswerButton label="Stimme zu" value={1} current={current} onClick={(v) => setAnswer(item.id, v)} />
-            <AnswerButton label="Neutral" value={0} current={current} onClick={(v) => setAnswer(item.id, v)} />
-            <AnswerButton label="Stimme nicht zu" value={-1} current={current} onClick={(v) => setAnswer(item.id, v)} />
+            <AnswerButton label={t("item.agree")} value={1} current={current} onClick={(v) => setAnswer(item.id, v)} />
+            <AnswerButton label={t("item.neutral")} value={0} current={current} onClick={(v) => setAnswer(item.id, v)} />
+            <AnswerButton label={t("item.disagree")} value={-1} current={current} onClick={(v) => setAnswer(item.id, v)} />
             <div className="flex justify-between pt-2">
               <button
                 onClick={() =>
@@ -392,7 +397,7 @@ export function GroupSelfRatingQuiz() {
                 }
                 className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
               >
-                ← Zurück
+                {tCommon("back")}
               </button>
               <button
                 onClick={() =>
@@ -402,7 +407,7 @@ export function GroupSelfRatingQuiz() {
                 }
                 className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
               >
-                Überspringen →
+                {tCommon("skip")}
               </button>
             </div>
           </div>
@@ -418,15 +423,15 @@ export function GroupSelfRatingQuiz() {
         <div className="w-full max-w-[560px] border-4 border-foreground bg-card">
           <ProgressBar current={currentStepIndex()} total={totalSteps} />
           <div className="bg-foreground text-primary-foreground px-6 py-5 sm:px-8">
-            <h2 className="font-heading text-xl uppercase">Gruppeninfo</h2>
+            <h2 className="font-heading text-xl uppercase">{t("description.title")}</h2>
             <p className="mt-1 text-xs text-primary-foreground/50">{group?.name}</p>
           </div>
           <div className="px-6 py-6 sm:px-8 flex flex-col gap-5">
             <p className="text-sm text-muted-foreground">
-              Füllt die Informationen zu eurer Gruppe aus — je vollständiger, desto besser das Matching.
+              {t("description.text")}
             </p>
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium">Kategorie</label>
+              <label className="text-sm font-medium">{t("description.category")}</label>
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
@@ -438,19 +443,24 @@ export function GroupSelfRatingQuiz() {
               </select>
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium">Kurzbeschreibung <span className="text-muted-foreground font-normal">(Pflicht)</span></label>
+              <label className="text-sm font-medium">
+                {t("description.shortDesc")}{" "}
+                <span className="text-muted-foreground font-normal">{t("description.shortDescRequired")}</span>
+              </label>
               <textarea
                 rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 maxLength={200}
-                placeholder="Was macht eure Gruppe aus? Was bietet ihr neuen Mitgliedern?"
+                placeholder={t("description.shortDescPlaceholder")}
                 className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors resize-none"
               />
-              <span className="text-xs text-muted-foreground">{description.trim().length}/200 Zeichen</span>
+              <span className="text-xs text-muted-foreground">
+                {t("description.shortDescChars", { count: description.trim().length })}
+              </span>
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium">Kontakt-E-Mail</label>
+              <label className="text-sm font-medium">{t("description.contactEmail")}</label>
               <input
                 type="email"
                 value={contactEmail}
@@ -460,7 +470,7 @@ export function GroupSelfRatingQuiz() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium">Website</label>
+              <label className="text-sm font-medium">{t("description.website")}</label>
               <input
                 type="url"
                 value={website}
@@ -470,7 +480,7 @@ export function GroupSelfRatingQuiz() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium">Instagram</label>
+              <label className="text-sm font-medium">{t("description.instagram")}</label>
               <input
                 type="url"
                 value={instagramUrl}
@@ -481,7 +491,7 @@ export function GroupSelfRatingQuiz() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium">Mitgliederzahl</label>
+                <label className="text-sm font-medium">{t("description.memberCount")}</label>
                 <input
                   type="number"
                   value={memberCount}
@@ -493,7 +503,7 @@ export function GroupSelfRatingQuiz() {
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium">Gründungsjahr</label>
+                <label className="text-sm font-medium">{t("description.foundedYear")}</label>
                 <input
                   type="number"
                   value={foundedYear}
@@ -509,13 +519,13 @@ export function GroupSelfRatingQuiz() {
               onClick={() => setStep({ type: "raterCount" })}
               className="w-full bg-foreground py-4 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
             >
-              Weiter →
+              {t("description.continueButton")}
             </button>
             <button
               onClick={() => setStep({ type: "item", index: STUDY2_ITEMS.length - 1 })}
               className="text-xs text-center text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
             >
-              ← Zurück
+              {t("description.backButton")}
             </button>
           </div>
         </div>
@@ -526,9 +536,9 @@ export function GroupSelfRatingQuiz() {
   // ── Rater count ──
   if (step.type === "raterCount") {
     const options: { label: string; value: 1 | 2 | 3 }[] = [
-      { label: "Ich allein", value: 1 },
-      { label: "Zu zweit", value: 2 },
-      { label: "3 oder mehr Personen", value: 3 },
+      { label: t("raterCount.alone"), value: 1 },
+      { label: t("raterCount.two"), value: 2 },
+      { label: t("raterCount.threeOrMore"), value: 3 },
     ];
 
     return (
@@ -537,7 +547,7 @@ export function GroupSelfRatingQuiz() {
           <ProgressBar current={currentStepIndex()} total={totalSteps} />
           <div className="bg-foreground text-primary-foreground px-6 py-5 sm:px-8">
             <h2 className="font-heading text-xl uppercase leading-snug">
-              Wie viele Personen haben die Antworten gemeinsam erarbeitet?
+              {t("raterCount.question")}
             </h2>
           </div>
           <div className="px-6 py-6 sm:px-8 flex flex-col gap-3">
@@ -567,13 +577,13 @@ export function GroupSelfRatingQuiz() {
               disabled={submitStatus === "submitting"}
               className="mt-2 w-full bg-foreground py-4 font-heading text-base uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors disabled:opacity-40"
             >
-              {submitStatus === "submitting" ? "Wird gespeichert…" : "Profil speichern"}
+              {submitStatus === "submitting" ? t("raterCount.submitting") : t("raterCount.submitButton")}
             </button>
             <button
               onClick={() => setStep({ type: "description" })}
               className="text-xs text-center text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
             >
-              ← Zurück
+              {tCommon("back")}
             </button>
           </div>
         </div>

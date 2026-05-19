@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import type { QuizThesisData, QuizGroupData } from "@/lib/quiz/types";
 import { Step00Intro } from "./steps/Step00Intro";
 import { Step01HowItWorks } from "./steps/Step01HowItWorks";
@@ -14,25 +15,14 @@ import { Step07Layouts } from "./steps/Step07Layouts";
 import { Step08Admin } from "./steps/Step08Admin";
 import { Step09Roadmap } from "./steps/Step09Roadmap";
 
-const STEP_LABELS = [
-  "Intro",
-  "Algorithmus",
-  "Persona Max",
-  "Ergebnis Max",
-  "Persona Lena",
-  "Ergebnis Lena",
-  "Vergleich",
-  "4 Layouts",
-  "Admin",
-  "Roadmap",
-];
-
 interface DemoTourProps {
   theses: QuizThesisData[];
   groups: QuizGroupData[];
 }
 
 export function DemoTour({ theses, groups }: DemoTourProps) {
+  const t = useTranslations("demo");
+  const STEP_LABELS = t.raw("stepLabels") as string[];
   const [step, setStep] = useState(0);
   const totalSteps = STEP_LABELS.length;
 
@@ -65,7 +55,7 @@ export function DemoTour({ theses, groups }: DemoTourProps) {
             disabled={step === 0}
             className="rounded border-2 border-[#ADD8E6]/30 px-4 py-2 text-sm font-medium text-[#ADD8E6] transition-colors hover:border-[#ADD8E6] disabled:opacity-30"
           >
-            ← Zurück
+            {t("nav.back")}
           </button>
 
           {/* Step dots */}
@@ -91,7 +81,7 @@ export function DemoTour({ theses, groups }: DemoTourProps) {
               onClick={next}
               className="rounded border-2 border-[#ADD8E6] bg-[#ADD8E6] px-4 py-2 text-sm font-bold text-[#1a2a35] transition-colors hover:bg-white"
             >
-              Weiter →
+              {t("nav.next")}
             </button>
           ) : (
             <button

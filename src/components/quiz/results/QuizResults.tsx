@@ -3,6 +3,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import type { QuizMatchResult, QuizThesisData } from "@/lib/quiz/types";
 import { ResultCard } from "./ResultCard";
 import { ComparisonTable } from "./ComparisonTable";
@@ -15,6 +16,7 @@ interface QuizResultsProps {
 }
 
 export function QuizResults({ results, theses, answeredCount, onRestart }: QuizResultsProps) {
+  const t = useTranslations("results");
   const [tab, setTab] = useState<"overview" | "compare">("overview");
   const [showAll, setShowAll] = useState(false);
   const [compareIds, setCompareIds] = useState<Set<string>>(new Set());
@@ -22,10 +24,10 @@ export function QuizResults({ results, theses, answeredCount, onRestart }: QuizR
 
   const handleShare = useCallback(async () => {
     const top3 = results.slice(0, 3).map((r) => r.group.name).join(", ");
-    const text = `Meine Top-Gruppen bei FOMO: ${top3}`;
+    const text = `My top groups on FOMO: ${top3}`;
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
-        await navigator.share({ title: "Mein FOMO-Ergebnis", text, url: window.location.href });
+        await navigator.share({ title: "My FOMO result", text, url: window.location.href });
         return;
       } catch {
         // User cancelled or API not available — fall through to clipboard
@@ -63,10 +65,10 @@ export function QuizResults({ results, theses, answeredCount, onRestart }: QuizR
             className="text-xl uppercase tracking-wide text-[#ADD8E6]"
             style={{ fontFamily: "'Archivo Black', sans-serif" }}
           >
-            Deine Ergebnisse
+            {t("title")}
           </h1>
           <p className="mt-1 text-sm text-[#ADD8E6]/70">
-            {answeredCount} / {theses.length} Thesen beantwortet — {results.length} Gruppen gematcht
+            {t("answeredOf", { answered: answeredCount, total: theses.length, count: results.length })}
           </p>
         </div>
 
@@ -80,7 +82,7 @@ export function QuizResults({ results, theses, answeredCount, onRestart }: QuizR
                 : "text-[#5a7a8a] hover:bg-[#f0f4f6]"
             }`}
           >
-            Übersicht
+            {t("tabOverview")}
           </button>
           <button
             onClick={() => setTab("compare")}
@@ -90,7 +92,7 @@ export function QuizResults({ results, theses, answeredCount, onRestart }: QuizR
                 : "text-[#5a7a8a] hover:bg-[#f0f4f6]"
             }`}
           >
-            Vergleich {compareIds.size > 0 && `(${compareIds.size})`}
+            {t("tabCompare")} {compareIds.size > 0 && `(${compareIds.size})`}
           </button>
         </div>
 
@@ -113,7 +115,7 @@ export function QuizResults({ results, theses, answeredCount, onRestart }: QuizR
                     onClick={() => setShowAll(true)}
                     className="text-sm text-[#5a8a9a] underline underline-offset-2 hover:text-[#1a2a35]"
                   >
-                    Alle {results.length} Gruppen anzeigen
+                    {t("showAll", { count: results.length })}
                   </button>
                 </div>
               )}
@@ -133,20 +135,20 @@ export function QuizResults({ results, theses, answeredCount, onRestart }: QuizR
             onClick={handleShare}
             className="w-full border-4 border-[#1a2a35] bg-[#1a2a35] py-3 text-sm font-bold uppercase tracking-wide text-[#ADD8E6] hover:bg-[#2a3a45] transition-colors"
           >
-            {copied ? "Link kopiert!" : "Ergebnis teilen"}
+            {copied ? t("linkCopied") : t("share")}
           </button>
           <div className="flex items-center justify-center gap-6">
             <button
               onClick={onRestart}
               className="text-sm text-[#4a7a8a] underline underline-offset-2 hover:text-[#1a2a35] transition-colors"
             >
-              Quiz wiederholen
+              {t("restart")}
             </button>
             <a
               href="/groups"
               className="text-sm text-[#4a7a8a] underline underline-offset-2 hover:text-[#1a2a35] transition-colors"
             >
-              Alle Gruppen ansehen
+              {t("allGroups")}
             </a>
           </div>
         </div>

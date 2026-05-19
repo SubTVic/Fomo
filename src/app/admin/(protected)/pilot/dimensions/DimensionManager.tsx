@@ -16,8 +16,10 @@ interface Question {
 interface DimensionWithQuestions {
   id: string;
   label: string;
+  labelEn: string | null;
   emoji: string;
   description: string;
+  descriptionEn: string | null;
   blockIndex: number;
   order: number;
   questions: Question[];
@@ -568,8 +570,10 @@ function EditDimensionForm({
   busy: boolean;
 }) {
   const [label, setLabel] = useState(dim.label);
+  const [labelEn, setLabelEn] = useState(dim.labelEn ?? "");
   const [emoji, setEmoji] = useState(dim.emoji);
   const [description, setDescription] = useState(dim.description);
+  const [descriptionEn, setDescriptionEn] = useState(dim.descriptionEn ?? "");
   const [blockIndex, setBlockIndex] = useState(dim.blockIndex);
   const [order, setOrder] = useState(dim.order);
 
@@ -581,13 +585,21 @@ function EditDimensionForm({
           <input value={emoji} onChange={(e) => setEmoji(e.target.value)} className="border px-2 py-1.5 text-sm" />
         </label>
         <label className="flex flex-col gap-1 text-sm col-span-2">
-          Label
+          Label DE
           <input value={label} onChange={(e) => setLabel(e.target.value)} className="border px-2 py-1.5 text-sm w-full" />
         </label>
       </div>
       <label className="flex flex-col gap-1 text-sm">
-        Beschreibung
+        Label EN (optional)
+        <input value={labelEn} onChange={(e) => setLabelEn(e.target.value)} className="border border-foreground/40 px-2 py-1.5 text-sm w-full" placeholder="English label..." />
+      </label>
+      <label className="flex flex-col gap-1 text-sm">
+        Beschreibung DE
         <input value={description} onChange={(e) => setDescription(e.target.value)} className="border px-2 py-1.5 text-sm w-full" />
+      </label>
+      <label className="flex flex-col gap-1 text-sm">
+        Beschreibung EN (optional)
+        <input value={descriptionEn} onChange={(e) => setDescriptionEn(e.target.value)} className="border border-foreground/40 px-2 py-1.5 text-sm w-full" placeholder="English description..." />
       </label>
       <div className="grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1 text-sm">
@@ -606,7 +618,7 @@ function EditDimensionForm({
       <div className="flex gap-2 pt-1">
         <button
           disabled={busy}
-          onClick={() => onSave({ label, emoji, description, blockIndex, order })}
+          onClick={() => onSave({ label, labelEn: labelEn || null, emoji, description, descriptionEn: descriptionEn || null, blockIndex, order })}
           className="px-4 py-2 text-sm bg-foreground text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50"
         >
           Speichern

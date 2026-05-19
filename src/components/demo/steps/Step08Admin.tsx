@@ -2,38 +2,40 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { StepProps } from "./types";
 
-const SCREENSHOTS = [
-  { src: "/demo-screenshots/admin-groups.png", label: "Gruppen-Verwaltung" },
-  { src: "/demo-screenshots/admin-quiz.png",   label: "Quiz-Editor" },
-  { src: "/demo-screenshots/admin-pilot.png",  label: "Pilot-Statistiken" },
-];
-
 export function Step08Admin({ groups, theses }: StepProps) {
+  const t = useTranslations("demo.step8");
   const [idx, setIdx] = useState(0);
 
+  const SCREENSHOTS = [
+    { src: "/demo-screenshots/admin-groups.png", label: t("screenshots.groups") },
+    { src: "/demo-screenshots/admin-quiz.png",   label: t("screenshots.quiz") },
+    { src: "/demo-screenshots/admin-pilot.png",  label: t("screenshots.pilot") },
+  ];
+
   const features = [
-    { icon: "🏛️", title: "Gruppen verwalten", desc: `${groups.length} Hochschulgruppen mit Profilen, Kontaktdaten und 17 Matching-Attributen` },
-    { icon: "❓", title: "Quiz-Thesen", desc: `${theses.length} Thesen erstellen, bearbeiten, per JSON importieren` },
-    { icon: "🎨", title: "Layout wählen", desc: "Aktive Quiz-Variante per Klick umschalten" },
-    { icon: "📊", title: "Pilot-Statistiken", desc: "Abschlussraten, Antwort-Heatmaps, CSV-Export" },
-    { icon: "✉️", title: "Einladungen", desc: "Token-basierte Links an Gruppen senden zur Selbstregistrierung" },
-    { icon: "✅", title: "Verifizierung", desc: "Gruppen-Profile nach Selbstauskunft manuell freigeben" },
+    { icon: "🏛️", title: t("features.manageGroups"), desc: t("features.manageGroupsDesc", { count: groups.length }) },
+    { icon: "❓", title: t("features.quizTheses"), desc: t("features.quizThesesDesc", { count: theses.length }) },
+    { icon: "🎨", title: t("features.layout"), desc: t("features.layoutDesc") },
+    { icon: "📊", title: t("features.stats"), desc: t("features.statsDesc") },
+    { icon: "✉️", title: t("features.invites"), desc: t("features.invitesDesc") },
+    { icon: "✅", title: t("features.verify"), desc: t("features.verifyDesc") },
   ];
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-8 space-y-5">
       <div className="text-center">
-        <p className="text-xs font-bold uppercase tracking-widest text-[#1a2a35]/50">Schritt 9</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-[#1a2a35]/50">{t("stepLabel")}</p>
         <h2
           className="mt-1 text-3xl uppercase text-[#1a2a35]"
           style={{ fontFamily: "'Archivo Black', sans-serif" }}
         >
-          Admin-Panel
+          {t("title")}
         </h2>
         <p className="mt-2 text-sm text-[#5a7a8a]">
-          Vollständiges CMS für StuRa-Redakteure — ohne Programmierkenntnisse.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -58,14 +60,14 @@ export function Step08Admin({ groups, theses }: StepProps) {
             <button
               onClick={() => setIdx((i) => (i - 1 + SCREENSHOTS.length) % SCREENSHOTS.length)}
               className="text-[#ADD8E6] hover:text-white transition-colors px-1"
-              aria-label="Vorheriges"
+              aria-label={t("prev")}
             >
               ←
             </button>
             <button
               onClick={() => setIdx((i) => (i + 1) % SCREENSHOTS.length)}
               className="text-[#ADD8E6] hover:text-white transition-colors px-1"
-              aria-label="Nächstes"
+              aria-label={t("nextLabel")}
             >
               →
             </button>
@@ -81,8 +83,8 @@ export function Step08Admin({ groups, theses }: StepProps) {
       </div>
 
       <div className="border-4 border-[#1a2a35] bg-[#1a2a35] p-4 text-sm text-white">
-        <strong className="text-[#ADD8E6]">Technisch:</strong>{" "}
-        Next.js 15, PostgreSQL, Prisma ORM, Auth.js. Deployed via Docker Compose — läuft auf dem Uni-Server ohne externe Abhängigkeiten. Open Source (AGPL-3.0).
+        <strong className="text-[#ADD8E6]">{t("techLabel")}</strong>{" "}
+        {t("tech")}
       </div>
     </div>
   );

@@ -108,6 +108,7 @@ model Group {
   invites        GroupInvite[]
   study2Sessions Study2Session[]
   selfRating     GroupSelfRating?
+  contacts       GroupContact[]
 
   @@index([categoryId])
   @@index([isActive])
@@ -136,7 +137,7 @@ model GroupInvite {
   id        String    @id @default(cuid())
   token     String    @unique // Random 32-char token
   groupId   String
-  email     String
+  email     String?
   createdAt DateTime  @default(now())
   expiresAt DateTime  // e.g. 30 days after creation
   usedAt    DateTime?
@@ -145,6 +146,25 @@ model GroupInvite {
 
   @@index([groupId])
   @@map("group_invites")
+}
+
+// ─── Gruppen-Kontakte (Verantwortliche Personen) ─────────────────
+
+model GroupContact {
+  id            String   @id @default(cuid())
+  groupId       String
+  name          String
+  email         String
+  role          String?  // Rolle in der Gruppe, z.B. "Vorsitzende:r"
+  isResponsible Boolean  @default(false) // Hat bestätigt, die Gruppe nach außen zu repräsentieren
+  source        String   // "self-registration" | "admin" | "import"
+  createdAt     DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId])
+  @@index([email])
+  @@map("group_contacts")
 }
 
 // ─── Admin & Auth ────────────────────────────────────────────────
@@ -203,9 +223,11 @@ model QuizSession {
 
 model QuizThesis {
   id         String   @id @default(cuid())
-  text       String   @db.Text       // Thesis statement shown to users
+  text       String   @db.Text       // Thesis statement shown to users (German)
+  textEn     String?  @db.Text       // English translation (optional, falls back to text)
   shortTitle String   @db.VarChar(50) // Short label, e.g. "Zeitaufwand"
   hint       String?  @db.VarChar(200) // Visible explanation below the thesis, e.g. "z.B. Religion, Philosophie, Ethik"
+  hintEn     String?  @db.VarChar(200) // English hint (optional)
   order      Int      @default(0)
   isActive   Boolean  @default(true)
   createdAt  DateTime @default(now())
@@ -233,14 +255,16 @@ model QuizThesisAttribute {
 // Pilot survey questions are managed via the admin dashboard
 
 model PilotDimension {
-  id          String @id  // "D1", "D2", etc.
-  label       String      // "Zeitbudget & Verbindlichkeit"
-  emoji       String @default("")
-  description String @default("")
-  blockIndex  Int    @default(0) // 0–3: which variant block this dimension belongs to
-  order       Int    @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String @id  // "D1", "D2", etc.
+  label         String      // "Zeitbudget & Verbindlichkeit"
+  labelEn       String?     // English label (optional)
+  emoji         String @default("")
+  description   String @default("")
+  descriptionEn String?     // English description (optional)
+  blockIndex    Int    @default(0) // 0–3: which variant block this dimension belongs to
+  order         Int    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   questions PilotSurveyQuestion[]
 

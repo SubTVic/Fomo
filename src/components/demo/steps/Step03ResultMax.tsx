@@ -2,12 +2,14 @@
 "use client";
 
 import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import type { StepProps } from "./types";
 import { PERSONAS, resolvePersonaAnswers } from "../personas";
 import { computeQuizMatches } from "@/lib/quiz/matching";
 import { DemoResults } from "../DemoResults";
 
 export function Step03ResultMax({ theses, groups }: StepProps) {
+  const t = useTranslations("demo.step3");
   const persona = PERSONAS[0];
   const results = useMemo(() => {
     const answers = resolvePersonaAnswers(persona, theses);
@@ -19,12 +21,12 @@ export function Step03ResultMax({ theses, groups }: StepProps) {
   return (
     <div className="mx-auto max-w-2xl px-6 py-8 space-y-5">
       <div className="text-center">
-        <p className="text-xs font-bold uppercase tracking-widest text-[#1a2a35]/50">Schritt 4</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-[#1a2a35]/50">{t("stepLabel")}</p>
         <h2
           className="mt-1 text-3xl uppercase text-[#1a2a35]"
           style={{ fontFamily: "'Archivo Black', sans-serif" }}
         >
-          Ergebnis für {persona.emoji} {persona.name}
+          {t("title", { emoji: persona.emoji, name: persona.name })}
         </h2>
       </div>
 
@@ -48,15 +50,15 @@ export function Step03ResultMax({ theses, groups }: StepProps) {
       {/* Full list */}
       <div className="border-4 border-[#1a2a35] bg-white p-4">
         <p className="mb-3 text-xs font-bold uppercase tracking-wide text-[#1a2a35]">
-          Alle {results.length} Gruppen — sortiert nach Übereinstimmung
+          {t("allGroupsLabel", { count: results.length })}
         </p>
         <DemoResults persona={persona} results={results} />
       </div>
 
       {/* Insight */}
       <div className="border-4 border-[#1a2a35] bg-[#1a2a35] p-4 text-sm text-white">
-        <strong className="text-[#ADD8E6]">Warum diese Gruppen?</strong>{" "}
-        {persona.name} hat Wettbewerbe und praktisches Tun stark bewertet — FOMO gewichtet diese Fragen höher und findet Gruppen mit den Attributen <em>competitive</em>, <em>hands-on</em> und <em>career</em>.
+        <strong className="text-[#ADD8E6]">{t("whyLabel")}</strong>{" "}
+        {t("why", { name: persona.name })}
       </div>
     </div>
   );

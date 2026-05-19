@@ -19,7 +19,6 @@ export function InviteButton({ groupId, groupName, contactEmail }: InviteButtonP
   const [error, setError] = useState("");
 
   async function handleInvite() {
-    if (!email) return;
     setStatus("loading");
     setError("");
     setResult(null);
@@ -29,7 +28,7 @@ export function InviteButton({ groupId, groupName, contactEmail }: InviteButtonP
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          invites: [{ groupId, email, expiresInDays: 30 }],
+          invites: [{ groupId, email: email || null, expiresInDays: 30 }],
         }),
       });
 
@@ -69,15 +68,15 @@ export function InviteButton({ groupId, groupName, contactEmail }: InviteButtonP
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="E-Mail"
+          placeholder="E-Mail (optional)"
           className="w-full rounded border px-2 py-1 text-xs bg-background"
         />
         <button
           onClick={handleInvite}
-          disabled={status === "loading" || !email}
+          disabled={status === "loading"}
           className="rounded border bg-primary text-primary-foreground px-2 py-1 text-xs font-medium whitespace-nowrap disabled:opacity-50"
         >
-          {status === "loading" ? "…" : "Senden"}
+          {status === "loading" ? "…" : "Link erstellen"}
         </button>
         <button
           onClick={() => { setOpen(false); setResult(null); setError(""); }}

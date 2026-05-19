@@ -5,30 +5,9 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { DimensionHeader } from "@/components/survey/DimensionHeader";
 import type { SurveyVariantProps } from "@/components/variants/types";
-
-// Maps Likert 1-5 to 3-option display — neutral styling, no bias symbols
-const CLASSIC_OPTIONS = [
-  {
-    label: "Ja",
-    value: "5",
-    base: "bg-[#1a2a35] text-white border-[#1a2a35]",
-    selected: "ring-2 ring-offset-2 ring-[#1a2a35]",
-  },
-  {
-    label: "Egal",
-    value: "3",
-    base: "bg-white text-[#1a2a35] border-[#1a2a35]",
-    selected: "ring-2 ring-offset-2 ring-[#1a2a35]",
-  },
-  {
-    label: "Nein",
-    value: "1",
-    base: "bg-[#ADD8E6] text-[#1a2a35] border-[#1a2a35]",
-    selected: "ring-2 ring-offset-2 ring-[#1a2a35]",
-  },
-];
 
 export function ClassicSurvey({
   state,
@@ -37,8 +16,16 @@ export function ClassicSurvey({
   blockQuestions,
   onBlockComplete,
 }: SurveyVariantProps) {
+  const t = useTranslations("quiz.classic");
   const { answers } = state;
   const [localIdx, setLocalIdx] = useState(0);
+
+  // Options built at render time so labels are translated
+  const CLASSIC_OPTIONS = [
+    { label: t("yes"), value: "5", base: "bg-[#1a2a35] text-white border-[#1a2a35]", selected: "ring-2 ring-offset-2 ring-[#1a2a35]" },
+    { label: t("neutral"), value: "3", base: "bg-white text-[#1a2a35] border-[#1a2a35]", selected: "ring-2 ring-offset-2 ring-[#1a2a35]" },
+    { label: t("no"), value: "1", base: "bg-[#ADD8E6] text-[#1a2a35] border-[#1a2a35]", selected: "ring-2 ring-offset-2 ring-[#1a2a35]" },
+  ];
 
   const question = blockQuestions[localIdx] ?? blockQuestions[0];
   const currentValue = answers[question.id] as string | undefined;
@@ -117,10 +104,8 @@ export function ClassicSurvey({
                   : "bg-white/60 border-yellow-400 hover:bg-yellow-50"
               }`}
             >
-              <span className="text-sm font-medium">Ich hab die Frage nicht verstanden</span>
-              <span className="block text-xs text-yellow-700/70 mt-0.5">
-                Hilft uns, unklare Fragen zu verbessern
-              </span>
+              <span className="text-sm font-medium">{t("confusedLabel")}</span>
+              <span className="block text-xs text-yellow-700/70 mt-0.5">{t("confusedHint")}</span>
             </button>
           </div>
         </div>
@@ -131,7 +116,7 @@ export function ClassicSurvey({
             disabled={isFirst}
             className="rounded-xl border-2 border-gray-300 px-4 py-2.5 text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all disabled:invisible"
           >
-            ← Zurück
+            {t("back")}
           </button>
         </div>
       </main>

@@ -1,6 +1,6 @@
 # FOMO – Offene Aufgaben
 
-Stand: 07. Mai 2026
+Stand: 19. Mai 2026
 
 ---
 
@@ -8,8 +8,8 @@ Stand: 07. Mai 2026
 
 | Phase | Status | Beschreibung |
 | --- | --- | --- |
-| Phase 1: Pilot-Studie | ✅ Abgeschlossen | 102 Sessions, Classic gewinnt (46%), Working Set v1.1 archiviert |
-| Phase 2: Gruppen-Registrierung | 🔄 In Arbeit | V2-Integration ausstehend (s.u. §3) |
+| Phase 1: Pilot-Studie | ✅ Abgeschlossen | 104 Sessions, Classic gewinnt (45%), Working Set v1.1 archiviert |
+| Phase 2: Gruppen-Registrierung | 🔄 In Arbeit | i18n DE/EN ✅, Selbst-Registrierung + Kontaktliste ✅, Deployment ausstehend |
 | Studie 2: Mitglieder-Validierung | 🔄 In Arbeit | `/pilot` gebaut, Daten werden noch erhoben |
 | Phase 3: Matching & Ergebnisse | ⏳ Geplant | nach Studie-2-Auswertung |
 | Phase 4: Launch | ⏳ Geplant | September 2026, Erstsemester-Woche |
@@ -43,9 +43,9 @@ Stand: 07. Mai 2026
 
 Plan: `CLAUDE-pläne/V2-Integration.md`
 
-- [ ] DB-Migration: `GroupSelfRating` + `GroupSelfRatingAnswer` Modelle
-- [ ] `GroupSelfRatingQuiz.tsx` — ersetzt `AttributeChecklist.tsx` im Phase-2-Flow
-- [ ] `/api/groups/register-attributes` — erweitert um WS2-Self-Rating + `raterCount`
+- [x] DB-Migration: `GroupSelfRating` + `GroupSelfRatingAnswer` Modelle
+- [x] `GroupSelfRatingQuiz.tsx` — ersetzt `AttributeChecklist.tsx` im Phase-2-Flow
+- [x] `/api/groups/register-attributes` — erweitert um WS2-Self-Rating + `raterCount`
 - [ ] `/quiz` Prototype — V2-Matching gegen `GroupSelfRating` (Fallback auf alte Attribute)
 - [ ] Homepage: 4. CTA-Block „Alle Gruppen anzeigen" (Browse-Pfad)
 - [ ] Deployment + Pilot-Test mit 3 Gruppen (Elbflorace, IOG, YETI)
@@ -54,6 +54,16 @@ Plan: `CLAUDE-pläne/V2-Integration.md`
 
 ## §4 Group Registration — Deployment
 
+- [x] Token-Einladungen: Email optional (Link ohne Email generierbar)
+- [x] Selbst-Registrierung: 6-Schritt-Formular mit Verantwortliche-Person-Bestätigung
+- [x] `GroupContact`-Modell + Admin-Kontaktliste mit CSV-Export
+- [x] Admin-Backup: JSON-Snapshot aller Tabellen per Button im Dashboard
+- [x] i18n DE/EN — next-intl, `[locale]/` Routen, LanguageSwitcher, alle Pages + Komponenten übersetzt
+- [x] DB-Migration: `textEn`/`hintEn` auf `QuizThesis`, `labelEn`/`descriptionEn` auf `PilotDimension`
+- [x] Quiz-Query: `getActiveQuizTheses(locale)` — liefert EN-Text wenn verfügbar, sonst DE-Fallback
+- [x] Admin-Formulare: EN-Felder für Thesen und Dimensionen editierbar
+- [ ] **Deployment auf Vercel** — Migration auf Prod-DB anwenden, dann deployen
+- [ ] EN-Übersetzungen für Quiz-Thesen im Admin eintragen
 - [ ] Prod-Deployment: Working Set V2 auf Prod importieren
 - [ ] Gruppen-Invite-Links generieren + mailen (→ Phase-2-Flow mit neuem Self-Rating)
 - [ ] Ziel: ≥42 Gruppen mit `GroupSelfRating` (Mindest-Schwelle für verlässliches Matching)
@@ -77,6 +87,7 @@ Plan: `CLAUDE-pläne/V2-Integration.md`
 - [x] Disclaimer-Banner auf `/quiz`
 - [x] `APP_MODE` → `APP_LIVE` Bool
 - [x] Admin: `/admin/study2` read-only View
+- [x] i18n-Struktur `[locale]/` (DE/EN) vollständig umgesetzt
 - [ ] Umami-Account anlegen + `NEXT_PUBLIC_UMAMI_WEBSITE_ID` in Vercel setzen
 - [ ] CLAUDE.md Phasen-Beschreibung aktualisieren (Phase 2 = Self-Rating, nicht Attribut-Checkliste)
 

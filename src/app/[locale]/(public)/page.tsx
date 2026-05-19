@@ -2,20 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { getActiveGroupCount } from "@/lib/queries/groups";
 import { getSiteConfig } from "@/lib/queries/site-config";
 
-// APP_LIVE controls the landing page CTAs:
-//   false (default) → Prelaunch (Studie 2 + Prototyp + Gruppen-Registrierung)
-//   true            → Live quiz CTA
 export const dynamic = "force-dynamic";
 
 const APP_LIVE = process.env.APP_LIVE === "true";
 
 export default async function LandingPage() {
-  const [groupCount, cfg] = await Promise.all([
+  const [groupCount, cfg, t] = await Promise.all([
     getActiveGroupCount(),
     getSiteConfig(),
+    getTranslations("landing"),
   ]);
 
   const groupImages = [1, 2, 3, 4, 5, 6].map((n) => ({
@@ -70,29 +69,29 @@ export default async function LandingPage() {
         </div>
 
         {APP_LIVE ? (
-          <LiveCta groupCount={groupCount} />
+          <LiveCta groupCount={groupCount} t={t} />
         ) : (
-          <PrelaunchCta groupCount={groupCount} />
+          <PrelaunchCta groupCount={groupCount} t={t} />
         )}
       </div>
     </div>
   );
 }
 
-function PrelaunchCta({ groupCount }: { groupCount: number }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function PrelaunchCta({ groupCount, t }: { groupCount: number; t: any }) {
   return (
     <>
-      {/* Studie 2 — primary */}
       <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-            Studie für Mitglieder
+            {t("prelaunch.studyLabel")}
           </p>
           <h2 className="font-heading text-[clamp(18px,3vw,28px)] uppercase leading-tight mb-2.5">
-            Hilf uns, FOMO zu kalibrieren
+            {t("prelaunch.studyTitle")}
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-            Du bist in einer Hochschulgruppe? Hilf uns, FOMO zu kalibrieren — ~5 Minuten.
+            {t("prelaunch.studyText")}
           </p>
         </div>
         <div className="flex flex-col items-center sm:items-end gap-2">
@@ -100,24 +99,22 @@ function PrelaunchCta({ groupCount }: { groupCount: number }) {
             href="/pilot"
             className="bg-foreground text-primary-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-[#2a3a45] transition-colors"
           >
-            Studie starten
+            {t("prelaunch.studyButton")}
           </Link>
-          <span className="text-[11px] text-muted-foreground">~5 Min · Anonym</span>
+          <span className="text-[11px] text-muted-foreground">{t("prelaunch.studyMeta")}</span>
         </div>
       </div>
 
-      {/* Prototyp — secondary */}
       <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center bg-accent">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-            Prototyp
+            {t("prelaunch.protoLabel")}
           </p>
           <h2 className="font-heading text-[clamp(18px,3vw,24px)] uppercase leading-tight mb-2.5">
-            Prototyp ansehen
+            {t("prelaunch.protoTitle")}
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-            So sieht das fertige Quiz schon aus. Achtung: Fragen, Layout und Matching sind
-            noch Work-in-Progress.
+            {t("prelaunch.protoText")}
           </p>
         </div>
         <div className="flex flex-col items-center sm:items-end gap-2">
@@ -125,22 +122,21 @@ function PrelaunchCta({ groupCount }: { groupCount: number }) {
             href="/quiz"
             className="border-2 border-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-foreground hover:text-primary-foreground transition-colors"
           >
-            Prototyp öffnen
+            {t("prelaunch.protoButton")}
           </Link>
         </div>
       </div>
 
-      {/* Gruppen-Registrierung — secondary */}
       <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-            Hochschulgruppen
+            {t("prelaunch.groupsLabel")}
           </p>
           <h2 className="font-heading text-[clamp(18px,3vw,24px)] uppercase leading-tight mb-2.5">
-            Registriert eure Gruppe
+            {t("prelaunch.groupsTitle")}
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-            {groupCount} Gruppen sind schon dabei. Registrierung kostenlos, in ~15 Minuten.
+            {t("prelaunch.groupsText", { count: groupCount })}
           </p>
         </div>
         <div className="flex flex-col items-center sm:items-end gap-2">
@@ -148,41 +144,40 @@ function PrelaunchCta({ groupCount }: { groupCount: number }) {
             href="/groups/register"
             className="border-2 border-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-foreground hover:text-primary-foreground transition-colors"
           >
-            Gruppe registrieren
+            {t("prelaunch.groupsButton")}
           </Link>
         </div>
       </div>
 
-      {/* Browse CTA */}
       <div className="border-t-4 border-foreground px-6 py-6 sm:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <p className="text-sm text-muted-foreground">
-          Lieber selbst stöbern? Schau dir alle Hochschulgruppen direkt an.
+          {t("prelaunch.browseText")}
         </p>
         <Link
           href="/groups"
           className="shrink-0 border-2 border-foreground px-6 py-3 font-heading text-sm uppercase tracking-wider hover:bg-foreground hover:text-primary-foreground transition-colors text-center"
         >
-          Alle Gruppen anzeigen →
+          {t("prelaunch.browseButton")}
         </Link>
       </div>
     </>
   );
 }
 
-function LiveCta({ groupCount }: { groupCount: number }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function LiveCta({ groupCount, t }: { groupCount: number; t: any }) {
   return (
     <div className="border-t-4 border-foreground">
       <div className="px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-            Quiz starten
+            {t("live.quizLabel")}
           </p>
           <h2 className="font-heading text-[clamp(18px,3vw,28px)] uppercase leading-tight mb-2.5">
-            Finde dein Match
+            {t("live.quizTitle")}
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-            Beantworte ~20 Fragen zu deinen Interessen und Werten — wir zeigen dir, welche der{" "}
-            {groupCount} Hochschulgruppen am besten zu dir passen.
+            {t("live.quizText", { count: groupCount })}
           </p>
         </div>
         <div className="flex flex-col items-center sm:items-end gap-2">
@@ -190,29 +185,29 @@ function LiveCta({ groupCount }: { groupCount: number }) {
             href="/quiz"
             className="bg-foreground text-primary-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-[#2a3a45] transition-colors"
           >
-            Quiz starten
+            {t("live.quizButton")}
           </Link>
-          <span className="text-[11px] text-muted-foreground">~ 10 Min &middot; Anonym &middot; Im Browser</span>
+          <span className="text-[11px] text-muted-foreground">{t("live.quizMeta")}</span>
           <Link href="/demo" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
-            Unsere Demo ansehen →
+            {t("live.demoLink")}
           </Link>
           <Link href="/groups" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
-            Oder alle Gruppen anzeigen →
+            {t("live.allGroupsLink")}
           </Link>
         </div>
       </div>
 
       <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 bg-accent">
-        <h3 className="font-heading text-lg uppercase mb-6">So funktioniert&apos;s</h3>
+        <h3 className="font-heading text-lg uppercase mb-6">{t("live.howTitle")}</h3>
         <div className="grid gap-6 sm:grid-cols-3">
-          <StepItem number={1} title="Fragen beantworten">
-            ~20 kurze Fragen zu deinen Interessen, Werten und deinem Zeitbudget.
+          <StepItem number={1} title={t("live.step1Title")}>
+            {t("live.step1Text")}
           </StepItem>
-          <StepItem number={2} title="Matching berechnen">
-            Unser Algorithmus vergleicht dein Profil mit den Profilen aller Hochschulgruppen — komplett im Browser.
+          <StepItem number={2} title={t("live.step2Title")}>
+            {t("live.step2Text")}
           </StepItem>
-          <StepItem number={3} title="Gruppen entdecken">
-            Sieh dir deine Top-Empfehlungen mit Kontaktinfos, Logo und Links an.
+          <StepItem number={3} title={t("live.step3Title")}>
+            {t("live.step3Text")}
           </StepItem>
         </div>
       </div>

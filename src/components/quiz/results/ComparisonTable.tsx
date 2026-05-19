@@ -3,7 +3,8 @@
 "use client";
 
 import type { QuizMatchResult } from "@/lib/quiz/types";
-import { ALL_ATTRIBUTE_KEYS, getAttributeLabel } from "@/lib/quiz/attribute-labels";
+import { ALL_ATTRIBUTE_KEYS } from "@/lib/quiz/attribute-labels";
+import { useTranslations } from "next-intl";
 
 interface ComparisonTableProps {
   results: QuizMatchResult[];
@@ -12,14 +13,14 @@ interface ComparisonTableProps {
 }
 
 export function ComparisonTable({ results, selectedIds, onToggle }: ComparisonTableProps) {
+  const t = useTranslations("results.comparison");
+  const tAttr = useTranslations("attributes");
   const selected = results.filter((r) => selectedIds.has(r.group.id));
 
   if (selected.length === 0) {
     return (
       <div className="px-6 py-10 text-center">
-        <p className="text-sm text-[#7a9aaa]">
-          Wähle Gruppen in der Übersicht zum Vergleichen aus (max. 8).
-        </p>
+        <p className="text-sm text-[#7a9aaa]">{t("empty")}</p>
       </div>
     );
   }
@@ -35,7 +36,7 @@ export function ComparisonTable({ results, selectedIds, onToggle }: ComparisonTa
         <thead>
           <tr className="border-b border-[#1a2a35]/10">
             <th className="sticky left-0 bg-white px-3 py-2 text-left font-medium text-[#5a7a8a] min-w-[120px]">
-              Attribut
+              {t("attributeHeader")}
             </th>
             {selected.map((r) => (
               <th key={r.group.id} className="px-2 py-2 text-center min-w-[80px]">
@@ -48,7 +49,7 @@ export function ComparisonTable({ results, selectedIds, onToggle }: ComparisonTa
                     onClick={() => onToggle(r.group.id)}
                     className="text-[9px] text-red-400 hover:text-red-600"
                   >
-                    entfernen
+                    {t("remove")}
                   </button>
                 </div>
               </th>
@@ -59,7 +60,8 @@ export function ComparisonTable({ results, selectedIds, onToggle }: ComparisonTa
           {relevantAttrs.map((attr) => (
             <tr key={attr} className="border-b border-[#1a2a35]/5 hover:bg-[#f8fbfc]">
               <td className="sticky left-0 bg-white px-3 py-2 font-medium text-[#5a7a8a]">
-                {getAttributeLabel(attr)}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {tAttr(attr as any)}
               </td>
               {selected.map((r) => {
                 const has = r.group.attributes[attr];

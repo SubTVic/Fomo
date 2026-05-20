@@ -93,6 +93,7 @@ export default async function AdminGroupDetailPage({
           </div>
           <MergeButton
             sourceGroupId={group.id}
+            sourceGroupName={group.name}
             targetGroupId={group.duplicateOf.id}
             targetGroupName={group.duplicateOf.name}
           />
@@ -116,6 +117,7 @@ export default async function AdminGroupDetailPage({
                 </a>
                 <MergeButton
                   sourceGroupId={dup.id}
+                  sourceGroupName={dup.name}
                   targetGroupId={group.id}
                   targetGroupName={group.name}
                 />

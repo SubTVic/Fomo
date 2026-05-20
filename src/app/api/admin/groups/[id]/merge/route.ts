@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Merge a self-registered duplicate group (source=id) into an existing group (target).
-// Transfers selfRating + contact fields, then deletes the source.
+// Transfers selfRating + content fields, then deletes the source.
+// keepSourceData=true: source's content overwrites target (use when source has the better data).
+// keepSourceData=false (default): only fill in missing fields on target.
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -9,6 +11,7 @@ import { auth } from "@/lib/auth";
 
 const MergeSchema = z.object({
   targetGroupId: z.string().min(1),
+  keepSourceData: z.boolean().default(false),
 });
 
 export async function POST(
@@ -32,7 +35,7 @@ export async function POST(
     return NextResponse.json({ error: "targetGroupId required" }, { status: 422 });
   }
 
-  const { targetGroupId } = parsed.data;
+  const { targetGroupId, keepSourceData } = parsed.data;
 
   if (sourceId === targetGroupId) {
     return NextResponse.json({ error: "source und target sind identisch" }, { status: 400 });
@@ -74,17 +77,58 @@ export async function POST(
     });
   }
 
-  // Transfer contact/description fields from source to target where target has no value
-  const contactUpdate: Record<string, string> = {};
-  if (!target.contactEmail && source.contactEmail) contactUpdate.contactEmail = source.contactEmail;
-  if (!target.contactPerson && source.contactPerson) contactUpdate.contactPerson = source.contactPerson;
-  if (!target.contactPersonRole && source.contactPersonRole) contactUpdate.contactPersonRole = source.contactPersonRole;
-  if (!target.websiteUrl && source.websiteUrl) contactUpdate.websiteUrl = source.websiteUrl;
-  if (!target.instagramUrl && source.instagramUrl) contactUpdate.instagramUrl = source.instagramUrl;
-  if (!target.longDescription && source.longDescription) contactUpdate.longDescription = source.longDescription;
+  // Transfer content fields from source to target.
+  // keepSourceData=true: overwrite target with source values (source has the better data).
+  // keepSourceData=false: only fill in fields that are missing on target.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const contentUpdate: Record<string, any> = {};
+  function transfer<K extends keyof typeof source>(field: K) {
+    const sv = source[field];
+    const tv = target[field];
+    if (keepSourceData) {
+      if (sv !== null && sv !== undefined && sv !== "") contentUpdate[field] = sv;
+    } else {
+      if ((tv === null || tv === undefined || tv === "") && sv !== null && sv !== undefined && sv !== "") {
+        contentUpdate[field] = sv;
+      }
+    }
+  }
 
-  if (Object.keys(contactUpdate).length > 0) {
-    await db.group.update({ where: { id: targetGroupId }, data: contactUpdate });
+  // Content fields
+  if (keepSourceData) {
+    transfer("name");
+    transfer("shortDescription");
+    transfer("slug");
+  }
+  transfer("longDescription");
+  transfer("contactEmail");
+  transfer("contactPerson");
+  transfer("contactPersonRole");
+  transfer("websiteUrl");
+  transfer("instagramUrl");
+  transfer("logoUrl");
+  transfer("memberCount");
+  transfer("meetingSchedule");
+  transfer("motto");
+  transfer("foundedYear");
+  transfer("language");
+  transfer("eventFrequency");
+  transfer("groupSize");
+
+  // Boolean attributes — only overwrite when keepSourceData
+  if (keepSourceData) {
+    for (const attr of [
+      "career", "tech", "socialImpact", "party", "religion", "sports",
+      "networking", "arts", "music", "timeLow", "handsOn", "outdoor",
+      "international", "beginnerFriendly", "competitive", "financialCost",
+      "leadershipOpportunities",
+    ] as const) {
+      contentUpdate[attr] = source[attr];
+    }
+  }
+
+  if (Object.keys(contentUpdate).length > 0) {
+    await db.group.update({ where: { id: targetGroupId }, data: contentUpdate });
   }
 
   // Delete source (cascades invites, pilot answers, study2 sessions, selfRating)

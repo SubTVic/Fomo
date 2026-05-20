@@ -19,10 +19,9 @@ export function Navbar() {
           >
             {t("allGroups")}
           </Link>
-          <span className="text-muted-foreground">|</span>
           <LanguageSwitcher />
-          <span className="text-muted-foreground">|</span>
-          <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider">
+          <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider">
+            <span className="text-muted-foreground">|</span>
             <YetiBadge />
             <span>YETI</span>
             <span className="text-muted-foreground mx-1">&times;</span>

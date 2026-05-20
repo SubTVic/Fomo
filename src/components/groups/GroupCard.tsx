@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
+"use client";
+
+import { useState } from "react";
 import type { GroupWithCategory } from "@/types";
 
 interface GroupCardProps {
@@ -7,6 +10,8 @@ interface GroupCardProps {
 }
 
 export function GroupCard({ group }: GroupCardProps) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <div className="flex flex-col gap-3 border-2 border-foreground bg-card p-5 transition-colors hover:bg-accent">
       {/* Category badge */}
@@ -20,7 +25,18 @@ export function GroupCard({ group }: GroupCardProps) {
       {/* Name + description */}
       <div>
         <h3 className="font-heading text-sm uppercase">{group.name}</h3>
-        <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{group.shortDescription}</p>
+        <button
+          type="button"
+          onClick={() => setExpanded((prev) => !prev)}
+          className="mt-1 w-full text-left"
+        >
+          <p className={`text-sm text-muted-foreground ${expanded ? "" : "line-clamp-2"}`}>
+            {group.shortDescription}
+          </p>
+          <span className="mt-0.5 block text-xs font-medium text-foreground underline underline-offset-2">
+            {expanded ? "Weniger anzeigen" : "Mehr anzeigen"}
+          </span>
+        </button>
       </div>
 
       {/* Meta info */}

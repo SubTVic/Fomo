@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getActiveGroupCount } from "@/lib/queries/groups";
 import { getSiteConfig } from "@/lib/queries/site-config";
+import { YetiBadge } from "@/components/shared/YetiBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -73,6 +74,14 @@ export default async function LandingPage() {
         ) : (
           <PrelaunchCta groupCount={groupCount} t={t} />
         )}
+
+        {/* YETI × StuRa branding — only on mobile (navbar shows it on desktop) */}
+        <div className="sm:hidden border-t-4 border-foreground px-6 py-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <YetiBadge />
+          <span>YETI</span>
+          <span className="mx-1">&times;</span>
+          <span>StuRa</span>
+        </div>
       </div>
     </div>
   );

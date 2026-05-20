@@ -81,10 +81,14 @@ export async function POST(
   // keepSourceData=true: overwrite target with source values (source has the better data).
   // keepSourceData=false: only fill in fields that are missing on target.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const src = source as Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tgt = target as Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const contentUpdate: Record<string, any> = {};
-  function transfer<K extends keyof typeof source>(field: K) {
-    const sv = source[field];
-    const tv = target[field];
+  const transfer = (field: string) => {
+    const sv = src[field];
+    const tv = tgt[field];
     if (keepSourceData) {
       if (sv !== null && sv !== undefined && sv !== "") contentUpdate[field] = sv;
     } else {
@@ -92,7 +96,7 @@ export async function POST(
         contentUpdate[field] = sv;
       }
     }
-  }
+  };
 
   // Content fields
   if (keepSourceData) {
@@ -122,8 +126,8 @@ export async function POST(
       "networking", "arts", "music", "timeLow", "handsOn", "outdoor",
       "international", "beginnerFriendly", "competitive", "financialCost",
       "leadershipOpportunities",
-    ] as const) {
-      contentUpdate[attr] = source[attr];
+    ]) {
+      contentUpdate[attr] = src[attr];
     }
   }
 

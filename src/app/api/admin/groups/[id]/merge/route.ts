@@ -132,6 +132,14 @@ export async function POST(
     }
   }
 
+  // Always preserve submission state from source on target — the merged group
+  // still needs admin verification, so it must stay visible in the "Eingereicht"
+  // tab. Force isVerified=false for the same reason.
+  if (src.registrationStatus) contentUpdate.registrationStatus = src.registrationStatus;
+  if (src.registeredVia) contentUpdate.registeredVia = src.registeredVia;
+  if (src.registeredAt) contentUpdate.registeredAt = src.registeredAt;
+  contentUpdate.isVerified = false;
+
   try {
     if (Object.keys(contentUpdate).length > 0) {
       await db.group.update({ where: { id: targetGroupId }, data: contentUpdate });

@@ -99,10 +99,11 @@ export async function POST(
   };
 
   // Content fields
+  // Note: slug is NOT transferred — it's @unique and would collide with source's slug
+  // before deletion. The target's existing slug stays for URL stability.
   if (keepSourceData) {
     transfer("name");
     transfer("shortDescription");
-    transfer("slug");
   }
   transfer("longDescription");
   transfer("contactEmail");
@@ -131,12 +132,18 @@ export async function POST(
     }
   }
 
-  if (Object.keys(contentUpdate).length > 0) {
-    await db.group.update({ where: { id: targetGroupId }, data: contentUpdate });
+  try {
+    if (Object.keys(contentUpdate).length > 0) {
+      await db.group.update({ where: { id: targetGroupId }, data: contentUpdate });
+    }
+
+    // Delete source (cascades invites, pilot answers, study2 sessions, selfRating)
+    await db.group.delete({ where: { id: sourceId } });
+
+    return NextResponse.json({ success: true, targetGroupId });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unbekannter Fehler beim Zusammenführen";
+    console.error("[merge] failed", { sourceId, targetGroupId, keepSourceData, err });
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  // Delete source (cascades invites, pilot answers, study2 sessions, selfRating)
-  await db.group.delete({ where: { id: sourceId } });
-
-  return NextResponse.json({ success: true, targetGroupId });
 }

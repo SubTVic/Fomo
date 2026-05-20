@@ -74,6 +74,18 @@ export default async function AdminGroupDetailPage({
         <ToggleActiveButton groupId={group.id} isActive={group.isActive} />
       </div>
 
+      {/* Unverified: data is likely AI-generated from the scraper */}
+      {!group.isVerified && (
+        <div className="mb-4 border-2 border-yellow-400 bg-yellow-50 px-5 py-3">
+          <p className="text-sm font-semibold text-yellow-900">
+            ⚠️ Daten noch nicht von der Gruppe bestätigt
+          </p>
+          <p className="text-xs text-yellow-800 mt-0.5">
+            Beschreibung und Attribute stammen vermutlich aus dem KI-Scraper und sind nicht verifiziert.
+          </p>
+        </div>
+      )}
+
       {/* Duplicate warning: this group IS a duplicate of an existing one */}
       {group.duplicateOf && (
         <div className="mb-4 border-2 border-purple-400 bg-purple-50 px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

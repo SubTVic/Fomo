@@ -25,6 +25,14 @@ export function GroupCard({ group }: GroupCardProps) {
       {/* Name + description */}
       <div>
         <h3 className="font-heading text-sm uppercase">{group.name}</h3>
+        {!group.isVerified && (
+          <p
+            className="mt-1 text-[10px] text-yellow-800 bg-yellow-50 border border-yellow-300 px-1.5 py-0.5 w-fit"
+            title="Beschreibung und Attribute wurden automatisch erstellt und nicht von der Gruppe selbst bestätigt."
+          >
+            ⚠️ Nicht von der Gruppe bestätigt
+          </p>
+        )}
         <button
           type="button"
           onClick={() => setExpanded((prev) => !prev)}

@@ -158,12 +158,12 @@ export async function POST(req: NextRequest) {
   } = parsed.data;
 
   try {
-    // Find or create category
-    let category = await db.category.findFirst({ where: { name: categoryName } });
+    const category = await db.category.findFirst({ where: { name: categoryName } });
     if (!category) {
-      category = await db.category.create({
-        data: { name: categoryName, order: 99 },
-      });
+      return NextResponse.json(
+        { error: `Unbekannte Kategorie: ${categoryName}` },
+        { status: 422 }
+      );
     }
 
     const slug = await uniqueSlug(generateSlug(name));

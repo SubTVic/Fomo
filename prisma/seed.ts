@@ -23,20 +23,29 @@ async function main() {
     }),
     prisma.category.create({
       data: {
-        name: "Kultur & Kunst",
-        description: "Kreative und kulturelle Hochschulgruppen",
-        color: "#9B5DE5",
-        icon: "palette",
+        name: "Sport & Bewegung",
+        description: "Sportliche Hochschulgruppen und Teams",
+        color: "#00BBF9",
+        icon: "trophy",
         order: 2,
       },
     }),
     prisma.category.create({
       data: {
-        name: "Sport & Bewegung",
-        description: "Sportliche Hochschulgruppen und Teams",
-        color: "#00BBF9",
-        icon: "trophy",
+        name: "Kunst & Kultur",
+        description: "Kreative und kulturelle Hochschulgruppen",
+        color: "#9B5DE5",
+        icon: "palette",
         order: 3,
+      },
+    }),
+    prisma.category.create({
+      data: {
+        name: "Musik",
+        description: "Chöre, Bands, Orchester und musikalische Gruppen",
+        color: "#F15BB5",
+        icon: "music",
+        order: 4,
       },
     }),
     prisma.category.create({
@@ -46,41 +55,68 @@ async function main() {
           "Hochschulgruppen rund um Technik, IT und Forschung",
         color: "#00F5D4",
         icon: "cpu",
-        order: 4,
-      },
-    }),
-    prisma.category.create({
-      data: {
-        name: "Umwelt & Nachhaltigkeit",
-        description:
-          "Hochschulgruppen für Umweltschutz und nachhaltiges Leben",
-        color: "#06D6A0",
-        icon: "leaf",
         order: 5,
       },
     }),
     prisma.category.create({
       data: {
-        name: "International & Sprachen",
+        name: "Nachhaltigkeit",
         description:
-          "Interkultureller Austausch und internationale Netzwerke",
-        color: "#FFD166",
-        icon: "globe",
+          "Hochschulgruppen für Umweltschutz und nachhaltiges Leben",
+        color: "#06D6A0",
+        icon: "leaf",
         order: 6,
       },
     }),
     prisma.category.create({
       data: {
-        name: "Soziales & Beratung",
+        name: "Internationales",
+        description:
+          "Interkultureller Austausch und internationale Netzwerke",
+        color: "#FFD166",
+        icon: "globe",
+        order: 7,
+      },
+    }),
+    prisma.category.create({
+      data: {
+        name: "Soziales Engagement",
         description: "Soziales Engagement und Beratungsangebote",
         color: "#EF476F",
         icon: "heart",
-        order: 7,
+        order: 8,
+      },
+    }),
+    prisma.category.create({
+      data: {
+        name: "Glaube & Spiritualität",
+        description: "Religiöse, weltanschauliche und spirituelle Gruppen",
+        color: "#B59CE0",
+        icon: "sparkles",
+        order: 9,
+      },
+    }),
+    prisma.category.create({
+      data: {
+        name: "Wirtschaft & Karriere",
+        description: "Unternehmertum, Consulting und Karriere-Netzwerke",
+        color: "#F77F00",
+        icon: "briefcase",
+        order: 10,
+      },
+    }),
+    prisma.category.create({
+      data: {
+        name: "Sonstiges",
+        description: "Sonstige Hochschulgruppen",
+        color: "#8D99AE",
+        icon: "more-horizontal",
+        order: 11,
       },
     }),
   ]);
 
-  const [politik, kultur, sport, technik, umwelt, international, soziales] =
+  const [politik, sport, kultur, , technik, umwelt, international, soziales] =
     categories;
 
   // ─── Groups ──────────────────────────────────────────────────

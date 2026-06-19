@@ -1,0 +1,70 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Zero-downtime data-swap setup for a StuRa server. Only Docker is required on
+# the host (no Node). nginx serves ./web/current (a symlink that
+# scripts/update-data.sh switches atomically between release folders).
+#
+#   ./scripts/update-data.sh        # build + publish current data, (re)start web
+#
+# Optional self-hosted analytics: `docker compose --profile analytics up -d`.
+
+services:
+  # Static web server. Serves the published release; reloaded on data swap.
+  web:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    volumes:
+      - ./web:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+  # One-shot builder (run by update-data.sh). Produces ./out on the host.
+  builder:
+    image: node:22-alpine
+    profiles: ["build"]
+    working_dir: /app
+    env_file:
+      - .env
+    environment:
+      NEXT_TELEMETRY_DISABLED: "1"
+    volumes:
+      - ./:/app
+    command: >
+      sh -lc "if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      && node scripts/validate-data.mjs
+      && npm run build"
+
+  # --- Optional: self-hosted Umami analytics (André's recommendation) ---
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    profiles: ["analytics"]
+    restart: unless-stopped
+    ports:
+      - "${UMAMI_PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD:-umami}@umami-db:5432/umami
+      DATABASE_TYPE: postgresql
+      APP_SECRET: ${UMAMI_APP_SECRET:-please-change-me}
+    depends_on:
+      umami-db:
+        condition: service_healthy
+
+  umami-db:
+    image: postgres:16-alpine
+    profiles: ["analytics"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD:-umami}
+    volumes:
+      - umami-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  umami-db-data:

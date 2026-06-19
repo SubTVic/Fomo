@@ -9,12 +9,20 @@ import type { NextConfig } from "next";
  * from `data/*.json` at build time. See CLAUDE.md (Architektur-Prinzipien) and
  * the static-site task brief.
  */
+// Optional subpath, e.g. when the StuRa server hosts FOMO under /fomo.
+// Must start with "/" and have no trailing slash. Inlined at build time.
+const rawBasePath = process.env.NEXT_PUBLIC_BASE_PATH?.trim();
+const basePath = rawBasePath && rawBasePath !== "/" ? rawBasePath.replace(/\/$/, "") : "";
+
 const nextConfig: NextConfig = {
   output: "export",
   // Static hosts have no Next.js image optimizer — serve images as-is.
   images: { unoptimized: true },
   // Emit /quiz/index.html etc. so any static host resolves clean URLs.
   trailingSlash: true,
+  // Serve under a subpath if configured (otherwise root). assetPrefix keeps
+  // /_next/* assets resolving correctly behind the prefix.
+  ...(basePath ? { basePath, assetPrefix: basePath } : {}),
   // This package intentionally ships no ESLint setup (the root app owns linting).
   // Skip lint-during-build so the static export stays self-contained.
   eslint: { ignoreDuringBuilds: true },

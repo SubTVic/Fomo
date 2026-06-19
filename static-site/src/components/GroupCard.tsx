@@ -10,11 +10,13 @@ interface GroupCardProps {
   group: Group;
   /** When set, renders a match-score badge (quiz results). */
   score?: number;
-  /** 1-based rank for the results list. */
+  /** Competition rank; shared by groups with the same score. */
   rank?: number;
+  /** True when this group shares its score with another (equally good fit). */
+  tied?: boolean;
 }
 
-export function GroupCard({ group, score, rank }: GroupCardProps) {
+export function GroupCard({ group, score, rank, tied }: GroupCardProps) {
   return (
     <article className="flex flex-col gap-3 border-poster bg-card p-5 transition-transform hover:-translate-y-0.5 hover:poster-shadow">
       <div className="flex items-start justify-between gap-3">
@@ -25,9 +27,16 @@ export function GroupCard({ group, score, rank }: GroupCardProps) {
           {group.categoryName}
         </span>
         {score !== undefined && (
-          <span className="flex shrink-0 items-baseline gap-1 border-2 border-navy bg-sky px-2 py-1 font-heading text-navy">
-            {rank !== undefined && <span className="text-xs">#{rank}</span>}
-            <span className="text-lg leading-none">{score}%</span>
+          <span className="flex shrink-0 flex-col items-end">
+            <span className="flex items-baseline gap-1 border-2 border-navy bg-sky px-2 py-1 font-heading text-navy">
+              {rank !== undefined && <span className="text-xs">#{rank}</span>}
+              <span className="text-lg leading-none">{score}%</span>
+            </span>
+            {tied && (
+              <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-accent-muted">
+                punktgleich
+              </span>
+            )}
           </span>
         )}
       </div>

@@ -56,7 +56,16 @@ export function computeMatches(
 ): MatchResult[] {
   return groups
     .map((group) => ({ group, score: scoreGroup(userAnswers, userFilters, group) }))
-    .sort((a, b) => b.score - a.score);
+    .sort(
+      (a, b) =>
+        // Primary: best score first. Tie-breakers are only for a *stable,
+        // reproducible* order — equally-scored groups genuinely fit equally
+        // well (the UI marks them "punktgleich"). Prefer the more confident
+        // self-rating (higher raterCount), then alphabetical for determinism.
+        b.score - a.score ||
+        (b.group.selfRating.raterCount ?? 0) - (a.group.selfRating.raterCount ?? 0) ||
+        a.group.name.localeCompare(b.group.name, "de"),
+    );
 }
 
 function answersToMap(answers: SelfRatingAnswer[]): Record<string, number> {

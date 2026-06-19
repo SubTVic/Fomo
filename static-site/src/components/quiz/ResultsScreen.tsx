@@ -19,24 +19,37 @@ export function ResultsScreen({ matches, answeredCount, onRestart }: ResultsScre
   // score 0 and must never appear. Empty list → handled by the message below.
   const top = matches.filter((m) => m.score > 0).slice(0, MAX_RESULTS);
 
+  // Competition ranking: equal scores share a rank (#1, #1, #3 …) so groups
+  // that fit equally well are shown as equals, not arbitrarily ordered.
+  const ranked = top.map((m, i) => {
+    const isTie =
+      (i > 0 && top[i - 1].score === m.score) ||
+      (i < top.length - 1 && top[i + 1].score === m.score);
+    return { ...m, rank: i + 1, tied: isTie };
+  });
+  for (let i = 1; i < ranked.length; i++) {
+    // Tied row inherits the first rank of its score group.
+    if (ranked[i].score === ranked[i - 1].score) ranked[i].rank = ranked[i - 1].rank;
+  }
+
   // Reveal cards one by one for a bit of drama.
   const [revealed, setRevealed] = useState(0);
   useEffect(() => {
-    if (revealed >= top.length) return;
+    if (revealed >= ranked.length) return;
     const t = setTimeout(() => setRevealed((r) => r + 1), 180);
     return () => clearTimeout(t);
-  }, [revealed, top.length]);
+  }, [revealed, ranked.length]);
 
   return (
     <div className="animate-fade-up">
       <p className="font-heading text-sm text-accent-muted">DEINE MATCHES</p>
       <h1 className="mt-1 text-3xl text-navy sm:text-4xl">Das passt zu dir</h1>
       <p className="mt-2 text-sm text-body">
-        Basierend auf {answeredCount} klaren Antworten. Tipp: Schreib einfach mal eine
-        Gruppe an — die meisten freuen sich über Neugierige.
+        Basierend auf {answeredCount} klaren Antworten. Gruppen mit gleicher Prozentzahl
+        passen gleich gut — die Reihenfolge dazwischen sagt nichts aus.
       </p>
 
-      {top.length === 0 ? (
+      {ranked.length === 0 ? (
         <div className="mt-6 border-poster bg-card p-6 text-center">
           <p className="text-body">
             Keine eindeutigen Treffer. Probier es mit weniger Filtern oder klareren Antworten.
@@ -44,12 +57,12 @@ export function ResultsScreen({ matches, answeredCount, onRestart }: ResultsScre
         </div>
       ) : (
         <div className="mt-6 grid gap-4">
-          {top.map((m, i) => (
+          {ranked.map((m, i) => (
             <div
               key={m.group.id}
               className={i < revealed ? "animate-fade-up" : "invisible"}
             >
-              <GroupCard group={m.group} score={m.score} rank={i + 1} />
+              <GroupCard group={m.group} score={m.score} rank={m.rank} tied={m.tied} />
             </div>
           ))}
         </div>

@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import type { Group } from "@/lib/types";
+import { categoryColorOf } from "@/lib/data";
 import { track, EVENTS } from "@/lib/analytics";
 
 interface GroupCardProps {
@@ -19,7 +20,7 @@ export function GroupCard({ group, score, rank }: GroupCardProps) {
       <div className="flex items-start justify-between gap-3">
         <span
           className="w-fit px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white"
-          style={{ backgroundColor: group.categoryColor }}
+          style={{ backgroundColor: categoryColorOf(group) }}
         >
           {group.categoryName}
         </span>

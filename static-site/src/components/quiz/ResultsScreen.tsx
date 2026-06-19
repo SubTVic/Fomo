@@ -13,12 +13,11 @@ interface ResultsScreenProps {
 }
 
 const MAX_RESULTS = 10;
-const MIN_RESULTS = 5;
 
 export function ResultsScreen({ matches, answeredCount, onRestart }: ResultsScreenProps) {
-  // Hard-constraint-excluded groups score 0 — drop them, keep the best few.
-  const ranked = matches.filter((m) => m.score > 0).slice(0, MAX_RESULTS);
-  const top = ranked.length >= MIN_RESULTS ? ranked : matches.slice(0, MAX_RESULTS);
+  // Only ever show real matches: groups excluded by the filter hard-constraint
+  // score 0 and must never appear. Empty list → handled by the message below.
+  const top = matches.filter((m) => m.score > 0).slice(0, MAX_RESULTS);
 
   // Reveal cards one by one for a bit of drama.
   const [revealed, setRevealed] = useState(0);

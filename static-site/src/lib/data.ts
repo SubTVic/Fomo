@@ -28,11 +28,27 @@ export function getQuizFilters(): QuizFilters {
   return quiz.filters;
 }
 
+/**
+ * Fallback for groups whose category has no colour in the data (e.g.
+ * "Sonstiges"). Without it the white category badge would render with no
+ * background — invisible on the white card.
+ */
+export const CATEGORY_FALLBACK_COLOR = "#5a8a9a";
+
+/** The badge colour for a group, never empty. */
+export function categoryColorOf(group: Group): string {
+  return group.categoryColor || CATEGORY_FALLBACK_COLOR;
+}
+
 /** Distinct categories with their poster colour, sorted by name. */
 export function getCategories(): Array<{ name: string; color: string }> {
   const seen = new Map<string, string>();
   for (const g of groups) {
-    if (!seen.has(g.categoryName)) seen.set(g.categoryName, g.categoryColor);
+    // Prefer the first non-empty colour seen for a category, else fall back.
+    const existing = seen.get(g.categoryName);
+    if (!existing || existing === CATEGORY_FALLBACK_COLOR) {
+      seen.set(g.categoryName, g.categoryColor || CATEGORY_FALLBACK_COLOR);
+    }
   }
   return [...seen.entries()]
     .map(([name, color]) => ({ name, color }))

@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getGroups, getGroupBySlug } from "@/lib/data";
+import { getGroups, getGroupBySlug, categoryColorOf } from "@/lib/data";
 import { GroupLinks } from "@/components/GroupLinks";
 
 /** Pre-render one HTML page per group for the static export. */
@@ -52,7 +52,7 @@ export default async function GroupDetailPage({
       <article className="mt-4 border-poster bg-card p-6 poster-shadow sm:p-8">
         <span
           className="w-fit px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white"
-          style={{ backgroundColor: group.categoryColor }}
+          style={{ backgroundColor: categoryColorOf(group) }}
         >
           {group.categoryName}
         </span>

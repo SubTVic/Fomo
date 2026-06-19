@@ -94,6 +94,39 @@ vergleichen (nur dort, wo die Gruppe selbst eine klare Haltung hatte):
      streichen, oder – **ohne** die laufende Registrierung zu ändern – später
      ein optionales 18. Attribut nur für *neue* Registrierungen ergänzen.
 
+## Besserer Scraper mit aktuellem Wissen: gelerntes Mapping (umgesetzt)
+
+Die registrierten Gruppen sind **gelabelte Trainingsdaten** (echte Bewertung +
+gescrapte Attribute). Daraus lässt sich pro Item ein besseres Mapping lernen,
+statt es von Hand zu raten.
+
+- **`scripts/train-derive-model.mjs`** lernt aus den registrierten Gruppen pro
+  Item ein feature-gewichtetes Modell und vergleicht es per Leave-one-out-CV mit
+  dem Hand-Mapping. Nur wo das gelernte Modell klar gewinnt, wird es genutzt
+  (`useLearned`). Ergebnis: `derive-model.json`.
+- **`derive-selfrating.mjs --model derive-model.json`** wendet es an – gelernt wo
+  besser, sonst naiv.
+
+**Gemessenes Ergebnis (LOO, ehrlich):** Übereinstimmung **53 % → 59 %**.
+Gelernt wird aktuell für **WS2-04** (international), **WS2-16** (Sprache),
+**WS2-18** (Freundschaften) und **WS2-21** (Entrepreneurship – vorher 0 %, da
+ohne Attribut nicht von Hand ableitbar). Das Modell **verbessert sich
+automatisch**, je mehr Gruppen sich registrieren – einfach neu trainieren.
+
+```bash
+node scripts/train-derive-model.mjs --in data/groups.json --out data/derive-model.json
+node scripts/derive-selfrating.mjs --in scraped-groups.json \
+  --model data/derive-model.json --overrides export.json --out data/groups.json
+```
+
+> Grenzen: Bei wenigen Registrierungen ist das Signal schwach (Overfitting-
+> Risiko, daher LOO + nur klare Gewinner). Der größere Hebel sind **bessere
+> Merkmale**: die Gruppen-**Texte** tragen mehr Signal als die binären Attribute
+> (z. B. Wettbewerbs-Keywords korrelieren +0.43 mit den Wettbewerbs-Items). Ein
+> Keyword-/LLM-Klassifikator über die „Über uns"-Texte, der die WS2-Items direkt
+> beantwortet (mit menschlicher Freigabe), ist der nächste sinnvolle Schritt –
+> er passt in genau dieselbe `scraped-groups.json`-Pipeline.
+
 ## Datenquellen fürs Scraping
 
 | Quelle | Liefert |
@@ -134,8 +167,10 @@ letzte 5 Releases als Rollback). Ein Cron-Job kann den Lauf automatisieren
 (André's Idee „Tabelle pflegen → automatisch neu bauen"):
 
 ```cron
-# täglich 04:00: Export ziehen, ableiten, live schalten
-0 4 * * *  cd /opt/fomo/static-site && node scripts/derive-selfrating.mjs \
-           --in /opt/fomo/scraped-groups.json --overrides /opt/fomo/export.json \
-           --out data/groups.json && ./scripts/update-data.sh >> /var/log/fomo-update.log 2>&1
+# täglich 04:00: Export ziehen, Modell trainieren, ableiten, live schalten
+0 4 * * *  cd /opt/fomo/static-site \
+  && node scripts/train-derive-model.mjs --in data/groups.json --out data/derive-model.json \
+  && node scripts/derive-selfrating.mjs --in /opt/fomo/scraped-groups.json \
+       --model data/derive-model.json --overrides /opt/fomo/export.json --out data/groups.json \
+  && ./scripts/update-data.sh >> /var/log/fomo-update.log 2>&1
 ```

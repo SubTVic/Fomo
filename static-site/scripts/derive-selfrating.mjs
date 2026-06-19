@@ -6,9 +6,13 @@
 // by the registration flow — which we DO NOT change). Groups that have not
 // registered yet have no self-rating, so the matcher would treat every item as
 // neutral. This script DERIVES a provisional selfRating for them from the 17
-// scraped binary attributes + groupSize/eventFrequency/language, using the
-// exact item→attribute mappings declared in quiz.json. Identical schema, so the
-// static site needs zero code changes.
+// scraped binary attributes + groupSize/eventFrequency/language.
+//
+// Two derivation modes:
+//   - default: the hand-coded item→attribute mapping from quiz.json.
+//   - --model derive-model.json: a per-item model LEARNED from already-registered
+//     groups (see train-derive-model.mjs). The model is only used for items where
+//     it beat the hand mapping in cross-validation; everything else stays naive.
 //
 // A real registration always wins: pass the registration export via --overrides
 // and those groups keep their human-entered answers (no re-registration ever
@@ -18,10 +22,12 @@
 //   node scripts/derive-selfrating.mjs \
 //     --in scraped-groups.json \            # groups with attributes, maybe no selfRating
 //     --quiz data/quiz.json \
+//     --model data/derive-model.json \      # optional: learned per-item mapping
 //     --overrides registration-export.json \ # optional: real selfRatings (by id or slug)
 //     --out data/groups.json
 
 import { readFileSync, writeFileSync } from "node:fs";
+import { naiveItemValue, learnedItemValue } from "./derive-lib.mjs";
 
 const args = process.argv.slice(2);
 const getArg = (n, d) => {
@@ -31,43 +37,20 @@ const getArg = (n, d) => {
 
 const inPath = getArg("--in", "data/groups.json");
 const quizPath = getArg("--quiz", "data/quiz.json");
+const modelPath = getArg("--model", null);
 const overridesPath = getArg("--overrides", null);
 const outPath = getArg("--out", "data/groups.json");
 
 const input = JSON.parse(readFileSync(inPath, "utf8"));
 const quiz = JSON.parse(readFileSync(quizPath, "utf8"));
 const groups = input.groups ?? input;
+const model = modelPath ? JSON.parse(readFileSync(modelPath, "utf8")) : null;
 
-// Map a scraped attribute name to the group field a valueMap reads from.
-const VALUE_MAP_FIELD = {
-  groupSize: "groupSize",
-  eventFrequency: "eventFrequency",
-  language: "language",
-};
-
-const clamp = (v) => (v > 0 ? 1 : v < 0 ? -1 : 0);
-
-/** Derive one item's answer (-1|0|1) from a group's scraped data. */
+/** Derive one item's answer (-1|0|1): learned where the model wins, else naive. */
 function deriveItemValue(group, item) {
-  const contributions = [];
-  for (const m of item.attributes) {
-    let raw;
-    if (m.valueMap) {
-      const field = VALUE_MAP_FIELD[m.attribute];
-      const fieldVal = field ? group[field] : undefined;
-      raw = fieldVal != null && m.valueMap[fieldVal] != null ? m.valueMap[fieldVal] : 0;
-    } else {
-      const attrVal = group.attributes?.[m.attribute];
-      // Unknown attribute (e.g. WS2-21 "entrepreneurship" is not among the 17
-      // registration attributes) → neutral, cannot be inferred from scraping.
-      raw = attrVal === true ? 1 : attrVal === false ? -1 : 0;
-    }
-    if (m.isInverse) raw = -raw;
-    contributions.push(raw);
-  }
-  if (contributions.length === 0) return 0;
-  const avg = contributions.reduce((a, b) => a + b, 0) / contributions.length;
-  return clamp(Math.round(avg));
+  const im = model?.items?.[item.id];
+  if (im?.useLearned) return learnedItemValue(group, im, model.threshold);
+  return naiveItemValue(group, item);
 }
 
 /** Filter selections a scraped group implies (its true filter attributes). */
@@ -123,6 +106,7 @@ const out = groups.map((g) => {
 const result = input.groups ? { ...input, groups: out } : out;
 writeFileSync(outPath, JSON.stringify(result, null, 2) + "\n");
 console.log(
-  `Derived selfRating for ${derivedCount} group(s); kept real selfRating for ${realCount}.`,
+  `Derived selfRating for ${derivedCount} group(s)${model ? " (model-assisted)" : ""}; ` +
+    `kept real selfRating for ${realCount}.`,
 );
 console.log(`Wrote ${out.length} groups → ${outPath}`);

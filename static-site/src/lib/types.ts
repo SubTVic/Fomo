@@ -18,6 +18,12 @@ export interface GroupSelfRating {
   /** Filter attribute ids the group selected for itself (hard-constraint side). */
   filterSelections: string[];
   answers: SelfRatingAnswer[];
+  /**
+   * True when the rating was auto-derived from scraped attributes (group has not
+   * registered yet), false/absent for a real self-rating. See
+   * docs/SCRAPING-KONZEPT.md. Used to flag "unbestätigt" in the UI.
+   */
+  derived?: boolean;
 }
 
 export interface GroupEvent {

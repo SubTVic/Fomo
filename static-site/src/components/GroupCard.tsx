@@ -34,6 +34,14 @@ export function GroupCard({ group, score, rank }: GroupCardProps) {
 
       <div>
         <h3 className="font-heading text-base text-navy">{group.name}</h3>
+        {group.selfRating.derived && (
+          <span
+            className="mt-1 inline-block text-[10px] font-semibold uppercase tracking-wider text-muted"
+            title="Profil automatisch ermittelt, noch nicht von der Gruppe bestätigt."
+          >
+            ⓘ unbestätigt
+          </span>
+        )}
         <p className="mt-1.5 line-clamp-3 text-sm text-body">{group.shortDescription}</p>
       </div>
 

@@ -1,0 +1,4742 @@
+{
+  "_meta": {
+    "source": "fomo-backup-2026-06-14-12-08-28.json",
+    "generatedFrom": "2026-06-14T12:08:28.029Z",
+    "groupCount": 36,
+    "note": "Public-only export: verified+active groups, no PII (no admins/contacts/sessions)."
+  },
+  "groups": [
+    {
+      "id": "cmmwg2y920001ib04sv32cqhp",
+      "name": "404 UNIVERSITY ESPORTS DRESDEN",
+      "slug": "404-university-esports-dresden",
+      "shortDescription": "Die 404 University Esports Dresden ist die eingetragene Hochschulgruppe des 404 Multigaming e.V. an der TU Dresden, die seit 2019 Studierende durch gemeinsames Gaming und die Teilnahme an der Uniliga",
+      "longDescription": "Die 404 University Esports Dresden ist die eingetragene Hochschulgruppe des 404 Multigaming e.V. an der TU Dresden, die seit 2019 Studierende durch gemeinsames Gaming und die Teilnahme an der Uniliga (z.B. League of Legends, Rocket League) miteinander verbindet. Sie organisiert LAN-Turniere, Online-Wettbewerbe und Community-Events auf dem Campus.",
+      "categoryName": "Sport & Bewegung",
+      "categoryColor": "#00BBF9",
+      "categoryIcon": "trophy",
+      "websiteUrl": "https://404-multigaming.de/university-esports/",
+      "instagramUrl": null,
+      "contactEmail": null,
+      "memberCount": null,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "large",
+      "motto": null,
+      "foundedYear": null,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": true,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": true,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": true,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": true,
+        "competitive": true,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "competitive",
+          "tech"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg2znn000jib045qztok08",
+      "name": "ArbeiterKind.de Dresden",
+      "slug": "arbeiterkind-de-dresden",
+      "shortDescription": "Wir ermutigen junge Menschen aus nichtakademischen Familien zum Studium und begleiten diese auf ihrem Weg – vom Studienbeginn bis zum Berufseinstieg.",
+      "longDescription": "ArbeiterKind.de ist eine gemeinnützige Organisation, die Schüler:innen und Studierende aus nichtakademischen Familien auf ihrem Bildungsweg unterstützt. Wir informieren über die Studienwahl, Finanzierungsmöglichkeiten wie BAföG und Stipendien,\nsowie alle wichtigen Fragen rund um das Studium. Unser Ziel ist es, junge Menschen zum Studium zu ermutigen und eigene Erfahrungen vom Studienstart bis zum Berufseinstieg weiterzugeben. Alle Menschen sollen frei über ihren Bildungsweg entscheiden können, unabhängig vom Bildungsstand der Eltern und unabhängig davon, woher sie kommen. Die Hochschulgruppe ArbeiterKind.de Dresden engagiert sich seit Jahren aktiv an der Technische Universität Dresden. Durch zahlreiche Informationsveranstaltungen unterstützen wir Studieninteressierte und Studierende dabei, den Einstieg ins Studium und den weiteren Studienverlauf erfolgreich zu meistern. Du willst dich ehrenamtlich engagieren? Dann werde Teil unserer vielfältigen Community!",
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
+      "websiteUrl": "https://arbeiterkind.de/mitmachen/lokale-gruppen/dresden/",
+      "instagramUrl": "https://www.instagram.com/arbeiterkind.de_dresden/",
+      "contactEmail": "dresden@arbeiterkind.de",
+      "memberCount": 1,
+      "language": "german",
+      "eventFrequency": "low",
+      "groupSize": "small",
+      "motto": null,
+      "foundedYear": 2008,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "party"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-16",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg3b4y0045ib04hd19vj1e",
+      "name": "AufeinanderAchten",
+      "slug": "team-aufeinanderachten",
+      "shortDescription": "Aufklärung, Enstigmatisierung und Empowerment für psychische Gesundheit! \nWissens- und Erfahrungsvermittlung, um gut auf sich selbst und auf andere zu achten.",
+      "longDescription": "Wir geben Kurse für Erwachsene und für Schüler:innen zum Thema psychische Gesundheit. Wir möchten Menschen dazu befähigen, auf ihr eigenes mentales Wohlbefinden zu achten und schulen sie darin, adäquat auf belastete Personen in ihrem Umfeld einzugehen. Unser Ziel ist es, eine Gesellschaft zu schaffen, in der psychische Gesundheit entstigmatisiert wird und psychische Belastungen ernst genommen werden. Helfen lernen ist einfach - man muss nur wissen wie!\nBei uns können alle mitmachen: Unser Team besteht aus Personen mit fachlich psychologischer Expertise, Erfahrungen durch eigene Betroffenheit und/oder als Angehörige von Menschen mit psychischen Erkrankungen. So können wir unsere Themen trialogisch gestalten.\nBei uns kann auch so ziemlich alles gemacht werden: Egal, ob man Kurse leiten möchte, gerne Instagramposts designed, mit anderen bei öffentlichen Events sich vernetzen möchte, Computerprobleme lösen will oder Spaß an Teameventplanung hat - für jede:n ist etwas dabei und wir freuen uns über jedes neue Gesicht, dss bei uns ehrenamtlich zur Tat schreiten möchte!",
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
+      "websiteUrl": "https://aufeinanderachten.de/",
+      "instagramUrl": "https://www.instagram.com/aufeinanderachten/",
+      "contactEmail": "info@aufeinanderachten.de",
+      "memberCount": 26,
+      "language": "german",
+      "eventFrequency": "low",
+      "groupSize": "medium",
+      "motto": "Weil Helfen lernen einfach ist!",
+      "foundedYear": 2020,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg2zy7000nib04ivf5joue",
+      "name": "Betonbootteam TU Dresden",
+      "slug": "betonbootteam-tu-dresden",
+      "shortDescription": "Das Betonbootteam der TU Dresden entwirft, konstruiert und baut seit 1996 Wasserfahrzeuge aus (Textil-)Beton und nimmt jährlich erfolgreich an internationalen Betonkanu-Regatten teil.",
+      "longDescription": "Das Betonbootteam der TU Dresden baut seit 1996 schwimmende Gefährte aus Beton und nimmt an der Deutschen Betonkanu-Regatta teil. Studierende des Bauingenieurwesens konstruieren und bauen in wöchentlichen Treffen gemeinsam Betonboote und wenden dabei aktuelle wissenschaftliche Erkenntnisse praktisch an.",
+      "categoryName": "Technik & Wissenschaft",
+      "categoryColor": "#00F5D4",
+      "categoryIcon": "cpu",
+      "websiteUrl": "https://www.betonboot.de",
+      "instagramUrl": "https://www.instagram.com/betonbootteam/",
+      "contactEmail": "betonboot@tu-dresden.de",
+      "memberCount": 20,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "medium",
+      "motto": null,
+      "foundedYear": 1996,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": true,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": true,
+        "networking": false,
+        "arts": true,
+        "music": false,
+        "timeLow": false,
+        "handsOn": true,
+        "outdoor": true,
+        "international": false,
+        "beginnerFriendly": true,
+        "competitive": true,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 3,
+        "filterSelections": [
+          "handsOn",
+          "competitive",
+          "arts"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmovsag870001ijcawnwjj8ed",
+      "name": "Bits und Bäume Dresden",
+      "slug": "bits-und-baeume-dresden",
+      "shortDescription": "Wir engagieren uns mit Veranstaltungen und Projekten für eine nachhaltige Digitalisierung. Ideen für Projekte von neuen Mitgliedern sind gerne willkommen!",
+      "longDescription": null,
+      "categoryName": "Nachhaltigkeit",
+      "categoryColor": "#06D6A0",
+      "categoryIcon": "leaf",
+      "websiteUrl": "https://dresden.bits-und-baeume.org/",
+      "instagramUrl": null,
+      "contactEmail": "dresden@bits-und-baeume.org",
+      "memberCount": null,
+      "language": null,
+      "eventFrequency": null,
+      "groupSize": null,
+      "motto": null,
+      "foundedYear": null,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "party",
+          "tech"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg3512002hib04vasm4hug",
+      "name": "bonding Studiereninitaive e.V.",
+      "slug": "bonding-studierendeninitiative-e-v",
+      "shortDescription": "Organisieren von Karriere Events, Exkursionen und die größte studentisch organisierte Messe Dresdens. Alles ehrenamtlich, alles kostenlos, alles von Studis für Studis.",
+      "longDescription": "Worum's geht es bei bonding: Wie vernetzen Studis mit Unternehmen, schon mitten im Studium und nicht erst nach dem Abschluss. \n\nWas wir dafür organisieren:\n- die bonding Firmenkontaktmesse jedes Frühjahr, mit über 100 Ausstellern eine der größten studentisch organisierten Karrieremessen Deutschlands\n- Exkursionen direkt in Werke und Büros von Unternehmen\n- Workshops und Soft-Skill-Trainings über unser bundesweites con-moto-Programm (Präsentation, Projektmanagement, Bewerbung)\n\nBei uns kannst du deine Skills einbringen und neue dazulernen. Wer schon was kann, übernimmt direkt Verantwortung; wer reinwachsen will, kriegt das beigebracht:\n\n- Marketing: Kampagnen, Social Media, Plakate, Flyer, Reels. Du lernst mit den Adobe-Programmen zu arbeiten.\n- Finanzen: Budgetplanung für Events und Buchhaltung mit DATEV. Praktische Erfahrung, die du in keinem Seminar so kriegst.\n- Makerspace: eigener Raum mit Werkzeug und Material, in dem wir Deko, Equipment und allen Kram selbst bauen\n- Daneben Eventorga, Sponsoring, IT und Vorstandsarbeit. Such dir aus, worauf du Bock hast.\n\nFür Studis ist alles kostenlos. Finanziert wird das über unsere Partnerunternehmen und Messen und dadurch, dass wir das Ganze ehrenamtlich stemmen.\n\nAktuell sind wir rund 15 aktive Studis quer durch alle Fachrichtungen (Maschinenwesen, Informatik, WiWi, Naturwissenschaften, ...) der TU. Plenum haben wir jeden Mittwoch ab 19 Uhr in unserem Büro auf der Nürnberger Straße 49. Wer reinschnuppern will: einfach beim nächsten Mittwoch dazustoßen oder uns vorher auf Instagram (@bondingdresden) anschreiben. Kein Bewerbungsverfahren, keine Vorerfahrung nötig.\n\nbonding gibt's seit 1988 bundesweit, in Dresden seit dem 1. Oktober 1990. Wir gehören damit zu den ältesten und größten Hochschulgruppen der bonding-Initiative.",
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
+      "websiteUrl": "https://bonding.de/der-verein/standorte/dresden",
+      "instagramUrl": "https://www.instagram.com/bondingdresden/",
+      "contactEmail": "dd_marketing@bonding.de",
+      "memberCount": 11,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "medium",
+      "motto": "erlebe, was Du werden kannst",
+      "foundedYear": 1990,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 2,
+        "filterSelections": [
+          "tech",
+          "party",
+          "arts"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg30on000xib04kq60g3v2",
+      "name": "Club Aquarium e.V.",
+      "slug": "club-aquarium-e-v",
+      "shortDescription": "Der Club Aquarium e.V. ist ein ehrenamtlich betriebener Dresdner Studentenclub mit Cocktailbar, Bühne und Veranstaltungen wie Konzerten, Kunstausstellungen und internationale Studentenpartys.",
+      "longDescription": "Der Club Aquarium e.V. ist ein seit 1983 ehrenamtlich betriebener Dresdner Studentenclub mit Cocktailbar, Bühne und Veranstaltungsort, der Konzerte, Kunstausstellungen, internationale Studentenpartys und Kneipenabende anbietet. Ziel des Vereins ist es, Studierenden einen Ort zum Kontakteknüpfen, Kunst erleben und Musik genießen zu bieten.",
+      "categoryName": "Kunst & Kultur",
+      "categoryColor": "#9B5DE5",
+      "categoryIcon": "palette",
+      "websiteUrl": "https://club-aquarium.de",
+      "instagramUrl": "https://www.instagram.com/instaquariumdd/",
+      "contactEmail": "info@club-aquarium.de",
+      "memberCount": 11,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "small",
+      "motto": null,
+      "foundedYear": 1983,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": true,
+        "religion": false,
+        "sports": false,
+        "networking": true,
+        "arts": true,
+        "music": true,
+        "timeLow": false,
+        "handsOn": true,
+        "outdoor": false,
+        "international": true,
+        "beginnerFriendly": true,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 2,
+        "filterSelections": [
+          "handsOn",
+          "party"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg30tx000zib04bdsmpi6v",
+      "name": "Club HängeMathe e.V.",
+      "slug": "club-haengemathe-e-v",
+      "shortDescription": "Kleiner linker Studiclub. Mindestens so süß wie eine Ratte ohne Fell.",
+      "longDescription": "Die Hängemathe ist ein gemütliches Wohnzimmer, in dem man Leute treffen und Spaßgetränke schlürfen kann.  \nDer Club wurde 1990 von Mathestudis gegründet und dann irgendwann halb von der Physik übernommen, aber wir haben auch Leute aus anderen Studiengängen und es wird nicht die ganze Zeit nur über Mathe geredet. (Aber schon manchmal, wenn es Spaß macht)  \nViele Clubmitglieder spielen gerne Kartenspiele, Brettspiele, Trinkspiele oder auch Tischkicker.  \nMusikalisch bewegen wir uns zwischen Punk, Metal, Indie, Rap, noch mehr Punk und generell allem, worauf der Bardienst gerade Lust hat.  \nWir öffnen drei Mal in der Woche den Club, wobei sehr häufig auch neben dem Bardienst noch Clubmitglieder als Gäste da sind, um einen entspannten Abend zu verbringen.\nWillkommen sind alle, die vorbeikommen wollen, mit der Ausnahme, dass Diskriminierung nicht ok ist und Nazis Hausverbot haben.",
+      "categoryName": "Sonstiges",
+      "categoryColor": null,
+      "categoryIcon": null,
+      "websiteUrl": "https://www.club-haengemathe.de",
+      "instagramUrl": "https://www.instagram.com/clubhaengemathe/",
+      "contactEmail": "vorstand@club-haengemathe.de",
+      "memberCount": 11,
+      "language": "both",
+      "eventFrequency": "high",
+      "groupSize": "medium",
+      "motto": "Und warum? Weil wir so sexy sind!",
+      "foundedYear": 1990,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 3,
+        "filterSelections": [
+          "music",
+          "party",
+          "arts",
+          "outdoor",
+          "competitive",
+          "tech"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg31f20017ib04isipueph",
+      "name": "DIAS - Dresdner Interessensverband für Außen- und Sicherheitspolitik",
+      "slug": "dresdner-interessenverband-fuer-aussen-und-sicherheitspolitik-dias",
+      "shortDescription": "Du interessierst dich für internationale Politik und das aktuelle Weltgeschehen? Dann komm zum DIAS! Wir organisieren monatlich Vorträge und Diskussionen - und suchen neue Mitglieder!",
+      "longDescription": "Politik bleibt im Studium oft abstrakt, theoretisch und weit weg von aktuellen Debatten. Genau das wollen wir ändern: Beim Dresdner Interessensverband für Außen- und Sicherheitspolitik schaffen wir Raum, um über internationale Politik, globale Krisen und aktuelle außen- und sicherheitspolitische Fragen ins Gespräch zu kommen.\nDafür holen wir regelmäßig Referent:innen und Expert:innen nach Dresden und laden Studierende aller Fachrichtungen ein, mitzudiskutieren und Fragen zu stellen. Unseren Mitgliedern bieten wir außerdem einen offenen Raum für Austausch, sowie Zugang zu Veranstaltungen unseres Dachverbandes, dem Bundesverband Sicherheitspolitik an Hochschulen (BSH).",
+      "categoryName": "Sonstiges",
+      "categoryColor": null,
+      "categoryIcon": null,
+      "websiteUrl": "https://dresden.sicherheitspolitik.de/aktuelles",
+      "instagramUrl": "dias_dresden",
+      "contactEmail": "dresden@sicherheitspolitik.de",
+      "memberCount": 26,
+      "language": "german",
+      "eventFrequency": "medium",
+      "groupSize": "small",
+      "motto": null,
+      "foundedYear": 2025,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "party"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-08",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg314h0013ib04wu90tbhd",
+      "name": "DIE BÜHNE e.V. – das Theater der TU Dresden",
+      "slug": "die-buehne-e-v-das-theater-der-tu-dresden",
+      "shortDescription": "DIE BÜHNE ist das studentische Amateurtheater der TU Dresden, gegründet 1956, mit Schwerpunkt auf professioneller Theaterarbeit (Schauspiel, Performance, Lesung, Konzert) durch Studierende aller Fachb",
+      "longDescription": "DIE BÜHNE ist das studentische Amateurtheater der TU Dresden, gegründet 1956, mit Schwerpunkt auf professioneller Theaterarbeit (Schauspiel, Performance, Lesung, Konzert) durch Studierende aller Fachbereiche. Pro Spielzeit entstehen vier bis fünf Inszenierungen sowie kleinere Projekte in Bereichen wie Regie, Dramaturgie, Licht- und Tontechnik.",
+      "categoryName": "Kunst & Kultur",
+      "categoryColor": "#9B5DE5",
+      "categoryIcon": "palette",
+      "websiteUrl": "https://die-buehne.tu-dresden.de",
+      "instagramUrl": null,
+      "contactEmail": null,
+      "memberCount": null,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "large",
+      "motto": null,
+      "foundedYear": null,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": true,
+        "party": true,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": true,
+        "music": true,
+        "timeLow": false,
+        "handsOn": true,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": true,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "tech"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg31ke0019ib04vcv5k5xf",
+      "name": "ELBFLORACE Formula Student Team TU Dresden e.V.",
+      "slug": "elbflorace-formula-student-team-tu-dresden-e-v",
+      "shortDescription": "ELBFLORACE ist eine Hochschulgruppe der TU Dresden, die am größten studentischen Konstruktionswettbewerb, der Formula Student, teilnimmt und dafür einen vollelektrischen und autonomen Rennwagen baut.",
+      "longDescription": "Elbflorace ist eine Hochschulgruppe der TU Dresden, die seit 2006 jährlich am weltweit größten studentischen Konstruktionswettbewerb Formula Student teilnimmt und dafür selbst einen vollelektrischen, autonom fahrenden Rennwagen entwickelt und baut. Das Team besteht aus ca. 70 aktiven Mitgliedern aus Ingenieur-, Wirtschafts- und Informatik-Studiengängen.",
+      "categoryName": "Technik & Wissenschaft",
+      "categoryColor": "#00F5D4",
+      "categoryIcon": "cpu",
+      "websiteUrl": "https://elbflorace.de",
+      "instagramUrl": "https://www.instagram.com/elbflorace/",
+      "contactEmail": "kontakt@elbflorace.de",
+      "memberCount": 70,
+      "language": "both",
+      "eventFrequency": "high",
+      "groupSize": "large",
+      "motto": null,
+      "foundedYear": null,
+      "logoUrl": null,
+      "attributes": {
+        "career": true,
+        "tech": true,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": true,
+        "networking": true,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": true,
+        "outdoor": true,
+        "international": true,
+        "beginnerFriendly": true,
+        "competitive": true,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "handsOn",
+          "competitive",
+          "tech",
+          "arts"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmovsagcm0005ijca03bo4xme",
+      "name": "EnergieNetz Dresden",
+      "slug": "energienetz-dresden",
+      "shortDescription": "Energienetz Dresden bietet eine Plattform für Studierende in den Bereichen Energiewirtschaft und Energieversorgung.",
+      "longDescription": "Energienetz Dresden ist eine Studentische Hochschulgruppe an der TU-Dresden, die sich thematisch mit der Energieversorgung, Energieinfrastruktur und Energiewirtschaft im Zeichen der Energiewende beschäftigt.\n\nWir bieten eine Plattform für den fachlichen und sozialen Austausch der Studierenden untereinander und durch Kooperationen mit Unternehmen und Organisationen werden Perspektiven aufgezeigt, die den Einstieg in die Berufswelt erleichtert.",
+      "categoryName": "Wirtschaft & Karriere",
+      "categoryColor": null,
+      "categoryIcon": null,
+      "websiteUrl": "https://junge-energie.org/en-dresden/",
+      "instagramUrl": "https://www.instagram.com/energienetz.dresden/",
+      "contactEmail": null,
+      "memberCount": null,
+      "language": "german",
+      "eventFrequency": "low",
+      "groupSize": "small",
+      "motto": null,
+      "foundedYear": null,
+      "logoUrl": null,
+      "attributes": {
+        "career": true,
+        "tech": true,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": true,
+        "arts": false,
+        "music": false,
+        "timeLow": true,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "tech"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-19",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg31uy001dib04bh8zejqn",
+      "name": "Erasmus Student Network TU Dresden e.V.",
+      "slug": "erasmus-student-network-tu-dresden-e-v",
+      "shortDescription": "ESN TU Dresden als Teil eines europaweiten Netzwerkes bietet internationalen Studierenden und Locals einen regen Austausch in Form von Feiern, Sprachcafés, Workshops und weiteren Events.",
+      "longDescription": "Das ESN TU Dresden unterstützt internationale Studierende bei ihrem Aufenthalt in Dresden und bringt ausländische und deutsche Studierende zusammen. Die Gruppe organisiert Partys, Ausflüge, Theaterbesuche, sportliche Veranstaltungen, Sprachcafés und kulturelle Events.",
+      "categoryName": "Internationales",
+      "categoryColor": "#FFD166",
+      "categoryIcon": "globe",
+      "websiteUrl": "https://esn-dresden.de",
+      "instagramUrl": null,
+      "contactEmail": null,
+      "memberCount": null,
+      "language": "both",
+      "eventFrequency": "high",
+      "groupSize": "medium",
+      "motto": null,
+      "foundedYear": null,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": true,
+        "party": true,
+        "religion": false,
+        "sports": true,
+        "networking": true,
+        "arts": false,
+        "music": false,
+        "timeLow": true,
+        "handsOn": false,
+        "outdoor": true,
+        "international": true,
+        "beginnerFriendly": true,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "outdoor"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-14",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-19",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg32at001jib04aen3x6s2",
+      "name": "FIRST AID FOR ALL - Dresden",
+      "slug": "first-aid-for-all-dresden",
+      "shortDescription": "First Aid For All ist eine studentische Hochschulgruppe, die ehrenamtlich Reanimationstrainings an Schulen und in der Öffentlichkeit anbietet, um lebensrettendes Wissen für alle zugänglich zu machen.",
+      "longDescription": "First Aid For All wurde 2022 gegründet. Seitdem haben wir vor allem Medizinstudierende ausgebildet, die unsere Reanimationstrainings ehrenamtlich durchführen. Grundsätzlich steht unsere Hochschulgruppe jedoch Studierenden aller Fachrichtungen offen, da unsere achtstündige Grundausbildung alle notwendigen Kenntnisse vermittelt, um das Gelernte anschließend selbst weiterzugeben.\nUnsere Hauptzielgruppe sind Schülerinnen und Schüler der 7. bis 9. Klasse. Darüber hinaus haben wir bereits Trainings für Unternehmen und Sportvereine angeboten sowie öffentliche Mitmachaktionen durchgeführt, beispielsweise vor dem HSZ oder auf den Brühlschen Terrassen",
+      "categoryName": "Sonstiges",
+      "categoryColor": null,
+      "categoryIcon": null,
+      "websiteUrl": "https://www.instagram.com/firstaidforall_dresden/",
+      "instagramUrl": "https://www.instagram.com/firstaidforall_dresden/",
+      "contactEmail": "firstaidforall.dresden@mailbox.tu-dresden.de",
+      "memberCount": 26,
+      "language": "german",
+      "eventFrequency": "medium",
+      "groupSize": "small",
+      "motto": null,
+      "foundedYear": 2022,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg35m9002lib040bx4rjfu",
+      "name": "Folkloretanzensemble „-Thea Maass“ der TU Dresden",
+      "slug": "folkloretanzensemble-thea-maass-der-tu-dresden",
+      "shortDescription": "Seit 1950 zählt das Folkloretanzensemble „Thea Maass“ der TU Dresden zu den leistungsstärksten und künstlerisch profiliertesten Amateurtanzgruppen Deutschlands.",
+      "longDescription": "Unter der Leitung der Tanzpädagogin und Choreografin Maud Butter widmen sich gegenwärtig etwa 40 Tänzer und Musiker der Pflege und Interpretation deutscher Tanzfolklore sowie der tänzerischen Umsetzung von überlieferten Bräuchen aus verschiedenen deutschen Regionen in anspruchsvollen Bühnenchoreografien. Dabei steht der feinfühlige und verantwortungsbewusste Umgang mit unserem Kulturerbe im Vordergrund der Gestaltung thematischer und handlungsbezogener Werke mit den vielfältigen Mitteln des Folkloretanzes.\n\nGanz im Sinne der lange Zeit für das Ensemble wirkenden Choreografin und Tanzregisseurin Thea Maass ist das Ziel der Gruppe, Menschen die Folklore in ihrer lebendigen Natürlichkeit, ihrem ausdrucksstarken Formenreichtum und in ihrer ganzen Schönheit nahe zu bringen.\n\nGelegenheit dazu bietet sich dem vorwiegend aus Studenten und Absolventen der TU Dresden bestehenden Ensemble nicht nur bei regionalen und landesweiten Auftritten, sondern als Mitglied des Internationalen Rats für die Organisation von Folklorefestivals und Volkskunst (CIOFF) auch bei zahlreichen Folklorefestivals und Tanzwettbewerben im Ausland. Im Kontakt mit Folkloregruppen und Menschen aus der ganzen Welt erfährt das Ensemble nicht nur selbst immer wieder neue Impulse in seiner künstlerischen Arbeit, sondern trägt in seiner Vielseitigkeit auch zu einem regen Austausch zwischen den Kulturen bei.",
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
+      "websiteUrl": "tu-te.de",
+      "instagramUrl": "https://www.instagram.com/theamaass_dance/",
+      "contactEmail": "info@tu-te.de",
+      "memberCount": 26,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "medium",
+      "motto": "Tänzerisch lebendig auf den Spuren unserer Kultur …",
+      "foundedYear": 1950,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 3,
+        "filterSelections": [
+          "arts",
+          "sports",
+          "competitive"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-12",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg35rj002nib04ox2q7ga6",
+      "name": "Gutzkowclub e.V.",
+      "slug": "gutzkowclub-e-v",
+      "shortDescription": "Der Gutzkowclub ist Dresdens ältester Studentenclub, gegründet 1964, und betreibt eine Studentenbar im Max-Kade-Haus an der Gutzkowstraße. Er bietet regelmäßige Veranstaltungen wie Kneipenquiz, Skatab",
+      "longDescription": "Der Gutzkowclub ist Dresdens ältester Studentenclub, gegründet 1964, und betreibt eine Studentenbar im Max-Kade-Haus an der Gutzkowstraße. Er bietet regelmäßige Veranstaltungen wie Kneipenquiz, Skatabende, Karaoke, Beerpong- und Dartturniere sowie die Möglichkeit, die Location für private Feiern zu mieten.",
+      "categoryName": "Kunst & Kultur",
+      "categoryColor": "#9B5DE5",
+      "categoryIcon": "palette",
+      "websiteUrl": "https://www.gutzkowclub.de",
+      "instagramUrl": null,
+      "contactEmail": null,
+      "memberCount": null,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "small",
+      "motto": null,
+      "foundedYear": null,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": true,
+        "religion": false,
+        "sports": false,
+        "networking": true,
+        "arts": false,
+        "music": false,
+        "timeLow": true,
+        "handsOn": false,
+        "outdoor": false,
+        "international": true,
+        "beginnerFriendly": true,
+        "competitive": true,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "competitive"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg35ws002pib04cd0ojnqb",
+      "name": "Heinrich-Cotta-Club e.V.",
+      "slug": "heinrich-cotta-club-e-v",
+      "shortDescription": "Der Heinrich-Cotta-Club (HCC) ist der Studentenclub der Forstwissenschaften in Tharandt der wöchentliche Clubabende veranstaltet. Auch bei größeren Events wie der Dresdner Nachtwanderung ist er dabei.",
+      "longDescription": "Der Heinrich-Cotta-Club (HCC) ist ein Studentenclub in Tharandt, gegründet 1986 von Forststudenten der TU Dresden, der wöchentliche Clubabende sowie Veranstaltungen wie den Grünen Ball, das Holzhackerfest und einen Mannschafts-Triathlon organisiert. Er richtet sich primär an Studierende der Forstwissenschaften und bietet ein geselliges Beisammensein mit Bar, Partys und Themenabenden.",
+      "categoryName": "Sonstiges",
+      "categoryColor": null,
+      "categoryIcon": null,
+      "websiteUrl": "http://www.heinrich-cotta-club.de/",
+      "instagramUrl": null,
+      "contactEmail": null,
+      "memberCount": null,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "small",
+      "motto": null,
+      "foundedYear": null,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": true,
+        "religion": false,
+        "sports": true,
+        "networking": true,
+        "arts": false,
+        "music": false,
+        "timeLow": true,
+        "handsOn": false,
+        "outdoor": true,
+        "international": false,
+        "beginnerFriendly": true,
+        "competitive": true,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg39nz003lib04a0s53xnu",
+      "name": "Hochschul-SMD Dresden",
+      "slug": "hochschul-smd-dresden",
+      "shortDescription": "Wir sind eine Gruppe christlicher Studis und möchten den Glauben an der Uni ins Gespräch bringen. Egal, welche Überzeugung du hast: Du bist herzlich willkommen!",
+      "longDescription": "Die SMD ist ein deutschlandweites, überkonfessionelles Netzwerk von Christen in Schule, Hochschule und Beruf – und wir als Hochschul-SMD Dresden sind ein Teil davon. Unsere Gruppe wurde 1990 gegründet und war die erste anerkannte Hochschulgruppe an der TU Dresden. \nAls studierende Christen möchten wir unseren Glauben im Kontext der Hochschule ins Gespräch bringen. Dabei gehören für uns Denken, Glauben und Erleben zusammen. Unsere Ziele sind es, christliche Werte wie Nächstenliebe und Gerechtigkeit an der Hochschule zu leben, Studis zum christlichen Glauben einzuladen und in den Austausch über Glauben und Wissenschaft zu kommen. Egal, welche Überzeugungen du hast, ob du Christ bist oder einfach neugierig: Du bist herzlich willkommen.\n\nWährend des Semesters laden wir alle zwei Wochen dienstags zu Themenabenden ein. Dich erwartet eine gute Mischung aus spannenden Impulsen, offenem Austausch und Gemeinschaft. Darüber hinaus organisieren wir Hörsaalvorträge, Kaffeestände und viele weitere Aktionen.\nKomm gerne vorbei, wir freuen uns auf dich!",
+      "categoryName": "Sonstiges",
+      "categoryColor": null,
+      "categoryIcon": null,
+      "websiteUrl": "https://hochschul-smd.org/dresden/",
+      "instagramUrl": "https://www.instagram.com/smd_dresden?igsh=Nmdya3YyYTNuaG83",
+      "contactEmail": "dresden@smd.org",
+      "memberCount": 11,
+      "language": "both",
+      "eventFrequency": "medium",
+      "groupSize": "medium",
+      "motto": "Denken. Glauben. Erleben.",
+      "foundedYear": 1990,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 2,
+        "filterSelections": [],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg39au003hib0421t7krmw",
+      "name": "HSG Progressiv am Campus",
+      "slug": "progressiv-am-campus",
+      "shortDescription": "Progressiv am Campus vernetzt engagierte Studierende, die Hochschule mitgestalten wollen – in Gremien und darüber hinaus. Gemeinsam machen wir Uni-Politik gerechter, offener und zukunftsfähiger.",
+      "longDescription": "Die Hochschulgruppe Progressiv am Campus ist der Zusammenschluss all jener, die den Uni-Alltag mitgestalten wollen - im Senat, in Senatskommissionen, weiteren Hochschulgremien oder einfach mit dem Wunsch, Hochschulpolitik progressiv voranzutreiben. Wir vernetzen engagierte Studierende zwischen den Uni-Wahlen und über die Wahlperiode hinaus, schaffen Räume für den Austausch und entwickeln gemeinsam Konzepte und Forderungen, die die Universität gerechter, offener und zukunftsfähiger machen. Dabei geht es nicht nur um Gremienarbeit, sondern auch um gegenseitige Unterstützung, hochschulpolitische Diskussionen und das gemeinsame Durchatmen inmitten des hochschulpolitischen Trubels.",
+      "categoryName": "Sonstiges",
+      "categoryColor": null,
+      "categoryIcon": null,
+      "websiteUrl": "tud.vote",
+      "instagramUrl": "https://www.instagram.com/studis_im_senat?igsh=a3pmYzcxYnIxb3E4",
+      "contactEmail": "studis_im_senat@mailbox.tu-dresden.de",
+      "memberCount": 11,
+      "language": "german",
+      "eventFrequency": "medium",
+      "groupSize": "small",
+      "motto": "Geht zur Wahl, wählt Aal.",
+      "foundedYear": 2025,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 3,
+        "filterSelections": [
+          "party"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg3319001tib040gp4jnjn",
+      "name": "Interessengemeinschaft Börse an der TU Dresden e.V.",
+      "slug": "interessengemeinschaft-boerse-an-der-tu-dresden-e-v",
+      "shortDescription": "Die IGB Dresden ist ein 1995 gegründeter studentischer Börsenverein an der TU Dresden, der börseninteressierte Studierende und Privatinvestoren mit Wissen und Netzwerk unterstützt.",
+      "longDescription": "Die IGB Dresden ist ein 1995 gegründeter studentischer Börsenverein an der TU Dresden, der börseninteressierte Studierende, Privatinvestoren und Bürger durch wöchentliche Diskussionsrunden, Vorträge, Seminare und Börsenfahrten zusammenbringt. Ziel ist es, Wissen über Kapitalmärkte und Finanzthemen zu vermitteln und ein Netzwerk in die Finanzwelt aufzubauen.",
+      "categoryName": "Soziales Engagement",
+      "categoryColor": "#EF476F",
+      "categoryIcon": "heart",
+      "websiteUrl": "https://www.igboerse.de",
+      "instagramUrl": null,
+      "contactEmail": null,
+      "memberCount": null,
+      "language": "german",
+      "eventFrequency": "medium",
+      "groupSize": "medium",
+      "motto": null,
+      "foundedYear": null,
+      "logoUrl": null,
+      "attributes": {
+        "career": true,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": true,
+        "arts": false,
+        "music": false,
+        "timeLow": true,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": true,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "party",
+          "tech",
+          "competitive"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg33mh0021ib04vcw4fe3n",
+      "name": "Junges Ensemble Dresden",
+      "slug": "junges-ensemble-dresden",
+      "shortDescription": "Das Junge Ensemble Dresden ist ein ambitionierter Kammerchor mit ca. 35 Sängerinnen und Sängern, überwiegend Studierende und junge Berufstätige, der sich anspruchsvoller Chorliteratur von der Renaissa",
+      "longDescription": "Das Junge Ensemble Dresden ist ein ambitionierter Kammerchor mit ca. 35 Sängerinnen und Sängern, überwiegend Studierende und junge Berufstätige, der sich anspruchsvoller Chorliteratur von der Renaissance bis zur Moderne widmet. Der Chor pflegt A-cappella-Gesang, Obertongesang und führt alljährliche Konzertreisen ins Ausland, insbesondere nach Osteuropa, durch.",
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
+      "websiteUrl": "https://jungesensembledresden.de/",
+      "instagramUrl": null,
+      "contactEmail": null,
+      "memberCount": null,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "medium",
+      "motto": null,
+      "foundedYear": null,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": true,
+        "music": true,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": true,
+        "beginnerFriendly": false,
+        "competitive": true,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "music"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-16",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg34im002dib04278dyw4v",
+      "name": "Leo-Club Dresden 'August der Starke'",
+      "slug": "leo-club-dresden-august-der-starke",
+      "shortDescription": "Der Leo-Club Dresden 'August der Starke' ist eine studentische Hochschulgruppe der TU Dresden, die sich durch soziale Projekte wie Umweltaktionen (Elbwiesenreinigung), Spendenaktionen (Car Wash),...",
+      "longDescription": "Der Leo-Club Dresden 'August der Starke' ist eine studentische Hochschulgruppe der TU Dresden, die sich durch soziale Projekte wie Umweltaktionen (Elbwiesenreinigung), Spendenaktionen (Car Wash) und die Unterstützung sozialer Einrichtungen engagiert. Das Motto der Gruppe lautet 'We Serve' und vereint Studierendes Engagement mit Gemeinschaft und Spaß.",
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
+      "websiteUrl": "https://dresden-august-der-starke.leo-clubs.de/",
+      "instagramUrl": "https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.instagram.com/leoclub.dresden.ads/&ved=2ahUKEwiapZzGiKyUAxUigP0HHXMyC-IQFnoECCAQAQ&usg=AOvVaw099chDHX8fivPrMSDJEJAx",
+      "contactEmail": "augustderstarke@leo-clubs.de",
+      "memberCount": 13,
+      "language": "german",
+      "eventFrequency": "low",
+      "groupSize": "small",
+      "motto": null,
+      "foundedYear": 1998,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": true,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": true,
+        "arts": false,
+        "music": false,
+        "timeLow": true,
+        "handsOn": true,
+        "outdoor": true,
+        "international": false,
+        "beginnerFriendly": true,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 3,
+        "filterSelections": [],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg34nw002fib04enlaaned",
+      "name": "Liberale Hochschulgruppe Dresden",
+      "slug": "liberale-hochschulgruppe-dresden",
+      "shortDescription": "Die Liberale Hochschulgruppe Dresden (LHG) ist eine politische Hochschulgruppe an der TU Dresden, die sich für liberale und freiheitliche Werte sowie die Interessen der Studierenden in der Hochschulpo",
+      "longDescription": "Die Liberale Hochschulgruppe Dresden (LHG) ist eine politische Hochschulgruppe an der TU Dresden, die sich für liberale und freiheitliche Werte sowie die Interessen der Studierenden in der Hochschulpolitik einsetzt. Sie diskutiert gesellschaftliche und hochschulpolitische Themen und trifft sich regelmäßig zum liberalen Stammtisch.",
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
+      "websiteUrl": "https://lhg-dresden.de",
+      "instagramUrl": null,
+      "contactEmail": null,
+      "memberCount": null,
+      "language": "german",
+      "eventFrequency": "medium",
+      "groupSize": "small",
+      "motto": null,
+      "foundedYear": null,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": true,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": true,
+        "arts": false,
+        "music": false,
+        "timeLow": true,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": true,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "party"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-19",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg38v0003bib04jeqrv00c",
+      "name": "Nightline Dresden e.V.",
+      "slug": "nightline-dresden-e-v",
+      "shortDescription": "Die Nightline Dresden ist ein anonymes Zuhörtelefon und Chatangebot von Studierenden für Studierende. Wir bieten dienstags, donnerstags, samstags und sonntags von 21 bis 24 Uhr ein offenes Ohr.",
+      "longDescription": "Die Nightline Dresden ist ein Zuhörtelefon von Studierenden für Studierende während der Nachtstunden. Egal, ob Prüfungsangst, Zweifel an der Wahl des Studienfachs, Stress in der WG, Heimweh oder Liebeskummer – die Liste studentischer Sorgen ist lang und gerade bei solchen Problemen sind wir für Dich da. Auch wenn Du einfach mal reden willst, haben wir ein offenes Ohr für Dich. Wir werten und verurteilen nicht, und wir sagen Dir nicht, was Du tun sollst. Wir hören Dir zu und finden vielleicht mit Dir zusammen einen Weg. Dabei gilt ganz besonders: Alle Anrufe werden vertraulich behandelt, niemand braucht seinen Namen zu nennen.\n\nAlle Mitglieder sind durch eine mehrtägige Schulung in den Grundlagen der Gesprächsführung ausgebildet und werden regelmäßig durch psychologische Fachkräfte supervidiert.\n\nWir arbeiten nach folgenden Prinzipien:\n- Anonymität: Niemand braucht seinen Namen zu nennen, wir bleiben ebenfalls anonym.\n- Vertraulichkeit: Wir unterliegen alle einer Schweigepflicht.\n- Vorurteilsfreiheit: Jedes Gespräch wird unvoreingenommen geführt; wir werten und verurteilen nicht.\n- Unabhängigkeit: Die Nightline Dresden ist institutionell, konfessionell und finanziell unabhängig.\n- Niederschwelligkeit: Die Nightline erhebt keinen Anspruch auf Professionalität, wir verstehen uns als Hilfe auf Augenhöhe.\n\nNeben Telefon- und Chatdiensten engagieren sich unsere Mitglieder auch in anderen Bereichen im Verein: Finanzen, Technik, Öffentlichkeitsarbeit, Dienstplan, ...\n\nDas Konzept kommt ursprünglich aus Großbritannien, wo es über 40 verschiedene Nightlines gibt. Die Nightline Dresden ist in engem Austausch mit den nationalen und internationalen Nightlines.",
+      "categoryName": "Soziales Engagement",
+      "categoryColor": "#EF476F",
+      "categoryIcon": "heart",
+      "websiteUrl": "https://nightline-dresden.de/",
+      "instagramUrl": "https://www.instagram.com/nightlinedresden?igsh=MW12bnhneHFicTVlbg==",
+      "contactEmail": "marketing@nightline-dresden.de",
+      "memberCount": 11,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "medium",
+      "motto": null,
+      "foundedYear": 2009,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmovsagfa0009ijcapim9nk7a",
+      "name": "RCDS Dresden",
+      "slug": "rcds-dresden",
+      "shortDescription": "Wir sind eine politische Hochschulgruppe. Uns verbinden christdemokratische, konservative und liberale Werte. Neben Hochschulpolitik und Diskussionen stehen bei uns Spaß und Vernetzung im Vordergrund.",
+      "longDescription": null,
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
+      "websiteUrl": "https://www.rcds-sachsen.de/ortsgruppen/dresden/",
+      "instagramUrl": "https://www.instagram.com/rcds_dresden/",
+      "contactEmail": "rcds.dresden@gmail.com",
+      "memberCount": 20,
+      "language": null,
+      "eventFrequency": null,
+      "groupSize": null,
+      "motto": null,
+      "foundedYear": 1996,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "party"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmpd2w4290001l704lgd1dlte",
+      "name": "Rotaract Club Dresden",
+      "slug": "rotaract-club-dresden",
+      "shortDescription": "Lernen – Helfen – Feiern ist unser Motto und jeder, der sich für einen sozialen Zweck engagieren möchte, kann mitmachen.\nWir treffen uns wöchentlich in und um Dresden herum.",
+      "longDescription": "Bei Rotaract treffen sich junge Menschen, die das Motto „Lernen – Helfen – Feiern“ verbindet. Rotaract steht dabei für „Rotary in Action“. Die 192 Rotaract Clubs in Deutschland haben mehr als 3.700 Mitglieder, weltweit sind die Clubs mit über 250.000 Mitgliedern eine der größten Jugendorganisationen. Ihr Dachverband ist der Rotary Club.\n\nWir setzen uns gemeinsam für andere ein und tragen durch Freundschaft, Fairness und Toleranz zur internationalen Verständigung bei. Mit Begeisterung und Spaß wollen wir die Welt verbessern und mit Kleinem Großes erreichen. Wir sind Student*innen und junge Berufstätige zahlreicher Fachrichtungen. Unser Altersspektrum reicht von 18 bis ca. 35 Jahren.\n\nWir treffen uns wöchentlich zu verschiedenen Anlässen in und um Dresden, und helfen Menschen in unserer Umgebung durch Sozialaktionen. In Dresden organisieren wir beispielsweise jedes Jahr die Weihnachtsfeier des Lebenshilfe e.V. und in den Sommerferien das Kidscamp mit dem Verein Urlaubskinder e.V. Wir gehen als Vorleser*innen in Seniorenheime, beteiligen uns an Aktivitäten wie der Elbwiesenreinigung und bilden uns immer wieder gemeinsam fort.\n\nDu hast Interesse an Rotaract? Dann freuen wir uns eine Mail an dresden[at]rotaract.de und kommt vorbei!",
+      "categoryName": "Soziales Engagement",
+      "categoryColor": "#EF476F",
+      "categoryIcon": "heart",
+      "websiteUrl": "https://dresden.rotaract.de/",
+      "instagramUrl": "https://www.instagram.com/rotaract_dresden/",
+      "contactEmail": "dresden-vorstand@rotaract.de",
+      "memberCount": 11,
+      "language": "both",
+      "eventFrequency": "high",
+      "groupSize": null,
+      "motto": "Lernen - Helfen - Feiern",
+      "foundedYear": 1991,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "handsOn",
+          "arts"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmpldv40a0001l404p8xq8k3o",
+      "name": "Rotaract Club Dresden",
+      "slug": "rotaract-club-dresden-2",
+      "shortDescription": "Ehrenamt: Wöchentliche Treffen immer Donnerstags 19:30 Uhr an immer abwechselnden Orten in und um Dresden.\nLernen: Vorträge/ Museen\nHelfen: Tafel; Lebenshilfe \nFeiern: Bar-/ Biergartenbesuche",
+      "longDescription": "Wir verstehen uns als große Freundesgruppe, die sich zusammen sozial engagiert und sich regelmäßig wöchentlich einmal trifft.\nBasierend auf unserem Motto basteln wir jeden Monat ein abwechslungsreiches Programm zusammen, das jeden Punkt abdeckt. \nIm Bereich des Helfens unterstützen wir zahlreiche soziale Einrichtungen in Dresden, bspw. die Lebenshilfe Dresden, das Familienzentrum Radebeul, den WinWin e.V. oder auch die Dresdner Tafel.\nWir freuen uns über jede und jeden, die sich ebenfalls engagieren möchten. Bei uns könnt ihr unverbindlich bei den Treffen teilnehmen und schauen, ob es \neuch gefällt und ob ihr euch einbringen möchtet.",
+      "categoryName": "Soziales Engagement",
+      "categoryColor": "#EF476F",
+      "categoryIcon": "heart",
+      "websiteUrl": "https://dresden.rotaract.de/",
+      "instagramUrl": "https://instagram.com/rotaract_dresden",
+      "contactEmail": "felix.a.mack@rotaract.de",
+      "memberCount": 11,
+      "language": "german",
+      "eventFrequency": null,
+      "groupSize": null,
+      "motto": "Lernen - Helfen - Feiern",
+      "foundedYear": 1991,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "handsOn",
+          "outdoor"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmpcj2uuw0001jv04qia1wqcw",
+      "name": "Schachboxen",
+      "slug": "schachboxen",
+      "shortDescription": "Erst Schach, dann Boxen – und das im Wechsel, bis jemand schachmattgesetzt wird oder im Ring nicht mehr weitermachen kann.\n(Die meisten Matches werden durch Schachmatt entschieden)",
+      "longDescription": "Angefangen hat alles mit einem Turnier in einem Keller im Zelleschen Weg. Ein Semester später standen wir schon im Sommer auf der Wiese, und inzwischen sind wir eine offizielle Hochschulgruppe mit gemieteter Turnhalle. Schritt für Schritt geht es aufwärts.",
+      "categoryName": "Sport & Bewegung",
+      "categoryColor": "#00BBF9",
+      "categoryIcon": "trophy",
+      "websiteUrl": null,
+      "instagramUrl": null,
+      "contactEmail": "schachboxentudresden@gmail.com",
+      "memberCount": 1,
+      "language": "german",
+      "eventFrequency": null,
+      "groupSize": null,
+      "motto": "Die einzige Sportart mit Schachuhr und Mundschutz",
+      "foundedYear": 2025,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 2,
+        "filterSelections": [
+          "sports",
+          "competitive"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg3aee003vib04flz35log",
+      "name": "Studentische Wasserwacht Dresden",
+      "slug": "studentische-wasserwacht-dresden",
+      "shortDescription": "In der Studentischen Wasserwacht Dresden engagieren wir uns ehrenamtlich als Rettungsschwimmer. Dafür trainieren wir wöchentlich in der Schwimmhalle und bilden uns regelmäßig weiter.",
+      "longDescription": "Als eine humanitäre und wassersporttreibende Gemeinschaft des Deutschen Roten Kreuzes setzen wir uns ehrenamtlich für die Sicherheit anderer am und im Wasser ein. Zu unseren Aufgaben zählen: Dienste in Schwimmbädern und am Meer, Absicherung von Veranstaltungen an und auf dem Wasser, Einsätze bei Hochwasser und Katastrophen, Prävention von Badeunfällen und die Aus- und Fortbildung von Einsatzkräften. Unsere Wasserwacht Ortsgruppe arbeitet dabei seit ihrem Bestehen eng mit dem Dresdner Hochschulsportzentrum (DHSZ) zusammen.\n\nWir treffen uns wöchentlich zum Rettungsschwimmtraining, um unsere Einsatzfähigkeit als Rettungsschwimmer zu verbessern bzw. zu erhalten. Zu diesem Zweck bieten wir den Mitgliedern auch verschiedene Ausbildungen trainingsbegleitend, in Gruppenstunden oder über Dachorganisationen an. Der soziale Aspekt und persönliche Austausch mit Gleichgesinnten kommen dabei auch nicht zu kurz. \n\nMehr Infos zu uns findest du auf unserer Webseite.",
+      "categoryName": "Sonstiges",
+      "categoryColor": null,
+      "categoryIcon": null,
+      "websiteUrl": "www.studentische-ww-dd.de",
+      "instagramUrl": "https://www.instagram.com/wasserwacht.dresden?igsh=cmxiaTBnNnd4ODJz",
+      "contactEmail": "kontakt@studentische-ww-dd.de",
+      "memberCount": 100,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "large",
+      "motto": "Mit Sicherheit am Wasser",
+      "foundedYear": 1991,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "sports"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmpcjj0pp0002jp04wskobi9k",
+      "name": "Studentischer Fotoclub Dresden",
+      "slug": "studentischer-fotoclub-dresden",
+      "shortDescription": "Gemeinsam fotografieren und Bilder besprechen.",
+      "longDescription": "Wir treffen uns jeden Montag im Tusculum um Bilder zu besprechen. Darüber hinaus haben wir ein Fotostudio und eine Dunkelkammer, die unsere Mitglieder frei nutzen können. Kommt gerne vorbei und schaut es euch an.",
+      "categoryName": "Kunst & Kultur",
+      "categoryColor": "#9B5DE5",
+      "categoryIcon": "palette",
+      "websiteUrl": null,
+      "instagramUrl": "https://www.instagram.com/sfc_dresden",
+      "contactEmail": "studentischerfotoclubdresden@gmail.com",
+      "memberCount": 11,
+      "language": "both",
+      "eventFrequency": null,
+      "groupSize": null,
+      "motto": null,
+      "foundedYear": 2007,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "arts"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg3ajo003xib0483p4vjeb",
+      "name": "Studentischer Sanitätsdienst der TU Dresden",
+      "slug": "studentischer-sanitaetsdienst-der-tu-dresden",
+      "shortDescription": "Der Studentische Sanitätsdienst hat sich auf Erste Hilfe spezialisiert: Mitglieder werden in Erster Hilfe aus- und fortgebildet, sichern Veranstaltungen ab und geben ihr Wissen in Kursen weiter.",
+      "longDescription": "Der Studentische Sanitätsdienst (Uni-Sanis) ist eine anerkannte Hochschulgruppe der TU Dresden, die sich auf Erste Hilfe spezialisiert: Mitglieder werden in Erster Hilfe aus- und fortgebildet, sichern Universitätsveranstaltungen sanitätsdienstlich ab und bieten kostenlose Erste-Hilfe-Seminare und Workshops für Studierende und Mitarbeitende der TU Dresden an.",
+      "categoryName": "Soziales Engagement",
+      "categoryColor": "#EF476F",
+      "categoryIcon": "heart",
+      "websiteUrl": "https://www.unisan-dresden.de",
+      "instagramUrl": "https://www.instagram.com/unisan_tud?igsh=ZWhjNzVjaXhkb2l3",
+      "contactEmail": "info@unisan-dresden.de",
+      "memberCount": 25,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "small",
+      "motto": null,
+      "foundedYear": 2017,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": true,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": true,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": true,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 2,
+        "filterSelections": [
+          "sports"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg3ba80047ib04u7o2rut1",
+      "name": "The Big Band Therapy",
+      "slug": "the-big-band-therapy",
+      "shortDescription": "The Big Band Therapy ist eine 2012 von Dresdner Medizinstudierenden gegründete Big Band, die Jazz, Swing, Latin und Pop spielt, für alle Studiengänge offen ist und wöchentlich donnerstags probt.",
+      "longDescription": "The Big Band Therapy ist eine 2012 von Dresdner Medizinstudierenden gegründete Big Band, die Jazz, Swing, Latin und Pop spielt und für alle Studiengänge offen ist. Die Band probt wöchentlich dienstags und tritt bei Konzerten, Bällen und Galas auf.",
+      "categoryName": "Kunst & Kultur",
+      "categoryColor": "#9B5DE5",
+      "categoryIcon": "palette",
+      "websiteUrl": "http://www.thebigbandtherapy.de/",
+      "instagramUrl": "https://www.instagram.com/the_big_band_therapy/",
+      "contactEmail": "Bigband@medforum-dresden.de",
+      "memberCount": 40,
+      "language": "both",
+      "eventFrequency": "high",
+      "groupSize": "medium",
+      "motto": null,
+      "foundedYear": 2012,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": true,
+        "music": true,
+        "timeLow": false,
+        "handsOn": true,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 2,
+        "filterSelections": [
+          "arts",
+          "music"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg3bq4004dib047ro4cirt",
+      "name": "TU Big Band Dresden e.V.",
+      "slug": "tu-big-band-e-v",
+      "shortDescription": "Die TU Big Band ist ein studentisches Jazzorchester der TU Dresden, das Swing, Jazz, Funk und Tanzmusik spielt.",
+      "longDescription": "Die TU Big Band Dresden ist ein studentisches Orchester, welches sich der Bigband-Musik verschrieben hat. Uns erleben Sie deshalb swingend, rockend, jazzend, bluesend, groovend, von laut bis leise, flott bis beschaulich, feurig bis träumend – aber immer musikalisch und mit Spaß bei der Sache.",
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
+      "websiteUrl": "https://tubigband.de/",
+      "instagramUrl": "https://www.instagram.com/tubigband/",
+      "contactEmail": "mitspielen@tubigband.de",
+      "memberCount": 26,
+      "language": "german",
+      "eventFrequency": "high",
+      "groupSize": "medium",
+      "motto": null,
+      "foundedYear": 1968,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [
+          "arts",
+          "competitive",
+          "music"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmpe6m2l50001js046ir11be3",
+      "name": "TU-Dresden Robotik AG",
+      "slug": "technische-universitaet-dresden-robotik-arbeitsgruppe",
+      "shortDescription": "Die TURAG ist eine studentische Arbeitsgruppe die autonome Roboter entwickelt und an Wettbewerben wie dem Eurobot teilnimmt.",
+      "longDescription": "Das Ziel der TU Dresden Robotik Arbeitsgruppe ist es, den\nStudierenden der verschiedenen Ingenieurs- und\nNaturwissenschaften bereits vor dem Einstieg in das\nBerufsleben die Alltagspraxis des Ingenieurberufs erleben zu\nlassen. Hierzu haben wir es uns als Aufgabe gemacht, jedes\nJahr am internationalen Eurobot-Wettbewerb teilzunehmen.\nUm dies zu erreichen braucht es sehr viel mehr als nur\nIngenieure. Unsere Aufgabenbereiche erstrecken sich vom\nEntwerfen und Inbetriebnehmen autonomer Roboter bis hin zur\nOrganisation von Exkursionen und Schnupperveranstaltungen\nfür angehende Studierende, sowie der Buchhaltung, dem\nKontakt zu Unterstützern unserer AG, der Projektplanung- und\nleitung und der Öffentlichkeitsarbeit.",
+      "categoryName": "Technik & Wissenschaft",
+      "categoryColor": "#00F5D4",
+      "categoryIcon": "cpu",
+      "websiteUrl": "https://turag.de/",
+      "instagramUrl": "https://www.instagram.com/turag_ev/",
+      "contactEmail": "kontakt@turag.de",
+      "memberCount": 25,
+      "language": "german",
+      "eventFrequency": null,
+      "groupSize": null,
+      "motto": null,
+      "foundedYear": 2003,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "selfRating": {
+        "raterCount": 3,
+        "filterSelections": [
+          "handsOn",
+          "competitive",
+          "tech"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg3cgj004nib04glqc8tga",
+      "name": "VWI HG Dresden e.V.",
+      "slug": "vwi-hg-dresden-e-v",
+      "shortDescription": "Der VWI Dresden verbindet Studierende und Alumni des Wirtschaftsingenieurwesens. Als Teil des VWI-Netzwerks bietet er praxisnahe Events, Exkursionen und wertvolle Kontakte zwischen Uni und Wirtschaft.",
+      "longDescription": "Die VWI Hochschulgruppe Dresden e.V. ist seit 1993 die Interessenvertretung der Wirtschaftsingenieur-Studierenden an der TU Dresden mit über 100 Mitgliedern. Sie organisiert Exkursionen, Workshops, Unternehmensbesuche und Wettbewerbe und bietet über ESTIEM Zugang zu einem europaweiten Netzwerk aus über 100 Hochschulgruppen in 31 Ländern.",
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
+      "websiteUrl": "https://dresden.vwi.org/",
+      "instagramUrl": "https://www.instagram.com/vwi_estiem_dresden?igsh=MTFuZGZydjRhMTMzNA==",
+      "contactEmail": "vorstand@vwi-dresden.de",
+      "memberCount": 85,
+      "language": "both",
+      "eventFrequency": "high",
+      "groupSize": "large",
+      "motto": null,
+      "foundedYear": 1993,
+      "logoUrl": null,
+      "attributes": {
+        "career": true,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": true,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": true,
+        "beginnerFriendly": true,
+        "competitive": true,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 1,
+        "filterSelections": [],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmmwg3clt004pib04aktgr7zp",
+      "name": "YETI Dresden",
+      "slug": "yeti-dresden",
+      "shortDescription": "YETI Dresden ist ein Entrepreneurship-Stipendium und Fellowship-Programm für Studierende Dresdner Hochschulen, das über 18 Monate Coaching, Mentoring, Workshops und Networking bietet, um unternehmeris",
+      "longDescription": "YETI Dresden ist ein Entrepreneurship-Stipendium und Fellowship-Programm für Studierende Dresdner Hochschulen, das über 18 Monate Coaching, Mentoring, Workshops und Networking bietet, um unternehmerische Vorbilder zu fördern. Alle Inhalte sind kostenlos und das Programm richtet sich an Studierende aller Fachrichtungen mit Interesse an Gründung und Innovation.",
+      "categoryName": "Technik & Wissenschaft",
+      "categoryColor": "#00F5D4",
+      "categoryIcon": "cpu",
+      "websiteUrl": "https://yeti-dresden.org/",
+      "instagramUrl": null,
+      "contactEmail": null,
+      "memberCount": null,
+      "language": "both",
+      "eventFrequency": "high",
+      "groupSize": "medium",
+      "motto": null,
+      "foundedYear": null,
+      "logoUrl": null,
+      "attributes": {
+        "career": true,
+        "tech": true,
+        "socialImpact": true,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": true,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": true,
+        "outdoor": false,
+        "international": true,
+        "beginnerFriendly": true,
+        "competitive": true,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "selfRating": {
+        "raterCount": 2,
+        "filterSelections": [
+          "handsOn",
+          "arts",
+          "competitive",
+          "tech"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-12",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    }
+  ]
+}

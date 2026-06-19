@@ -1,0 +1,373 @@
+{
+  "_meta": {
+    "version": "v2",
+    "scale": "3-stage (-1 / 0 / +1)",
+    "note": "WS2 item pool + filters for the static quiz. Swap for working-set-v3 after Study-2 trimming."
+  },
+  "items": [
+    {
+      "id": "WS2-01",
+      "pilotQuestionId": "D1Q1",
+      "text": "Unter der Woche kann ich 3+ Stunden für eine Hochschulgruppe einplanen.",
+      "shortTitle": "Zeitbudget Wochentag",
+      "construct": "timeAvailable_weekday",
+      "attributes": [
+        {
+          "attribute": "timeLow",
+          "isInverse": true
+        }
+      ],
+      "rationale": "Pilot Δ=1.15 (timeLow). User-Feedback: Wochentag/Wochenende getrennt erfragen."
+    },
+    {
+      "id": "WS2-02",
+      "pilotQuestionId": null,
+      "text": "Auch am Wochenende habe ich Zeit für Gruppen-Termine.",
+      "shortTitle": "Zeitbudget Wochenende",
+      "construct": "timeAvailable_weekend",
+      "attributes": [
+        {
+          "attribute": "timeLow",
+          "isInverse": true
+        }
+      ],
+      "rationale": "Neu, aus User-Feedback aufgespalten. Eigene Achse — wer Wochenende hat ≠ wer Werktag hat."
+    },
+    {
+      "id": "WS2-03",
+      "pilotQuestionId": "D1Q5",
+      "text": "Ich möchte in der Gruppe Verantwortung übernehmen — z.B. Projektleitung oder Vorstand.",
+      "shortTitle": "Verantwortung",
+      "construct": "leadership",
+      "attributes": [
+        {
+          "attribute": "leadershipOpportunities",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Scraper-Attribut 100% true → Matching-Gewicht praktisch null. Item bleibt für User-Profil und für Phase-2-Verifikation, ob Gruppen sich differenzieren können."
+    },
+    {
+      "id": "WS2-04",
+      "pilotQuestionId": "D7Q3",
+      "text": "Interkultureller Austausch und internationale Mitglieder sind mir wichtig.",
+      "shortTitle": "Internationalität",
+      "construct": "international",
+      "attributes": [
+        {
+          "attribute": "international",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Pilot Δ=1.92 — stärkstes Item nach D4Q4."
+    },
+    {
+      "id": "WS2-05",
+      "pilotQuestionId": "D2Q1",
+      "text": "Ich lerne lieber durch praktisches Tun als durch Theorie und Diskussion.",
+      "shortTitle": "Hands-on Lernstil",
+      "construct": "handsOn_personality",
+      "attributes": [
+        {
+          "attribute": "handsOn",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Pilot Δ=0.77. Filter-F-handsOn deckt Aktivität, Likert deckt Stil/Persönlichkeit — verschiedene Achsen."
+    },
+    {
+      "id": "WS2-06",
+      "pilotQuestionId": "D2Q5",
+      "text": "Strategische Planung und konzeptionelle Arbeit liegen mir genauso wie die Umsetzung.",
+      "shortTitle": "Konzeptarbeit",
+      "construct": "concept_vs_handsOn",
+      "attributes": [
+        {
+          "attribute": "handsOn",
+          "isInverse": true
+        }
+      ],
+      "rationale": "Pilot Δ=1.00 (inverse). Wichtige Gegenachse zu WS2-05."
+    },
+    {
+      "id": "WS2-07",
+      "pilotQuestionId": null,
+      "text": "Ich will auf ein konkretes Ziel mit klarem Zeitplan hinarbeiten.",
+      "shortTitle": "Zielorientierung",
+      "construct": "goalOriented",
+      "attributes": [
+        {
+          "attribute": "competitive",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Aus WS-S2 übernommen. Persönlichkeitsachse zu Filter F-competitive (Aktivität)."
+    },
+    {
+      "id": "WS2-08",
+      "pilotQuestionId": null,
+      "text": "Ich bevorzuge eine kleine, eng vernetzte Gruppe gegenüber einer großen Community.",
+      "shortTitle": "Gruppengröße klein",
+      "construct": "groupSize_pref",
+      "attributes": [
+        {
+          "attribute": "groupSize",
+          "isInverse": false,
+          "valueMap": {
+            "small": 1,
+            "medium": 0,
+            "large": -1
+          }
+        }
+      ],
+      "rationale": "Neue Achse. Scraper hat groupSize 33/40/10 (small/medium/large) → gute Varianz, aktuell ungenutzt."
+    },
+    {
+      "id": "WS2-09",
+      "pilotQuestionId": null,
+      "text": "Regelmäßige wöchentliche Treffen sind mir wichtig — ich mag Verbindlichkeit.",
+      "shortTitle": "Termin-Dichte",
+      "construct": "eventFrequency_pref",
+      "attributes": [
+        {
+          "attribute": "eventFrequency",
+          "isInverse": false,
+          "valueMap": {
+            "high": 1,
+            "medium": 0,
+            "low": -1
+          }
+        }
+      ],
+      "rationale": "Neue Achse. Scraper hat eventFrequency 42/32/9 (high/medium/low) → gute Varianz."
+    },
+    {
+      "id": "WS2-10",
+      "pilotQuestionId": null,
+      "text": "Mir ist wichtig, dass die Gruppe meiner späteren Karriere nutzt — durch Kontakte oder Praxiserfahrung.",
+      "shortTitle": "Karriere-Bezug",
+      "construct": "career",
+      "attributes": [
+        {
+          "attribute": "career",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Neu. career 55% scraped, beste Varianz, hatte aber kein Quiz-Item — größte Lücke des v1-Sets."
+    },
+    {
+      "id": "WS2-11",
+      "pilotQuestionId": null,
+      "text": "Mitgliedsbeitrag oder eigene Ausrüstungs-Kosten über 50€ pro Semester wären für mich okay.",
+      "shortTitle": "Finanzielle Belastbarkeit",
+      "construct": "financialCost",
+      "attributes": [
+        {
+          "attribute": "financialCost",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Neu. financialCost 53% scraped, hohe Relevanz für Erstis."
+    },
+    {
+      "id": "WS2-12",
+      "pilotQuestionId": "D4Q4",
+      "text": "Ich möchte mich für benachteiligte oder marginalisierte Gruppen einsetzen.",
+      "shortTitle": "Soziales Engagement",
+      "construct": "socialImpact_advocacy",
+      "attributes": [
+        {
+          "attribute": "socialImpact",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Pilot Δ=2.08 — stärkstes Item überhaupt. Bleibt."
+    },
+    {
+      "id": "WS2-13",
+      "pilotQuestionId": null,
+      "text": "Es ist mir wichtig, in der Gruppe direkt anderen Menschen helfen zu können.",
+      "shortTitle": "Altruismus",
+      "construct": "socialImpact_help",
+      "attributes": [
+        {
+          "attribute": "socialImpact",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Aus WS-S1 übernommen. Andere Facette als WS2-12 (direkte Hilfe vs. Advocacy). Studie 2 zeigt ob beide nötig oder eines redundant."
+    },
+    {
+      "id": "WS2-14",
+      "pilotQuestionId": "D6Q3",
+      "text": "Nachhaltigkeit und ökologisches Handeln sind mir bei einer Gruppe wichtig.",
+      "shortTitle": "Nachhaltigkeit",
+      "construct": "sustainability",
+      "attributes": [
+        {
+          "attribute": "socialImpact",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Pilot Δ=-0.23 (schwach). Bleibt im Pool, aber Drop-Kandidat #1 wenn Studie 2 Schwäche bestätigt. Begründung Drinbleiben: socialImpact ist 86% scraped → Nachhaltigkeit könnte Untergruppe sauber trennen."
+    },
+    {
+      "id": "WS2-15",
+      "pilotQuestionId": null,
+      "text": "Eine gemeinsame religiöse oder weltanschauliche Grundlage ist mir wichtig.",
+      "shortTitle": "Religion / Werte",
+      "construct": "religion",
+      "attributes": [
+        {
+          "attribute": "religion",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Neu. religion 10% scraped (8 Gruppen) — zu nischig für Filter, aber harte Trennung als Likert-Item für die ~5% Zielnutzer."
+    },
+    {
+      "id": "WS2-16",
+      "pilotQuestionId": null,
+      "text": "Eine englischsprachige Gruppe wäre für mich genauso okay wie eine deutschsprachige.",
+      "shortTitle": "Sprache Englisch",
+      "construct": "language_pref",
+      "attributes": [
+        {
+          "attribute": "language",
+          "isInverse": false,
+          "valueMap": {
+            "english": 1,
+            "both": 1,
+            "german": -1
+          }
+        }
+      ],
+      "rationale": "Neue Achse. Scraper: 65 deutsch / 16 both / 2 english — Englisch-Toleranz öffnet 18 Gruppen."
+    },
+    {
+      "id": "WS2-17",
+      "pilotQuestionId": null,
+      "text": "Ich möchte sofort mitmachen können, ohne Vorerfahrung oder lange Einarbeitung.",
+      "shortTitle": "Einsteiger",
+      "construct": "beginnerFriendly",
+      "attributes": [
+        {
+          "attribute": "beginnerFriendly",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Scraper 99% true → keine Diskriminierung. Item bleibt als User-Profil-Achse und prüft, ob Gruppen sich in Phase 2 ehrlicher einschätzen als der LLM."
+    },
+    {
+      "id": "WS2-18",
+      "pilotQuestionId": "D3Q1",
+      "text": "Ich suche eine Gruppe vor allem, um neue Freundschaften zu schließen.",
+      "shortTitle": "Freundschaften",
+      "construct": "friendship_motivation",
+      "attributes": [
+        {
+          "attribute": "networking",
+          "isInverse": false
+        }
+      ],
+      "rationale": "networking 90% scraped → für Matching unbrauchbar, aber wichtige User-Persönlichkeitsachse. Studie 2 prüft, ob die Achse in der Gruppen-Selbsteinschätzung differenzierter wird."
+    },
+    {
+      "id": "WS2-19",
+      "pilotQuestionId": "D8Q3",
+      "text": "Ich möchte in Rankings, Bestenlisten oder Meisterschaften auftreten.",
+      "shortTitle": "Wettbewerb",
+      "construct": "competitive_personality",
+      "attributes": [
+        {
+          "attribute": "competitive",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Pilot Δ=1.33 (mit n=102 deutlich besser als n=10-Report mit Δ=0). Persönlichkeits-Variante zu Filter F-competitive."
+    },
+    {
+      "id": "WS2-20",
+      "pilotQuestionId": null,
+      "text": "Ich verbringe Gruppenzeit am liebsten draußen.",
+      "shortTitle": "Outdoor-Präferenz",
+      "construct": "outdoor_personality",
+      "attributes": [
+        {
+          "attribute": "outdoor",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Aus WS-S3 übernommen. Persönlichkeits-Variante zu Filter F-outdoor — graduierte Präferenz statt nur Yes/No."
+    },
+    {
+      "id": "WS2-21",
+      "pilotQuestionId": null,
+      "text": "Ich möchte in der Gruppe eigene Projekte oder Produkte aufbauen — von der Idee bis zur Umsetzung.",
+      "shortTitle": "Eigene Projekte / Entrepreneurship",
+      "construct": "entrepreneurship",
+      "attributes": [
+        {
+          "attribute": "entrepreneurship",
+          "isInverse": false
+        }
+      ],
+      "rationale": "Neu. Deckt Startup-/Gründer-/Macher-Mindset ab, das bislang weder von career (passiver Karriere-Nutzen) noch competitive (Wettbewerb) noch handsOn (Werkstatt-Tätigkeit) abgedeckt war. Trifft z.B. Elbflorace, Robotik AG, bonding, BioInnovation, sonstige Macher-Initiativen. Attribut entrepreneurship ist neu — kein Scraper-Wert vorhanden, wird in Phase-2-Selbst-Rating der Gruppen erstmals erhoben."
+    }
+  ],
+  "filters": {
+    "type": "multi-select",
+    "question": "Was möchtest du in deiner Hochschulgruppe vor allem tun?",
+    "subtitle": "Mehrfachauswahl. Lass leer, wenn dir alles offen ist.",
+    "options": [
+      {
+        "id": "F-handsOn",
+        "label": "Hands-on bauen & Werkstatt",
+        "attribute": "handsOn",
+        "groupCount": 39
+      },
+      {
+        "id": "F-arts",
+        "label": "Künstlerisch arbeiten (Theater, Film, Schreiben, Design, Foto)",
+        "attribute": "arts",
+        "groupCount": 26
+      },
+      {
+        "id": "F-competitive",
+        "label": "An Wettbewerben & Meisterschaften teilnehmen",
+        "attribute": "competitive",
+        "groupCount": 24
+      },
+      {
+        "id": "F-music",
+        "label": "Musik machen",
+        "attribute": "music",
+        "groupCount": 23
+      },
+      {
+        "id": "F-outdoor",
+        "label": "Outdoor & Natur (Klettern, Wandern, Paddeln)",
+        "attribute": "outdoor",
+        "groupCount": 22
+      },
+      {
+        "id": "F-tech",
+        "label": "Tech & Digital (Coding, Software, Esports)",
+        "attribute": "tech",
+        "groupCount": 21
+      },
+      {
+        "id": "F-party",
+        "label": "Hochschulpolitik & Mitbestimmung",
+        "attribute": "party",
+        "groupCount": 18
+      },
+      {
+        "id": "F-sports",
+        "label": "Sport & Bewegung",
+        "attribute": "sports",
+        "groupCount": 10
+      }
+    ]
+  }
+}

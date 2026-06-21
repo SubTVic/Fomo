@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Beispiel Hochschulgruppe e.V.",
+    "websiteUrl": "https://example-gruppe.de",
+    "instagramUrl": "https://instagram.com/example_gruppe",
+    "contactEmail": "kontakt@example-gruppe.de",
+    "categoryName": "Sonstiges"
+  },
+  {
+    "name": "Nur-Name-Gruppe (ohne Website)",
+    "websiteUrl": null,
+    "categoryName": "Sonstiges"
+  }
+]

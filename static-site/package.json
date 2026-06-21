@@ -7,7 +7,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "validate": "node scripts/validate-data.mjs",
+    "scrape": "node scripts/scrape-groups.mjs",
+    "scrape:eval": "node scripts/scrape-eval.mjs",
+    "derive": "node scripts/derive-selfrating.mjs",
+    "derive:train": "node scripts/train-derive-model.mjs"
   },
   "dependencies": {
     "next": "15.5.12",

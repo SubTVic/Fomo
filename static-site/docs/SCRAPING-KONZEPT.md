@@ -30,14 +30,16 @@
 
 Konkrete Skripte (liegen in `scripts/`):
 
-1. **`derive-selfrating.mjs`** – erzeugt aus den gescrapten Attributen eine
+1. **`scrape-groups.mjs`** – lädt Websites und erzeugt `scraped-groups.json`
+   (siehe Abschnitt „Datenholender Scraper").
+2. **`derive-selfrating.mjs`** – erzeugt aus den gescrapten Attributen eine
    *provisorische* Selbstbewertung. Es nutzt exakt die `item → attribute`-
    Mappings aus `quiz.json` (inkl. `isInverse` und `valueMap` für
    groupSize/eventFrequency/language). Echte Registrierungen werden via
    `--overrides <export.json>` übernommen und gewinnen immer.
-2. **`validate-data.mjs`** – Schema-/Integritäts-Gate. Bricht bei kaputten Daten
+3. **`validate-data.mjs`** – Schema-/Integritäts-Gate. Bricht bei kaputten Daten
    ab, bevor etwas live geht.
-3. **`update-data.sh`** – baut + schaltet ohne Downtime live (siehe
+4. **`update-data.sh`** – baut + schaltet ohne Downtime live (siehe
    `INBETRIEBNAHME.md`).
 
 Beispiel:
@@ -141,6 +143,48 @@ Attribute aus Texten ableiten kann manuell (Checkliste) oder
 passieren. Wichtig: **Ergebnis ist immer eine `scraped-groups.json` im
 festen Schema** – der Rest der Pipeline bleibt gleich.
 
+## Datenholender Scraper (umgesetzt)
+
+`scripts/scrape-groups.mjs` lädt pro Gruppe die Website (Startseite + eine
+wahrscheinliche „Über uns"-Unterseite), extrahiert den Text und klassifiziert
+ihn per Keyword-Regeln (`scrape-rules.mjs`) in die 17 Attribute +
+language/eventFrequency. Keine externen Abhängigkeiten, höflich (1 Anfrage/s,
+eigener User-Agent), fehlertolerant pro Gruppe.
+
+**Eingabe – `groups-seed.json`** (Liste der noch fehlenden Gruppen; Vorlage:
+`scripts/example-seed.json`):
+
+```json
+[{ "name": "…", "websiteUrl": "https://…", "instagramUrl": null,
+   "contactEmail": null, "categoryName": "…" }]
+```
+
+**Ablauf:**
+
+```bash
+npm run scrape -- --seed groups-seed.json --out scraped-groups.json
+# → Attribute REVIEWEN (siehe _scrape.needsReview / _scrape.hits)
+npm run derive -- --in scraped-groups.json --model data/derive-model.json \
+  --overrides registrierung-export.json --out data/groups.json
+npm run validate && ./scripts/update-data.sh
+```
+
+**Qualität – ehrlich (`npm run scrape:eval`):** gegen die 36 verifizierten
+Gruppen getestet. Gut erkannt werden themennahe Attribute (music, tech, sports,
+arts, career: Recall 60–100 %), schwach die abstrakten (beginnerFriendly,
+party/Hochschulpolitik, timeLow ≈ 0 %). Die Präzision ist mäßig (viele False
+Positives). **Deshalb:** Jede gescrapte Gruppe ist `needsReview` und `derived` –
+der Scraper ist eine **Review-Hilfe**, kein Ersatz für Prüfung; eine echte
+Registrierung überschreibt alles.
+
+> **Hinweis Netz:** Das Scrapen braucht ausgehenden HTTP-Zugriff vom Server.
+> Sandboxen/CI ohne Egress liefern HTTP 403 – dann lokal/auf dem StuRa-Server
+> laufen lassen.
+>
+> **Nächster Hebel:** statt Keywords ein LLM über die „Über uns"-Texte, das die
+> WS2-Items direkt beantwortet (mit Review). Gleiche `scraped-groups.json`-
+> Pipeline, nur ein besserer Klassifikator in `scrape-rules.mjs`.
+
 ## Schema `scraped-groups.json` (Minimum)
 
 ```jsonc
@@ -167,10 +211,11 @@ letzte 5 Releases als Rollback). Ein Cron-Job kann den Lauf automatisieren
 (André's Idee „Tabelle pflegen → automatisch neu bauen"):
 
 ```cron
-# täglich 04:00: Export ziehen, Modell trainieren, ableiten, live schalten
+# täglich 04:00: scrapen, Modell trainieren, ableiten, live schalten
 0 4 * * *  cd /opt/fomo/static-site \
+  && node scripts/scrape-groups.mjs --seed /opt/fomo/groups-seed.json --out scraped-groups.json \
   && node scripts/train-derive-model.mjs --in data/groups.json --out data/derive-model.json \
-  && node scripts/derive-selfrating.mjs --in /opt/fomo/scraped-groups.json \
+  && node scripts/derive-selfrating.mjs --in scraped-groups.json \
        --model data/derive-model.json --overrides /opt/fomo/export.json --out data/groups.json \
   && ./scripts/update-data.sh >> /var/log/fomo-update.log 2>&1
 ```

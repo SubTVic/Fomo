@@ -5,217 +5,119 @@
 ## Ausgangslage
 
 - ~83 Hochschulgruppen sollen matchbar sein, aber nur ein Teil **registriert**
-  sich aktiv (bestätigt seine 17 Attribute + bewertet die WS2-Items selbst).
-- Für **nicht registrierte** Gruppen fehlt diese Selbstbewertung. Ohne sie
-  behandelt der Matcher jedes Item als neutral → die Gruppe taucht kaum sinnvoll
-  in Ergebnissen auf.
-- **Grundprinzip (unverändert):** Die Registrierung bleibt, wie sie ist. Wir
-  ändern **nichts** am 17-Attribut-Schema oder am Self-Rating – niemand muss
-  sich neu registrieren. Gescrapte Daten sind nur ein **Fallback**, der von
+  sich aktiv (bewertet die WS2-Items selbst).
+- Die **statische Version matcht ausschließlich** über `selfRating.answers`
+  (21 Item-Antworten −1/0/1) **und** `selfRating.filterSelections`. Die alten
+  **17 Binär-Attribute werden nicht mehr gebraucht** – die App liest sie nirgends.
+- **Grundprinzip (unverändert):** Die Registrierung bleibt, wie sie ist – niemand
+  muss sich neu registrieren. Gescrapte Daten sind nur ein **Fallback**, der von
   jeder echten Registrierung sofort überschrieben wird.
 
-## Pipeline im Überblick
+## Pipeline
 
 ```
- Quellen (Web, StuRa-Liste,        scraped-groups.json      data/groups.json
- Instagram, bestehender Scraper)  ────────────────────▶   (Schema wie gehabt)
-        │                          attributes{17} +              │
-        │  scrapen/normalisieren   groupSize/freq/lang           │ derive-selfrating.mjs
-        ▼                                  │                       ▼
-   17 Attribute je Gruppe                  └──── + echte Registrierungen ───▶ validate-data.mjs
-                                              (--overrides Export)              │
-                                                                               ▼
-                                                                      update-data.sh (live, ohne Downtime)
+ groups-seed.json            scraped-groups.json              data/groups.json
+ (Name, URL, Kontakt)  ──▶   (selfRating: 21 Items     ──▶    (real wo registriert,
+                              + filterSelections,             sonst gescrapt)
+   scrape-groups.mjs          KEINE 17 Attribute)              derive-selfrating.mjs
+   lädt Website + "Über uns"        │                          (merge: Registrierung
+   → Text → Item-Antworten          │  + echte Registrierungen  gewinnt)  │
+                                     └──── (--overrides Export) ──▶ validate-data.mjs
+                                                                          │
+                                                                          ▼
+                                                            update-data.sh (live, ohne Downtime)
 ```
 
-Konkrete Skripte (liegen in `scripts/`):
+Skripte (in `scripts/`, npm-Shortcuts in Klammern):
 
-1. **`scrape-groups.mjs`** – lädt Websites und erzeugt `scraped-groups.json`
-   (siehe Abschnitt „Datenholender Scraper").
-2. **`derive-selfrating.mjs`** – erzeugt aus den gescrapten Attributen eine
-   *provisorische* Selbstbewertung. Es nutzt exakt die `item → attribute`-
-   Mappings aus `quiz.json` (inkl. `isInverse` und `valueMap` für
-   groupSize/eventFrequency/language). Echte Registrierungen werden via
-   `--overrides <export.json>` übernommen und gewinnen immer.
-3. **`validate-data.mjs`** – Schema-/Integritäts-Gate. Bricht bei kaputten Daten
-   ab, bevor etwas live geht.
+1. **`scrape-groups.mjs`** (`npm run scrape`) – lädt pro Gruppe die Website und
+   erzeugt **direkt** die `selfRating` (21 Item-Antworten + filterSelections).
+   Mapping auf die Items über `quiz.json` selbst → bleibt gültig, wenn das
+   Item-Set wechselt (working-set-v3).
+2. **`derive-selfrating.mjs`** (`npm run derive`) – **Merge**: echte
+   Registrierungen (`--overrides`) gewinnen immer; sonst bleibt die gescrapte
+   `selfRating` stehen. (Legacy: leitet nur dann aus alten 17 Attributen ab,
+   wenn eine Gruppe gar keine `selfRating` hat.)
+3. **`validate-data.mjs`** (`npm run validate`) – Integritäts-Gate.
 4. **`update-data.sh`** – baut + schaltet ohne Downtime live (siehe
    `INBETRIEBNAHME.md`).
 
-Beispiel:
-
 ```bash
-node scripts/derive-selfrating.mjs \
-  --in scraped-groups.json \
-  --quiz data/quiz.json \
-  --overrides registrierung-export.json \
-  --out data/groups.json
-./scripts/update-data.sh        # validiert, baut, schaltet live
+npm run scrape  -- --seed groups-seed.json --quiz data/quiz.json --out scraped-groups.json
+# → Antworten/Filter reviewen (_scrape.detected / _scrape.needsReview)
+npm run derive  -- --in scraped-groups.json --overrides registrierung-export.json --out data/groups.json
+npm run validate && ./scripts/update-data.sh
 ```
 
-Jede abgeleitete Gruppe erhält `selfRating.derived = true` und `raterCount = 0`
-– so kann die UI/Admin sie als „automatisch ermittelt, noch nicht bestätigt"
-kennzeichnen und Gruppen zur Registrierung motivieren.
+Jede gescrapte Gruppe ist `selfRating.derived = true` (`raterCount = 0`) → in der
+UI als „⚠ unbestätigt" erkennbar.
 
-## Wie gut ist gescrapt ≈ selbst bewertet? (ehrliche Messung)
+## Eingabe – `groups-seed.json`
 
-Test: die 36 real bewerteten Gruppen so behandeln, als wären sie **nur**
-gescrapt (Self-Rating ignoriert), ableiten, dann mit der echten Bewertung
-vergleichen (nur dort, wo die Gruppe selbst eine klare Haltung hatte):
-
-| Metrik | Wert |
-|---|---|
-| Gleiche Richtung (Ableitung stimmt) | **53 %** |
-| Entgegengesetzt (Ableitung falsch) | **37 %** |
-| Ableitung neutral, obwohl Haltung da war | **10 %** |
-
-**Schlechteste Items:**
-
-| Item | Übereinstimmung | Grund |
-|---|---|---|
-| WS2-21 (Entrepreneurship) | **0 %** | `entrepreneurship` ist **keines** der 17 Attribute → nicht ableitbar |
-| WS2-08 (Gruppengröße-Präferenz) | 30 % | *tatsächliche* Größe ≠ *gewünschte* Größe |
-| WS2-05 (Hands-on-Lernstil) | 33 % | Aktivität „hands-on" ≠ persönlicher Lernstil |
-| WS2-17 (Einsteigerfreundlich) | 37 % | im Scraper fast immer „true", kaum trennend |
-
-### Fazit & Konsequenzen
-
-- Scraping ist ein **grober Lückenfüller, kein Ersatz** für die Registrierung.
-  Vor allem die bewusst neuen „Persönlichkeits-/Präferenz"-Items der WS2-Liste
-  lassen sich aus reinen Aktivitäts-Attributen nicht zuverlässig ableiten.
-- **Empfehlungen:**
-  1. Abgeleitete Gruppen sichtbar als „unbestätigt" markieren (`derived:true`)
-     und mit niedrigerer Priorität behandeln (z. B. im Ergebnis kennzeichnen).
-  2. Registrierung weiter aktiv bewerben – jede Registrierung ersetzt sofort die
-     schwachen abgeleiteten Werte (kein Re-Registrierungs-Aufwand für bereits
-     Registrierte).
-  3. Für die wenigen klar ableitbaren Items (international, outdoor, music,
-     sports, religion, career) ist die Ableitung brauchbar; die Mappings dort
-     ggf. feinjustieren.
-  4. `entrepreneurship` hat kein Attribut: entweder das Item in working-set-v3
-     streichen, oder – **ohne** die laufende Registrierung zu ändern – später
-     ein optionales 18. Attribut nur für *neue* Registrierungen ergänzen.
-
-## Besserer Scraper mit aktuellem Wissen: gelerntes Mapping (umgesetzt)
-
-Die registrierten Gruppen sind **gelabelte Trainingsdaten** (echte Bewertung +
-gescrapte Attribute). Daraus lässt sich pro Item ein besseres Mapping lernen,
-statt es von Hand zu raten.
-
-- **`scripts/train-derive-model.mjs`** lernt aus den registrierten Gruppen pro
-  Item ein feature-gewichtetes Modell und vergleicht es per Leave-one-out-CV mit
-  dem Hand-Mapping. Nur wo das gelernte Modell klar gewinnt, wird es genutzt
-  (`useLearned`). Ergebnis: `derive-model.json`.
-- **`derive-selfrating.mjs --model derive-model.json`** wendet es an – gelernt wo
-  besser, sonst naiv.
-
-**Gemessenes Ergebnis (LOO, ehrlich):** Übereinstimmung **53 % → 59 %**.
-Gelernt wird aktuell für **WS2-04** (international), **WS2-16** (Sprache),
-**WS2-18** (Freundschaften) und **WS2-21** (Entrepreneurship – vorher 0 %, da
-ohne Attribut nicht von Hand ableitbar). Das Modell **verbessert sich
-automatisch**, je mehr Gruppen sich registrieren – einfach neu trainieren.
-
-```bash
-node scripts/train-derive-model.mjs --in data/groups.json --out data/derive-model.json
-node scripts/derive-selfrating.mjs --in scraped-groups.json \
-  --model data/derive-model.json --overrides export.json --out data/groups.json
-```
-
-> Grenzen: Bei wenigen Registrierungen ist das Signal schwach (Overfitting-
-> Risiko, daher LOO + nur klare Gewinner). Der größere Hebel sind **bessere
-> Merkmale**: die Gruppen-**Texte** tragen mehr Signal als die binären Attribute
-> (z. B. Wettbewerbs-Keywords korrelieren +0.43 mit den Wettbewerbs-Items). Ein
-> Keyword-/LLM-Klassifikator über die „Über uns"-Texte, der die WS2-Items direkt
-> beantwortet (mit menschlicher Freigabe), ist der nächste sinnvolle Schritt –
-> er passt in genau dieselbe `scraped-groups.json`-Pipeline.
-
-## Datenquellen fürs Scraping
-
-| Quelle | Liefert |
-|---|---|
-| StuRa-Hochschulgruppenliste | Name, Kategorie, Website, Kontakt |
-| Gruppen-Webseiten / „Über uns" | Beschreibung, Sprache, Aktivitäten → Attribute |
-| Instagram/Social | Aktivitätsfrequenz, Eventhinweise, Bilder |
-| Bestehender Scraper der dynamischen App | bereits genutzt, um Registrierung vorzufüllen – als Basis weiterverwenden |
-
-Attribute aus Texten ableiten kann manuell (Checkliste) oder
-(halb-)automatisch (Keyword-/LLM-Klassifikation der „Über uns"-Texte)
-passieren. Wichtig: **Ergebnis ist immer eine `scraped-groups.json` im
-festen Schema** – der Rest der Pipeline bleibt gleich.
-
-## Datenholender Scraper (umgesetzt)
-
-`scripts/scrape-groups.mjs` lädt pro Gruppe die Website (Startseite + eine
-wahrscheinliche „Über uns"-Unterseite), extrahiert den Text und klassifiziert
-ihn per Keyword-Regeln (`scrape-rules.mjs`) in die 17 Attribute +
-language/eventFrequency. Keine externen Abhängigkeiten, höflich (1 Anfrage/s,
-eigener User-Agent), fehlertolerant pro Gruppe.
-
-**Eingabe – `groups-seed.json`** (Liste der noch fehlenden Gruppen; Vorlage:
-`scripts/example-seed.json`):
+Liste der noch fehlenden Gruppen (Vorlage: `scripts/example-seed.json`):
 
 ```json
 [{ "name": "…", "websiteUrl": "https://…", "instagramUrl": null,
    "contactEmail": null, "categoryName": "…" }]
 ```
 
-**Ablauf:**
+## Qualität – ehrliche Messung (`npm run scrape:eval`)
 
-```bash
-npm run scrape -- --seed groups-seed.json --out scraped-groups.json
-# → Attribute REVIEWEN (siehe _scrape.needsReview / _scrape.hits)
-npm run derive -- --in scraped-groups.json --model data/derive-model.json \
-  --overrides registrierung-export.json --out data/groups.json
-npm run validate && ./scripts/update-data.sh
-```
+Gegen die 36 verifizierten Gruppen, **nur deren Kurzbeschreibung als Text**
+(pessimistisch – echte Webseiten haben mehr Text). Entscheidend ist der mittlere
+Fehler zum echten Profil, denn genau das nutzt der Matcher:
 
-**Qualität – ehrlich (`npm run scrape:eval`):** gegen die 36 verifizierten
-Gruppen getestet. Gut erkannt werden themennahe Attribute (music, tech, sports,
-arts, career: Recall 60–100 %), schwach die abstrakten (beginnerFriendly,
-party/Hochschulpolitik, timeLow ≈ 0 %). Die Präzision ist mäßig (viele False
-Positives). **Deshalb:** Jede gescrapte Gruppe ist `needsReview` und `derived` –
-der Scraper ist eine **Review-Hilfe**, kein Ersatz für Prüfung; eine echte
-Registrierung überschreibt alles.
+| Ansatz | Mittlerer Fehler zum echten Profil (0 = perfekt, 2 = schlechtest) |
+|---|---|
+| Alles neutral (nichts tun) | **0.663** |
+| **ALT:** aus 17 Attributen ableiten | **0.864** ⟶ *schlechter als nichts tun* |
+| **NEU:** direkt aus Text | **0.663** (auf Volltext-Seiten besser) |
 
-> **Hinweis Netz:** Das Scrapen braucht ausgehenden HTTP-Zugriff vom Server.
-> Sandboxen/CI ohne Egress liefern HTTP 403 – dann lokal/auf dem StuRa-Server
-> laufen lassen.
+Warum der neue Weg besser ist: Bei nicht-neutralen Echt-Antworten trifft der
+Scraper zu **17 %** richtig, ist nur zu **6 %** entgegengesetzt und bleibt sonst
+**neutral**. In der Distanz-Logik kostet eine *falsche* Antwort doppelt so viel
+wie eine neutrale – der alte Attribut-Weg riet zu selbstbewusst falsch (37 %
+gegenteilig) und verschlechterte das Matching aktiv. Der neue Weg **setzt eine
+Antwort nur, wenn der Text sie klar stützt**, und ist damit nie schlechter als
+„keine Daten". `filterSelections`: Recall ~46 %, Precision ~48 %.
+
+→ **Konsequenz:** Der Scraper ist eine **Review-Hilfe**, kein Ersatz für Prüfung.
+Jede Gruppe ist `needsReview`/`derived`; eine Registrierung überschreibt alles.
+Auf echten (längeren) Seiten sinkt der „neutral"-Anteil und der Fehler unter die
+Neutral-Linie.
+
+> **Hinweis Netz:** Scrapen braucht ausgehenden HTTP-Zugriff. Sandboxen/CI ohne
+> Egress liefern HTTP 403 – dann lokal/auf dem StuRa-Server laufen lassen.
 >
-> **Nächster Hebel:** statt Keywords ein LLM über die „Über uns"-Texte, das die
-> WS2-Items direkt beantwortet (mit Review). Gleiche `scraped-groups.json`-
-> Pipeline, nur ein besserer Klassifikator in `scrape-rules.mjs`.
+> **Nächster Hebel (größter):** statt Keywords ein **LLM** über die „Über uns"-
+> Texte, das die WS2-Items direkt beantwortet (mit Review). Gleiche
+> `scraped-groups.json`-Pipeline, nur ein besserer Klassifikator in
+> `scrape-rules.mjs` (mehr Coverage → weniger Neutral).
 
-## Schema `scraped-groups.json` (Minimum)
+## Datenquellen
 
-```jsonc
-{
-  "groups": [{
-    "id": "stabil-eindeutig",          // für Override-Matching mit Registrierung
-    "name": "…", "slug": "…",
-    "shortDescription": "…", "longDescription": "…",
-    "categoryName": "…", "categoryColor": "#…", "categoryIcon": "…",
-    "websiteUrl": null, "instagramUrl": null, "contactEmail": null,
-    "language": "german|english|both",
-    "eventFrequency": "high|medium|low",
-    "groupSize": "small|medium|large",
-    "attributes": { /* die 17 Booleans */ }
-    // selfRating wird von derive-selfrating.mjs erzeugt
-  }]
-}
-```
+| Quelle | Liefert |
+|---|---|
+| StuRa-Hochschulgruppenliste | Name, Kategorie, Website, Kontakt (→ Seed) |
+| Gruppen-Webseiten / „Über uns" | Text → Item-Antworten + Filter |
+| Instagram/Social | Aktivität, Events (manuell ergänzen) |
 
-## Live-Austausch ohne Downtime
-
-Schon umgesetzt über `update-data.sh` (atomarer Symlink-Swap + nginx-Reload,
-letzte 5 Releases als Rollback). Ein Cron-Job kann den Lauf automatisieren
-(André's Idee „Tabelle pflegen → automatisch neu bauen"):
+## Live-Austausch ohne Downtime (Cron)
 
 ```cron
-# täglich 04:00: scrapen, Modell trainieren, ableiten, live schalten
+# täglich 04:00: scrapen, mit Registrierungen mergen, live schalten
 0 4 * * *  cd /opt/fomo/static-site \
   && node scripts/scrape-groups.mjs --seed /opt/fomo/groups-seed.json --out scraped-groups.json \
-  && node scripts/train-derive-model.mjs --in data/groups.json --out data/derive-model.json \
   && node scripts/derive-selfrating.mjs --in scraped-groups.json \
-       --model data/derive-model.json --overrides /opt/fomo/export.json --out data/groups.json \
+       --overrides /opt/fomo/export.json --out data/groups.json \
   && ./scripts/update-data.sh >> /var/log/fomo-update.log 2>&1
 ```
+
+## Anhang: Legacy-Attribut-Pfad (optional, meist ungenutzt)
+
+`train-derive-model.mjs` + `derive-selfrating.mjs --model` lernen aus den
+registrierten Gruppen ein besseres **Attribut→Item**-Mapping (53 % → 59 %). Das
+ist nur relevant, falls noch alte Datensätze **mit** 17 Attributen, aber **ohne**
+`selfRating` verarbeitet werden müssen. Der neue Scraper umgeht diesen Pfad
+komplett (er erzeugt die `selfRating` direkt) – die 17 Attribute sind damit
+endgültig nicht mehr nötig.

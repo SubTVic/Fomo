@@ -4,7 +4,11 @@
 // build. Keep them in sync with those files; the code stays generic so a data
 // refresh (e.g. swapping in working-set-v3) needs no code change.
 
-/** The 17 binary scraper attributes attached to every group. */
+/**
+ * Legacy 17 binary attributes. The static matcher does NOT use them — matching
+ * runs on selfRating.answers + selfRating.filterSelections only. Kept optional
+ * for backward compatibility with older data; new (scraped) groups omit it.
+ */
 export type GroupAttributes = Record<string, boolean>;
 
 /** One WS2 self-rating answer from a group: itemId → -1 | 0 | 1. */
@@ -19,7 +23,7 @@ export interface GroupSelfRating {
   filterSelections: string[];
   answers: SelfRatingAnswer[];
   /**
-   * True when the rating was auto-derived from scraped attributes (group has not
+   * True when the rating was auto-derived from scraped data (group has not
    * registered yet), false/absent for a real self-rating. See
    * docs/SCRAPING-KONZEPT.md. Used to flag "unbestätigt" in the UI.
    */
@@ -54,7 +58,8 @@ export interface Group {
   motto: string | null;
   foundedYear: number | null;
   logoUrl: string | null;
-  attributes: GroupAttributes;
+  /** Legacy, optional — not used by matching (see GroupAttributes). */
+  attributes?: GroupAttributes;
   nextEvent?: GroupEvent | null;
   selfRating: GroupSelfRating;
 }

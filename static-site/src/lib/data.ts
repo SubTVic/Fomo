@@ -6,19 +6,21 @@
 
 import groupsJson from "../../data/groups.json";
 import quizJson from "../../data/quiz.json";
+import logosJson from "../../data/logos.json";
 import type { Group, QuizData, QuizItem, QuizFilters } from "./types";
 
-const groups = (groupsJson as { groups: Group[] }).groups;
+// Logo overlay (slug → /logos/file). Kept separate from groups.json so logos
+// can be added without touching the big data file; a group's own logoUrl wins.
+const logos = logosJson as Record<string, string>;
+const groups = (groupsJson as { groups: Group[] }).groups.map((g) => ({
+  ...g,
+  logoUrl: g.logoUrl ?? logos[g.slug] ?? null,
+}));
 const quiz = quizJson as unknown as QuizData;
 
-/** All groups in the bundle (verified + AI-derived unverified ones). */
+/** All verified groups (the JSON already excludes unverified ones). */
 export function getGroups(): Group[] {
   return groups;
-}
-
-/** True when the group's profile was not confirmed by the group itself. */
-export function isUnverified(group: Group): boolean {
-  return group.selfRating.derived === true;
 }
 
 export function getGroupBySlug(slug: string): Group | undefined {

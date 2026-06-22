@@ -1,38 +1,25 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { MatchResult } from "@/lib/types";
-import { isUnverified } from "@/lib/data";
 import { GroupCard } from "@/components/GroupCard";
-import { UnverifiedNotice } from "@/components/UnverifiedNotice";
+import { ShareButton } from "./ShareButton";
 
 interface ResultsScreenProps {
   matches: MatchResult[];
   answeredCount: number; // non-neutral answers
+  resultsParam: string; // encoded answers, for sharing + detail back-links
   onRestart: () => void;
 }
 
 const MAX_RESULTS = 10;
 
-export function ResultsScreen({ matches, answeredCount, onRestart }: ResultsScreenProps) {
-  const [showUnverified, setShowUnverified] = useState(false);
-
-  const positives = useMemo(() => matches.filter((m) => m.score > 0), [matches]);
-  const unverifiedAvailable = useMemo(
-    () => positives.some((m) => isUnverified(m.group)),
-    [positives],
-  );
-
+export function ResultsScreen({ matches, answeredCount, resultsParam, onRestart }: ResultsScreenProps) {
   // Only ever show real matches: groups excluded by the filter hard-constraint
   // score 0 and must never appear. Empty list → handled by the message below.
-  const top = useMemo(() => {
-    const pool = showUnverified
-      ? positives
-      : positives.filter((m) => !isUnverified(m.group));
-    return pool.slice(0, MAX_RESULTS);
-  }, [positives, showUnverified]);
+  const top = matches.filter((m) => m.score > 0).slice(0, MAX_RESULTS);
 
   // Competition ranking: equal scores share a rank (#1, #1, #3 …) so groups
   // that fit equally well are shown as equals, not arbitrarily ordered.
@@ -43,14 +30,12 @@ export function ResultsScreen({ matches, answeredCount, onRestart }: ResultsScre
     return { ...m, rank: i + 1, tied: isTie };
   });
   for (let i = 1; i < ranked.length; i++) {
+    // Tied row inherits the first rank of its score group.
     if (ranked[i].score === ranked[i - 1].score) ranked[i].rank = ranked[i - 1].rank;
   }
 
-  // Reveal cards one by one for a bit of drama. Reset when the toggle changes.
+  // Reveal cards one by one for a bit of drama.
   const [revealed, setRevealed] = useState(0);
-  useEffect(() => {
-    setRevealed(0);
-  }, [showUnverified]);
   useEffect(() => {
     if (revealed >= ranked.length) return;
     const t = setTimeout(() => setRevealed((r) => r + 1), 180);
@@ -65,23 +50,9 @@ export function ResultsScreen({ matches, answeredCount, onRestart }: ResultsScre
         Basierend auf {answeredCount} klaren Antworten. Gruppen mit gleicher Prozentzahl
         passen gleich gut — die Reihenfolge dazwischen sagt nichts aus.
       </p>
-
-      {unverifiedAvailable && (
-        <label className="mt-4 flex cursor-pointer items-center gap-2 text-sm text-body">
-          <input
-            type="checkbox"
-            checked={showUnverified}
-            onChange={(e) => setShowUnverified(e.target.checked)}
-            className="h-4 w-4 accent-navy"
-          />
-          <span>Auch unbestätigte Gruppen einbeziehen</span>
-        </label>
-      )}
-      {showUnverified && (
-        <div className="mt-3">
-          <UnverifiedNotice />
-        </div>
-      )}
+      <p className="mt-1 text-xs text-muted">
+        Tipp: Speichere oder teile den Link — er bringt dich genau zu diesem Ergebnis zurück.
+      </p>
 
       {ranked.length === 0 ? (
         <div className="mt-6 border-poster bg-card p-6 text-center">
@@ -96,13 +67,20 @@ export function ResultsScreen({ matches, answeredCount, onRestart }: ResultsScre
               key={m.group.id}
               className={i < revealed ? "animate-fade-up" : "invisible"}
             >
-              <GroupCard group={m.group} score={m.score} rank={m.rank} tied={m.tied} />
+              <GroupCard
+                group={m.group}
+                score={m.score}
+                rank={m.rank}
+                tied={m.tied}
+                resultsParam={resultsParam}
+              />
             </div>
           ))}
         </div>
       )}
 
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-8 grid gap-3 sm:grid-cols-3">
+        <ShareButton />
         <button
           type="button"
           onClick={onRestart}
@@ -114,7 +92,7 @@ export function ResultsScreen({ matches, answeredCount, onRestart }: ResultsScre
           href="/groups"
           className="border-poster bg-navy px-6 py-3 text-center font-heading text-sky transition-colors hover:bg-navy-hover"
         >
-          Alle Gruppen ansehen
+          Alle Gruppen
         </Link>
       </div>
     </div>

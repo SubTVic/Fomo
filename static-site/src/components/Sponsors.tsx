@@ -4,17 +4,17 @@
 import { useState } from "react";
 
 /**
- * "Entstanden als Projekt von" — YETI & StuRa. Logo image files live in
- * public/sponsors/ (yeti.jpeg present; a StuRa logo is not in the repo). Each
- * logo falls back to a wordmark badge if its image is missing, so the section
- * never shows a broken image.
+ * "Entstanden als Projekt von" — YETI & StuRa. The YETI logo lives in
+ * public/group-logos/; a StuRa logo is not in the repo, so it shows as a
+ * wordmark badge. Each logo falls back to a wordmark if its image is missing,
+ * so the section never shows a broken image.
  */
 export function Sponsors() {
   return (
     <section className="my-10 border-poster bg-card p-6 text-center sm:p-8">
       <p className="font-heading text-sm text-accent-muted">ENTSTANDEN ALS PROJEKT VON</p>
       <div className="mt-5 flex flex-wrap items-center justify-center gap-6 sm:gap-10">
-        <SponsorLogo src="/sponsors/yeti.jpeg" name="YETI" />
+        <SponsorLogo src="/group-logos/YETI_Logo_Transparent_Black.png" name="YETI" />
         <SponsorLogo src="/sponsors/stura.png" name="StuRa" />
       </div>
       <p className="mx-auto mt-5 max-w-prose text-sm text-body">

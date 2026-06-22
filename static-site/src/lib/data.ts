@@ -41,28 +41,31 @@ export function getQuizFilters(): QuizFilters {
 }
 
 /**
- * Fallback for groups whose category has no colour in the data (e.g.
+ * Fallback for categories that have no colour anywhere in the data (e.g.
  * "Sonstiges"). Without it the white category badge would render with no
  * background — invisible on the white card.
  */
 export const CATEGORY_FALLBACK_COLOR = "#5a8a9a";
 
-/** The badge colour for a group, never empty. */
+// Resolve one colour per category (first non-empty seen). Scraped groups often
+// have a null categoryColor even though other groups in the same category carry
+// one — so the badge colour is taken at the category level, not per group.
+const categoryColors = new Map<string, string>();
+for (const g of groups) {
+  if (g.categoryColor && !categoryColors.has(g.categoryName)) {
+    categoryColors.set(g.categoryName, g.categoryColor);
+  }
+}
+
+/** The badge colour for a group, never empty (resolved per category). */
 export function categoryColorOf(group: Group): string {
-  return group.categoryColor || CATEGORY_FALLBACK_COLOR;
+  return categoryColors.get(group.categoryName) || group.categoryColor || CATEGORY_FALLBACK_COLOR;
 }
 
 /** Distinct categories with their poster colour, sorted by name. */
 export function getCategories(): Array<{ name: string; color: string }> {
-  const seen = new Map<string, string>();
-  for (const g of groups) {
-    // Prefer the first non-empty colour seen for a category, else fall back.
-    const existing = seen.get(g.categoryName);
-    if (!existing || existing === CATEGORY_FALLBACK_COLOR) {
-      seen.set(g.categoryName, g.categoryColor || CATEGORY_FALLBACK_COLOR);
-    }
-  }
-  return [...seen.entries()]
-    .map(([name, color]) => ({ name, color }))
+  const names = new Set(groups.map((g) => g.categoryName));
+  return [...names]
+    .map((name) => ({ name, color: categoryColors.get(name) || CATEGORY_FALLBACK_COLOR }))
     .sort((a, b) => a.name.localeCompare(b.name, "de"));
 }

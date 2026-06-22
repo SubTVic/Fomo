@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getGroups, getGroupBySlug, categoryColorOf } from "@/lib/data";
+import { getGroups, getGroupBySlug, categoryColorOf, isUnverified } from "@/lib/data";
 import { GroupLinks } from "@/components/GroupLinks";
 import { GroupLogo } from "@/components/GroupLogo";
 import { BackLink } from "@/components/BackLink";
+import { UnverifiedNotice } from "@/components/UnverifiedNotice";
 
 /** Pre-render one HTML page per group for the static export. */
 export function generateStaticParams() {
@@ -60,6 +61,12 @@ export default async function GroupDetailPage({
         </div>
 
         {group.motto && <p className="mt-2 text-lg italic text-accent-muted">„{group.motto}“</p>}
+
+        {isUnverified(group) && (
+          <div className="mt-4">
+            <UnverifiedNotice />
+          </div>
+        )}
 
         <p className="mt-5 whitespace-pre-line text-body">{group.longDescription}</p>
 

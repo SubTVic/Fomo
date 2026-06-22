@@ -23,6 +23,11 @@ export function getGroups(): Group[] {
   return groups;
 }
 
+/** A group whose profile was auto-derived (scraped), not confirmed by the group. */
+export function isUnverified(group: Group): boolean {
+  return group.selfRating.derived === true;
+}
+
 export function getGroupBySlug(slug: string): Group | undefined {
   return groups.find((g) => g.slug === slug);
 }

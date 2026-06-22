@@ -11,9 +11,14 @@ import type { Group, QuizData, QuizItem, QuizFilters } from "./types";
 const groups = (groupsJson as { groups: Group[] }).groups;
 const quiz = quizJson as unknown as QuizData;
 
-/** All verified groups (the JSON already excludes unverified ones). */
+/** All groups in the bundle (verified + AI-derived unverified ones). */
 export function getGroups(): Group[] {
   return groups;
+}
+
+/** True when the group's profile was not confirmed by the group itself. */
+export function isUnverified(group: Group): boolean {
+  return group.selfRating.derived === true;
 }
 
 export function getGroupBySlug(slug: string): Group | undefined {

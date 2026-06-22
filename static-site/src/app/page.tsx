@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import Link from "next/link";
+import Image from "next/image";
 import { getGroups, getQuizItems } from "@/lib/data";
 
 export default function HomePage() {
@@ -42,6 +43,47 @@ export default function HomePage() {
         <p className="mt-5 text-xs uppercase tracking-wider text-muted">
           100% anonym · Matching läuft in deinem Browser · Keine Anmeldung
         </p>
+      </section>
+
+      {/* Partner / Trägerschaft */}
+      <section className="mt-6 border-poster bg-card p-5 poster-shadow sm:mt-8 sm:p-8">
+        <p className="mx-auto max-w-prose text-center text-sm text-body sm:text-base">
+          Entstanden als Projekt des YETI-Fellowship, umgesetzt als Projektgruppe des StuRa.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-12 gap-y-6 sm:mt-6 sm:gap-x-20">
+          <a
+            href="https://www.stura.tu-dresden.de"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block transition-opacity hover:opacity-80"
+            aria-label="StuRa TU Dresden"
+          >
+            <Image
+              src="/logos/stura.png"
+              alt="StuRa TU Dresden"
+              width={220}
+              height={110}
+              className="h-16 w-auto sm:h-20"
+              priority
+            />
+          </a>
+          <a
+            href="https://yeti-dresden.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block transition-opacity hover:opacity-80"
+            aria-label="YETI Dresden"
+          >
+            <Image
+              src="/logos/yeti.png"
+              alt="YETI Dresden"
+              width={110}
+              height={110}
+              className="h-16 w-auto sm:h-20"
+              priority
+            />
+          </a>
+        </div>
       </section>
 
       {/* How it works */}

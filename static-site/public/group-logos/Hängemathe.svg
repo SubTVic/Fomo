@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="320"
+   height="320"
+   viewBox="0 0 320 320"
+   id="logo-brand-aside"
+   version="1.1"
+   xml:space="preserve"
+   sodipodi:docname="logo.inkscape.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs167" /><sodipodi:namedview
+   id="namedview165"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="false"
+   inkscape:zoom="1.1495575"
+   inkscape:cx="267.49423"
+   inkscape:cy="163.54119"
+   inkscape:window-width="1920"
+   inkscape:window-height="1023"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="logo-brand-aside" />
+  <style
+   id="style131">
+    g#text path {
+      fill: #000000;
+    }
+  </style>
+  <rect
+   style="display:inline;fill:#ffffff"
+   id="outline"
+   width="320"
+   height="320"
+   x="0"
+   y="0" />
+  <path
+   id="path327"
+   d="M 10,10 H 310 V 190 C 310,190 182.2,176.02407 79.216236,79.18975 105.89224,126.80221 190.99707,215.36896 310,244 v 66 H 10 Z"
+   style="display:inline;fill:#aa0000;stroke-width:1.07143"
+   inkscape:label="logo_300" />
+  
+</svg>

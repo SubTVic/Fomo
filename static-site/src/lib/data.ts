@@ -18,7 +18,7 @@ const groups = (groupsJson as { groups: Group[] }).groups.map((g) => ({
 }));
 const quiz = quizJson as unknown as QuizData;
 
-/** All verified groups (the JSON already excludes unverified ones). */
+/** All active groups (verified + unverified). Used for browsing /groups. */
 export function getGroups(): Group[] {
   return groups;
 }
@@ -26,6 +26,15 @@ export function getGroups(): Group[] {
 /** A group whose profile was auto-derived (scraped), not confirmed by the group. */
 export function isUnverified(group: Group): boolean {
   return group.selfRating.derived === true;
+}
+
+/**
+ * Groups eligible for quiz matching: verified only. Unverified (scraped) groups
+ * have lower-quality auto-derived profiles, so they are excluded from the
+ * ranking and only shown when browsing (behind the "unbestätigt" toggle).
+ */
+export function getMatchableGroups(): Group[] {
+  return groups.filter((g) => !isUnverified(g));
 }
 
 export function getGroupBySlug(slug: string): Group | undefined {

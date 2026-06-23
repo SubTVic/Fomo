@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Metadata } from "next";
-import { getGroups, getQuizItems, getQuizFilters } from "@/lib/data";
+import { getMatchableGroups, getQuizItems, getQuizFilters } from "@/lib/data";
 import { QuizFlow } from "@/components/quiz/QuizFlow";
 
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export default function QuizPage() {
       <QuizFlow
         items={getQuizItems()}
         filters={getQuizFilters()}
-        groups={getGroups()}
+        groups={getMatchableGroups()}
       />
     </div>
   );

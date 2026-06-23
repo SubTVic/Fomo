@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Group } from "@/lib/types";
 import { categoryColorOf } from "@/lib/data";
@@ -23,15 +22,14 @@ interface GroupCardProps {
 export function GroupCard({ group, score, rank, tied, resultsParam }: GroupCardProps) {
   const isResult = score !== undefined;
   const router = useRouter();
-  const [expanded, setExpanded] = useState(false);
 
   const detailHref = `/groups/${group.slug}/${resultsParam ? `?r=${encodeURIComponent(resultsParam)}` : ""}`;
 
-  // Result cards navigate to the detail page (so the back link can return to
-  // the results); browse cards expand inline on click.
-  function onCardClick() {
-    if (isResult) router.push(detailHref);
-    else setExpanded((e) => !e);
+  // Both variants open the group's own detail page ("Mehr anzeigen" → eigener
+  // Screen). Result cards carry the encoded results so the back link returns
+  // to the ranking.
+  function openDetail() {
+    router.push(detailHref);
   }
 
   const stop = (e: React.MouseEvent) => e.stopPropagation();
@@ -41,14 +39,13 @@ export function GroupCard({ group, score, rank, tied, resultsParam }: GroupCardP
     <article
       role="button"
       tabIndex={0}
-      onClick={onCardClick}
+      onClick={openDetail}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          onCardClick();
+          openDetail();
         }
       }}
-      aria-expanded={isResult ? undefined : expanded}
       className="flex cursor-pointer flex-col gap-3 border-poster bg-card p-5 transition-transform hover:-translate-y-0.5 hover:poster-shadow"
     >
       <div className="flex items-start gap-3">
@@ -87,18 +84,14 @@ export function GroupCard({ group, score, rank, tied, resultsParam }: GroupCardP
         </div>
       </div>
 
-      <p className={`text-sm text-body ${expanded ? "" : "line-clamp-3"}`}>
-        {expanded ? group.longDescription || group.shortDescription : group.shortDescription}
-      </p>
+      <p className="text-sm text-body line-clamp-3">{group.shortDescription}</p>
 
-      {expanded && <MetaRow group={group} />}
-
-      {/* Browse: hint to expand. Result: hint to open the detail page. */}
+      {/* Both variants link to the group's own detail screen. */}
       <span className="text-xs font-semibold uppercase tracking-wide text-accent-muted">
-        {isResult ? "Antippen für Details →" : expanded ? "Weniger anzeigen ▲" : "Antippen für mehr ▼"}
+        {isResult ? "Antippen für Details →" : "Mehr anzeigen →"}
       </span>
 
-      {(expanded || isResult) && links.length > 0 && (
+      {isResult && links.length > 0 && (
         <div className="flex flex-wrap items-center gap-3 text-xs" onClick={stop}>
           {links.map((l) => (
             <a
@@ -124,24 +117,4 @@ function buildLinks(group: Group) {
   if (group.instagramUrl) links.push({ href: group.instagramUrl, label: "Instagram", dest: "instagram" });
   if (group.contactEmail) links.push({ href: `mailto:${group.contactEmail}`, label: "E-Mail", dest: "email" });
   return links;
-}
-
-function MetaRow({ group }: { group: Group }) {
-  const meta: string[] = [];
-  if (group.memberCount) meta.push(`${group.memberCount} Mitglieder`);
-  if (group.groupSize) meta.push({ small: "Klein", medium: "Mittel", large: "Groß" }[group.groupSize] ?? group.groupSize);
-  if (group.eventFrequency)
-    meta.push({ high: "Wöchentlich", medium: "Monatlich", low: "Gelegentlich" }[group.eventFrequency] ?? group.eventFrequency);
-  if (group.language)
-    meta.push({ german: "Deutsch", english: "Englisch", both: "DE & EN" }[group.language] ?? group.language);
-  if (meta.length === 0) return null;
-  return (
-    <div className="flex flex-wrap gap-2 text-[11px] font-medium text-muted">
-      {meta.map((m) => (
-        <span key={m} className="border border-navy px-2 py-0.5">
-          {m}
-        </span>
-      ))}
-    </div>
-  );
 }

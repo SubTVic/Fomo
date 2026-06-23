@@ -12,10 +12,9 @@ export default function HomePage() {
       {/* Hero — no start button here on purpose: read on first. */}
       <section className="mt-6 border-poster bg-card p-6 poster-shadow sm:mt-10 sm:p-10">
         <p className="font-heading text-sm text-accent-muted sm:text-base">TU DRESDEN</p>
-        <h1 className="mt-3 text-4xl text-navy sm:text-6xl">
+        <h1 className="mt-3 hyphens-auto break-words text-[2rem] leading-tight text-navy sm:text-6xl">
           Finde deine
-          <br />
-          Hochschulgruppe.
+          <br className="hidden sm:inline" /> Hochschulgruppe.
         </h1>
         <p className="mt-5 max-w-prose text-base text-body sm:text-lg">
           Über {groupCount} Gruppen, eine Frage: Wo passt du rein? Beantworte {itemCount} kurze
@@ -36,7 +35,11 @@ export default function HomePage() {
               t: "Antworten",
               d: `${itemCount} kurze Fragen, eine pro Screen. Stimme zu, neutral oder nicht.`,
             },
-            { n: "03", t: "Matchen", d: "Sieh sofort deine Top-Gruppen mit Kontakt und Links." },
+            {
+              n: "03",
+              t: "Matchen",
+              d: `Jede Gruppe hat dieselben ${itemCount} Fragen beantwortet — wir vergleichen eure Antworten und zeigen deine Top-Gruppen.`,
+            },
           ].map((step) => (
             <div key={step.n} className="border-poster bg-card p-5">
               <span className="font-heading text-3xl text-sky [text-shadow:_2px_2px_0_#1a2a35]">

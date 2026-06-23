@@ -33,7 +33,7 @@ export function FilterScreen({ filters, selected, onToggle, onStart }: FilterScr
                 isOn ? "bg-navy text-sky" : "bg-card text-navy hover:bg-surface"
               }`}
             >
-              <span className="font-medium">{opt.label}</span>
+              <span className="min-w-0 break-words font-medium">{opt.label}</span>
               <span
                 className={`flex h-6 w-6 shrink-0 items-center justify-center border-2 text-sm font-bold ${
                   isOn ? "border-sky bg-sky text-navy" : "border-navy"

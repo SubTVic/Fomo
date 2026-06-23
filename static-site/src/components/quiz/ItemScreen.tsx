@@ -14,9 +14,9 @@ interface ItemScreenProps {
 }
 
 const OPTIONS: Array<{ value: number; label: string; emoji: string }> = [
-  { value: -1, label: "Stimme nicht zu", emoji: "👎" },
-  { value: 0, label: "Neutral", emoji: "🤷" },
   { value: 1, label: "Stimme zu", emoji: "👍" },
+  { value: 0, label: "Neutral", emoji: "🤷" },
+  { value: -1, label: "Stimme nicht zu", emoji: "👎" },
 ];
 
 /** One Likert item per screen. Selecting an option auto-advances (handled by parent). */
@@ -32,8 +32,8 @@ export function ItemScreen({
     <div className="animate-fade-up" key={item.id}>
       <ProgressBar current={index + 1} total={total} />
 
-      <div className="mt-6 flex min-h-[140px] items-center border-poster bg-card p-6">
-        <p className="text-xl text-navy sm:text-2xl">{item.text}</p>
+      <div className="mt-6 flex min-h-[140px] items-center border-poster bg-card p-5 sm:p-6">
+        <p className="hyphens-auto break-words text-xl text-navy sm:text-2xl">{item.text}</p>
       </div>
 
       <div className="mt-5 grid gap-3">
@@ -49,10 +49,10 @@ export function ItemScreen({
                 isOn ? "bg-navy text-sky" : "bg-card text-navy hover:bg-surface"
               }`}
             >
-              <span className="text-2xl" aria-hidden>
+              <span className="shrink-0 text-2xl" aria-hidden>
                 {opt.emoji}
               </span>
-              {opt.label}
+              <span className="min-w-0 break-words">{opt.label}</span>
             </button>
           );
         })}

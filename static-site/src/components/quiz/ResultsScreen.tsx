@@ -3,20 +3,30 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { MatchResult } from "@/lib/types";
+import type { MatchResult, QuizFilters } from "@/lib/types";
 import { GroupCard } from "@/components/GroupCard";
 import { ShareButton } from "./ShareButton";
+import { CompareGroups } from "./CompareGroups";
 
 interface ResultsScreenProps {
   matches: MatchResult[];
   answeredCount: number; // non-neutral answers
+  itemCount: number; // total quiz items (the same questions every group answered)
+  filters: QuizFilters;
   resultsParam: string; // encoded answers, for sharing + detail back-links
   onRestart: () => void;
 }
 
 const MAX_RESULTS = 10;
 
-export function ResultsScreen({ matches, answeredCount, resultsParam, onRestart }: ResultsScreenProps) {
+export function ResultsScreen({
+  matches,
+  answeredCount,
+  itemCount,
+  filters,
+  resultsParam,
+  onRestart,
+}: ResultsScreenProps) {
   // Only ever show real matches: groups excluded by the filter hard-constraint
   // score 0 and must never appear. Empty list → handled by the message below.
   const top = matches.filter((m) => m.score > 0).slice(0, MAX_RESULTS);
@@ -50,7 +60,20 @@ export function ResultsScreen({ matches, answeredCount, resultsParam, onRestart 
         Basierend auf {answeredCount} klaren Antworten. Gruppen mit gleicher Prozentzahl
         passen gleich gut — die Reihenfolge dazwischen sagt nichts aus.
       </p>
-      <p className="mt-1 text-xs text-muted">
+
+      <div className="mt-4 border-2 border-navy bg-surface p-4">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-accent-muted">
+          Wie der Match entsteht
+        </p>
+        <p className="mt-1 text-sm text-body">
+          Jede Gruppe hat <strong className="text-navy">dieselben {itemCount} Fragen</strong>{" "}
+          beantwortet wie du gerade. Wir vergleichen deine Antworten mit denen jeder Gruppe — je
+          mehr ihr übereinstimmt, desto höher der Prozentwert. Alles passiert in deinem Browser,
+          nichts wird gesendet.
+        </p>
+      </div>
+
+      <p className="mt-3 text-xs text-muted">
         Tipp: Speichere oder teile den Link — er bringt dich genau zu diesem Ergebnis zurück.
       </p>
 
@@ -78,6 +101,8 @@ export function ResultsScreen({ matches, answeredCount, resultsParam, onRestart 
           ))}
         </div>
       )}
+
+      {ranked.length >= 2 && <CompareGroups results={ranked} filters={filters} />}
 
       <div className="mt-8 grid gap-3 sm:grid-cols-3">
         <ShareButton />

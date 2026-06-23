@@ -128,6 +128,8 @@ export function QuizFlow({ items, filters, groups }: QuizFlowProps) {
     <ResultsScreen
       matches={matches}
       answeredCount={answeredCount}
+      itemCount={items.length}
+      filters={filters}
       resultsParam={resultsParam}
       onRestart={restart}
     />

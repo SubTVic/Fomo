@@ -2,7 +2,7 @@
 
 **Stand:** 2026-05-07
 **Item-Pool:** [`data/working-set-v2.json`](../data/working-set-v2.json)
-**Abhängigkeit:** `CLAUDE-pläne/Studie2-Integration.md` muss bereits umgesetzt sein (Study2Session/Study2Answer existieren in DB).
+**Abhängigkeit:** `CLAUDE-pläne/archiv/Studie2-Integration.md` muss bereits umgesetzt sein (Study2Session/Study2Answer existieren in DB).
 
 Dieser Plan ist autoritativ — keine Rückfragen nötig. Bei Mehrdeutigkeiten: einfachste Variante, Notiz im Commit.
 
@@ -81,7 +81,7 @@ npx prisma migrate dev --name add_group_self_rating
 
 ## 2 — Item-Modul (bereits vorhanden — nicht neu anlegen)
 
-`src/lib/study2/items.ts` wurde durch `CLAUDE-pläne/Studie2-Integration.md` bereits erstellt und exportiert `STUDY2_ITEMS` und `STUDY2_FILTER` aus `working-set-v2.json`. **Nicht neu anlegen, nicht überschreiben.** Einfach importieren wo nötig.
+`src/lib/study2/items.ts` wurde durch `CLAUDE-pläne/archiv/Studie2-Integration.md` bereits erstellt und exportiert `STUDY2_ITEMS` und `STUDY2_FILTER` aus `working-set-v2.json`. **Nicht neu anlegen, nicht überschreiben.** Einfach importieren wo nötig.
 
 ## 3 — API-Routen
 

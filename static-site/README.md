@@ -20,20 +20,52 @@ npm run build    # → static-site/out/  (the deployable bundle)
 
 ## Data
 
-All content comes from two JSON files — no code change needed to refresh it:
+All content comes from three JSON files — no code change needed to refresh it:
 
-- `data/groups.json` — verified, PII-free groups (each with a `selfRating`).
+- `data/groups.json` — all active, PII-free groups (each with a `selfRating`).
 - `data/quiz.json` — quiz `items` (Likert questions) + `filters`.
+- `data/logos.json` — optional slug → logo overlay (a group's own `logoUrl` wins).
 
 To update the live data: replace these files and rebuild. The code is generic
 against their shape (see `src/lib/types.ts`), so swapping the WS2 item pool for
 a trimmed working-set-v3 just works.
+
+**Verified vs. unverified:** a group whose profile was auto-derived (scraped)
+carries `selfRating.derived: true`. Such groups are **excluded from quiz
+matching** (`getMatchableGroups()` in `src/lib/data.ts`) and only appear when
+browsing `/groups` behind the "unbestätigt" toggle — their data is a fallback,
+never a ranking input. A real registration overrides the scrape and flips it to
+verified.
+
+## Data pipeline (scripts/)
+
+Refreshing `data/groups.json` without prod DB access — full concept in
+[`docs/SCRAPING-KONZEPT.md`](docs/SCRAPING-KONZEPT.md):
+
+| Script | npm | Purpose |
+| --- | --- | --- |
+| `scrape-groups.mjs` | `scrape` | Keyword scraper → `selfRating` directly (offline, no key). |
+| `scrape-llm.mjs` | `scrape:llm` | LLM scraper (Claude reads the "Über uns" text). Needs `ANTHROPIC_API_KEY`; falls back to the keyword scraper per group on any error or with `--offline`. |
+| `derive-selfrating.mjs` | `derive` | Merge: real registrations (`--overrides`) always win over scraped data. |
+| `export-from-backup.mjs` | — | Rebuild `groups.json` from an admin backup JSON (mirrors the prod exporter). |
+| `validate-data.mjs` | `validate` | Integrity gate before going live. |
+| `update-data.sh` | — | Build + zero-downtime symlink swap (see `docs/INBETRIEBNAHME.md`). |
+
+The LLM scraper needs `@anthropic-ai/sdk` (run `npm install`) and uses
+`claude-opus-4-8` with adaptive thinking.
 
 ## Matching (client-side, v2)
 
 `src/lib/matching.ts` — mean-absolute-distance between the user's non-neutral
 answers and each group's self-rating, with a filter hard-constraint. See
 `CLAUDE.md` for the algorithm background.
+
+## Operations
+
+Self-hosting on a StuRa server (Docker or plain Node + nginx) and zero-downtime
+data swaps are documented in [`docs/INBETRIEBNAHME.md`](docs/INBETRIEBNAHME.md).
+Which usage data we collect (anonymous, Umami) is in
+[`docs/DATEN-SAMMELN-KONZEPT.md`](docs/DATEN-SAMMELN-KONZEPT.md).
 
 ## Analytics
 

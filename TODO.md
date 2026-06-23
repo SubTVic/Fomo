@@ -35,7 +35,7 @@ Stand: 19. Mai 2026
 - [x] Homepage: 3 CTAs (Studie 2 / Prototyp / Gruppen-Registrierung)
 - [ ] **Deployment auf Vercel** (Studie 2 live schalten)
 - [ ] **Recruitment:** ≥60 Mitglieder-Sessions (3 pro Gruppe × 20 priorisierte Gruppen)
-- [ ] Manual-AC testen (siehe Studie2-Integration.md §8) + 7 Commits aus §10 anlegen
+- [ ] Manual-AC testen (siehe archiv/Studie2-Integration.md §8) + 7 Commits aus §10 anlegen
 
 ---
 

@@ -30,10 +30,18 @@
 
 Skripte (in `scripts/`, npm-Shortcuts in Klammern):
 
-1. **`scrape-groups.mjs`** (`npm run scrape`) – lädt pro Gruppe die Website und
-   erzeugt **direkt** die `selfRating` (21 Item-Antworten + filterSelections).
-   Mapping auf die Items über `quiz.json` selbst → bleibt gültig, wenn das
-   Item-Set wechselt (working-set-v3).
+1. **`scrape-groups.mjs`** (`npm run scrape`) – Keyword-Scraper: lädt pro Gruppe
+   die Website und erzeugt **direkt** die `selfRating` (21 Item-Antworten +
+   filterSelections). Mapping auf die Items über `quiz.json` selbst → bleibt
+   gültig, wenn das Item-Set wechselt (working-set-v3). Deterministisch, offline,
+   ohne API-Key.
+1b. **`scrape-llm.mjs`** (`npm run scrape:llm`) – LLM-Scraper: gleiche Pipeline
+   und gleiches Ausgabeformat, aber statt Keywords liest **Claude** den
+   „Über uns"-Text und beantwortet die WS2-Items direkt (Modell `claude-opus-4-8`,
+   adaptive thinking). Braucht `ANTHROPIC_API_KEY`. Ohne Key – oder wenn ein
+   Fetch/JSON fehlschlägt – fällt jede Gruppe automatisch auf den Keyword-Scraper
+   zurück (`--offline` erzwingt das). Gleiche Ehrlichkeitsregel: ohne klaren Beleg
+   antwortet das Modell neutral (0). `_scrape.source` zeigt `llm` oder `keyword`.
 2. **`derive-selfrating.mjs`** (`npm run derive`) – **Merge**: echte
    Registrierungen (`--overrides`) gewinnen immer; sonst bleibt die gescrapte
    `selfRating` stehen. (Legacy: leitet nur dann aus alten 17 Attributen ab,
@@ -86,13 +94,14 @@ Jede Gruppe ist `needsReview`/`derived`; eine Registrierung überschreibt alles.
 Auf echten (längeren) Seiten sinkt der „neutral"-Anteil und der Fehler unter die
 Neutral-Linie.
 
-> **Hinweis Netz:** Scrapen braucht ausgehenden HTTP-Zugriff. Sandboxen/CI ohne
+> **Hinweis Netz:** Scrapen braucht ausgehenden HTTP-Zugriff (und für den
+> LLM-Scraper zusätzlich Zugriff auf die Anthropic-API). Sandboxen/CI ohne
 > Egress liefern HTTP 403 – dann lokal/auf dem StuRa-Server laufen lassen.
 >
-> **Nächster Hebel (größter):** statt Keywords ein **LLM** über die „Über uns"-
-> Texte, das die WS2-Items direkt beantwortet (mit Review). Gleiche
-> `scraped-groups.json`-Pipeline, nur ein besserer Klassifikator in
-> `scrape-rules.mjs` (mehr Coverage → weniger Neutral).
+> **Umgesetzt:** Der „nächste Hebel" – ein **LLM** statt Keywords – ist als
+> `scrape-llm.mjs` (`npm run scrape:llm`) gebaut. Es liest die „Über uns"-Texte
+> und beantwortet die WS2-Items direkt; mehr Coverage → weniger Neutral, bei
+> gleicher Review-Pflicht. Der Keyword-Scraper bleibt als Offline-Fallback.
 
 ## Datenquellen
 

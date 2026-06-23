@@ -20,6 +20,17 @@ Answer ~20 questions about your interests, values, and time budget, and get pers
 
 Offene Aufgaben: siehe [TODO.md](TODO.md)
 
+### Two apps in this repo
+
+- **Root (`src/`, `prisma/`, …)** — the dynamic Next.js app: admin dashboard,
+  group registration, data collection. Needs PostgreSQL. This is the internal
+  tool that produces the data.
+- **[`static-site/`](static-site/)** — the public, launch-bound FOMO site as a
+  fully static export (no server, no DB, client-side matching). It reads
+  PII-free JSON baked in at build time; the quiz never sends data anywhere.
+  See [`static-site/README.md`](static-site/README.md) for build, the scraper
+  pipeline, and self-hosting.
+
 ## Features
 
 ### Quiz & Matching

@@ -10,6 +10,7 @@
     "lint": "next lint",
     "validate": "node scripts/validate-data.mjs",
     "scrape": "node scripts/scrape-groups.mjs",
+    "scrape:llm": "node scripts/scrape-llm.mjs",
     "scrape:eval": "node scripts/scrape-eval.mjs",
     "derive": "node scripts/derive-selfrating.mjs",
     "derive:train": "node scripts/train-derive-model.mjs"
@@ -20,6 +21,7 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.105.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

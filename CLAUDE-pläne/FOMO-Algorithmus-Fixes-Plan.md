@@ -1,5 +1,17 @@
 # FOMO — Algorithmus-Fixes Plan (Sonnet vs. Opus)
 
+> **Update Juni 2026 — Wo die öffentliche App jetzt lebt:** Die launch-relevante
+> Quiz-App ist als **statischer Export** unter [`static-site/`](../static-site/)
+> gebaut (kein Server, kein DB, Matching v2 im Browser). Working Set v2 (21 Items,
+> 8 Filter) ist dort live; Gruppen werden über `selfRating.answers` gematcht, die
+> alten 17 Binär-Attribute werden nicht mehr genutzt. **Unverifizierte (gescrapte)
+> Gruppen sind vom Matching ausgeschlossen** und nur im Browse-Modus sichtbar.
+> Daten-Refresh ohne Prod-DB läuft über die Scraper-Pipeline in
+> `static-site/scripts/` (Keyword: `scrape-groups.mjs`, LLM: `scrape-llm.mjs`) —
+> Konzept in `static-site/docs/SCRAPING-KONZEPT.md`. Studie 2 wurde verworfen; der
+> zugehörige Plan liegt unter `CLAUDE-pläne/archiv/Studie2-Integration.md`. Der
+> Plan unten dokumentiert die Algorithmus-/Daten-Arbeit, die dorthin geführt hat.
+
 > **Stand:** 04. Mai 2026
 > **Zielgruppe:** Claude Code, mit klarer Modell-Empfehlung pro Task
 > **Ablageort:** `CLAUDE-pläne/ALGORITHM-FIXES.md`

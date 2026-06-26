@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+﻿// SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -25,7 +25,7 @@ export function GroupCard({ group, score, rank, tied, resultsParam }: GroupCardP
 
   const detailHref = `/groups/${group.slug}/${resultsParam ? `?r=${encodeURIComponent(resultsParam)}` : ""}`;
 
-  // Both variants open the group's own detail page ("Mehr anzeigen" → eigener
+  // Both variants open the group's own detail page ("Mehr anzeigen" -> eigener
   // Screen). Result cards carry the encoded results so the back link returns
   // to the ranking.
   function openDetail() {
@@ -34,6 +34,8 @@ export function GroupCard({ group, score, rank, tied, resultsParam }: GroupCardP
 
   const stop = (e: React.MouseEvent) => e.stopPropagation();
   const links = buildLinks(group);
+  const scoreColor =
+    score === undefined ? undefined : score >= 70 ? "#2f9e44" : score >= 50 ? "#f2c94c" : "#d64545";
 
   return (
     <article
@@ -58,17 +60,9 @@ export function GroupCard({ group, score, rank, tied, resultsParam }: GroupCardP
             >
               {group.categoryName}
             </span>
-            {isResult && (
-              <span className="flex shrink-0 flex-col items-end">
-                <span className="flex items-baseline gap-1 border-2 border-navy bg-sky px-2 py-1 font-heading text-navy">
-                  {rank !== undefined && <span className="text-xs">#{rank}</span>}
-                  <span className="text-lg leading-none">{score}%</span>
-                </span>
-                {tied && (
-                  <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-accent-muted">
-                    punktgleich
-                  </span>
-                )}
+            {isResult && rank !== undefined && (
+              <span className=" border-2 border-navy bg-sky px-2 py-1 font-heading text-xs text-navy">
+                #{rank}
               </span>
             )}
           </div>
@@ -86,9 +80,29 @@ export function GroupCard({ group, score, rank, tied, resultsParam }: GroupCardP
 
       <p className="text-sm text-body line-clamp-3">{group.shortDescription}</p>
 
+      {isResult && scoreColor && (
+        <div>
+          <div className="mb-1 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-body">
+            <span>Match</span>
+            <span className="font-heading text-navy">{score}%</span>
+          </div>
+          <div className="h-3 overflow-hidden border-2 border-navy bg-surface">
+            <div
+              className="h-full transition-all duration-500"
+              style={{ width: `${score}%`, backgroundColor: scoreColor }}
+            />
+          </div>
+          {tied && (
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-wider text-accent-muted">
+              punktgleich
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Both variants link to the group's own detail screen. */}
       <span className="text-xs font-semibold uppercase tracking-wide text-accent-muted">
-        {isResult ? "Antippen für Details →" : "Mehr anzeigen →"}
+        {isResult ? "Antippen für Details ->" : "Mehr anzeigen ->"}
       </span>
 
       {isResult && links.length > 0 && (

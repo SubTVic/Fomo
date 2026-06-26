@@ -2,43 +2,33 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { track } from "@/lib/analytics";
 
-/**
- * Share the current results URL. Uses the native share sheet on mobile, falls
- * back to copying the link. The URL already carries the encoded answers (?r=…),
- * so opening it restores the exact ranking.
- */
 export function ShareButton() {
+  const pathname = usePathname();
+  const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
   const [copied, setCopied] = useState(false);
 
-  async function share() {
+  async function copyLink() {
     const url = typeof window !== "undefined" ? window.location.href : "";
-    track("results-share");
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: "Mein FOMO-Ergebnis", text: "Das passt zu mir an der TU Dresden:", url });
-        return;
-      }
-    } catch {
-      // user cancelled the share sheet — fall through to copy
-    }
+    track("results-share-copy");
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), 1800);
     } catch {
-      // clipboard blocked — nothing else we can safely do
+      setCopied(false);
     }
   }
 
   return (
     <button
       type="button"
-      onClick={share}
-      className="border-poster bg-sky px-6 py-3 text-center font-heading text-navy transition-colors hover:bg-surface"
+      onClick={copyLink}
+      className="border-poster bg-card px-6 py-3 text-center font-heading text-navy transition-colors hover:bg-surface"
     >
-      {copied ? "Link kopiert ✓" : "Teilen"}
+      {copied ? (isEnglish ? "Link copied" : "Link kopiert") : isEnglish ? "Share" : "Teilen"}
     </button>
   );
 }

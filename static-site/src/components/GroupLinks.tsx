@@ -1,20 +1,26 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
+import { usePathname } from "next/navigation";
 import type { Group } from "@/lib/types";
 import { track, EVENTS } from "@/lib/analytics";
 
-/** Contact links for a group, with Umami click tracking. */
 export function GroupLinks({ group }: { group: Group }) {
+  const pathname = usePathname();
+  const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
   const links: Array<{ href: string; label: string; dest: string }> = [];
   if (group.websiteUrl) links.push({ href: group.websiteUrl, label: "Website", dest: "website" });
   if (group.instagramUrl)
     links.push({ href: group.instagramUrl, label: "Instagram", dest: "instagram" });
   if (group.contactEmail)
-    links.push({ href: `mailto:${group.contactEmail}`, label: "E-Mail", dest: "email" });
+    links.push({ href: `mailto:${group.contactEmail}`, label: isEnglish ? "E-mail" : "E-Mail", dest: "email" });
 
   if (links.length === 0) {
-    return <p className="text-sm text-muted">Keine Kontaktinfos hinterlegt.</p>;
+    return (
+      <p className="text-sm text-muted">
+        {isEnglish ? "No contact information available." : "Keine Kontaktinfos hinterlegt."}
+      </p>
+    );
   }
 
   return (

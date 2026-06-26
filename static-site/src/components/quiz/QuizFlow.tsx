@@ -14,6 +14,7 @@ interface QuizFlowProps {
   items: QuizItem[];
   filters: QuizFilters;
   groups: Group[];
+  lang?: "de" | "en";
 }
 
 type Phase = "filter" | "items" | "results";
@@ -24,7 +25,7 @@ type Phase = "filter" | "items" | "results";
  * risk in sandboxes, see CLAUDE.md). The finished result is encoded into the
  * URL (?r=…) so it can be saved/shared and restored. Matching runs in-browser.
  */
-export function QuizFlow({ items, filters, groups }: QuizFlowProps) {
+export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps) {
   const [phase, setPhase] = useState<Phase>("filter");
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [answers, setAnswers] = useState<UserAnswers>({});
@@ -107,6 +108,7 @@ export function QuizFlow({ items, filters, groups }: QuizFlowProps) {
         selected={selectedFilters}
         onToggle={toggleFilter}
         onStart={startItems}
+        lang={lang}
       />
     );
   }
@@ -120,6 +122,7 @@ export function QuizFlow({ items, filters, groups }: QuizFlowProps) {
         currentValue={answers[items[index].id]}
         onAnswer={answer}
         onBack={back}
+        lang={lang}
       />
     );
   }
@@ -132,6 +135,7 @@ export function QuizFlow({ items, filters, groups }: QuizFlowProps) {
       filters={filters}
       resultsParam={resultsParam}
       onRestart={restart}
+      lang={lang}
     />
   );
 }

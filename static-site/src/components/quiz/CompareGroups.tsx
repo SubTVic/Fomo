@@ -7,29 +7,45 @@ import type { Group, QuizFilters } from "@/lib/types";
 import { GroupLogo } from "@/components/GroupLogo";
 
 interface CompareGroupsProps {
-  /** The ranked matches (group + score), in display order. */
   results: Array<{ group: Group; score: number }>;
   filters: QuizFilters;
+  lang?: "de" | "en";
 }
 
-const sizeLabel = (s: string | null) =>
-  s ? ({ small: "Klein", medium: "Mittel", large: "Groß" }[s] ?? s) : "—";
-const freqLabel = (f: string | null) =>
-  f ? ({ high: "Wöchentlich", medium: "Monatlich", low: "Gelegentlich" }[f] ?? f) : "—";
-const langLabel = (l: string | null) =>
-  l ? ({ german: "Deutsch", english: "Englisch", both: "DE & EN" }[l] ?? l) : "—";
-
-/**
- * Side-by-side comparison of two groups from the results. Lets a user weigh two
- * matches directly (score, category, size, rhythm, language, activities,
- * contact) instead of jumping between two detail pages.
- */
-export function CompareGroups({ results, filters }: CompareGroupsProps) {
+export function CompareGroups({ results, filters, lang = "de" }: CompareGroupsProps) {
   const [aId, setAId] = useState(results[0].group.id);
   const [bId, setBId] = useState(results[1].group.id);
 
   const a = results.find((r) => r.group.id === aId) ?? results[0];
   const b = results.find((r) => r.group.id === bId) ?? results[1];
+  const prefix = lang === "en" ? "/en" : "";
+
+  const copy =
+    lang === "en"
+      ? {
+          title: "Compare two groups",
+          text: "Choose two matches and compare the differences directly.",
+          chooseOther: "Choose another group in one column to compare.",
+          category: "Category",
+          size: "Size",
+          meetings: "Meetings",
+          language: "Language",
+          members: "Members",
+          activities: "Activities",
+          open: "open",
+        }
+      : {
+          title: "Zwei Gruppen vergleichen",
+          text: "Wähle zwei deiner Matches und sieh die Unterschiede direkt nebeneinander.",
+          chooseOther: "Wähle in einer Spalte eine andere Gruppe, um zu vergleichen.",
+          category: "Kategorie",
+          size: "Größe",
+          meetings: "Termine",
+          language: "Sprache",
+          members: "Mitglieder",
+          activities: "Aktivitäten",
+          open: "öffnen",
+        };
 
   const filterLabel = new Map(filters.options.map((o) => [o.attribute, o.label]));
   const activities = (g: Group) =>
@@ -37,13 +53,13 @@ export function CompareGroups({ results, filters }: CompareGroupsProps) {
 
   const rows: Array<{ label: string; render: (g: Group, score: number) => React.ReactNode }> = [
     { label: "Match", render: (_g, score) => <span className="font-heading text-navy">{score}%</span> },
-    { label: "Kategorie", render: (g) => g.categoryName },
-    { label: "Größe", render: (g) => sizeLabel(g.groupSize) },
-    { label: "Termine", render: (g) => freqLabel(g.eventFrequency) },
-    { label: "Sprache", render: (g) => langLabel(g.language) },
-    { label: "Mitglieder", render: (g) => (g.memberCount ? String(g.memberCount) : "—") },
+    { label: copy.category, render: (g) => g.categoryName },
+    { label: copy.size, render: (g) => sizeLabel(g.groupSize, lang) },
+    { label: copy.meetings, render: (g) => freqLabel(g.eventFrequency, lang) },
+    { label: copy.language, render: (g) => langLabel(g.language, lang) },
+    { label: copy.members, render: (g) => (g.memberCount ? String(g.memberCount) : "—") },
     {
-      label: "Aktivitäten",
+      label: copy.activities,
       render: (g) => {
         const acts = activities(g);
         return acts.length ? acts.join(", ") : "—";
@@ -52,13 +68,10 @@ export function CompareGroups({ results, filters }: CompareGroupsProps) {
   ];
 
   return (
-    <section className="mt-10 border-poster bg-card p-5 sm:p-6">
-      <h2 className="text-xl text-navy sm:text-2xl">Zwei Gruppen vergleichen</h2>
-      <p className="mt-1 text-sm text-body">
-        Wähle zwei deiner Matches und sieh die Unterschiede direkt nebeneinander.
-      </p>
+    <section className="border-poster bg-card p-5 sm:p-6">
+      <h2 className="text-xl text-navy sm:text-2xl">{copy.title}</h2>
+      <p className="mt-1 text-sm text-body">{copy.text}</p>
 
-      {/* Pickers + logos */}
       <div className="mt-5 grid grid-cols-2 gap-3">
         {[
           { sel: aId, set: setAId, picked: a },
@@ -70,7 +83,7 @@ export function CompareGroups({ results, filters }: CompareGroupsProps) {
               value={col.sel}
               onChange={(e) => col.set(e.target.value)}
               className="w-full min-w-0 border-2 border-navy bg-surface px-2 py-2 text-sm font-medium text-navy"
-              aria-label={`Gruppe ${i + 1} wählen`}
+              aria-label={lang === "en" ? `Choose group ${i + 1}` : `Gruppe ${i + 1} wählen`}
             >
               {results.map((r) => (
                 <option key={r.group.id} value={r.group.id}>
@@ -83,12 +96,9 @@ export function CompareGroups({ results, filters }: CompareGroupsProps) {
       </div>
 
       {a.group.id === b.group.id && (
-        <p className="mt-3 text-center text-xs text-muted">
-          Wähle in einer Spalte eine andere Gruppe, um zu vergleichen.
-        </p>
+        <p className="mt-3 text-center text-xs text-muted">{copy.chooseOther}</p>
       )}
 
-      {/* Comparison rows: label spans full width, then the two values aligned. */}
       <dl className="mt-5 divide-y-2 divide-navy/15">
         {rows.map((row) => (
           <div key={row.label} className="py-2.5">
@@ -103,15 +113,41 @@ export function CompareGroups({ results, filters }: CompareGroupsProps) {
         ))}
       </dl>
 
-      {/* Quick links to each full profile */}
       <div className="mt-4 grid grid-cols-2 gap-3 text-center text-xs font-semibold uppercase tracking-wide">
-        <Link href={`/groups/${a.group.slug}/`} className="text-accent-muted hover:text-navy">
-          {a.group.name} öffnen →
+        <Link href={`${prefix}/groups/${a.group.slug}/`} className="text-accent-muted hover:text-navy">
+          {a.group.name} {copy.open} →
         </Link>
-        <Link href={`/groups/${b.group.slug}/`} className="text-accent-muted hover:text-navy">
-          {b.group.name} öffnen →
+        <Link href={`${prefix}/groups/${b.group.slug}/`} className="text-accent-muted hover:text-navy">
+          {b.group.name} {copy.open} →
         </Link>
       </div>
     </section>
   );
+}
+
+function sizeLabel(s: string | null, lang: "de" | "en") {
+  if (!s) return "—";
+  const labels =
+    lang === "en"
+      ? { small: "Small", medium: "Medium", large: "Large" }
+      : { small: "Klein", medium: "Mittel", large: "Groß" };
+  return labels[s as keyof typeof labels] ?? s;
+}
+
+function freqLabel(f: string | null, lang: "de" | "en") {
+  if (!f) return "—";
+  const labels =
+    lang === "en"
+      ? { high: "Weekly", medium: "Monthly", low: "Occasionally" }
+      : { high: "Wöchentlich", medium: "Monatlich", low: "Gelegentlich" };
+  return labels[f as keyof typeof labels] ?? f;
+}
+
+function langLabel(l: string | null, lang: "de" | "en") {
+  if (!l) return "—";
+  const labels =
+    lang === "en"
+      ? { german: "German", english: "English", both: "DE & EN" }
+      : { german: "Deutsch", english: "Englisch", both: "DE & EN" };
+  return labels[l as keyof typeof labels] ?? l;
 }

@@ -3,20 +3,26 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-/**
- * Back link on the group detail page. When the visitor arrived from their quiz
- * results (URL carries ?r=…), it returns to those results instead of the full
- * group list — so they land back on their own ranking.
- */
 export function BackLink() {
+  const pathname = usePathname();
+  const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
   const [r, setR] = useState<string | null>(null);
+
   useEffect(() => {
     setR(new URLSearchParams(window.location.search).get("r"));
   }, []);
 
-  const href = r ? `/quiz/?r=${encodeURIComponent(r)}` : "/groups";
-  const label = r ? "← Zurück zu deinen Ergebnissen" : "← Alle Gruppen";
+  const prefix = isEnglish ? "/en" : "";
+  const href = r ? `${prefix}/quiz/?r=${encodeURIComponent(r)}` : `${prefix}/groups`;
+  const label = r
+    ? isEnglish
+      ? "← Back to your results"
+      : "← Zurück zu deinen Ergebnissen"
+    : isEnglish
+      ? "← All groups"
+      : "← Alle Gruppen";
 
   return (
     <Link

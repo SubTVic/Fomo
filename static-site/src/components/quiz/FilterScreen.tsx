@@ -8,17 +8,16 @@ interface FilterScreenProps {
   selected: string[];
   onToggle: (attribute: string) => void;
   onStart: () => void;
+  lang?: "de" | "en";
 }
 
-/**
- * Optional multi-select filter screen. Selections are attribute ids that feed
- * the matching hard constraint. Empty = "alles offen".
- */
-export function FilterScreen({ filters, selected, onToggle, onStart }: FilterScreenProps) {
+export function FilterScreen({ filters, selected, onToggle, onStart, lang = "de" }: FilterScreenProps) {
+  const title =
+    lang === "en" ? "What would you mainly like to do in your student group?" : filters.question;
+
   return (
     <div className="animate-fade-up">
-      <h1 className="text-2xl text-navy sm:text-3xl">{filters.question}</h1>
-      <p className="mt-2 text-sm text-body">{filters.subtitle}</p>
+      <h1 className="text-2xl text-navy sm:text-3xl">{title}</h1>
 
       <div className="mt-5 grid gap-3">
         {filters.options.map((opt) => {
@@ -52,11 +51,14 @@ export function FilterScreen({ filters, selected, onToggle, onStart }: FilterScr
         onClick={onStart}
         className="mt-6 w-full border-poster bg-navy px-6 py-4 font-heading text-lg text-sky transition-colors hover:bg-navy-hover"
       >
-        {selected.length > 0 ? `Los geht's (${selected.length} gewählt) →` : "Los geht's →"}
+        {lang === "en"
+          ? selected.length > 0
+            ? `Start (${selected.length} selected)`
+            : "Start"
+          : selected.length > 0
+            ? `Los geht's (${selected.length} gewählt)`
+            : "Los geht's"}
       </button>
-      <p className="mt-2 text-center text-xs text-muted">
-        Du kannst auch ohne Auswahl starten.
-      </p>
     </div>
   );
 }

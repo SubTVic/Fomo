@@ -2,52 +2,96 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 export function Navbar() {
   const pathname = usePathname();
+  const [search, setSearch] = useState("");
 
-  const links = [
-    { href: "/groups", label: "Gruppen" },
-    { href: "/quiz", label: "Quiz" },
-  ];
+  useEffect(() => {
+    setSearch(window.location.search);
+  }, []);
 
-  const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(href + "/");
+  const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
+  const normalizedPathname = pathname !== "/" ? pathname.replace(/\/$/, "") : pathname;
+  const showLanguageSwitch =
+    normalizedPathname === "/" ||
+    normalizedPathname === "/en" ||
+    normalizedPathname === "/groups" ||
+    normalizedPathname === "/en/groups";
+  const homeHref = isEnglish ? "/en" : "/";
+  const germanHref = `${isEnglish ? stripEnglishPrefix(pathname) : pathname}${search}`;
+  const englishHref = `${isEnglish ? pathname : `/en${pathname === "/" ? "" : pathname}`}${search}`;
 
   return (
     <header className="w-full">
-      <nav className="mx-auto flex max-w-[1000px] items-center justify-between px-4 py-4 sm:px-6">
+      <nav className="relative mx-auto flex max-w-[1000px] items-center justify-between gap-4 px-4 py-4 sm:px-6">
         <Link
-          href="/"
-          className="border-poster bg-card px-3.5 py-1.5 font-heading text-[22px] text-navy"
+          href={homeHref}
+          className="shrink-0 border-poster bg-card px-3.5 py-1.5 font-heading text-[22px] text-navy"
           aria-label="FOMO Startseite"
         >
           FOMO
         </Link>
-        <div className="flex items-center gap-4 text-sm font-semibold uppercase tracking-wide">
-          {links.map(({ href, label }) =>
-            isActive(href) ? (
-              <Link
-                key={href}
-                href={href}
-                aria-current="page"
-                className="border-poster bg-navy px-3 py-1.5 text-sky transition-colors hover:bg-navy-hover"
-              >
-                {label}
-              </Link>
-            ) : (
-              <Link
-                key={href}
-                href={href}
-                className="text-body transition-colors hover:text-navy"
-              >
-                {label}
-              </Link>
-            )
-          )}
+
+        {showLanguageSwitch && (
+          <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 border-2 border-navy bg-card font-heading text-xs uppercase">
+            <Link
+              href={germanHref}
+              aria-current={!isEnglish ? "page" : undefined}
+              className={`px-2.5 py-1.5 transition-colors ${
+                !isEnglish ? "bg-navy text-sky" : "text-navy hover:bg-surface"
+              }`}
+            >
+              DE
+            </Link>
+            <Link
+              href={englishHref}
+              aria-current={isEnglish ? "page" : undefined}
+              className={`border-l-2 border-navy px-2.5 py-1.5 transition-colors ${
+                isEnglish ? "bg-navy text-sky" : "text-navy hover:bg-surface"
+              }`}
+            >
+              EN
+            </Link>
+          </div>
+        )}
+
+        <div className="flex min-w-0 items-center justify-end gap-3 sm:gap-4">
+          <div className="flex min-w-0 items-center justify-end gap-2 sm:gap-3">
+            <span className="hidden font-heading text-xs uppercase text-accent-muted sm:inline">
+              Powered by
+            </span>
+            <a
+              href="https://yeti-dresden.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YETI Dresden"
+            >
+              <img src="/logos/yeti.png" alt="YETI" className="h-7 w-auto object-contain sm:h-9" />
+            </a>
+            <span className="font-heading text-sm text-navy sm:text-base">x</span>
+            <a
+              href="https://www.stura.tu-dresden.de"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="StuRa TU Dresden"
+            >
+              <img
+                src="/logos/stura-transparent.png"
+                alt="StuRa"
+                className="h-7 w-auto object-contain sm:h-9"
+              />
+            </a>
+          </div>
         </div>
       </nav>
     </header>
   );
+}
+
+function stripEnglishPrefix(pathname: string) {
+  const stripped = pathname.replace(/^\/en/, "") || "/";
+  return stripped;
 }

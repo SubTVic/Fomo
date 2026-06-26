@@ -318,7 +318,7 @@
   "filters": {
     "type": "multi-select",
     "question": "Was möchtest du in deiner Hochschulgruppe vor allem tun?",
-    "subtitle": "Mehrfachauswahl. Lass leer, wenn dir alles offen ist.",
+    "subtitle": "",
     "options": [
       {
         "id": "F-handsOn",

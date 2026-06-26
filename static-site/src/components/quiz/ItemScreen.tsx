@@ -1,25 +1,26 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
+import { useEffect, useState } from "react";
 import type { QuizItem } from "@/lib/types";
 import { ProgressBar } from "./ProgressBar";
 
 interface ItemScreenProps {
   item: QuizItem;
-  index: number; // 0-based
+  index: number;
   total: number;
   currentValue: number | undefined;
   onAnswer: (value: number) => void;
   onBack: () => void;
+  lang?: "de" | "en";
 }
 
-const OPTIONS: Array<{ value: number; label: string; emoji: string }> = [
-  { value: 1, label: "Stimme zu", emoji: "👍" },
-  { value: 0, label: "Neutral", emoji: "🤷" },
-  { value: -1, label: "Stimme nicht zu", emoji: "👎" },
+const OPTIONS: Array<{ value: number; de: string; en: string }> = [
+  { value: 1, de: "Stimme zu", en: "Agree" },
+  { value: 0, de: "Neutral", en: "Neutral" },
+  { value: -1, de: "Stimme nicht zu", en: "Disagree" },
 ];
 
-/** One Likert item per screen. Selecting an option auto-advances (handled by parent). */
 export function ItemScreen({
   item,
   index,
@@ -27,32 +28,56 @@ export function ItemScreen({
   currentValue,
   onAnswer,
   onBack,
+  lang = "de",
 }: ItemScreenProps) {
+  const [picked, setPicked] = useState<number | undefined>(currentValue);
+  const [selecting, setSelecting] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+
+  useEffect(() => {
+    setPicked(currentValue);
+    setSelecting(false);
+    setLeaving(false);
+  }, [item.id, currentValue]);
+
+  function choose(value: number) {
+    if (selecting) return;
+    setPicked(value);
+    setSelecting(true);
+    window.setTimeout(() => setLeaving(true), 140);
+    window.setTimeout(() => onAnswer(value), 260);
+  }
+
   return (
-    <div className="animate-fade-up" key={item.id}>
+    <div
+      className={`animate-fade-up transition-all duration-150 ease-out ${
+        leaving ? "-translate-y-2 opacity-0" : "translate-y-0 opacity-100"
+      }`}
+      key={item.id}
+    >
       <ProgressBar current={index + 1} total={total} />
 
       <div className="mt-6 flex min-h-[140px] items-center border-poster bg-card p-5 sm:p-6">
-        <p className="hyphens-auto break-words text-xl text-navy sm:text-2xl">{item.text}</p>
+        <p className="text-xl leading-snug text-navy [overflow-wrap:normal] [text-wrap:pretty] sm:text-2xl">
+          {item.text}
+        </p>
       </div>
 
       <div className="mt-5 grid gap-3">
         {OPTIONS.map((opt) => {
-          const isOn = currentValue === opt.value;
+          const isOn = picked === opt.value;
           return (
             <button
               key={opt.value}
               type="button"
               aria-pressed={isOn}
-              onClick={() => onAnswer(opt.value)}
-              className={`flex items-center gap-3 border-poster px-4 py-4 text-left text-lg font-medium transition-colors ${
+              disabled={selecting}
+              onClick={() => choose(opt.value)}
+              className={`border-poster px-4 py-4 text-left text-lg font-medium transition-all duration-150 ${
                 isOn ? "bg-navy text-sky" : "bg-card text-navy hover:bg-surface"
-              }`}
+              } ${selecting && !isOn ? "opacity-45" : ""} ${isOn && selecting ? "translate-x-1" : ""}`}
             >
-              <span className="shrink-0 text-2xl" aria-hidden>
-                {opt.emoji}
-              </span>
-              <span className="min-w-0 break-words">{opt.label}</span>
+              <span className="min-w-0 [overflow-wrap:normal]">{lang === "en" ? opt.en : opt.de}</span>
             </button>
           );
         })}
@@ -61,10 +86,10 @@ export function ItemScreen({
       <button
         type="button"
         onClick={onBack}
-        disabled={index === 0}
+        disabled={index === 0 || selecting}
         className="mt-5 text-sm font-semibold uppercase tracking-wide text-body transition-colors enabled:hover:text-navy disabled:opacity-40"
       >
-        ← Zurück
+        {lang === "en" ? "Back" : "Zurück"}
       </button>
     </div>
   );

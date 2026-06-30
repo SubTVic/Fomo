@@ -32,11 +32,37 @@ export function groupLongText(group: Group, lang: "de" | "en") {
 }
 
 function teaser(text: string) {
-  const paragraph = (text.split(/\n\s*\n/)[0] ?? text).trim();
-  const sentences = paragraph.match(/[^.!?]+[.!?]+/g) ?? [paragraph];
-  const firstTwo = sentences.slice(0, 2).join(" ").replace(/\s+/g, " ").trim();
-  if (firstTwo.length <= 260) return firstTwo;
-  return trimAtWord(sentences[0] ?? paragraph, 220);
+  const clean = text.replace(/\s+/g, " ").trim();
+  const sentences = splitSentences(clean);
+  const picked: string[] = [];
+
+  for (const sentence of sentences) {
+    picked.push(sentence.trim());
+    const teaserText = picked.join(" ");
+    if (picked.length >= 2 && teaserText.length >= 240) break;
+    if (picked.length >= 4) break;
+  }
+
+  const teaserText = picked.join(" ").replace(/\s+/g, " ").trim();
+  if (teaserText.length <= 360) return teaserText;
+  return trimAtWord(teaserText, 340);
+}
+
+function splitSentences(text: string) {
+  const protectedText = text
+    .replace(/e\.V\./g, "e<V>")
+    .replace(/e\. V\./g, "e<V>")
+    .replace(/z\.B\./g, "z<B>")
+    .replace(/i\.e\./g, "i<E>")
+    .replace(/e\.g\./g, "e<G>");
+  const sentences = protectedText.match(/[^.!?]+[.!?]+/g) ?? [protectedText];
+  return sentences.map((sentence) =>
+    sentence
+      .replace(/e<V>/g, "e.V.")
+      .replace(/z<B>/g, "z.B.")
+      .replace(/i<E>/g, "i.e.")
+      .replace(/e<G>/g, "e.g."),
+  );
 }
 
 function trimAtWord(text: string, maxLength: number) {

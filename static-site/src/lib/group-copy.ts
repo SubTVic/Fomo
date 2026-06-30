@@ -21,7 +21,7 @@ export function groupCategory(group: Group, lang: "de" | "en") {
 
 export function groupShortText(group: Group, lang: "de" | "en") {
   if (lang === "de") return group.shortDescription || "";
-  if (groupTranslations[group.slug]) return firstParagraph(groupTranslations[group.slug]);
+  if (groupTranslations[group.slug]) return teaser(groupTranslations[group.slug]);
   return translateGroupDescription(group.shortDescription || group.longDescription || "", group);
 }
 
@@ -31,8 +31,19 @@ export function groupLongText(group: Group, lang: "de" | "en") {
   return translateGroupDescription(group.longDescription || group.shortDescription || "", group);
 }
 
-function firstParagraph(text: string) {
-  return text.split(/\n\s*\n/)[0] ?? text;
+function teaser(text: string) {
+  const paragraph = (text.split(/\n\s*\n/)[0] ?? text).trim();
+  const sentences = paragraph.match(/[^.!?]+[.!?]+/g) ?? [paragraph];
+  const firstTwo = sentences.slice(0, 2).join(" ").replace(/\s+/g, " ").trim();
+  if (firstTwo.length <= 260) return firstTwo;
+  return trimAtWord(sentences[0] ?? paragraph, 220);
+}
+
+function trimAtWord(text: string, maxLength: number) {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= maxLength) return clean;
+  const shortened = clean.slice(0, maxLength).replace(/\s+\S*$/, "");
+  return `${shortened}...`;
 }
 
 function englishSummary(group: Group) {

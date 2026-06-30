@@ -2,15 +2,19 @@
 import type { Group } from "./types";
 // Canonical site origin for SEO (absolute URLs in sitemap, robots, canonical,
 // OpenGraph). Resolution order:
-//   1. NEXT_PUBLIC_SITE_URL  — set this to the real custom domain in production.
-//   2. VERCEL_PROJECT_PRODUCTION_URL — Vercel injects this at build time.
-//   3. http://localhost:3000 — local dev fallback.
+//   1. NEXT_PUBLIC_SITE_URL — override for a different/future domain.
+//   2. https://www.fomo-dresden.app — the live production domain (default for
+//      prod builds, so canonical/sitemap stay correct even without the env var).
+//      Must match the PRIMARY host on Vercel; the apex (fomo-dresden.app) should
+//      301-redirect here so Google sees one canonical host.
+//   3. http://localhost:3000 — local dev.
 // All values are inlined at build time (static export), so a rebuild is needed
 // after changing the domain.
 
+const PROD_DEFAULT = "https://www.fomo-dresden.app";
 const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-const fromVercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
-const raw = fromEnv || (fromVercel ? `https://${fromVercel}` : "http://localhost:3000");
+const raw =
+  fromEnv || (process.env.NODE_ENV === "production" ? PROD_DEFAULT : "http://localhost:3000");
 
 export const SITE_URL = raw.replace(/\/$/, "");
 

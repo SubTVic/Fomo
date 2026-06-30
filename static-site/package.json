@@ -16,6 +16,8 @@
     "derive:train": "node scripts/train-derive-model.mjs"
   },
   "dependencies": {
+    "@fontsource/archivo-black": "^5.2.8",
+    "@fontsource/lexend": "^5.2.11",
     "next": "15.5.12",
     "react": "19.1.0",
     "react-dom": "19.1.0"

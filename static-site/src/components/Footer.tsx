@@ -23,6 +23,12 @@ export function Footer() {
           <Link href={`${prefix}/groups`} className="hover:text-navy">
             {isEnglish ? "Groups" : "Gruppen"}
           </Link>
+          <Link href="/impressum" className="hover:text-navy">
+            {isEnglish ? "Imprint" : "Impressum"}
+          </Link>
+          <Link href="/datenschutz" className="hover:text-navy">
+            {isEnglish ? "Privacy" : "Datenschutz"}
+          </Link>
         </div>
         <p className="text-xs text-muted">
           {isEnglish

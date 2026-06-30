@@ -7,7 +7,7 @@ import { GroupLogo } from "@/components/GroupLogo";
 import { BackLink } from "@/components/BackLink";
 import { UnverifiedNotice } from "@/components/UnverifiedNotice";
 import { GroupAttributes } from "@/components/GroupAttributes";
-import { seoAlternates, absAsset, groupOrganizationLd } from "@/lib/site";
+import { seoAlternates, absAsset, groupOrganizationLd, breadcrumbLd } from "@/lib/site";
 
 /** Pre-render one HTML page per group for the static export. */
 export function generateStaticParams() {
@@ -57,6 +57,18 @@ export default async function GroupDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(groupOrganizationLd(group, "de", group.shortDescription)),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            breadcrumbLd([
+              { name: "Start", path: "/" },
+              { name: "Gruppen", path: "/groups" },
+              { name: group.name, path: `/groups/${group.slug}` },
+            ]),
+          ),
         }}
       />
       <BackLink />

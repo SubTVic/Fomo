@@ -9,7 +9,7 @@ import { GroupLogo } from "@/components/GroupLogo";
 import { BackLink } from "@/components/BackLink";
 import { UnverifiedNotice } from "@/components/UnverifiedNotice";
 import { GroupAttributes } from "@/components/GroupAttributes";
-import { seoAlternates, absAsset, groupOrganizationLd } from "@/lib/site";
+import { seoAlternates, absAsset, groupOrganizationLd, breadcrumbLd } from "@/lib/site";
 
 export function generateStaticParams() {
   return getGroups().map((g) => ({ slug: g.slug }));
@@ -60,6 +60,18 @@ export default async function EnglishGroupDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(groupOrganizationLd(group, "en", groupShortText(group, "en"))),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            breadcrumbLd([
+              { name: "Home", path: "/en" },
+              { name: "Groups", path: "/en/groups" },
+              { name: group.name, path: `/en/groups/${group.slug}` },
+            ]),
+          ),
         }}
       />
       <BackLink />

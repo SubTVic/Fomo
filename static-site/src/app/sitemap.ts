@@ -30,9 +30,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...pair("/groups", "/en/groups", 0.8, "weekly"),
   ];
 
+  const legalPages: MetadataRoute.Sitemap = [
+    { url: absUrl("/impressum"), lastModified: now, changeFrequency: "yearly", priority: 0.2 },
+    { url: absUrl("/datenschutz"), lastModified: now, changeFrequency: "yearly", priority: 0.2 },
+  ];
+
   const groupPages = getGroups().flatMap((g) =>
     pair(`/groups/${g.slug}`, `/en/groups/${g.slug}`, 0.6, "monthly"),
   );
 
-  return [...staticPages, ...groupPages];
+  return [...staticPages, ...legalPages, ...groupPages];
 }

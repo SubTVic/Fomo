@@ -40,6 +40,40 @@ export function absAsset(path: string): string {
   return `${SITE_URL}${BASE_PATH}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
+/** schema.org BreadcrumbList JSON-LD from an ordered list of {name, path}. */
+export function breadcrumbLd(items: Array<{ name: string; path: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: it.name,
+      item: absUrl(it.path),
+    })),
+  };
+}
+
+/** schema.org ItemList JSON-LD for a list of group detail pages. */
+export function groupListLd(
+  groups: Array<{ name: string; slug: string }>,
+  lang: "de" | "en",
+  name: string,
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name,
+    numberOfItems: groups.length,
+    itemListElement: groups.map((g, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: g.name,
+      url: absUrl(lang === "en" ? `/en/groups/${g.slug}` : `/groups/${g.slug}`),
+    })),
+  };
+}
+
 /** schema.org Organization JSON-LD for one group's detail page (rich results). */
 export function groupOrganizationLd(group: Group, lang: "de" | "en", description: string) {
   const sameAs = [group.websiteUrl, group.instagramUrl].filter(Boolean) as string[];

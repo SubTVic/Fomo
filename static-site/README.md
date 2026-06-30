@@ -67,6 +67,23 @@ data swaps are documented in [`docs/INBETRIEBNAHME.md`](docs/INBETRIEBNAHME.md).
 Which usage data we collect (anonymous, Umami) is in
 [`docs/DATEN-SAMMELN-KONZEPT.md`](docs/DATEN-SAMMELN-KONZEPT.md).
 
+## SEO
+
+The site ships full SEO for static export: per-page titles/descriptions,
+canonical + `hreflang` DE↔EN, OpenGraph/Twitter cards, an OG image
+(`public/og.png`), favicon (`app/icon.svg`), JSON-LD (`WebSite` + `Organization`
+site-wide, a per-group `Organization` on each detail page), and generated
+`sitemap.xml` + `robots.txt` (`app/sitemap.ts`, `app/robots.ts`).
+
+Set the canonical origin so all absolute URLs are correct:
+
+- `NEXT_PUBLIC_SITE_URL` — the public origin, e.g. `https://fomo.example.de`
+  (no trailing slash). On Vercel it falls back to the project's production URL;
+  locally it falls back to `http://localhost:3000`. **Set this to the real
+  custom domain in production** — sitemap, canonical and OG URLs depend on it.
+
+After launch, submit `https://<domain>/sitemap.xml` in Google Search Console.
+
 ## Analytics
 
 Umami is wired via `src/components/UmamiScript.tsx` and only loads when

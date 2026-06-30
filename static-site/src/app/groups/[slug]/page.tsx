@@ -7,6 +7,7 @@ import { GroupLogo } from "@/components/GroupLogo";
 import { BackLink } from "@/components/BackLink";
 import { UnverifiedNotice } from "@/components/UnverifiedNotice";
 import { GroupAttributes } from "@/components/GroupAttributes";
+import { seoAlternates, absAsset, groupOrganizationLd } from "@/lib/site";
 
 /** Pre-render one HTML page per group for the static export. */
 export function generateStaticParams() {
@@ -24,6 +25,13 @@ export async function generateMetadata({
   return {
     title: group.name,
     description: group.shortDescription,
+    alternates: seoAlternates(`/groups/${slug}`, `/en/groups/${slug}`, "de"),
+    openGraph: {
+      type: "website",
+      title: `${group.name} — FOMO`,
+      description: group.shortDescription,
+      ...(group.logoUrl ? { images: [{ url: absAsset(group.logoUrl), alt: group.name }] } : {}),
+    },
   };
 }
 
@@ -45,6 +53,12 @@ export default async function GroupDetailPage({
 
   return (
     <div className="mx-auto w-full max-w-[760px] px-4 py-8 sm:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(groupOrganizationLd(group, "de", group.shortDescription)),
+        }}
+      />
       <BackLink />
 
       <article className="mt-4 border-poster bg-card p-6 poster-shadow sm:p-8">

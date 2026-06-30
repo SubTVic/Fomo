@@ -9,6 +9,7 @@ import { GroupLogo } from "@/components/GroupLogo";
 import { BackLink } from "@/components/BackLink";
 import { UnverifiedNotice } from "@/components/UnverifiedNotice";
 import { GroupAttributes } from "@/components/GroupAttributes";
+import { seoAlternates, absAsset, groupOrganizationLd } from "@/lib/site";
 
 export function generateStaticParams() {
   return getGroups().map((g) => ({ slug: g.slug }));
@@ -22,9 +23,18 @@ export async function generateMetadata({
   const { slug } = await params;
   const group = getGroupBySlug(slug);
   if (!group) return { title: "Group not found" };
+  const description = groupShortText(group, "en");
   return {
     title: group.name,
-    description: groupShortText(group, "en"),
+    description,
+    alternates: seoAlternates(`/groups/${slug}`, `/en/groups/${slug}`, "en"),
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      title: `${group.name} — FOMO`,
+      description,
+      ...(group.logoUrl ? { images: [{ url: absAsset(group.logoUrl), alt: group.name }] } : {}),
+    },
   };
 }
 
@@ -46,6 +56,12 @@ export default async function EnglishGroupDetailPage({
 
   return (
     <div className="mx-auto w-full max-w-[760px] px-4 py-8 sm:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(groupOrganizationLd(group, "en", groupShortText(group, "en"))),
+        }}
+      />
       <BackLink />
 
       <article className="mt-4 border-poster bg-card p-6 poster-shadow sm:p-8">

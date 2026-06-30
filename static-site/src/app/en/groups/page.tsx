@@ -2,10 +2,12 @@
 import type { Metadata } from "next";
 import { getGroups, getCategories } from "@/lib/data";
 import { GroupBrowser } from "@/components/GroupBrowser";
+import { seoAlternates } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "All groups",
   description: "Browse all student groups at TU Dresden.",
+  alternates: seoAlternates("/groups", "/en/groups", "en"),
 };
 
 export default function EnglishGroupsPage() {

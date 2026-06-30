@@ -2,10 +2,12 @@
 import type { Metadata } from "next";
 import { getGroups, getQuizItems, getQuizFilters } from "@/lib/data";
 import { QuizFlow } from "@/components/quiz/QuizFlow";
+import { seoAlternates } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Quiz",
   description: "Beantworte ein paar Fragen und finde deine passenden Hochschulgruppen.",
+  alternates: seoAlternates("/quiz", "/en/quiz", "de"),
 };
 
 export default function QuizPage() {

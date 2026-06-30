@@ -61,10 +61,10 @@ export function HomePageContent({ lang }: { lang: Lang }) {
         <p className="font-heading text-lg text-navy sm:text-xl">{t.contactTitle}</p>
         <p className="mx-auto mt-2 max-w-prose text-sm text-body">{t.contactText}</p>
         <a
-          href="mailto:victor.kling@yeti-dresden.org"
+          href="mailto:fomo@yeti-dresden.org"
           className="mt-4 inline-flex border-4 border-navy bg-navy px-5 py-3 text-center font-heading text-sm text-sky transition-colors hover:bg-navy-hover focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-navy sm:text-base"
         >
-          victor.kling@yeti-dresden.org
+          fomo@yeti-dresden.org
         </a>
       </section>
     </div>

@@ -1,11 +1,12 @@
 ﻿// SPDX-License-Identifier: AGPL-3.0-only
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getGroups, getGroupBySlug, categoryColorOf, isUnverified } from "@/lib/data";
+import { getGroups, getGroupBySlug, getQuizFilters, categoryColorOf, isUnverified } from "@/lib/data";
 import { GroupLinks } from "@/components/GroupLinks";
 import { GroupLogo } from "@/components/GroupLogo";
 import { BackLink } from "@/components/BackLink";
 import { UnverifiedNotice } from "@/components/UnverifiedNotice";
+import { GroupAttributes } from "@/components/GroupAttributes";
 
 /** Pre-render one HTML page per group for the static export. */
 export function generateStaticParams() {
@@ -82,6 +83,8 @@ export default async function GroupDetailPage({
             ))}
           </dl>
         )}
+
+        <GroupAttributes group={group} filters={getQuizFilters()} lang="de" />
 
         {group.nextEvent && (
           <div className="mt-6 border-2 border-navy bg-sky p-4">

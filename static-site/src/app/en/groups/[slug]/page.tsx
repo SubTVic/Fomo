@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getGroups, getGroupBySlug, categoryColorOf, isUnverified } from "@/lib/data";
+import { getGroups, getGroupBySlug, getQuizFilters, categoryColorOf, isUnverified } from "@/lib/data";
 import { groupCategory, groupLongText, groupShortText } from "@/lib/group-copy";
+import { translateQuizFilters } from "@/lib/quiz-translations";
 import { GroupLinks } from "@/components/GroupLinks";
 import { GroupLogo } from "@/components/GroupLogo";
 import { BackLink } from "@/components/BackLink";
 import { UnverifiedNotice } from "@/components/UnverifiedNotice";
+import { GroupAttributes } from "@/components/GroupAttributes";
 
 export function generateStaticParams() {
   return getGroups().map((g) => ({ slug: g.slug }));
@@ -82,6 +84,12 @@ export default async function EnglishGroupDetailPage({
             ))}
           </dl>
         )}
+
+        <GroupAttributes
+          group={group}
+          filters={translateQuizFilters(getQuizFilters())}
+          lang="en"
+        />
 
         <div className="mt-7">
           <GroupLinks group={group} />

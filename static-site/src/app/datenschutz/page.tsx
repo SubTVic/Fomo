@@ -33,9 +33,9 @@ export default function DatenschutzPage() {
           <h2 className="font-heading text-lg text-navy">Verantwortlicher</h2>
           <p className="mt-2 whitespace-pre-line">
             {`Victor Kling
-Katherienstraße 17
+Katharinenstraße 17
 01099 Dresden
-E-Mail: [E-Mail-Adresse eintragen]`}
+E-Mail: fomo@yeti-dresden.org`}
           </p>
           <p className="mt-2">Siehe auch das Impressum.</p>
         </section>
@@ -101,7 +101,7 @@ E-Mail: [E-Mail-Adresse eintragen]`}
           </p>
         </section>
 
-        <p className="text-xs text-muted">Stand: [Datum eintragen]</p>
+        <p className="text-xs text-muted">Stand: Juli 2026</p>
       </div>
     </div>
   );

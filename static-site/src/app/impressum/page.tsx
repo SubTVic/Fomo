@@ -10,8 +10,7 @@ export const metadata: Metadata = {
 };
 
 // Pflichtangaben nach § 5 DDG (ehem. TMG) und § 18 Abs. 2 MStV.
-// Betrieben als Privatperson. Vor dem Launch nur noch die E-Mail-Adresse
-// eintragen ([ … ]) und die Straßenschreibweise prüfen.
+// Betrieben als Privatperson.
 export default function ImpressumPage() {
   return (
     <div className="mx-auto w-full max-w-[760px] px-4 py-10 sm:px-6">
@@ -22,7 +21,7 @@ export default function ImpressumPage() {
           <h2 className="font-heading text-lg text-navy">Angaben gemäß § 5 DDG</h2>
           <p className="mt-2 whitespace-pre-line">
             {`Victor Kling
-Katherienstraße 17
+Katharinenstraße 17
 01099 Dresden`}
           </p>
         </section>
@@ -30,7 +29,7 @@ Katherienstraße 17
         <section>
           <h2 className="font-heading text-lg text-navy">Kontakt</h2>
           <p className="mt-2 whitespace-pre-line">
-            {`E-Mail: [E-Mail-Adresse eintragen]`}
+            {`E-Mail: fomo@yeti-dresden.org`}
           </p>
         </section>
 
@@ -40,7 +39,7 @@ Katherienstraße 17
           </h2>
           <p className="mt-2 whitespace-pre-line">
             {`Victor Kling
-Katherienstraße 17
+Katharinenstraße 17
 01099 Dresden`}
           </p>
         </section>

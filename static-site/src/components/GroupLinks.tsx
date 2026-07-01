@@ -31,7 +31,7 @@ export function GroupLinks({ group }: { group: Group }) {
           href={l.href}
           target={l.dest === "email" ? undefined : "_blank"}
           rel={l.dest === "email" ? undefined : "noopener noreferrer"}
-          onClick={() => track(EVENTS.groupClick, { group: group.slug, dest: l.dest })}
+          onClick={() => track(EVENTS.groupClick, { group: group.slug, dest: l.dest, context: "detail" })}
           className="border-poster bg-navy px-5 py-3 font-heading text-sky transition-colors hover:bg-navy-hover"
         >
           {l.label}

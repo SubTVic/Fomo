@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Group, MatchResult, QuizFilters } from "@/lib/types";
 import { groupCategory, groupShortText } from "@/lib/group-copy";
+import { track, EVENTS } from "@/lib/analytics";
 import { ShareButton } from "./ShareButton";
 import { CompareGroups } from "./CompareGroups";
 
@@ -45,6 +46,24 @@ export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang 
     return () => clearTimeout(t);
   }, [revealed, ranked.length, tab]);
 
+  // Zero-hit rate: too-strict filters or unclear answers produce no result at
+  // all — the single most actionable signal for tuning filters/items.
+  useEffect(() => {
+    if (allMatches.length === 0) track(EVENTS.resultsZeroHits);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allMatches.length === 0]);
+
+  function selectTab(next: "groups" | "compare") {
+    track(EVENTS.resultsTab, { tab: next });
+    setTab(next);
+  }
+
+  function toggleShowAll() {
+    const next = !showAll;
+    track(EVENTS.resultsShowMore, { expanded: next });
+    setShowAll(next);
+  }
+
   const copy =
     lang === "en"
       ? {
@@ -81,7 +100,7 @@ export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang 
       <div className="mt-5 grid grid-cols-2 gap-3">
         <button
           type="button"
-          onClick={() => setTab("groups")}
+          onClick={() => selectTab("groups")}
           className={`border-poster px-6 py-3 font-heading transition-colors ${
             tab === "groups" ? "bg-navy text-sky" : "bg-card text-navy hover:bg-surface"
           }`}
@@ -90,7 +109,7 @@ export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang 
         </button>
         <button
           type="button"
-          onClick={() => setTab("compare")}
+          onClick={() => selectTab("compare")}
           className={`border-poster px-6 py-3 font-heading transition-colors ${
             tab === "compare" ? "bg-navy text-sky" : "bg-card text-navy hover:bg-surface"
           }`}
@@ -124,7 +143,7 @@ export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang 
           {allMatches.length > INITIAL_RESULTS && (
             <button
               type="button"
-              onClick={() => setShowAll((value) => !value)}
+              onClick={toggleShowAll}
               className="mt-5 w-full border-poster bg-card px-6 py-3 text-center font-heading text-navy transition-colors hover:bg-surface"
             >
               {showAll ? copy.less : copy.more(allMatches.length - INITIAL_RESULTS)}
@@ -160,6 +179,56 @@ export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang 
           {copy.allGroups}
         </Link>
       </div>
+
+      <ResultsFeedback lang={lang} />
+    </div>
+  );
+}
+
+/**
+ * One-tap satisfaction signal ("War das hilfreich?"). Anonymous, no follow-up
+ * question — a rough but honest quality metric without a survey.
+ */
+function ResultsFeedback({ lang }: { lang: "de" | "en" }) {
+  const [given, setGiven] = useState<"up" | "down" | null>(null);
+
+  function give(value: "up" | "down") {
+    if (given) return;
+    track(EVENTS.resultsFeedback, { value });
+    setGiven(value);
+  }
+
+  return (
+    <div className="mt-8 border-2 border-navy bg-surface p-4 text-center">
+      {given ? (
+        <p className="text-sm font-semibold text-navy">
+          {lang === "en" ? "Thanks for the feedback!" : "Danke für dein Feedback!"}
+        </p>
+      ) : (
+        <>
+          <p className="text-sm text-body">
+            {lang === "en" ? "Was this helpful?" : "War das hilfreich?"}
+          </p>
+          <div className="mt-3 flex justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => give("up")}
+              aria-label={lang === "en" ? "Yes, helpful" : "Ja, hilfreich"}
+              className="border-2 border-navy px-5 py-2 text-xl transition-colors hover:bg-card"
+            >
+              👍
+            </button>
+            <button
+              type="button"
+              onClick={() => give("down")}
+              aria-label={lang === "en" ? "Not helpful" : "Nicht hilfreich"}
+              className="border-2 border-navy px-5 py-2 text-xl transition-colors hover:bg-card"
+            >
+              👎
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -221,6 +290,14 @@ function ResultRow({
                   href={link.href}
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noopener noreferrer" : undefined}
+                  onClick={() =>
+                    track(EVENTS.groupClick, {
+                      group: group.slug,
+                      dest: link.dest,
+                      context: "results",
+                      rank,
+                    })
+                  }
                   className={`border-2 border-navy px-4 py-2 font-semibold transition-colors ${
                     link.primary
                       ? "bg-navy text-sky hover:bg-navy-hover"
@@ -232,6 +309,7 @@ function ResultRow({
               ))}
               <Link
                 href={detailHref}
+                onClick={() => track(EVENTS.groupDetailOpen, { group: group.slug, context: "results", rank })}
                 className="border-2 border-navy bg-card px-4 py-2 font-semibold text-navy transition-colors hover:bg-surface"
               >
                 {lang === "en" ? "Open profile" : "Profil öffnen"}
@@ -261,16 +339,19 @@ function RankBadge({ rank }: { rank: number }) {
 }
 
 function buildLinks(group: Group, lang: "de" | "en") {
-  const links: Array<{ href: string; label: string; external: boolean; primary?: boolean }> = [];
+  const links: Array<{ href: string; label: string; external: boolean; primary?: boolean; dest: string }> = [];
   if (group.contactEmail) {
     links.push({
       href: `mailto:${group.contactEmail}`,
       label: lang === "en" ? "Write e-mail" : "E-Mail schreiben",
       external: false,
       primary: true,
+      dest: "email",
     });
   }
-  if (group.websiteUrl) links.push({ href: group.websiteUrl, label: "Website", external: true });
-  if (group.instagramUrl) links.push({ href: group.instagramUrl, label: "Instagram", external: true });
+  if (group.websiteUrl)
+    links.push({ href: group.websiteUrl, label: "Website", external: true, dest: "website" });
+  if (group.instagramUrl)
+    links.push({ href: group.instagramUrl, label: "Instagram", external: true, dest: "instagram" });
   return links;
 }

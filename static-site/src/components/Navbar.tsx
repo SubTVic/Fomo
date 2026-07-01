@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { track, EVENTS } from "@/lib/analytics";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -40,6 +41,7 @@ export function Navbar() {
             <Link
               href={germanHref}
               aria-current={!isEnglish ? "page" : undefined}
+              onClick={() => !isEnglish || track(EVENTS.langSwitch, { to: "de" })}
               className={`px-2.5 py-1.5 transition-colors ${
                 !isEnglish ? "bg-navy text-sky" : "text-navy hover:bg-surface"
               }`}
@@ -49,6 +51,7 @@ export function Navbar() {
             <Link
               href={englishHref}
               aria-current={isEnglish ? "page" : undefined}
+              onClick={() => isEnglish || track(EVENTS.langSwitch, { to: "en" })}
               className={`border-l-2 border-navy px-2.5 py-1.5 transition-colors ${
                 isEnglish ? "bg-navy text-sky" : "text-navy hover:bg-surface"
               }`}
@@ -69,7 +72,13 @@ export function Navbar() {
               rel="noopener noreferrer"
               aria-label="YETI Dresden"
             >
-              <img src="/logos/yeti.png" alt="YETI" className="h-7 w-auto object-contain sm:h-9" />
+              <img
+                src="/logos/yeti.png"
+                alt="YETI"
+                width={2048}
+                height={2045}
+                className="h-7 w-auto object-contain sm:h-9"
+              />
             </a>
             <span className="font-heading text-sm text-navy sm:text-base">x</span>
             <a
@@ -81,6 +90,8 @@ export function Navbar() {
               <img
                 src="/logos/stura-transparent.png"
                 alt="StuRa"
+                width={248}
+                height={100}
                 className="h-7 w-auto object-contain sm:h-9"
               />
             </a>

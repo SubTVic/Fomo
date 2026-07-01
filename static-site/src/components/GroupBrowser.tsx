@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import type { Group } from "@/lib/types";
 import { categoryColorOf, isUnverified } from "@/lib/data";
 import { groupCategory, groupLongText, groupShortText } from "@/lib/group-copy";
+import { track, EVENTS } from "@/lib/analytics";
 import { UnverifiedNotice } from "./UnverifiedNotice";
 
 interface GroupBrowserProps {
@@ -46,6 +47,17 @@ export function GroupBrowser({ groups, categories, lang = "de" }: GroupBrowserPr
     );
   }, [groups, active, showUnverified]);
 
+  function selectCategory(label: string) {
+    const next = active === label ? "" : label;
+    if (next) track(EVENTS.groupsCategoryFilter, { category: next });
+    setActive(next);
+  }
+
+  function toggleShowUnverified(checked: boolean) {
+    track(EVENTS.groupsShowUnverified, { shown: checked });
+    setShowUnverified(checked);
+  }
+
   return (
     <div>
       <div className="flex flex-wrap gap-2">
@@ -56,7 +68,7 @@ export function GroupBrowser({ groups, categories, lang = "de" }: GroupBrowserPr
           <FilterButton
             key={category.key}
             active={active === category.label}
-            onClick={() => setActive(active === category.label ? "" : category.label)}
+            onClick={() => selectCategory(category.label)}
           >
             {category.label}
           </FilterButton>
@@ -68,7 +80,7 @@ export function GroupBrowser({ groups, categories, lang = "de" }: GroupBrowserPr
           <input
             type="checkbox"
             checked={showUnverified}
-            onChange={(e) => setShowUnverified(e.target.checked)}
+            onChange={(e) => toggleShowUnverified(e.target.checked)}
             className="h-4 w-4 accent-navy"
           />
           <span>
@@ -184,6 +196,7 @@ function GroupTile({ group, lang }: { group: Group; lang: "de" | "en" }) {
       <div className="mt-auto flex flex-wrap gap-x-5 gap-y-2 pt-6 text-sm font-semibold">
         <Link
           href={`${prefix}/groups/${group.slug}/`}
+          onClick={() => track(EVENTS.groupDetailOpen, { group: group.slug, context: "browse" })}
           className="underline underline-offset-4 transition-transform hover:-translate-y-0.5 hover:text-accent-muted active:translate-y-0"
         >
           {lang === "en" ? "Open profile" : "Profil öffnen"}
@@ -193,6 +206,7 @@ function GroupTile({ group, lang }: { group: Group; lang: "de" | "en" }) {
             href={website}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => track(EVENTS.groupClick, { group: group.slug, dest: "website", context: "browse" })}
             className="underline underline-offset-4 hover:text-accent-muted"
           >
             Website

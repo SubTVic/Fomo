@@ -11,6 +11,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { UmamiScript } from "@/components/UmamiScript";
+import { HtmlLangSync } from "@/components/HtmlLangSync";
 import { SITE_URL, absUrl } from "@/lib/site";
 
 const DESCRIPTION =
@@ -70,6 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de">
       <body className="flex min-h-screen flex-col">
+        <HtmlLangSync />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

@@ -61,6 +61,15 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
     window.history.replaceState(null, "", url);
   }, [phase, resultsParam]);
 
+  // Per-question funnel: fires as each item is actually shown, not just once
+  // at quiz-start/complete. Lets us see exactly where people drop off without
+  // relying on an unreliable beforeunload hook.
+  useEffect(() => {
+    if (phase !== "items") return;
+    track(EVENTS.quizItemView, { index, itemId: items[index]?.id, total: items.length });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, index]);
+
   const answeredCount = Object.values(answers).filter((v) => v !== 0).length;
 
   function toggleFilter(attribute: string) {
@@ -70,7 +79,13 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
   }
 
   function startItems() {
-    track(EVENTS.quizStart, { filters: selectedFilters.length });
+    // Filter names are anonymous, canned category labels (not personal data) —
+    // sending the actual selection (not just the count) captures interest even
+    // for sessions that abandon before finishing the quiz.
+    track(EVENTS.quizStart, {
+      filters: selectedFilters.length ? selectedFilters.join(",") : "none",
+      filterCount: selectedFilters.length,
+    });
     setPhase("items");
   }
 
@@ -101,10 +116,12 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
   }
 
   function back() {
+    if (index > 0) track(EVENTS.quizItemBack, { fromIndex: index });
     setIndex((i) => Math.max(0, i - 1));
   }
 
   function restart() {
+    track(EVENTS.quizRestart);
     setSelectedFilters([]);
     setAnswers({});
     setIndex(0);

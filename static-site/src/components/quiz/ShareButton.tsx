@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { track } from "@/lib/analytics";
+import { track, EVENTS } from "@/lib/analytics";
 
 export function ShareButton() {
   const pathname = usePathname();
@@ -12,7 +12,7 @@ export function ShareButton() {
 
   async function copyLink() {
     const url = typeof window !== "undefined" ? window.location.href : "";
-    track("results-share-copy");
+    track(EVENTS.resultsShareCopy);
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);

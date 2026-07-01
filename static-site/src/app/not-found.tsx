@@ -1,5 +1,13 @@
 ﻿// SPDX-License-Identifier: AGPL-3.0-only
+import type { Metadata } from "next";
 import Link from "next/link";
+
+// Explicit noindex — self-documenting, and avoids relying on Next's implicit
+// not-found handling to keep 404s out of the index.
+export const metadata: Metadata = {
+  title: "Nicht gefunden",
+  robots: { index: false, follow: false },
+};
 
 export default function NotFound() {
   return (

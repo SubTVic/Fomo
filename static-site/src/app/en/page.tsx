@@ -7,7 +7,9 @@ const EN_DESCRIPTION =
   "Take a short quiz and find which of 80+ student groups at TU Dresden fit you. Fully anonymous, the matching runs in your browser.";
 
 export const metadata: Metadata = {
-  title: "FOMO — Find your student group at TU Dresden",
+  // "absolute" bypasses the layout's "%s — FOMO" template — this title already
+  // contains "FOMO", so the template would otherwise double it up.
+  title: { absolute: "FOMO — Find your student group at TU Dresden" },
   description: EN_DESCRIPTION,
   alternates: seoAlternates("/", "/en", "en"),
   openGraph: {

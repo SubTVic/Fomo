@@ -25,9 +25,24 @@ export function track(event: string, data?: Record<string, unknown>): void {
 
 export const EVENTS = {
   quizStart: "quiz-start",
+  // Fired once per item screen shown — builds a per-question funnel
+  // (index 0..20) so drop-off per question is visible without needing an
+  // unreliable beforeunload/visibilitychange hook.
+  quizItemView: "quiz-item-view",
+  quizItemBack: "quiz-item-back",
   quizComplete: "quiz-complete",
   // Anonymous, aggregate research data: the 21 Likert answers + the selected
   // filters. No identifier, no personal data — only sent when Umami is enabled.
   quizResponse: "quiz-response",
+  quizRestart: "quiz-restart",
   groupClick: "group-click",
+  groupDetailOpen: "group-detail-open",
+  resultsTab: "results-tab",
+  resultsShowMore: "results-show-more",
+  resultsZeroHits: "results-zero-hits",
+  resultsFeedback: "results-feedback",
+  resultsShareCopy: "results-share-copy",
+  groupsCategoryFilter: "groups-category-filter",
+  groupsShowUnverified: "groups-show-unverified",
+  langSwitch: "lang-switch",
 } as const;

@@ -92,4 +92,16 @@ configured:
 - `NEXT_PUBLIC_UMAMI_WEBSITE_ID` — website UUID (required to enable)
 - `NEXT_PUBLIC_UMAMI_SRC` — script URL (defaults to Umami Cloud)
 
-Tracked events: `quiz-start`, `quiz-complete`, `group-click`.
+Tracked events (all anonymous, no identifier — see `src/lib/analytics.ts` for
+the full list and `docs/DATEN-SAMMELN-KONZEPT.md` for the rationale):
+
+- **Funnel:** `quiz-start` (incl. selected filters), `quiz-item-view` (per
+  question, for drop-off analysis), `quiz-item-back`, `quiz-complete`,
+  `quiz-response` (the 21 answers + filters), `quiz-restart`
+- **Results interaction:** `results-tab`, `results-show-more`,
+  `results-zero-hits`, `results-feedback` (👍/👎), `results-share-copy`
+- **Group engagement:** `group-click` (`dest`: website/instagram/email,
+  `context`: browse/results/detail, `rank` where applicable),
+  `group-detail-open`
+- **Browsing:** `groups-category-filter`, `groups-show-unverified`
+- **i18n:** `lang-switch`

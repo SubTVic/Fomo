@@ -33,7 +33,11 @@ export async function generateMetadata({
       locale: "en_US",
       title: `${group.name} — FOMO`,
       description,
-      ...(group.logoUrl ? { images: [{ url: absAsset(group.logoUrl), alt: group.name }] } : {}),
+      // Fall back to the site OG image so link previews (WhatsApp, Instagram,
+      // Discord, …) never render blank for the ~90% of groups without a logo.
+      images: group.logoUrl
+        ? [{ url: absAsset(group.logoUrl), alt: group.name }]
+        : [{ url: "/og.png", width: 1200, height: 630, alt: "FOMO — Finde deine Hochschulgruppe" }],
     },
   };
 }

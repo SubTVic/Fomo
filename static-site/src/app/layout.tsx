@@ -89,11 +89,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   "@type": "Organization",
                   "@id": `${SITE_URL}/#organization`,
                   name: "FOMO",
+                  alternateName: "FOMO Dresden",
                   url: `${SITE_URL}/`,
                   description: DESCRIPTION,
                   logo: absUrl("/og.png"),
                   founder: "YETI Dresden",
                   areaServed: "TU Dresden",
+                  // Offizielle Profile derselben Entität → hilft Google, FOMO
+                  // eindeutig einzuordnen und von gleichnamigen Diensten zu trennen.
+                  sameAs: ["https://yeti-dresden.org", "https://www.stura.tu-dresden.de"],
                 },
               ],
             }),

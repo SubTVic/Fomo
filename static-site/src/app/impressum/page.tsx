@@ -9,9 +9,9 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-// PLACEHOLDER: Pflichtangaben nach § 5 DDG (ehem. TMG) und § 18 Abs. 2 MStV.
-// Bitte vor dem Launch durch die echten Angaben der verantwortlichen
-// Person / des Vereins ersetzen (alle [ … ] ausfüllen).
+// Pflichtangaben nach § 5 DDG (ehem. TMG) und § 18 Abs. 2 MStV.
+// Betrieben als Privatperson. Vor dem Launch nur noch die E-Mail-Adresse
+// eintragen ([ … ]) und die Straßenschreibweise prüfen.
 export default function ImpressumPage() {
   return (
     <div className="mx-auto w-full max-w-[760px] px-4 py-10 sm:px-6">
@@ -21,31 +21,16 @@ export default function ImpressumPage() {
         <section>
           <h2 className="font-heading text-lg text-navy">Angaben gemäß § 5 DDG</h2>
           <p className="mt-2 whitespace-pre-line">
-            {`[Name des Vereins / der verantwortlichen Person]
-[Straße und Hausnummer]
-[PLZ Ort]`}
+            {`Victor Kling
+Katherienstraße 17
+01099 Dresden`}
           </p>
-        </section>
-
-        <section>
-          <h2 className="font-heading text-lg text-navy">Vertreten durch</h2>
-          <p className="mt-2">[Name der vertretungsberechtigten Person/en]</p>
         </section>
 
         <section>
           <h2 className="font-heading text-lg text-navy">Kontakt</h2>
           <p className="mt-2 whitespace-pre-line">
-            {`E-Mail: [kontakt@fomo-dresden.app]
-Telefon: [optional]`}
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-heading text-lg text-navy">Registereintrag</h2>
-          <p className="mt-2 whitespace-pre-line">
-            {`Registergericht: [z. B. Amtsgericht Dresden]
-Registernummer: [z. B. VR 1234]
-(falls eingetragener Verein – sonst diesen Abschnitt entfernen)`}
+            {`E-Mail: [E-Mail-Adresse eintragen]`}
           </p>
         </section>
 
@@ -54,8 +39,9 @@ Registernummer: [z. B. VR 1234]
             Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV
           </h2>
           <p className="mt-2 whitespace-pre-line">
-            {`[Name]
-[Anschrift wie oben]`}
+            {`Victor Kling
+Katherienstraße 17
+01099 Dresden`}
           </p>
         </section>
 

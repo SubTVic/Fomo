@@ -32,9 +32,10 @@ export default function DatenschutzPage() {
         <section>
           <h2 className="font-heading text-lg text-navy">Verantwortlicher</h2>
           <p className="mt-2 whitespace-pre-line">
-            {`[Name des Vereins / der verantwortlichen Person]
-[Anschrift]
-E-Mail: [kontakt@fomo-dresden.app]`}
+            {`Victor Kling
+Katherienstraße 17
+01099 Dresden
+E-Mail: [E-Mail-Adresse eintragen]`}
           </p>
           <p className="mt-2">Siehe auch das Impressum.</p>
         </section>

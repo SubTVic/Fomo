@@ -22,10 +22,12 @@ export default function DatenschutzPage() {
           <h2 className="font-heading text-lg text-navy">Kurzfassung</h2>
           <p className="mt-2">
             FOMO ist datensparsam gebaut. Das Quiz und das Matching laufen
-            <strong className="text-navy"> vollständig in deinem Browser</strong>. Deine Antworten
-            werden <strong className="text-navy">nicht an einen Server gesendet</strong>, nicht
-            gespeichert und keiner Person zugeordnet. Es gibt keine Anmeldung und standardmäßig
-            keine Cookies.
+            <strong className="text-navy"> vollständig in deinem Browser</strong>. Es gibt keine
+            Anmeldung und standardmäßig keine Cookies, und deine Antworten werden
+            <strong className="text-navy"> keiner Person zugeordnet</strong>. Sofern die
+            Reichweitenmessung aktiviert ist, werden deine Quiz-Antworten zusätzlich in
+            <strong className="text-navy"> anonymer, aggregierter Form</strong> zur Verbesserung des
+            Angebots erfasst (ohne Identifikationsmerkmal) – Details unten unter „Reichweitenmessung".
           </p>
         </section>
 
@@ -53,12 +55,15 @@ E-Mail: fomo@yeti-dresden.org`}
         </section>
 
         <section>
-          <h2 className="font-heading text-lg text-navy">Quiz & Matching (keine Datenübertragung)</h2>
+          <h2 className="font-heading text-lg text-navy">Quiz & Matching</h2>
           <p className="mt-2">
             Die Fragen und die Gruppenprofile werden einmalig mit der Seite geladen. Die Berechnung
-            deiner Ergebnisse passiert ausschließlich lokal in deinem Gerät. Ein Ergebnis-Link
-            enthält lediglich deine Antworten in kodierter Form in der URL – er wird nur erzeugt,
-            wenn du selbst teilst oder speicherst, und an niemanden automatisch gesendet.
+            deiner Ergebnisse (das Matching) passiert <strong className="text-navy">ausschließlich
+            lokal in deinem Gerät</strong> – die Empfehlungen selbst verlassen deinen Browser nicht.
+            Ein Ergebnis-Link enthält deine Antworten in kodierter Form in der URL und wird nur
+            erzeugt, wenn du selbst teilst oder speicherst. Unabhängig davon können die Antworten –
+            sofern die Reichweitenmessung aktiviert ist – anonym und ohne Personenbezug an die
+            Statistik übermittelt werden (siehe nächster Abschnitt).
           </p>
         </section>
 
@@ -75,9 +80,15 @@ E-Mail: fomo@yeti-dresden.org`}
           <h2 className="font-heading text-lg text-navy">Reichweitenmessung (optional)</h2>
           <p className="mt-2">
             Sofern aktiviert, nutzt FOMO <strong className="text-navy">Umami</strong> – eine
-            cookielose, anonyme Statistik ohne personenbezogene Profile und ohne Einwilligungsbanner.
-            Es werden nur aggregierte Ereignisse (z. B. „Quiz gestartet") ohne personenbeziehbare
-            Kennung erfasst. Ist Umami nicht konfiguriert, findet keinerlei Tracking statt.
+            cookielose Statistik ohne personenbezogene Profile und ohne Einwilligungsbanner. Erfasst
+            werden anonyme Ereignisse ohne personenbeziehbare Kennung: dass ein Quiz gestartet und
+            abgeschlossen wurde, welche Gruppen-Links angeklickt werden und – zur Verbesserung des
+            Frage- und Matching-Konzepts – die <strong className="text-navy">gegebenen Quiz-Antworten
+            (die 21 Fragen und die gewählten Filter)</strong>. Diese Antworten enthalten keine Namen,
+            keine Kontaktdaten und keine ID; sie lassen sich keiner Person zuordnen und werden nur
+            aggregiert ausgewertet. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes
+            Interesse an der Verbesserung des Angebots). Ist Umami nicht konfiguriert, findet
+            keinerlei Tracking statt.
           </p>
         </section>
 

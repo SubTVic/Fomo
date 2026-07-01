@@ -87,6 +87,16 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
   function finish(finalAnswers: UserAnswers) {
     const nonNeutral = Object.values(finalAnswers).filter((v) => v !== 0).length;
     track(EVENTS.quizComplete, { answered: nonNeutral, filters: selectedFilters.length });
+    // Anonymous research payload: one property per item (id → -1|0|1) plus the
+    // selected multiple-choice filters. No identifier is attached; this only
+    // leaves the browser if Umami is configured (see Datenschutz).
+    const answerData: Record<string, number> = {};
+    for (const item of items) answerData[item.id] = finalAnswers[item.id] ?? 0;
+    track(EVENTS.quizResponse, {
+      ...answerData,
+      filters: selectedFilters.length ? selectedFilters.join(",") : "none",
+      answered: nonNeutral,
+    });
     setPhase("results");
   }
 

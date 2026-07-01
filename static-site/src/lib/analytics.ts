@@ -26,5 +26,8 @@ export function track(event: string, data?: Record<string, unknown>): void {
 export const EVENTS = {
   quizStart: "quiz-start",
   quizComplete: "quiz-complete",
+  // Anonymous, aggregate research data: the 21 Likert answers + the selected
+  // filters. No identifier, no personal data — only sent when Umami is enabled.
+  quizResponse: "quiz-response",
   groupClick: "group-click",
 } as const;

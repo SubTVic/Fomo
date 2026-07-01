@@ -12,7 +12,9 @@ export const metadata: Metadata = {
 
 export default function QuizPage() {
   // All data is embedded at build time and handed to the client component.
-  // Matching then runs entirely in the browser — nothing is sent to a server.
+  // Matching runs entirely in the browser. Only anonymous, aggregate analytics
+  // (incl. the quiz answers, no identifier) leave the browser, and only when
+  // Umami is configured — see the Datenschutz page.
   return (
     <div className="mx-auto w-full max-w-[640px] px-4 py-6 sm:px-6">
       <QuizFlow

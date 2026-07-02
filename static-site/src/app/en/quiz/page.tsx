@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Metadata } from "next";
-import { getGroups, getQuizItems, getQuizFilters } from "@/lib/data";
+import { getMatchableGroups, getQuizItems, getQuizFilters } from "@/lib/data";
 import { translateQuizFilters, translateQuizItems } from "@/lib/quiz-translations";
 import { QuizFlow } from "@/components/quiz/QuizFlow";
 import { seoAlternates } from "@/lib/site";
@@ -17,7 +17,7 @@ export default function EnglishQuizPage() {
       <QuizFlow
         items={translateQuizItems(getQuizItems())}
         filters={translateQuizFilters(getQuizFilters())}
-        groups={getGroups()}
+        groups={getMatchableGroups()}
         lang="en"
       />
     </div>

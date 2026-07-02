@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Metadata } from "next";
-import { seoAlternates } from "@/lib/site";
+import { sitePath } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Datenschutzerklärung",
   description: "Wie FOMO mit Daten umgeht: clientseitiges Matching, keine Nutzerprofile, keine Cookies.",
-  alternates: seoAlternates("/datenschutz", "/datenschutz", "de"),
+  // German-only page — plain canonical, no hreflang pair (there is no /en twin).
+  alternates: { canonical: sitePath("/datenschutz") },
   robots: { index: true, follow: true },
 };
 

@@ -21,7 +21,14 @@ interface ResultsScreenProps {
 
 const INITIAL_RESULTS = 5;
 
-export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang = "de" }: ResultsScreenProps) {
+export function ResultsScreen({
+  matches,
+  itemCount,
+  filters,
+  resultsParam,
+  onRestart,
+  lang = "de",
+}: ResultsScreenProps) {
   const [showAll, setShowAll] = useState(false);
   const [tab, setTab] = useState<"groups" | "compare">("groups");
   const allMatches = matches.filter((m) => m.score > 0);
@@ -69,6 +76,8 @@ export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang 
       ? {
           title: "Your result",
           subtitle: "These student groups match your answers:",
+          how: (n: number) =>
+            `Every group answered the same ${n} questions as you — the score shows how closely your answers agree.`,
           groups: "Groups",
           compare: "Compare",
           none: "No clear matches. Try fewer filters or clearer answers.",
@@ -80,6 +89,8 @@ export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang 
       : {
           title: "Dein Ergebnis",
           subtitle: "Diese Hochschulgruppen passen zu deinen Antworten:",
+          how: (n: number) =>
+            `Jede Gruppe hat dieselben ${n} Fragen beantwortet wie du — der Prozentwert zeigt, wie stark eure Antworten übereinstimmen.`,
           groups: "Gruppen",
           compare: "Vergleichen",
           none: "Keine eindeutigen Treffer. Probier es mit weniger Filtern oder klareren Antworten.",
@@ -95,6 +106,7 @@ export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang 
       <div>
         <h1 className="text-3xl text-navy sm:text-4xl">{copy.title}</h1>
         <p className="mt-2 text-body">{copy.subtitle}</p>
+        <p className="mt-1 text-sm text-muted">{copy.how(itemCount)}</p>
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3">

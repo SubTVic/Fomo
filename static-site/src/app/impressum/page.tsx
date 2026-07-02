@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Metadata } from "next";
-import { seoAlternates } from "@/lib/site";
+import { sitePath } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Impressum",
   description: "Anbieterkennzeichnung und Kontakt für FOMO.",
-  alternates: seoAlternates("/impressum", "/impressum", "de"),
+  // German-only page — plain canonical, no hreflang pair (there is no /en twin).
+  alternates: { canonical: sitePath("/impressum") },
   robots: { index: true, follow: true },
 };
 

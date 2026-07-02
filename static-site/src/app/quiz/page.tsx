@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import type { Metadata } from "next";
-import { getGroups, getQuizItems, getQuizFilters } from "@/lib/data";
+import { getMatchableGroups, getQuizItems, getQuizFilters } from "@/lib/data";
 import { QuizFlow } from "@/components/quiz/QuizFlow";
 import { seoAlternates } from "@/lib/site";
 
@@ -17,10 +17,13 @@ export default function QuizPage() {
   // Umami is configured — see the Datenschutz page.
   return (
     <div className="mx-auto w-full max-w-[640px] px-4 py-6 sm:px-6">
+      {/* Matching runs against VERIFIED groups only — unverified (scraped)
+          profiles are lower quality and would distort the ranking. They stay
+          browseable on /groups behind the "unbestätigt" toggle. */}
       <QuizFlow
         items={getQuizItems()}
         filters={getQuizFilters()}
-        groups={getGroups()}
+        groups={getMatchableGroups()}
         lang="de"
       />
     </div>

@@ -62,8 +62,14 @@ answers and each group's self-rating, with a filter hard-constraint. See
 
 ## Operations
 
+**Non-technical handover:** [`docs/BETRIEBSHANDBUCH.md`](docs/BETRIEBSHANDBUCH.md)
+— accounts, routine tasks (data updates, logos, texts), troubleshooting and the
+yearly maintenance calendar, written for non-developers.
+
 Self-hosting on a StuRa server (Docker or plain Node + nginx) and zero-downtime
 data swaps are documented in [`docs/INBETRIEBNAHME.md`](docs/INBETRIEBNAHME.md).
+The live site deploys via Vercel instead: every push to `main` that touches
+`static-site/` rebuilds and publishes automatically.
 Which usage data we collect (anonymous, Umami) is in
 [`docs/DATEN-SAMMELN-KONZEPT.md`](docs/DATEN-SAMMELN-KONZEPT.md).
 

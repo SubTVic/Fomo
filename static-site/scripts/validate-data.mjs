@@ -71,6 +71,24 @@ for (const g of groups) {
   }
 }
 
+// Near-duplicate detection: the same group registered/scraped twice shows up
+// under two slugs (seen live: kritmed/kritmed-dresden, rotaract-club-dresden/-2,
+// two TURAG variants). Exact slugs already error above; this catches the same
+// NAME under different slugs. Warning only — the fix belongs in the source
+// (deactivate one copy in the admin DB), not in this generated file.
+const nameStem = (n) => n.toLowerCase().replace(/dresden|e\.?\s?v\.?/g, "").replace(/[^a-zä-ü]/g, "");
+const byStem = new Map();
+for (const g of groups) {
+  const k = nameStem(g.name || "");
+  if (!k) continue;
+  if (!byStem.has(k)) byStem.set(k, []);
+  byStem.get(k).push(g.slug);
+}
+for (const [stem, list] of byStem) {
+  if (list.length > 1)
+    warn(`possible duplicate group ("${stem}"): ${list.join(" + ")} — deactivate one copy in the admin DB`);
+}
+
 console.log(`Checked ${groups.length} groups against ${itemIds.length} quiz items.`);
 if (warnings.length) {
   console.log(`\n${warnings.length} warning(s):`);

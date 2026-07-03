@@ -22,7 +22,9 @@ export default function EnglishGroupsPage() {
           __html: JSON.stringify(groupListLd(groups, "en", "Student groups at TU Dresden")),
         }}
       />
-      <h1 className="text-3xl text-navy sm:text-4xl">All student groups</h1>
+      <h1 className="hyphens-auto break-words text-3xl text-navy sm:text-4xl">
+        All student groups
+      </h1>
       <p className="mt-2 max-w-prose text-body">{groups.length} groups at TU Dresden</p>
 
       <div className="mt-7">

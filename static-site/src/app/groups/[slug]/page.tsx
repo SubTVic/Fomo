@@ -80,14 +80,16 @@ export default async function GroupDetailPage({
       <article className="mt-4 border-poster bg-card p-6 poster-shadow sm:p-8">
         <div className="flex items-start gap-4">
           <GroupLogo group={group} size={72} />
-          <div>
+          <div className="min-w-0">
             <span
               className="w-fit px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white"
               style={{ backgroundColor: categoryColorOf(group) }}
             >
               {group.categoryName}
             </span>
-            <h1 className="mt-2 text-3xl text-navy sm:text-4xl">{group.name}</h1>
+            <h1 className="mt-2 hyphens-auto break-words text-3xl text-navy sm:text-4xl">
+              {group.name}
+            </h1>
           </div>
         </div>
 

@@ -2,10 +2,8 @@
 import type { QuizFilters, QuizItem } from "@/lib/types";
 import type { UserAnswers } from "@/lib/matching";
 
-const defaultEndpoint =
+const endpoint =
   "https://script.google.com/macros/s/AKfycbwWM130hYXtvJ22Nw1fjP6GsZg2rKR2g0RnPwtId5vertY4KD3f-Evp1vwAc-UPjHx4/exec";
-
-const endpoint = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL?.trim() || defaultEndpoint;
 
 export function isResponseTrackingEnabled(): boolean {
   return Boolean(endpoint);
@@ -43,17 +41,16 @@ export function trackQuizResponse({
   const body = JSON.stringify(payload);
 
   try {
-    if (navigator.sendBeacon) {
-      const blob = new Blob([body], { type: "text/plain;charset=UTF-8" });
-      if (navigator.sendBeacon(endpoint, blob)) return;
-    }
-
     void fetch(endpoint, {
       method: "POST",
       mode: "no-cors",
       keepalive: true,
       headers: { "Content-Type": "text/plain;charset=UTF-8" },
       body,
+    }).catch(() => {
+      if (!navigator.sendBeacon) return;
+      const blob = new Blob([body], { type: "text/plain;charset=UTF-8" });
+      navigator.sendBeacon(endpoint, blob);
     });
   } catch {
     // Response tracking must never block showing the result.

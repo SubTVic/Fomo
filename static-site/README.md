@@ -79,10 +79,8 @@ Tracked events: `quiz-start`, `quiz-complete`, `group-click`.
 
 ## Optional response tracking
 
-The static quiz can send anonymous quiz responses to a Google Sheets-backed
-Apps Script endpoint when the user finishes the quiz. Configure:
-
-- `NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL` - deployed Google Apps Script web app URL
+The static quiz sends anonymous quiz responses to the configured Google
+Sheets-backed Apps Script endpoint when the user finishes the quiz.
 
 Only the quiz answers, selected filters, and `submittedAt` timestamp are sent.
 No name, email, result link, user agent, or tracking ID is included.
@@ -108,6 +106,6 @@ function doPost(e) {
 }
 ```
 
-Deploy the script as a web app with access set to "Anyone". Leave
-`NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL` unset to keep the fully local,
-no-submission behavior.
+Deploy the script as a web app with access set to "Anyone". The current web app
+endpoint is hard-coded in `src/lib/response-tracking.ts` so static deployments
+do not depend on Vercel environment variables.

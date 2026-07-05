@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import Link from "next/link";
+import { CATEGORY_SEO } from "@/lib/categories";
+import { FAQ_DE, FAQ_EN } from "@/lib/faq";
 
 type Lang = "de" | "en";
 
@@ -54,6 +56,76 @@ export function HomePageContent({ lang }: { lang: Lang }) {
           >
             {t.groups}
           </Link>
+        </div>
+      </section>
+
+      {/* Crawlable content section: targets generic queries ("Hochschulgruppen
+          TU Dresden", "Verein finden Dresden") that the thin hero alone can
+          never rank for. Category links feed the per-category landing pages. */}
+      <section className="mt-6 border-poster bg-card p-6 sm:p-10">
+        {lang === "de" ? (
+          <>
+            <h2 className="hyphens-auto break-words text-2xl text-navy sm:text-3xl">
+              Hochschulgruppen an der TU Dresden entdecken
+            </h2>
+            <p className="mt-4 max-w-prose text-body">
+              Egal ob du gerade dein Studium in Dresden beginnst oder schon länger dabei bist:
+              Eine Hochschulgruppe ist der einfachste Weg, Leute außerhalb deines Studiengangs
+              kennenzulernen und neben der Uni etwas zu machen, das dir wirklich Spaß macht.
+              FOMO listet über 90 studentische Gruppen, Vereine und Initiativen an der TU Dresden —
+              mit Beschreibung, Kontakt und einem Quiz, das dir deine persönlichen Empfehlungen
+              berechnet.
+            </p>
+            <p className="mt-3 max-w-prose text-body">Stöbere direkt nach Interessen:</p>
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {CATEGORY_SEO.map((c) => (
+                <li key={c.slug}>
+                  <Link
+                    href={`/groups/kategorie/${c.slug}/`}
+                    className="inline-block border-2 border-navy bg-card px-3 py-1.5 text-sm font-semibold text-navy transition-colors hover:bg-sky"
+                  >
+                    {c.categoryName}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <>
+            <h2 className="hyphens-auto break-words text-2xl text-navy sm:text-3xl">
+              Discover student groups at TU Dresden
+            </h2>
+            <p className="mt-4 max-w-prose text-body">
+              Whether you are just starting your studies in Dresden or have been here for a while:
+              joining a student group is the easiest way to meet people outside your degree
+              programme. FOMO lists over 90 student groups, clubs and initiatives at TU Dresden —
+              with descriptions, contact details and a quiz that computes your personal
+              recommendations.
+            </p>
+            <p className="mt-3 max-w-prose text-body">
+              <Link href="/en/groups" className="underline underline-offset-4 hover:text-navy">
+                Browse all groups →
+              </Link>
+            </p>
+          </>
+        )}
+      </section>
+
+      {/* Visible FAQ — must stay in sync with the FAQPage JSON-LD (same source). */}
+      <section className="mt-6 border-poster bg-card p-6 sm:p-10">
+        <h2 className="text-2xl text-navy sm:text-3xl">
+          {lang === "de" ? "Häufige Fragen" : "Frequently asked questions"}
+        </h2>
+        <div className="mt-4 divide-y-2 divide-navy/15">
+          {(lang === "de" ? FAQ_DE : FAQ_EN).map((f) => (
+            <details key={f.q} className="group py-3">
+              <summary className="cursor-pointer list-none font-heading text-base text-navy marker:content-none">
+                <span className="mr-2 inline-block transition-transform group-open:rotate-90">→</span>
+                {f.q}
+              </summary>
+              <p className="mt-2 max-w-prose pl-6 text-sm text-body">{f.a}</p>
+            </details>
+          ))}
         </div>
       </section>
 

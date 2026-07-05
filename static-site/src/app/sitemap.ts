@@ -2,6 +2,7 @@
 import type { MetadataRoute } from "next";
 import { getGroups } from "@/lib/data";
 import { absUrl } from "@/lib/site";
+import { CATEGORY_SEO } from "@/lib/categories";
 
 // Emitted as /sitemap.xml at build time (works with output: 'export').
 export const dynamic = "force-static";
@@ -35,9 +36,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absUrl("/datenschutz"), lastModified: now, changeFrequency: "yearly", priority: 0.2 },
   ];
 
+  // German-only SEO landing pages per category ("Sport Hochschulgruppen Dresden" …).
+  const categoryPages: MetadataRoute.Sitemap = CATEGORY_SEO.map((c) => ({
+    url: absUrl(`/groups/kategorie/${c.slug}`),
+    lastModified: now,
+    changeFrequency: "weekly",
+    priority: 0.7,
+  }));
+
   const groupPages = getGroups().flatMap((g) =>
     pair(`/groups/${g.slug}`, `/en/groups/${g.slug}`, 0.6, "monthly"),
   );
 
-  return [...staticPages, ...legalPages, ...groupPages];
+  return [...staticPages, ...legalPages, ...categoryPages, ...groupPages];
 }

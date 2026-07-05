@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { HomePageContent } from "@/components/HomePageContent";
 import { seoAlternates, absUrl } from "@/lib/site";
+import { FAQ_EN, faqPageLd } from "@/lib/faq";
 
 const EN_DESCRIPTION =
   "Take a short quiz and find which of 80+ student groups at TU Dresden fit you. Fully anonymous, the matching runs in your browser.";
@@ -25,5 +26,13 @@ export const metadata: Metadata = {
 };
 
 export default function EnglishHomePage() {
-  return <HomePageContent lang="en" />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageLd(FAQ_EN)) }}
+      />
+      <HomePageContent lang="en" />
+    </>
+  );
 }

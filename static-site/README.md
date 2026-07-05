@@ -76,3 +76,38 @@ configured:
 - `NEXT_PUBLIC_UMAMI_SRC` — script URL (defaults to Umami Cloud)
 
 Tracked events: `quiz-start`, `quiz-complete`, `group-click`.
+
+## Optional response tracking
+
+The static quiz can send anonymous quiz responses to a Google Sheets-backed
+Apps Script endpoint when the user finishes the quiz. Configure:
+
+- `NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL` - deployed Google Apps Script web app URL
+
+Only the quiz answers, selected filters, and `submittedAt` timestamp are sent.
+No name, email, result link, user agent, or tracking ID is included.
+
+Example Apps Script for the FOMO response sheet:
+
+```js
+const SPREADSHEET_ID = "1Jh3Q1kEpVAL_z3rx0WECKJUOqRz9Ce3nKpbkeOvA1Uk";
+const SHEET_NAME = "Responses";
+
+function doPost(e) {
+  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = spreadsheet.getSheetByName(SHEET_NAME);
+  const data = JSON.parse(e.postData.contents);
+
+  sheet.appendRow([
+    data.submittedAt,
+    JSON.stringify(data.answers),
+    JSON.stringify(data.filters),
+  ]);
+
+  return ContentService.createTextOutput("ok");
+}
+```
+
+Deploy the script as a web app with access set to "Anyone". Leave
+`NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL` unset to keep the fully local,
+no-submission behavior.

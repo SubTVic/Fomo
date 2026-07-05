@@ -6,6 +6,7 @@ import type { Group, QuizFilters, QuizItem, MatchResult } from "@/lib/types";
 import { computeMatches, type UserAnswers } from "@/lib/matching";
 import { encodeResults, decodeResults, readResultsParam } from "@/lib/results";
 import { track, EVENTS } from "@/lib/analytics";
+import { trackQuizResponse } from "@/lib/response-tracking";
 import { FilterScreen } from "./FilterScreen";
 import { ItemScreen } from "./ItemScreen";
 import { ResultsScreen } from "./ResultsScreen";
@@ -87,6 +88,12 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
   function finish(finalAnswers: UserAnswers) {
     const nonNeutral = Object.values(finalAnswers).filter((v) => v !== 0).length;
     track(EVENTS.quizComplete, { answered: nonNeutral, filters: selectedFilters.length });
+    trackQuizResponse({
+      answers: finalAnswers,
+      filters: selectedFilters,
+      items,
+      quizFilters: filters,
+    });
     setPhase("results");
   }
 

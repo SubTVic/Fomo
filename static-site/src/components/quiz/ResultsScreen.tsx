@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Group, MatchResult, QuizFilters } from "@/lib/types";
 import { groupCategory, groupShortText } from "@/lib/group-copy";
+import { isResponseTrackingEnabled } from "@/lib/response-tracking";
 import { ShareButton } from "./ShareButton";
 import { CompareGroups } from "./CompareGroups";
 
@@ -20,7 +21,15 @@ interface ResultsScreenProps {
 
 const INITIAL_RESULTS = 5;
 
-export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang = "de" }: ResultsScreenProps) {
+export function ResultsScreen({
+  matches,
+  answeredCount,
+  itemCount,
+  filters,
+  resultsParam,
+  onRestart,
+  lang = "de",
+}: ResultsScreenProps) {
   const [showAll, setShowAll] = useState(false);
   const [tab, setTab] = useState<"groups" | "compare">("groups");
   const allMatches = matches.filter((m) => m.score > 0);
@@ -53,6 +62,11 @@ export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang 
           groups: "Groups",
           compare: "Compare",
           none: "No clear matches. Try fewer filters or clearer answers.",
+          basis: `Based on ${answeredCount} clear answers.`,
+          method: `Every group answered the same ${itemCount} questions as you. The matching itself happens in your browser`,
+          tracking: isResponseTrackingEnabled()
+            ? "; your answers are stored anonymously with a timestamp for the study."
+            : "; nothing is sent.",
           more: (count: number) => `Show ${count} more`,
           less: "Show fewer",
           again: "Start over",
@@ -64,6 +78,11 @@ export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang 
           groups: "Gruppen",
           compare: "Vergleichen",
           none: "Keine eindeutigen Treffer. Probier es mit weniger Filtern oder klareren Antworten.",
+          basis: `Basierend auf ${answeredCount} klaren Antworten.`,
+          method: `Jede Gruppe hat dieselben ${itemCount} Fragen beantwortet wie du. Der Abgleich passiert in deinem Browser`,
+          tracking: isResponseTrackingEnabled()
+            ? "; deine Antworten werden mit Zeitstempel anonym für die Studie gespeichert."
+            : ", nichts wird gesendet.",
           more: (count: number) => `Weitere ${count} anzeigen`,
           less: "Weniger anzeigen",
           again: "Von vorne beginnen",
@@ -76,6 +95,11 @@ export function ResultsScreen({ matches, filters, resultsParam, onRestart, lang 
       <div>
         <h1 className="text-3xl text-navy sm:text-4xl">{copy.title}</h1>
         <p className="mt-2 text-body">{copy.subtitle}</p>
+        <p className="mt-2 text-sm text-muted">{copy.basis}</p>
+        <p className="mt-2 text-xs text-muted">
+          {copy.method}
+          {copy.tracking}
+        </p>
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3">

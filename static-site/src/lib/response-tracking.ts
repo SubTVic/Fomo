@@ -2,7 +2,10 @@
 import type { QuizFilters, QuizItem } from "@/lib/types";
 import type { UserAnswers } from "@/lib/matching";
 
-const endpoint = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL?.trim();
+const defaultEndpoint =
+  "https://script.google.com/macros/s/AKfycbwRHQEvNP4uTrhtmC458CN8CH3WS-kxndLTVtDo30jhqZVYgmN-klhcjmSBSeMkMBjd/exec";
+
+const endpoint = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL?.trim() || defaultEndpoint;
 
 export function isResponseTrackingEnabled(): boolean {
   return Boolean(endpoint);

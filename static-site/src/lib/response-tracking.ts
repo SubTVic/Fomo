@@ -3,7 +3,7 @@ import type { QuizFilters, QuizItem } from "@/lib/types";
 import type { UserAnswers } from "@/lib/matching";
 
 const defaultEndpoint =
-  "https://script.google.com/macros/s/AKfycbwRHQEvNP4uTrhtmC458CN8CH3WS-kxndLTVtDo30jhqZVYgmN-klhcjmSBSeMkMBjd/exec";
+  "https://script.google.com/macros/s/AKfycbwWM130hYXtvJ22Nw1fjP6GsZg2rKR2g0RnPwtId5vertY4KD3f-Evp1vwAc-UPjHx4/exec";
 
 const endpoint = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_WEBHOOK_URL?.trim() || defaultEndpoint;
 

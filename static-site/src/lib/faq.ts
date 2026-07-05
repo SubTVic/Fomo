@@ -12,6 +12,10 @@ export interface FaqEntry {
 
 export const FAQ_DE: FaqEntry[] = [
   {
+    q: "Was ist eine Hochschulgruppe?",
+    a: "Hochschulgruppen sind vom Studierendenrat (StuRa) anerkannte studentische Vereine und Initiativen. Dort gehen Studierende gemeinsam ihren Interessen nach — und das kann fast alles sein: ein Rennauto bauen, eine Bar betreiben, Theater spielen oder einfach der Austausch mit Gleichgesinnten.",
+  },
+  {
     q: "Welche Hochschulgruppen gibt es an der TU Dresden?",
     a: "An der TU Dresden gibt es über 90 studentische Hochschulgruppen und Vereine — von Sport, Musik und Theater über Robotik, Coding und Rennwagenbau bis zu Ehrenamt, Nachhaltigkeit, Hochschulpolitik und internationalen Communities. FOMO listet sie alle mit Beschreibung und Kontakt.",
   },
@@ -34,6 +38,10 @@ export const FAQ_DE: FaqEntry[] = [
 ];
 
 export const FAQ_EN: FaqEntry[] = [
+  {
+    q: "What is a Hochschulgruppe (student group)?",
+    a: "Hochschulgruppen are student clubs and initiatives officially recognised by the student council (StuRa). Students pursue shared interests together — and that can be almost anything: building a race car, running a bar, doing theatre, or simply connecting with like-minded people.",
+  },
   {
     q: "Which student groups exist at TU Dresden?",
     a: "TU Dresden has over 90 student groups — from sports, music and theatre to robotics, coding and race-car building, plus volunteering, sustainability, student politics and international communities. FOMO lists them all with a description and contact details.",

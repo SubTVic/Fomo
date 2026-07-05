@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { CATEGORY_SEO } from "@/lib/categories";
 
 export function Footer() {
   const pathname = usePathname();
@@ -30,6 +31,24 @@ export function Footer() {
             {isEnglish ? "Privacy" : "Datenschutz"}
           </Link>
         </div>
+        {/* Discreet, crawlable links to the SEO category pages. Deliberately in
+            the footer: they are entry doors for search engines, NOT a second
+            browsing UI (the one browse surface is /groups). German only. */}
+        {!isEnglish && (
+          <p className="text-xs text-muted">
+            {CATEGORY_SEO.map((c, i) => (
+              <span key={c.slug}>
+                {i > 0 && " · "}
+                <Link
+                  href={`/groups/kategorie/${c.slug}/`}
+                  className="underline-offset-4 hover:text-navy hover:underline"
+                >
+                  {c.categoryName}
+                </Link>
+              </span>
+            ))}
+          </p>
+        )}
         <p className="text-xs text-muted">
           {isEnglish
             ? "Find your student group at TU Dresden. A project by YETI & StuRa. Matching runs entirely in your browser."

@@ -110,12 +110,23 @@ Login auf Umami → Website „fomo-dresden.app". Die wichtigsten Zahlen:
 Alles ist anonym; es gibt nichts DSGVO-Kritisches zu verwalten, kein
 Cookie-Banner, keine Löschanfragen-Prozesse.
 
-**Schöner Bericht statt Umami-Rohdaten:** `npm run report` (im Ordner
-`static-site/`, braucht Umami-API-Zugang als Umgebungsvariablen — siehe
-README „Report generator") erzeugt eine einzelne HTML-Datei mit fertigen
-Diagrammen: Antworten pro Frage im Klartext, Abbruch-Kurve, Top-Gruppen in
-den Ergebnissen und eine Bias-Analyse. Die Datei kann direkt an den StuRa
-weitergegeben werden.
+**Schöner Bericht statt Umami-Rohdaten — ohne Technik:** Die Live-Seite baut
+bei jedem Deployment automatisch einen fertigen Bericht mit Diagrammen und
+legt ihn unter **www.fomo-dresden.app/report/** ab: Antworten pro Frage im
+Klartext, Abbruch-Kurve, Top-Gruppen in den Ergebnissen, Bias-Analyse. Den
+Link kann man direkt an den StuRa weitergeben. (Der Bericht ist öffentlich,
+enthält aber nur anonyme Sammelwerte; Google indexiert ihn nicht.)
+
+Damit er echte Zahlen zeigt, müssen im Vercel-Projekt zwei Variablen gesetzt
+sein: `UMAMI_API_KEY` und `UMAMI_WEBSITE_ID` (ohne `NEXT_PUBLIC_`-Präfix).
+**Aktualität:** Der Bericht erneuert sich bei jedem Deployment; zusätzlich
+stößt eine GitHub-Automatik jeden Montag früh ein Deployment an — dafür
+einmalig in Vercel einen „Deploy Hook" (Settings → Git) erstellen und die
+URL als GitHub-Secret `VERCEL_DEPLOY_HOOK_URL` hinterlegen. Sofort
+aktualisieren: GitHub → Actions → „Weekly report redeploy" → „Run workflow".
+
+Für Fortgeschrittene gibt es den Bericht auch lokal: `npm run report` im
+Ordner `static-site/` (Details in der README, Abschnitt „Report generator").
 
 ## 8. Wenn etwas nicht funktioniert
 
@@ -138,6 +149,7 @@ jede:r Webentwickler:in übernehmen.
 |---|---|
 | **Jährlich** | Domain-Verlängerung prüfen (Registrar) |
 | **Vor Erstiwoche (Sept.)** | Daten aktualisieren (§4), tote Links stichprobenartig prüfen, Umami checken |
-| **Nach Erstiwoche** | Statistik exportieren für StuRa-Bericht |
+| **Nach Erstiwoche** | Bericht sichern: www.fomo-dresden.app/report/ aufrufen und als PDF/HTML speichern → an StuRa |
 | **Bei Personenwechsel** | Impressum/Datenschutz aktualisieren (§2), Zugänge übergeben |
+| **Montags (automatisch)** | Der /report/ aktualisiert sich per GitHub-Automatik von selbst (§7) |
 | **Sonst** | Nichts. Statische Seite = keine Sicherheitsupdates nötig. |

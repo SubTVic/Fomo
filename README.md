@@ -6,17 +6,17 @@ FOMO is an open-source web app that matches TU Dresden freshmen with student org
 
 Answer ~20 questions about your interests, values, and time budget, and get personalized recommendations from 83+ student groups — with contact info, links, and logos.
 
-**Built for:** [StuRa TU Dresden](https://www.stura.tu-dresden.de/) · **Target launch:** Orientation Week WS 26/27
+**Built for:** [StuRa TU Dresden](https://www.stura.tu-dresden.de/) · **🚀 Live:** [www.fomo-dresden.app](https://www.fomo-dresden.app)
 
 ## Status
 
 | Phase | Status | Description |
 | --- | --- | --- |
 | Phase 1: Pilot Study | ✅ Abgeschlossen | 104 Sessions, Classic-Variante gewinnt (45%), Working Set v1.1 eingefroren |
-| Phase 2: Group Registration | 🔄 Aktiv | Token-Einladungen, Selbst-Registrierung, Scraper-Import, i18n DE/EN ✅ |
-| Studie 2: Member Validation | 🔄 Aktiv | `/pilot` live, Daten werden erhoben (Ziel: ≥60 Sessions) |
-| Phase 3: Matching & Results | ⏳ Geplant | nach Studie-2-Auswertung, Working Set v3 |
-| Phase 4: Launch | ⏳ Geplant | September 2026, Erstsemester-Woche TU Dresden |
+| Phase 2: Group Registration | 🔄 Läuft weiter | Token-Einladungen, Selbst-Registrierung; jede neue Registrierung verbessert das Live-Matching |
+| Studie 2: Member Validation | ❌ Verworfen | zu wenig Rücklauf — ersetzt durch anonyme Live-Nutzungsdaten (Umami) |
+| Phase 3: Matching & Results | ✅ Live | Working Set v2 (21 Items), Matching v2 client-side in `static-site/` |
+| Phase 4: Launch | ✅ Live seit Juli 2026 | **www.fomo-dresden.app** (statische Version, Vercel); Erstiwoche Sept. 2026 = Haupt-Traffic |
 
 Offene Aufgaben: siehe [TODO.md](TODO.md)
 
@@ -25,11 +25,14 @@ Offene Aufgaben: siehe [TODO.md](TODO.md)
 - **Root (`src/`, `prisma/`, …)** — the dynamic Next.js app: admin dashboard,
   group registration, data collection. Needs PostgreSQL. This is the internal
   tool that produces the data.
-- **[`static-site/`](static-site/)** — the public, launch-bound FOMO site as a
-  fully static export (no server, no DB, client-side matching). It reads
-  PII-free JSON baked in at build time; the quiz never sends data anywhere.
-  See [`static-site/README.md`](static-site/README.md) for build, the scraper
-  pipeline, and self-hosting.
+- **[`static-site/`](static-site/)** — the **live public site**
+  ([www.fomo-dresden.app](https://www.fomo-dresden.app)) as a fully static
+  export (no server, no DB, client-side matching). It reads PII-free JSON
+  baked in at build time; only optional anonymous Umami analytics leave the
+  browser. See [`static-site/README.md`](static-site/README.md) for build,
+  data pipeline, analytics/report and operations docs
+  ([Betriebshandbuch](static-site/docs/BETRIEBSHANDBUCH.md),
+  [KI-Mitarbeit](static-site/docs/KI-MITARBEIT.md)).
 
 ## Features
 

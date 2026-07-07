@@ -36,6 +36,29 @@ Das Projekt wird vom StuRa TU Dresden finanziert (3.000€) und soll im Septembe
 
 **Ziel:** APP_MODE=live umschalten, Gewinner-Variante als Default, StuRa-Abnahme.
 
+## ⚡ Stand Juli 2026 — was WIRKLICH live ist (überschreibt Obiges bei Widerspruch)
+
+Die öffentliche FOMO-Seite ist **nicht** die dynamische App, sondern der
+**statische Export in `static-site/`** — live auf **www.fomo-dresden.app**
+(eigenes Vercel-Projekt, Root Directory `static-site`, deployt bei jedem Push
+auf `main`). Kernfakten für die Arbeit daran:
+
+- Matching v2 (21 WS2-Items + 8 Filter) läuft client-side gegen
+  `selfRating.answers`; die alten 17 Binär-Attribute werden nicht mehr genutzt.
+- **Nur verifizierte Gruppen** sind im Quiz-Matching (`getMatchableGroups()`);
+  gescrapte/unbestätigte nur im Verzeichnis hinter einem Toggle.
+- Studie 2 wurde verworfen; stattdessen anonyme Live-Daten via Umami
+  (Events in `static-site/src/lib/analytics.ts`, Konzept in
+  `static-site/docs/DATEN-SAMMELN-KONZEPT.md`). Auswertung:
+  `npm run report` bzw. live unter `/report/` (baut bei jedem Deploy).
+- DE + EN (unter `/en/`), SEO komplett (Sitemap, hreflang, JSON-LD,
+  Kategorie-Landingpages), Impressum/Datenschutz vorhanden.
+- Doku: `static-site/README.md`, Betrieb für Nicht-Techniker in
+  `static-site/docs/BETRIEBSHANDBUCH.md`, KI-Arbeitsregeln in
+  `static-site/docs/KI-MITARBEIT.md`.
+- Die dynamische Root-App bleibt internes Datenerfassungs-Tool
+  (Registrierung/Admin) — bei Arbeiten an der öffentlichen Seite NICHT anfassen.
+
 ## Tech-Stack
 
 - **Framework:** Next.js 15 (App Router, TypeScript)

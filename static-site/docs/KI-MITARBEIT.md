@@ -79,6 +79,7 @@ static-site/README.md. Regeln:
 | FAQ (Landing) | `static-site/src/lib/faq.ts` |
 | SEO (Sitemap, Strukturdaten) | `static-site/src/app/sitemap.ts`, `src/lib/site.ts` |
 | Analytics-Events | `static-site/src/lib/analytics.ts` |
+| Report-Generator (live: `/report/`) | `static-site/scripts/report.mjs` (läuft auch als prebuild) |
 | Betrieb/Übergabe-Doku | `static-site/docs/BETRIEBSHANDBUCH.md` |
 
 ## 6. Was schiefgehen kann (und warum es nicht schlimm ist)

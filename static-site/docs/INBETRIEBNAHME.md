@@ -2,6 +2,11 @@
 
 # FOMO – Inbetriebnahme auf einem StuRa-Server
 
+> **Stand Juli 2026:** Die Seite läuft produktiv auf **Vercel**
+> (www.fomo-dresden.app, Auto-Deploy bei jedem Push auf `main`) — dafür ist
+> keiner dieser Schritte nötig. Diese Anleitung bleibt als Plan B für einen
+> Umzug auf einen eigenen Server (StuRa / Rechenzentrum) gültig.
+
 Diese Anleitung beschreibt, wie die **statische FOMO-Seite** auf einem eigenen
 Server (StuRa / Rechenzentrum) installiert, betrieben und mit neuen Daten
 aktualisiert wird – **ohne Ausfallzeit im laufenden Betrieb**.

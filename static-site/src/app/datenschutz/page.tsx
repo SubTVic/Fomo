@@ -83,7 +83,8 @@ E-Mail: fomo@yeti-dresden.org`}
             Sofern aktiviert, nutzt FOMO <strong className="text-navy">Umami</strong> – eine
             cookielose Statistik ohne personenbezogene Profile und ohne Einwilligungsbanner. Erfasst
             werden anonyme Ereignisse ohne personenbeziehbare Kennung: dass ein Quiz gestartet,
-            Frage für Frage durchlaufen und abgeschlossen wurde, welche Gruppen-Links angeklickt
+            Frage für Frage durchlaufen und abgeschlossen wurde, welche Gruppen dabei als
+            Ergebnis vorgeschlagen wurden, welche Gruppen-Links angeklickt
             werden (aus dem Browsen, den Ergebnissen oder von Profilseiten), Bedienelemente wie die
             Vergleichs-Ansicht, Sprachumschaltung oder das optionale 👍/👎-Feedback, und – zur
             Verbesserung des Frage- und Matching-Konzepts – die{" "}

@@ -3,8 +3,10 @@
 The public-facing FOMO app as a **fully static** export (`next build` →
 `out/`). No server, no database, no API routes — just HTML/JS plus the JSON
 data baked in at build time. Hosts anywhere static (Vercel static, S3, GitHub
-Pages, a Uni server). DSGVO-friendly: the quiz and matching run entirely in the
-browser, no user data is sent anywhere.
+Pages, a Uni server). **Live at https://www.fomo-dresden.app** (Vercel, deploys
+on every push to `main`). DSGVO-friendly: the quiz and matching run entirely in
+the browser; the only thing that ever leaves it is optional anonymous Umami
+analytics (see Analytics below and the Datenschutz page).
 
 The dynamic app in the repo root stays the data-collection tool (admin,
 registration, Study 2) and is untouched by this folder.
@@ -125,3 +127,13 @@ thousands of profiles against the real matcher. Auth via env — either
 `UMAMI_URL` + `UMAMI_USER` + `UMAMI_PASSWORD` (self-hosted, API always
 included); both need `UMAMI_WEBSITE_ID`. `--offline` builds the
 simulation-only bias report without any API access.
+
+The report is also **built into the live site**: `npm run build` runs the
+generator first (prebuild) and ships the result at **`/report/`** (public,
+`noindex` + robots-disallowed; contains anonymous aggregates only). It never
+blocks a deploy — API failures degrade to the simulation-only report. Set
+`UMAMI_API_KEY` + `UMAMI_WEBSITE_ID` (no `NEXT_PUBLIC_` prefix — build-time
+only) in the Vercel project to fill it with live data. A weekly GitHub Action
+(`.github/workflows/weekly-report-redeploy.yml`, also manually triggerable)
+POSTs a Vercel Deploy Hook so the numbers refresh without a code push — it
+needs the `VERCEL_DEPLOY_HOOK_URL` repo secret once.

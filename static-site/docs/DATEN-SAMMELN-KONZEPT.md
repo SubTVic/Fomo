@@ -28,6 +28,7 @@ brauchen.
 | `quiz-item-back` | „Zurück"-Button | Index, von dem zurückgegangen wurde |
 | `quiz-complete` | Ergebnisse erreicht | #beantwortete (nicht-neutrale) Items, #Filter |
 | `quiz-response` | Ergebnisse erreicht | **alle 21 Antworten (−1/0/1) + gewählte Filter** — siehe Hinweis unten |
+| `quiz-result-group` | Ergebnisse erreicht | je ein Event pro Top-5-Gruppe: Slug, Rang, Score → „welche Gruppen kommen raus, wie oft?" (feuert nur bei echtem Abschluss, nicht beim Öffnen geteilter Links) |
 | `quiz-restart` | „Von vorne beginnen" | – |
 | `results-tab` | Wechsel Gruppen/Vergleichen | gewählter Tab |
 | `results-show-more` | „Weitere anzeigen"/„Weniger anzeigen" | neuer Zustand |
@@ -86,16 +87,31 @@ wechseln (präziser als Umamis Browser-Sprache-Statistik).
 | **Hochschulgruppen** | Sichtbarkeit/Interesse an ihrer Gruppe → Anreiz zur Registrierung |
 | **Skalierung** | pro Hochschule eigene Umami-Website-ID → sauberer Standort-Vergleich (Dresden/Leipzig/Chemnitz) |
 
+## Auswertung: der Report-Generator
+
+Umamis eigenes Dashboard zeigt nur Rohwerte (`WS2-07: 1`). Für lesbare
+Auswertung gibt es `npm run report` (`scripts/report.mjs`): holt die Events
+per Umami-API, verheiratet sie mit `quiz.json` (Fragetexte) und `groups.json`
+(Gruppennamen) und erzeugt **eine HTML-Datei mit Diagrammen** — Antworten pro
+Frage, Filterwahl, Abbruch-Funnel, Top-Gruppen in den Ergebnissen und eine
+**Bias-Analyse** (u. a. Simulation tausender Profile gegen den echten
+Matcher). Der Report wird außerdem bei jedem Vercel-Build erzeugt und liegt
+live unter `/report/` (noindex; wöchentlicher Auto-Refresh per GitHub Action).
+
+**Historie:** Eine zwischenzeitliche Google-Sheets-Anbindung (Client-Beacon an
+einen offenen Apps-Script-Endpoint) wurde im Juli 2026 revertiert — sie lief
+am Umami-Opt-in vorbei und widersprach der Datenschutzerklärung. Der Report
+deckt den Bedarf über die eine, deklarierte Datensenke ab.
+
 ## Umsetzung
 
 **Stand Juli 2026: alle oben genannten Events sind gebaut** (siehe „Bereits
 eingebaut"). Offen bleibt nur der Betrieb:
 
-1. Umami-Website-ID setzen (`NEXT_PUBLIC_UMAMI_WEBSITE_ID`), Dashboard für
-   StuRa einrichten.
-2. Nach ein paar Wochen Echtbetrieb: `quiz-item-view` + `quiz-response`
-   gemeinsam auswerten (Skript oder Umami-API-Export) für den ersten
-   working-set-v3-Datenpunkt.
+1. Umami-Website-ID setzen (`NEXT_PUBLIC_UMAMI_WEBSITE_ID` fürs Tracking;
+   `UMAMI_API_KEY` + `UMAMI_WEBSITE_ID` zusätzlich für den /report/-Build).
+2. Nach ein paar Wochen Echtbetrieb: den Bias-Abschnitt des Reports als
+   ersten working-set-v3-Datenpunkt heranziehen.
 
 ## Bewusst NICHT sammeln
 

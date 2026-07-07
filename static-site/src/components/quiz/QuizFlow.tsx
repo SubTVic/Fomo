@@ -6,7 +6,6 @@ import type { Group, QuizFilters, QuizItem, MatchResult } from "@/lib/types";
 import { computeMatches, type UserAnswers } from "@/lib/matching";
 import { encodeResults, decodeResults, readResultsParam } from "@/lib/results";
 import { track, EVENTS } from "@/lib/analytics";
-import { trackQuizResponse } from "@/lib/response-tracking";
 import { FilterScreen } from "./FilterScreen";
 import { ItemScreen } from "./ItemScreen";
 import { ResultsScreen } from "./ResultsScreen";
@@ -102,8 +101,6 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
 
   function finish(finalAnswers: UserAnswers) {
     const nonNeutral = Object.values(finalAnswers).filter((v) => v !== 0).length;
-    const finalMatches = computeMatches(finalAnswers, selectedFilters, groups);
-    const finalResultsParam = encodeResults(finalAnswers, selectedFilters, items, filters);
     track(EVENTS.quizComplete, { answered: nonNeutral, filters: selectedFilters.length });
     // Anonymous research payload: one property per item (id → -1|0|1) plus the
     // selected multiple-choice filters. No identifier is attached; this only
@@ -114,14 +111,6 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
       ...answerData,
       filters: selectedFilters.length ? selectedFilters.join(",") : "none",
       answered: nonNeutral,
-    });
-    trackQuizResponse({
-      answers: finalAnswers,
-      filters: selectedFilters,
-      items,
-      matches: finalMatches,
-      quizFilters: filters,
-      resultsParam: finalResultsParam,
     });
     // Which groups the quiz produced: one event per initially shown result
     // (top 5, matching INITIAL_RESULTS in ResultsScreen). Fired only on a real

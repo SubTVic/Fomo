@@ -113,3 +113,15 @@ the full list and `docs/DATEN-SAMMELN-KONZEPT.md` for the rationale):
   `group-detail-open`
 - **Browsing:** `groups-category-filter`, `groups-show-unverified`
 - **i18n:** `lang-switch`
+
+### Report generator
+
+`npm run report` pulls the events from the Umami API and writes a single
+self-contained HTML report (`fomo-report.html`): answer distribution per
+question (full question text), filter choices, drop-off funnel, which groups
+the quiz recommends and how often, plus a bias analysis that simulates
+thousands of profiles against the real matcher. Auth via env — either
+`UMAMI_API_KEY` (Umami Cloud, needs a plan with API access) or
+`UMAMI_URL` + `UMAMI_USER` + `UMAMI_PASSWORD` (self-hosted, API always
+included); both need `UMAMI_WEBSITE_ID`. `--offline` builds the
+simulation-only bias report without any API access.

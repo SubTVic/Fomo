@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "validate": "node scripts/validate-data.mjs",
+    "report": "node scripts/report.mjs",
     "scrape": "node scripts/scrape-groups.mjs",
     "scrape:llm": "node scripts/scrape-llm.mjs",
     "scrape:eval": "node scripts/scrape-eval.mjs",

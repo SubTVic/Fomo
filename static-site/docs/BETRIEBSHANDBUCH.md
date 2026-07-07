@@ -110,6 +110,13 @@ Login auf Umami → Website „fomo-dresden.app". Die wichtigsten Zahlen:
 Alles ist anonym; es gibt nichts DSGVO-Kritisches zu verwalten, kein
 Cookie-Banner, keine Löschanfragen-Prozesse.
 
+**Schöner Bericht statt Umami-Rohdaten:** `npm run report` (im Ordner
+`static-site/`, braucht Umami-API-Zugang als Umgebungsvariablen — siehe
+README „Report generator") erzeugt eine einzelne HTML-Datei mit fertigen
+Diagrammen: Antworten pro Frage im Klartext, Abbruch-Kurve, Top-Gruppen in
+den Ergebnissen und eine Bias-Analyse. Die Datei kann direkt an den StuRa
+weitergegeben werden.
+
 ## 8. Wenn etwas nicht funktioniert
 
 | Symptom | Wahrscheinliche Ursache | Lösung |

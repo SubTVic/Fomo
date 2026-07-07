@@ -102,6 +102,8 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
 
   function finish(finalAnswers: UserAnswers) {
     const nonNeutral = Object.values(finalAnswers).filter((v) => v !== 0).length;
+    const finalMatches = computeMatches(finalAnswers, selectedFilters, groups);
+    const finalResultsParam = encodeResults(finalAnswers, selectedFilters, items, filters);
     track(EVENTS.quizComplete, { answered: nonNeutral, filters: selectedFilters.length });
     // Anonymous research payload: one property per item (id → -1|0|1) plus the
     // selected multiple-choice filters. No identifier is attached; this only
@@ -117,7 +119,9 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
       answers: finalAnswers,
       filters: selectedFilters,
       items,
+      matches: finalMatches,
       quizFilters: filters,
+      resultsParam: finalResultsParam,
     });
     setPhase("results");
   }

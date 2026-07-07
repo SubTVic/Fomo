@@ -111,3 +111,33 @@ the full list and `docs/DATEN-SAMMELN-KONZEPT.md` for the rationale):
   `group-detail-open`
 - **Browsing:** `groups-category-filter`, `groups-show-unverified`
 - **i18n:** `lang-switch`
+
+## Google Sheets response export
+
+The quiz also posts an anonymous response payload to the Google Apps Script
+endpoint in `src/lib/response-tracking.ts`. The payload includes:
+
+- `submittedAt`
+- `topMatchName` and `topMatchScore`
+- `topMatches` as JSON, including rank, group name, slug, score, and category
+- `answers` as JSON, including item id, short title, question text, numeric
+  value, and readable label
+- `answersReadable` as a compact text summary
+- `filters` as JSON and `filtersReadable`
+- `resultUrl`
+
+Recommended Apps Script columns:
+
+```js
+sheet.appendRow([
+  data.submittedAt,
+  data.topMatchName,
+  data.topMatchScore,
+  JSON.stringify(data.topMatches ?? []),
+  data.answersReadable,
+  JSON.stringify(data.answers ?? []),
+  data.filtersReadable,
+  JSON.stringify(data.filters ?? []),
+  data.resultUrl,
+]);
+```

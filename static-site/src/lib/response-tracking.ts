@@ -3,7 +3,7 @@ import type { MatchResult, QuizFilters, QuizItem } from "@/lib/types";
 import type { UserAnswers } from "@/lib/matching";
 
 const endpoint =
-  "https://script.google.com/macros/s/AKfycbwWM130hYXtvJ22Nw1fjP6GsZg2rKR2g0RnPwtId5vertY4KD3f-Evp1vwAc-UPjHx4/exec";
+  "https://script.google.com/macros/s/AKfycbz7akPcoybZfcGePIOBlnP-29dm_8BaiYS9MZKspmHkW3s2vRBBM8zElef62jKCVHZ-/exec";
 
 interface TrackQuizResponseInput {
   answers: UserAnswers;

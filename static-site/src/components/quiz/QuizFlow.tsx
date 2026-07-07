@@ -123,6 +123,15 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
       quizFilters: filters,
       resultsParam: finalResultsParam,
     });
+    // Which groups the quiz produced: one event per initially shown result
+    // (top 5, matching INITIAL_RESULTS in ResultsScreen). Fired only on a real
+    // completion — restoring a shared ?r= link does not re-count.
+    computeMatches(finalAnswers, selectedFilters, groups)
+      .filter((m) => m.score > 0)
+      .slice(0, 5)
+      .forEach((m, i) =>
+        track(EVENTS.quizResultGroup, { group: m.group.slug, rank: i + 1, score: m.score }),
+      );
     setPhase("results");
   }
 

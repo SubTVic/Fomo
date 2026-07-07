@@ -34,6 +34,10 @@ export const EVENTS = {
   // Anonymous, aggregate research data: the 21 Likert answers + the selected
   // filters. No identifier, no personal data — only sent when Umami is enabled.
   quizResponse: "quiz-response",
+  // One event per group shown in the top results (rank + score) — makes
+  // "which groups come out of the quiz, how often?" a simple frequency table
+  // in the Umami UI (event → property "group").
+  quizResultGroup: "quiz-result-group",
   quizRestart: "quiz-restart",
   groupClick: "group-click",
   groupDetailOpen: "group-detail-open",

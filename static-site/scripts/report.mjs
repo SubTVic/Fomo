@@ -17,7 +17,7 @@
 // --offline skips the API entirely: the report then contains only the
 // simulation-based bias section (needs no traffic, only groups.json).
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -597,9 +597,28 @@ tip.style.left=x+'px';tip.style.top=(e.clientY+16)+'px';});
 }
 
 // ---------------------------------------------------------------------------
-const data = await fetchAll();
+// Fail-soft by design: this also runs inside the Vercel build (prebuild), and
+// a flaky Umami API must never block a site deploy — degrade to the
+// simulation-only report instead of exiting non-zero.
+let data;
+try {
+  data = await fetchAll();
+} catch (e) {
+  console.error(`⚠️  Umami-Abruf fehlgeschlagen (${e.message}) — Bericht ohne Live-Daten.`);
+  data = { live: false, error: e.message };
+}
 console.error(`→ Simulation mit ${SIM_N.toLocaleString("de-DE")} Profilen …`);
 const sim = simulate(data);
-writeFileSync(OUT, buildHtml(data, sim));
+mkdirSync(dirname(OUT) || ".", { recursive: true });
+try {
+  writeFileSync(OUT, buildHtml(data, sim));
+} catch (e) {
+  // Even a template bug must not break the deploy — write a stub instead.
+  console.error(`⚠️  Report-Rendering fehlgeschlagen (${e.message}) — schreibe Platzhalter.`);
+  writeFileSync(
+    OUT,
+    `<!doctype html><html lang="de"><meta charset="utf-8"><meta name="robots" content="noindex"><title>FOMO Report</title><p>Report konnte nicht erzeugt werden: ${esc(e.message)}</p>`,
+  );
+}
 console.error(`✅ Bericht geschrieben → ${OUT}`);
 if (!data.live) console.error("   (nur Bias-Simulation — für alle Sektionen Umami-Zugang setzen)");

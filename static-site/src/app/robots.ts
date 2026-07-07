@@ -7,7 +7,8 @@ export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/" },
+    // /report/ is the build-time analytics report — public but not for search.
+    rules: { userAgent: "*", allow: "/", disallow: "/report/" },
     sitemap: absUrl("/sitemap.xml").replace(/\/$/, ""),
     host: absUrl("/").replace(/\/$/, ""),
   };

@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Refreshes the analytics report on the live site once a week without a code
+# change: the static site regenerates /report/ only at build time, so this
+# simply asks Vercel to rebuild via a Deploy Hook.
+#
+# Setup (one time):
+#   1. Vercel → static-site project → Settings → Git → Deploy Hooks →
+#      create a hook for branch "main", copy its URL.
+#   2. GitHub → repo → Settings → Secrets and variables → Actions →
+#      new secret VERCEL_DEPLOY_HOOK_URL with that URL.
+# Without the secret the job exits quietly (no failure noise).
+
+name: Weekly report redeploy
+
+on:
+  schedule:
+    - cron: "0 4 * * 1" # Mondays 04:00 UTC (06:00 Dresden in summer)
+  workflow_dispatch: {} # manual "refresh now" button in the Actions tab
+
+jobs:
+  redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "VERCEL_DEPLOY_HOOK_URL secret not set — skipping."
+            exit 0
+          fi
+          curl -sS -X POST "$HOOK" -o /dev/null -w "Deploy hook → HTTP %{http_code}\n"

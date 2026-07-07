@@ -5,6 +5,7 @@
   "description": "Static public FOMO site — client-side quiz, build-time JSON data, no server",
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/report.mjs --out public/report/index.html",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

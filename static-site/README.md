@@ -106,8 +106,10 @@ the full list and `docs/DATEN-SAMMELN-KONZEPT.md` for the rationale):
 - **Funnel:** `quiz-start` (incl. selected filters), `quiz-item-view` (per
   question, for drop-off analysis), `quiz-item-back`, `quiz-complete`,
   `quiz-response` (the 21 answers + filters), `quiz-result-group` (one event
-  per top-5 result: `group` slug, `rank`, `score` — the frequency table for
-  "which groups come out of the quiz, how often"), `quiz-restart`
+  per initially shown result — top 5 incl. boundary ties: `group` slug,
+  `rank`, `score` — the frequency table for "which groups come out of the
+  quiz, how often"), `quiz-edit` (re-entering the questions from the
+  results), `quiz-restart`
 - **Results interaction:** `results-tab`, `results-show-more`,
   `results-zero-hits`, `results-feedback` (👍/👎), `results-share-copy`
 - **Group engagement:** `group-click` (`dest`: website/instagram/email,

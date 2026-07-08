@@ -56,7 +56,10 @@ function scoreGroup(userAnswers, userFilters, group) {
   return Math.round((1 - totalDist / (active.length * 2)) * 100);
 }
 function topFive(userAnswers, userFilters) {
-  return groups
+  // KEEP IN SYNC with topWithTies in src/lib/matching.ts: the first 5 plus all
+  // boundary ties (cap 10) — the same set the results screen shows and the
+  // quiz-result-group event records.
+  const positive = groups
     .map((g) => ({ g, score: scoreGroup(userAnswers, userFilters, g) }))
     .filter((m) => m.score > 0)
     .sort(
@@ -64,8 +67,11 @@ function topFive(userAnswers, userFilters) {
         b.score - a.score ||
         (b.g.selfRating.raterCount ?? 0) - (a.g.selfRating.raterCount ?? 0) ||
         a.g.name.localeCompare(b.g.name, "de"),
-    )
-    .slice(0, 5);
+    );
+  if (positive.length <= 5) return positive;
+  let end = 5;
+  while (end < positive.length && end < 10 && positive[end].score === positive[4].score) end++;
+  return positive.slice(0, end);
 }
 
 // ---------------------------------------------------------------------------

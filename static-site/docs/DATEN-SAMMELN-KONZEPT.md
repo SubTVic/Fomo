@@ -28,7 +28,8 @@ brauchen.
 | `quiz-item-back` | „Zurück"-Button | Index, von dem zurückgegangen wurde |
 | `quiz-complete` | Ergebnisse erreicht | #beantwortete (nicht-neutrale) Items, #Filter |
 | `quiz-response` | Ergebnisse erreicht | **alle 21 Antworten (−1/0/1) + gewählte Filter** — siehe Hinweis unten |
-| `quiz-result-group` | Ergebnisse erreicht | je ein Event pro Top-5-Gruppe: Slug, Rang, Score → „welche Gruppen kommen raus, wie oft?" (feuert nur bei echtem Abschluss, nicht beim Öffnen geteilter Links) |
+| `quiz-result-group` | Ergebnisse erreicht | je ein Event pro initial angezeigter Gruppe (Top 5 inkl. punktgleicher an der Grenze): Slug, Rang, Score → „welche Gruppen kommen raus, wie oft?" (feuert nur bei echtem Abschluss, nicht beim Öffnen geteilter Links) |
+| `quiz-edit` | „Antworten ändern" auf der Ergebnisseite | – |
 | `quiz-restart` | „Von vorne beginnen" | – |
 | `results-tab` | Wechsel Gruppen/Vergleichen | gewählter Tab |
 | `results-show-more` | „Weitere anzeigen"/„Weniger anzeigen" | neuer Zustand |

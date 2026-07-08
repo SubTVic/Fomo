@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Group, QuizFilters, QuizItem, MatchResult } from "@/lib/types";
-import { computeMatches, type UserAnswers } from "@/lib/matching";
+import { computeMatches, topWithTies, type UserAnswers } from "@/lib/matching";
 import { encodeResults, decodeResults, readResultsParam } from "@/lib/results";
 import { track, EVENTS } from "@/lib/analytics";
 import { FilterScreen } from "./FilterScreen";
@@ -113,15 +113,20 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
       answered: nonNeutral,
     });
     // Which groups the quiz produced: one event per initially shown result
-    // (top 5, matching INITIAL_RESULTS in ResultsScreen). Fired only on a real
-    // completion — restoring a shared ?r= link does not re-count.
-    computeMatches(finalAnswers, selectedFilters, groups)
-      .filter((m) => m.score > 0)
-      .slice(0, 5)
-      .forEach((m, i) =>
-        track(EVENTS.quizResultGroup, { group: m.group.slug, rank: i + 1, score: m.score }),
-      );
+    // (top 5 incl. boundary ties — the same set ResultsScreen displays).
+    // Fired only on a real completion — restoring a shared ?r= link does not
+    // re-count.
+    topWithTies(computeMatches(finalAnswers, selectedFilters, groups)).forEach((m, i) =>
+      track(EVENTS.quizResultGroup, { group: m.group.slug, rank: i + 1, score: m.score }),
+    );
     setPhase("results");
+  }
+
+  /** Back into the questions with everything preserved — cheaper than restart. */
+  function editAnswers() {
+    track(EVENTS.quizEdit);
+    setIndex(0);
+    setPhase("items");
   }
 
   function back() {
@@ -171,6 +176,7 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
       filters={filters}
       resultsParam={resultsParam}
       onRestart={restart}
+      onEdit={editAnswers}
       lang={lang}
     />
   );

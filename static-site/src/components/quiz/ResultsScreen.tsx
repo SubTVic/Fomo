@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Group, MatchResult, QuizFilters } from "@/lib/types";
+import { topWithTies } from "@/lib/matching";
 import { groupCategory, groupShortText } from "@/lib/group-copy";
 import { track, EVENTS } from "@/lib/analytics";
 import { ShareButton } from "./ShareButton";
@@ -16,6 +17,8 @@ interface ResultsScreenProps {
   filters: QuizFilters;
   resultsParam: string;
   onRestart: () => void;
+  /** Re-enter the questions with all answers preserved (fair correction path). */
+  onEdit: () => void;
   lang?: "de" | "en";
 }
 
@@ -27,12 +30,15 @@ export function ResultsScreen({
   filters,
   resultsParam,
   onRestart,
+  onEdit,
   lang = "de",
 }: ResultsScreenProps) {
   const [showAll, setShowAll] = useState(false);
   const [tab, setTab] = useState<"groups" | "compare">("groups");
   const allMatches = matches.filter((m) => m.score > 0);
-  const visibleMatches = showAll ? allMatches : allMatches.slice(0, INITIAL_RESULTS);
+  // Boundary ties are included (see topWithTies) so the last visible slot is
+  // not silently handed to the same groups every time.
+  const visibleMatches = showAll ? allMatches : topWithTies(matches, INITIAL_RESULTS);
 
   const ranked = visibleMatches.map((m) => {
     const firstSameScoreIndex = allMatches.findIndex((candidate) => candidate.score === m.score);
@@ -84,6 +90,7 @@ export function ResultsScreen({
           more: (count: number) => `Show ${count} more`,
           less: "Show fewer",
           again: "Start over",
+          edit: "Change answers",
           allGroups: "All groups",
         }
       : {
@@ -97,6 +104,7 @@ export function ResultsScreen({
           more: (count: number) => `Weitere ${count} anzeigen`,
           less: "Weniger anzeigen",
           again: "Von vorne beginnen",
+          edit: "Antworten ändern",
           allGroups: "Alle Gruppen",
         };
   const prefix = lang === "en" ? "/en" : "";
@@ -152,13 +160,22 @@ export function ResultsScreen({
             </div>
           )}
 
-          {allMatches.length > INITIAL_RESULTS && (
+          {allMatches.length > visibleMatches.length && (
             <button
               type="button"
               onClick={toggleShowAll}
               className="mt-5 w-full border-poster bg-card px-6 py-3 text-center font-heading text-navy transition-colors hover:bg-surface"
             >
-              {showAll ? copy.less : copy.more(allMatches.length - INITIAL_RESULTS)}
+              {copy.more(allMatches.length - visibleMatches.length)}
+            </button>
+          )}
+          {showAll && (
+            <button
+              type="button"
+              onClick={toggleShowAll}
+              className="mt-5 w-full border-poster bg-card px-6 py-3 text-center font-heading text-navy transition-colors hover:bg-surface"
+            >
+              {copy.less}
             </button>
           )}
         </div>
@@ -174,13 +191,22 @@ export function ResultsScreen({
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={onRestart}
-        className="mt-6 w-full border-poster bg-surface px-6 py-3 text-center font-heading text-navy transition-colors hover:bg-card"
-      >
-        {copy.again}
-      </button>
+      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        <button
+          type="button"
+          onClick={onEdit}
+          className="border-poster bg-surface px-6 py-3 text-center font-heading text-navy transition-colors hover:bg-card"
+        >
+          {copy.edit}
+        </button>
+        <button
+          type="button"
+          onClick={onRestart}
+          className="border-poster bg-surface px-6 py-3 text-center font-heading text-navy transition-colors hover:bg-card"
+        >
+          {copy.again}
+        </button>
+      </div>
 
       <div className="mt-8 grid gap-3 sm:grid-cols-2">
         <ShareButton />

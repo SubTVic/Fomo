@@ -18,6 +18,7 @@ interface GroupBrowserProps {
 export function GroupBrowser({ groups, categories, lang = "de" }: GroupBrowserProps) {
   const [active, setActive] = useState("");
   const [showUnverified, setShowUnverified] = useState(false);
+  const [query, setQuery] = useState("");
 
   const verifiedCount = useMemo(() => groups.filter((g) => !isUnverified(g)).length, [groups]);
   const unverifiedCount = groups.length - verifiedCount;
@@ -42,10 +43,19 @@ export function GroupBrowser({ groups, categories, lang = "de" }: GroupBrowserPr
   const visible = useMemo(() => {
     let list = showUnverified ? groups : groups.filter((g) => !isUnverified(g));
     if (active) list = list.filter((g) => groupCategory(g, lang) === active);
+    const q = query.trim().toLowerCase();
+    if (q) {
+      list = list.filter((g) =>
+        [g.name, groupCategory(g, lang), groupShortText(g, lang)]
+          .join(" ")
+          .toLowerCase()
+          .includes(q),
+      );
+    }
     return [...list].sort((a, b) =>
       sortKey(a.name).localeCompare(sortKey(b.name), "de", { sensitivity: "base" }),
     );
-  }, [groups, active, showUnverified]);
+  }, [groups, active, showUnverified, query, lang]);
 
   function selectCategory(label: string) {
     const next = active === label ? "" : label;
@@ -60,6 +70,14 @@ export function GroupBrowser({ groups, categories, lang = "de" }: GroupBrowserPr
 
   return (
     <div>
+      <input
+        type="search"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder={lang === "en" ? "Search groups…" : "Gruppe suchen…"}
+        aria-label={lang === "en" ? "Search groups" : "Gruppen durchsuchen"}
+        className="mb-4 w-full border-2 border-navy bg-card px-4 py-3 text-base text-navy placeholder:text-muted focus:outline-none focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-navy"
+      />
       <div className="flex flex-wrap gap-2">
         <FilterButton active={active === ""} onClick={() => setActive("")}>
           {lang === "en" ? "All" : "Alle"}
@@ -102,6 +120,13 @@ export function GroupBrowser({ groups, categories, lang = "de" }: GroupBrowserPr
           <GroupTile key={group.id} group={group} lang={lang} />
         ))}
       </div>
+      {visible.length === 0 && (
+        <p className="mt-10 border-2 border-navy bg-card p-6 text-center text-body">
+          {lang === "en"
+            ? "No groups match — try a different search term or category."
+            : "Keine Gruppe gefunden — probier einen anderen Suchbegriff oder eine andere Kategorie."}
+        </p>
+      )}
     </div>
   );
 }

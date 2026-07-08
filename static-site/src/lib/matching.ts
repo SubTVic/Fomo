@@ -68,6 +68,24 @@ export function computeMatches(
     );
 }
 
+/**
+ * The initially visible results: the first `n` positive-score matches PLUS all
+ * groups tied with the score at the boundary (capped at `cap`).
+ *
+ * Why: simulation showed a score tie exactly at the top-5 boundary in ~65% of
+ * quizzes. A hard cut would hand the last visible slot to the same groups
+ * every time (raterCount, then alphabet — deterministic, never random), which
+ * is a systematic bias invisible to users. Including boundary ties keeps the
+ * cut fair AND deterministic (shared ?r= links stay stable).
+ */
+export function topWithTies(matches: MatchResult[], n = 5, cap = 10): MatchResult[] {
+  const positive = matches.filter((m) => m.score > 0);
+  if (positive.length <= n) return positive;
+  let end = n;
+  while (end < positive.length && end < cap && positive[end].score === positive[n - 1].score) end++;
+  return positive.slice(0, end);
+}
+
 function answersToMap(answers: SelfRatingAnswer[]): Record<string, number> {
   const map: Record<string, number> = {};
   for (const a of answers) map[a.itemId] = a.value;

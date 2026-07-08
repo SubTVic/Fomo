@@ -38,6 +38,7 @@ export const EVENTS = {
   // "which groups come out of the quiz, how often?" a simple frequency table
   // in the Umami UI (event → property "group").
   quizResultGroup: "quiz-result-group",
+  quizEdit: "quiz-edit",
   quizRestart: "quiz-restart",
   groupClick: "group-click",
   groupDetailOpen: "group-detail-open",

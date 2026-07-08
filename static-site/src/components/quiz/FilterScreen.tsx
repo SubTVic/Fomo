@@ -18,6 +18,11 @@ export function FilterScreen({ filters, selected, onToggle, onStart, lang = "de"
   return (
     <div className="animate-fade-up">
       <h1 className="text-2xl text-navy sm:text-3xl">{title}</h1>
+      <p className="mt-2 text-sm text-body">
+        {lang === "en"
+          ? "Optional. If you pick something, we only show groups that offer it — leave everything unselected to keep all options open."
+          : "Optional. Wenn du etwas auswählst, zeigen wir dir nur Gruppen, die das anbieten — ohne Auswahl bleibt alles offen."}
+      </p>
 
       <div className="mt-5 grid gap-3">
         {filters.options.map((opt) => {

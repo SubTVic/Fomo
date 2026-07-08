@@ -10,9 +10,24 @@ export function ShareButton() {
   const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
   const [copied, setCopied] = useState(false);
 
-  async function copyLink() {
+  async function share() {
     const url = typeof window !== "undefined" ? window.location.href : "";
-    track(EVENTS.resultsShareCopy);
+    // 80% of the audience is on mobile — prefer the native share sheet
+    // (WhatsApp & Co.) and fall back to copying the link on desktop.
+    if (typeof navigator !== "undefined" && navigator.share) {
+      track(EVENTS.resultsShareCopy, { method: "native" });
+      try {
+        await navigator.share({
+          title: "FOMO",
+          text: isEnglish ? "My student-group matches:" : "Meine Hochschulgruppen-Matches:",
+          url,
+        });
+      } catch {
+        // user dismissed the sheet — nothing to do
+      }
+      return;
+    }
+    track(EVENTS.resultsShareCopy, { method: "clipboard" });
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
@@ -25,7 +40,7 @@ export function ShareButton() {
   return (
     <button
       type="button"
-      onClick={copyLink}
+      onClick={share}
       className="border-poster bg-card px-6 py-3 text-center font-heading text-navy transition-colors hover:bg-surface"
     >
       {copied ? (isEnglish ? "Link copied" : "Link kopiert") : isEnglish ? "Share" : "Teilen"}

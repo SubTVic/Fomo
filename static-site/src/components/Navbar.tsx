@@ -16,14 +16,12 @@ export function Navbar() {
 
   const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
   const normalizedPathname = pathname !== "/" ? pathname.replace(/\/$/, "") : pathname;
-  const showLanguageSwitch =
-    normalizedPathname === "/" ||
-    normalizedPathname === "/en" ||
-    normalizedPathname === "/groups" ||
-    normalizedPathname === "/en/groups";
+  // The switch is shown everywhere (internationals often land deep via a
+  // shared link). German-only pages map to their closest English page.
+  const showLanguageSwitch = true;
   const homeHref = isEnglish ? "/en" : "/";
   const germanHref = `${isEnglish ? stripEnglishPrefix(pathname) : pathname}${search}`;
-  const englishHref = `${isEnglish ? pathname : `/en${pathname === "/" ? "" : pathname}`}${search}`;
+  const englishHref = `${isEnglish ? pathname : toEnglishPath(normalizedPathname)}${search}`;
 
   return (
     <header className="w-full">
@@ -105,4 +103,12 @@ export function Navbar() {
 function stripEnglishPrefix(pathname: string) {
   const stripped = pathname.replace(/^\/en/, "") || "/";
   return stripped;
+}
+
+/** DE path → its EN twin; pages without one fall back to the nearest EN page. */
+function toEnglishPath(pathname: string) {
+  // German-only pages (no /en twin — linking there would 404).
+  if (pathname === "/impressum" || pathname === "/datenschutz") return "/en";
+  if (pathname.startsWith("/groups/kategorie")) return "/en/groups";
+  return `/en${pathname === "/" ? "" : pathname}`;
 }

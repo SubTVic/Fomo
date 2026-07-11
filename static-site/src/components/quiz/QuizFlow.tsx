@@ -66,7 +66,9 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
   // relying on an unreliable beforeunload hook.
   useEffect(() => {
     if (phase !== "items") return;
-    track(EVENTS.quizItemView, { index, itemId: items[index]?.id, total: items.length });
+    // index as string — see the note in finish(): only string values can be
+    // enumerated by Umami's values API (the funnel needs counts per index).
+    track(EVENTS.quizItemView, { index: String(index), itemId: items[index]?.id, total: items.length });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, index]);
 
@@ -105,8 +107,11 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
     // Anonymous research payload: one property per item (id → -1|0|1) plus the
     // selected multiple-choice filters. No identifier is attached; this only
     // leaves the browser if Umami is configured (see Datenschutz).
-    const answerData: Record<string, number> = {};
-    for (const item of items) answerData[item.id] = finalAnswers[item.id] ?? 0;
+    // Values as STRINGS on purpose: Umami's event-data "values" API only
+    // enumerates string-typed data — number-typed fields can't be aggregated
+    // into a distribution, which left the report's answer charts empty.
+    const answerData: Record<string, string> = {};
+    for (const item of items) answerData[item.id] = String(finalAnswers[item.id] ?? 0);
     track(EVENTS.quizResponse, {
       ...answerData,
       filters: selectedFilters.length ? selectedFilters.join(",") : "none",
@@ -117,7 +122,8 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
     // Fired only on a real completion — restoring a shared ?r= link does not
     // re-count.
     topWithTies(computeMatches(finalAnswers, selectedFilters, groups)).forEach((m, i) =>
-      track(EVENTS.quizResultGroup, { group: m.group.slug, rank: i + 1, score: m.score }),
+      // rank as string (enumerable via the values API); score stays numeric.
+      track(EVENTS.quizResultGroup, { group: m.group.slug, rank: String(i + 1), score: m.score }),
     );
     setPhase("results");
   }

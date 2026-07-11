@@ -119,9 +119,18 @@ async function api(path, params = {}) {
 }
 /** value→count map for one event property. */
 async function values(eventName, propertyName) {
-  const rows = await api("/event-data/values", { eventName, propertyName });
+  let rows = await api("/event-data/values", { eventName, propertyName });
+  // Param name differs between Umami versions/deployments — retry with
+  // `event` when `eventName` yields nothing.
+  if (!Array.isArray(rows) || rows.length === 0) {
+    try {
+      rows = await api("/event-data/values", { event: eventName, propertyName });
+    } catch {
+      rows = [];
+    }
+  }
   const m = new Map();
-  for (const row of rows) {
+  for (const row of rows ?? []) {
     // Umami returns NUMBER-typed event data as decimal strings ("1.0000");
     // canonicalise numeric-looking values so lookups like "1"/"0"/"-1" match.
     let key = String(row.value);
@@ -146,6 +155,14 @@ async function fetchAll() {
   data.stats = await api("/stats");
   const metrics = await api("/metrics", { type: "event", limit: "500" });
   data.events = new Map(metrics.map((m) => [m.x, Number(m.y)]));
+  // Which event-data fields the server actually stored (name + data type) —
+  // pure diagnostics, shown in the report so aggregation problems (e.g.
+  // number-typed fields that the values API cannot enumerate) are visible.
+  try {
+    data.fields = await api("/event-data/fields");
+  } catch {
+    data.fields = null;
+  }
   data.perItem = {};
   for (const item of quiz.items) data.perItem[item.id] = await values("quiz-response", item.id);
   data.respFilters = await values("quiz-response", "filters");
@@ -405,11 +422,21 @@ function buildHtml(data, sim) {
       .sort((a, b) => b[1] - a[1])
       .map(([n, c]) => `${esc(n)}&thinsp;×&thinsp;${c}`)
       .join(" · ");
+    // Field diagnostics: property name + stored data type. A number-typed
+    // field cannot be enumerated by the values API — if answer charts are
+    // empty, this line shows why.
+    const fieldLine = Array.isArray(data.fields)
+      ? data.fields
+          .slice(0, 30)
+          .map((f) => `${esc(f.propertyName ?? f.fieldName ?? "?")}&thinsp;(${esc(String(f.dataType ?? f.type ?? "?"))})`)
+          .join(" · ")
+      : null;
     sections.push(
       `<section><h2>Kernzahlen</h2><div class="tiles">${tiles
         .map(([l, v]) => `<div class="tile"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`)
         .join("")}</div>
-      <p class="sub" style="margin-top:12px">Events im Zeitraum: ${evLine || "keine"}</p></section>`,
+      <p class="sub" style="margin-top:12px">Events im Zeitraum: ${evLine || "keine"}</p>
+      ${fieldLine ? `<p class="sub">Gespeicherte Datenfelder (Typ): ${fieldLine}</p>` : ""}</section>`,
     );
   }
 
@@ -424,10 +451,11 @@ function buildHtml(data, sim) {
         )
       : 0;
     if (data.live && answerTotal === 0) {
-      body = `<p class="nodata">Noch keine Antwort-Daten: Das Ereignis <code>quiz-response</code> wird erst seit
-        dem Update vom 01.07.2026 gesendet — Abschlüsse davor tragen keine Antworten. Sobald neue
-        Quizze abgeschlossen werden, füllt sich diese Sektion. (Ob Events ankommen, zeigt die
-        Zeile „Events im Zeitraum" oben.)</p>`;
+      body = `<p class="nodata">Noch keine auswertbaren Antwort-Daten. Antworten, die vor dem
+        11.07.2026 eingingen, wurden als Zahlen gespeichert — dieses Format kann die Umami-API
+        nicht zu Verteilungen auszählen. Seit dem Update werden sie auszählbar (als Text)
+        gesendet: <strong>jeder neue Quiz-Abschluss füllt diese Sektion</strong>. Diagnose:
+        Zeilen „Events im Zeitraum" und „Gespeicherte Datenfelder" oben.</p>`;
     }
     if (data.live && completions > 0 && answerTotal > 0) {
       const rows = quiz.items.map((item) => {

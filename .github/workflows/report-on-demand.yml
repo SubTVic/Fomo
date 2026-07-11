@@ -1,0 +1,46 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# On-demand FOMO report WITHOUT a site redeploy: run the report generator in
+# CI and attach the finished HTML as a downloadable artifact.
+#
+# Usage: GitHub → Actions → "Report erstellen (ohne Deploy)" → Run workflow
+#        → open the finished run → download the "fomo-report" artifact (zip
+#        containing fomo-report.html) → open in any browser.
+#
+# Setup (one time): repo Settings → Secrets and variables → Actions →
+#   UMAMI_API_KEY      (same value as in Vercel)
+#   UMAMI_WEBSITE_ID   (same value as in Vercel)
+# Without them the report still builds, but contains only the simulation
+# section (the script degrades gracefully).
+
+name: Report erstellen (ohne Deploy)
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Zeitraum in Tagen"
+        required: false
+        default: "90"
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # report.mjs is dependency-free — no npm install needed.
+      - name: Generate report
+        working-directory: static-site
+        env:
+          UMAMI_API_KEY: ${{ secrets.UMAMI_API_KEY }}
+          UMAMI_WEBSITE_ID: ${{ secrets.UMAMI_WEBSITE_ID }}
+        run: node scripts/report.mjs --days "${{ inputs.days }}" --out fomo-report.html
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fomo-report
+          path: static-site/fomo-report.html
+          retention-days: 90

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Thin wrapper around Umami's global `umami` object. Safe to call even when the
-// script is absent (e.g. NEXT_PUBLIC_UMAMI_WEBSITE_ID unset in dev) — it just
+// script is absent (e.g. UMAMI_WEBSITE_ID unset in dev) — it just
 // no-ops. No personal data is ever passed.
 
 type UmamiFn = (event: string, data?: Record<string, unknown>) => void;

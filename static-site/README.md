@@ -97,8 +97,8 @@ After launch, submit `https://<domain>/sitemap.xml` in Google Search Console.
 Umami is wired via `src/components/UmamiScript.tsx` and only loads when
 configured:
 
-- `NEXT_PUBLIC_UMAMI_WEBSITE_ID` — website UUID (required to enable)
-- `NEXT_PUBLIC_UMAMI_SRC` — script URL (defaults to Umami Cloud)
+- `UMAMI_WEBSITE_ID` — website UUID (required to enable)
+- `UMAMI_SRC` — script URL (defaults to Umami Cloud)
 
 Tracked events (all anonymous, no identifier — see `src/lib/analytics.ts` for
 the full list and `docs/DATEN-SAMMELN-KONZEPT.md` for the rationale):

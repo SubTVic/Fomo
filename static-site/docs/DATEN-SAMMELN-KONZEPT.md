@@ -14,7 +14,7 @@ brauchen.
 - Transport über **Umami-Events** (cookielos, kein Banner nötig).
 - Es werden nur **Aggregate** ausgewertet. Einzelne Events tragen nie eine ID,
   die auf eine Person zeigt.
-- Alles ist abschaltbar: ohne `NEXT_PUBLIC_UMAMI_WEBSITE_ID` läuft FOMO komplett
+- Alles ist abschaltbar: ohne `UMAMI_WEBSITE_ID` läuft FOMO komplett
   ohne Tracking.
 
 ## Bereits eingebaut
@@ -109,7 +109,7 @@ deckt den Bedarf über die eine, deklarierte Datensenke ab.
 **Stand Juli 2026: alle oben genannten Events sind gebaut** (siehe „Bereits
 eingebaut"). Offen bleibt nur der Betrieb:
 
-1. Umami-Website-ID setzen (`NEXT_PUBLIC_UMAMI_WEBSITE_ID` fürs Tracking;
+1. Umami-Website-ID setzen (`UMAMI_WEBSITE_ID` fürs Tracking;
    `UMAMI_API_KEY` + `UMAMI_WEBSITE_ID` zusätzlich für den /report/-Build).
 2. Nach ein paar Wochen Echtbetrieb: den Bias-Abschnitt des Reports als
    ersten working-set-v3-Datenpunkt heranziehen.

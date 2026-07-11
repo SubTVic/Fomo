@@ -62,12 +62,12 @@ einer Änderung also neu bauen (`./scripts/update-data.sh`).
 | Variable | Zweck | Beispiel |
 |---|---|---|
 | `WEB_PORT` | Port, auf dem nginx lauscht | `8080` |
-| `NEXT_PUBLIC_UMAMI_WEBSITE_ID` | Umami-Website-ID (aktiviert Tracking) | `xxxxxxxx-…` |
-| `NEXT_PUBLIC_UMAMI_SRC` | Umami-Script-URL | `https://umami.stura.de/script.js` |
+| `UMAMI_WEBSITE_ID` | Umami-Website-ID (aktiviert Tracking) | `xxxxxxxx-…` |
+| `UMAMI_SRC` | Umami-Script-URL | `https://umami.stura.de/script.js` |
 | `NEXT_PUBLIC_BASE_PATH` | Subpfad, falls nicht unter `/` gehostet | `/fomo` |
 | `UMAMI_PORT` / `UMAMI_*` | nur für optionales Self-Hosting von Umami | – |
 
-Ohne gesetzte `NEXT_PUBLIC_UMAMI_WEBSITE_ID` wird **kein** Analytics-Script
+Ohne gesetzte `UMAMI_WEBSITE_ID` wird **kein** Analytics-Script
 geladen – datenschutzfreundlicher Default.
 
 ---
@@ -147,7 +147,7 @@ Soll FOMO unter einem **Unterpfad** laufen (z. B. `stura.de/fomo`), zusätzlich
 eingebacken):
 
 ```bash
-docker build --build-arg NEXT_PUBLIC_UMAMI_WEBSITE_ID=xxxx -t fomo-static .
+docker build --build-arg UMAMI_WEBSITE_ID=xxxx -t fomo-static .
 docker run -d -p 8080:80 fomo-static
 ```
 
@@ -178,7 +178,7 @@ git pull
 | `update-data.sh` bricht bei „Validation FAILED" ab | `groups.json`/`quiz.json` fehlerhaft – Meldung lesen, Datei korrigieren. Live-Seite bleibt unberührt. |
 | Seite zeigt 404 / leer | Läuft FOMO unter einem Subpfad? `NEXT_PUBLIC_BASE_PATH` setzen und neu bauen. |
 | Assets laden nicht hinter Reverse-Proxy | `proxy_pass` ohne Pfad-Rewrite nutzen; bei Subpfad `NEXT_PUBLIC_BASE_PATH` korrekt setzen. |
-| Analytics zählt nicht | `NEXT_PUBLIC_UMAMI_WEBSITE_ID` gesetzt **und neu gebaut**? Script-URL erreichbar? |
+| Analytics zählt nicht | `UMAMI_WEBSITE_ID` gesetzt **und neu gebaut**? Script-URL erreichbar? |
 | Build schlägt fehl (Versionsdrift) | Für Reproduzierbarkeit `package-lock.json` committen (dann nutzt der Build `npm ci`). |
 
 ---

@@ -3,20 +3,28 @@ import Script from "next/script";
 
 /**
  * Privacy-friendly Umami analytics. Renders the tracking script only when a
- * website id is configured via env, so dev/local builds stay clean. The Umami
- * account/website id does not exist yet — set these in Vercel/host env later:
+ * website id is configured via env, so dev/local builds stay clean.
  *
- *   NEXT_PUBLIC_UMAMI_WEBSITE_ID   the website UUID (required to enable)
- *   NEXT_PUBLIC_UMAMI_SRC          script URL (defaults to Umami Cloud)
+ * This is a SERVER component (rendered at build time in the static export),
+ * so the env var does NOT need the NEXT_PUBLIC_ prefix. Accepted, in order:
  *
- * NEXT_PUBLIC_* vars are inlined at build time, so a value change needs a
- * rebuild — consistent with the rest of the static pipeline.
+ *   UMAMI_WEBSITE_ID               the website UUID — same var the /report/
+ *                                  build uses, so ONE variable powers both
+ *   NEXT_PUBLIC_UMAMI_WEBSITE_ID   legacy name, still honoured
+ *   UMAMI_SRC / NEXT_PUBLIC_UMAMI_SRC   script URL (defaults to Umami Cloud)
+ *
+ * Values are inlined at build time — a change needs a rebuild, consistent
+ * with the rest of the static pipeline.
  */
 export function UmamiScript() {
-  const websiteId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
+  const websiteId =
+    process.env.UMAMI_WEBSITE_ID ?? process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
   if (!websiteId) return null;
 
-  const src = process.env.NEXT_PUBLIC_UMAMI_SRC ?? "https://cloud.umami.is/script.js";
+  const src =
+    process.env.UMAMI_SRC ??
+    process.env.NEXT_PUBLIC_UMAMI_SRC ??
+    "https://cloud.umami.is/script.js";
 
   return (
     <Script

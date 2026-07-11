@@ -5,7 +5,7 @@
 # swaps without rebuilding the image, see docker-compose.yml + scripts/update-data.sh.
 #
 #   docker build \
-#     --build-arg NEXT_PUBLIC_UMAMI_WEBSITE_ID=xxxx \
+#     --build-arg UMAMI_WEBSITE_ID=xxxx \
 #     -t fomo-static .
 #   docker run -p 8080:80 fomo-static
 
@@ -14,11 +14,11 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 # NEXT_PUBLIC_* are inlined at build time → must be build args, not runtime env.
-ARG NEXT_PUBLIC_UMAMI_WEBSITE_ID=""
-ARG NEXT_PUBLIC_UMAMI_SRC=""
+ARG UMAMI_WEBSITE_ID=""
+ARG UMAMI_SRC=""
 ARG NEXT_PUBLIC_BASE_PATH=""
-ENV NEXT_PUBLIC_UMAMI_WEBSITE_ID=$NEXT_PUBLIC_UMAMI_WEBSITE_ID \
-    NEXT_PUBLIC_UMAMI_SRC=$NEXT_PUBLIC_UMAMI_SRC \
+ENV UMAMI_WEBSITE_ID=$UMAMI_WEBSITE_ID \
+    UMAMI_SRC=$UMAMI_SRC \
     NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH \
     NEXT_TELEMETRY_DISABLED=1
 

@@ -144,7 +144,7 @@ Ordner `static-site/` (Details in der README, Abschnitt „Report generator").
 | Änderung wird nicht sichtbar | Build fehlgeschlagen | Vercel → Deployments → Log ansehen; meist kaputtes JSON → Änderung auf GitHub reverten |
 | Gruppe fehlt im Quiz | Gruppe ist unbestätigt | Registrierung anstoßen (siehe §4) |
 | Logo erscheint nicht | Slug/Dateiname in logos.json falsch | Schreibweise + `%20` prüfen |
-| Statistik leer | `NEXT_PUBLIC_UMAMI_WEBSITE_ID` fehlt in Vercel | Vercel → Settings → Env Vars, dann Redeploy |
+| Statistik leer | `UMAMI_WEBSITE_ID` fehlt in Vercel | Vercel → Settings → Env Vars, dann Redeploy |
 
 **Eskalation:** Wenn es nicht in dieser Tabelle steht, braucht es jemanden mit
 Next.js-Grundkenntnissen (jede:r Informatik-Studi im 3. Semester). Das gesamte

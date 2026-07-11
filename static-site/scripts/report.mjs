@@ -155,63 +155,50 @@ async function fetchAll() {
 // ---------------------------------------------------------------------------
 // Bias simulation against the real matcher.
 // ---------------------------------------------------------------------------
-function buildSampler(data) {
-  // Per-item empirical marginals when live data exists, else uniform.
-  const marginals = {};
-  for (const item of quiz.items) {
-    const m = data.perItem?.[item.id];
-    const c = { "-1": 1, 0: 1, 1: 1 };
-    if (m) for (const [v, n] of m) if (v in c) c[v] += n;
-    const total = c["-1"] + c["0"] + c["1"];
-    marginals[item.id] = [c["-1"] / total, c["0"] / total, c["1"] / total];
-  }
-  // Filter behaviour: probability of "no filter" + weights per filter.
-  let pNone = 0.5;
-  const fw = new Map(quiz.filters.options.map((o) => [o.attribute, 1]));
-  if (data.respFilters && data.respFilters.size) {
-    let none = 0;
-    let total = 0;
-    for (const [v, n] of data.respFilters) {
-      total += n;
-      if (v === "none") none += n;
-      else for (const f of v.split(",")) fw.set(f, (fw.get(f) ?? 0) + n);
-    }
-    if (total > 0) pNone = none / total;
-  }
-  const fEntries = [...fw.entries()];
-  const fSum = fEntries.reduce((s, [, w]) => s + w, 0);
+// Deterministic PRNG (mulberry32, fixed seed): the structural simulation must
+// produce IDENTICAL numbers on every run so reports are comparable over time.
+// It deliberately does NOT use live answer distributions — the section measures
+// what the algorithm + group profiles bake in, independent of who takes the
+// quiz (that behaviour-independence is also what makes the "echt vs. erwartet"
+// scatter's diagonal meaningful). Results change only when groups.json or
+// quiz.json change — which is exactly the signal we want.
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function buildSampler() {
+  const rng = mulberry32(20260711); // fixed seed — same run, same numbers
+  const fAttrs = quiz.filters.options.map((o) => o.attribute);
   return {
-    empirical: !!data.perItem,
     answers() {
       const a = {};
       for (const item of quiz.items) {
-        const [pN, pZ] = [marginals[item.id][0], marginals[item.id][0] + marginals[item.id][1]];
-        const r = Math.random();
-        a[item.id] = r < pN ? -1 : r < pZ ? 0 : 1;
+        const r = rng();
+        a[item.id] = r < 1 / 3 ? -1 : r < 2 / 3 ? 0 : 1;
       }
       return a;
     },
     filters() {
-      if (Math.random() < pNone) return [];
-      const n = Math.random() < 0.6 ? 1 : Math.random() < 0.85 ? 2 : 3;
+      // Fixed model: half the profiles filter-free; the rest pick 1–3 filters
+      // uniformly. Intentionally NOT fitted to live behaviour (see above).
+      if (rng() < 0.5) return [];
+      const n = rng() < 0.6 ? 1 : rng() < 0.85 ? 2 : 3;
       const picked = new Set();
-      while (picked.size < n) {
-        let r = Math.random() * fSum;
-        for (const [f, w] of fEntries) {
-          r -= w;
-          if (r <= 0) {
-            picked.add(f);
-            break;
-          }
-        }
-      }
+      while (picked.size < n) picked.add(fAttrs[Math.floor(rng() * fAttrs.length)]);
       return [...picked];
     },
   };
 }
 
-function simulate(data) {
-  const sampler = buildSampler(data);
+function simulate() {
+  const sampler = buildSampler();
   const stat = new Map(
     groups.map((g) => [g.slug, { top5: 0, wins: 0, rankSum: 0 }]),
   );
@@ -226,7 +213,6 @@ function simulate(data) {
   }
   return {
     n: SIM_N,
-    empirical: sampler.empirical,
     perGroup: [...stat.entries()]
       .map(([slug, s]) => ({
         slug,
@@ -525,7 +511,7 @@ function buildHtml(data, sim) {
     }
     sections.push(
       `<section><h2>Hat das Quiz einen Bias?</h2>
-       <p class="sub">Simulation: <strong>${sim.n.toLocaleString("de-DE")}</strong> zufällige Antwortprofile gegen den echten Matching-Algorithmus (${groups.length} verifizierte Gruppen). ${sim.empirical ? "Antwort- und Filterwahrscheinlichkeiten aus den echten Daten." : "Gleichverteilte Antworten (noch keine echten Daten als Basis)."}</p>
+       <p class="sub">Simulation: <strong>${sim.n.toLocaleString("de-DE")}</strong> Antwortprofile (gleichverteilt, fester Zufalls-Seed → <strong>reproduzierbar</strong>) gegen den echten Matching-Algorithmus (${groups.length} verifizierte Gruppen). Diese Zahlen ändern sich nur, wenn sich die Gruppenprofile ändern — nicht zwischen zwei Report-Läufen. Wie sich echtes Nutzerverhalten davon unterscheidet, zeigt das Streudiagramm unten.</p>
        <h3>Strukturelle Top-5-Wahrscheinlichkeit (Top 20)</h3>
        <p class="sub">Wie oft eine Gruppe rein rechnerisch in den Top 5 landet — unabhängig davon, wer das Quiz macht. Faire Erwartung bei ${groups.length} Gruppen: ~${pct(5 / groups.length, 1)}.</p>
        ${hbarChart(simTop, (v) => pct(v, 1))}
@@ -614,7 +600,7 @@ try {
   data = { live: false, error: e.message };
 }
 console.error(`→ Simulation mit ${SIM_N.toLocaleString("de-DE")} Profilen …`);
-const sim = simulate(data);
+const sim = simulate();
 mkdirSync(dirname(OUT) || ".", { recursive: true });
 try {
   writeFileSync(OUT, buildHtml(data, sim));

@@ -121,7 +121,13 @@ async function api(path, params = {}) {
 async function values(eventName, propertyName) {
   const rows = await api("/event-data/values", { eventName, propertyName });
   const m = new Map();
-  for (const row of rows) m.set(String(row.value), Number(row.total));
+  for (const row of rows) {
+    // Umami returns NUMBER-typed event data as decimal strings ("1.0000");
+    // canonicalise numeric-looking values so lookups like "1"/"0"/"-1" match.
+    let key = String(row.value);
+    if (/^-?\d+(\.\d+)?$/.test(key)) key = String(parseFloat(key));
+    m.set(key, (m.get(key) ?? 0) + Number(row.total));
+  }
   return m;
 }
 
@@ -381,18 +387,29 @@ function buildHtml(data, sim) {
   if (data.live) {
     const up = data.feedback?.get("up") ?? 0;
     const down = data.feedback?.get("down") ?? 0;
+    // Stats shape differs between Umami versions: {visitors:{value}} or plain
+    // numbers — accept both.
+    const stat = (x) => x?.value ?? (typeof x === "number" ? x : "–");
     const tiles = [
-      ["Besucher:innen", data.stats?.visitors?.value ?? "–"],
-      ["Seitenaufrufe", data.stats?.pageviews?.value ?? "–"],
+      ["Besucher:innen", stat(data.stats?.visitors)],
+      ["Seitenaufrufe", stat(data.stats?.pageviews)],
       ["Quiz-Starts", starts],
       ["Quiz-Abschlüsse", completions],
       ["Abschlussquote", starts ? pct(completions / starts) : "–"],
       ["Feedback 👍", up + down ? pct(up / (up + down)) : "–"],
     ];
+    // Diagnostic line: which events actually arrived in the window. Makes
+    // "section is empty because the event only ships since <date>" vs.
+    // "events arrive but a lookup is broken" distinguishable at a glance.
+    const evLine = [...(data.events ?? new Map()).entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([n, c]) => `${esc(n)}&thinsp;×&thinsp;${c}`)
+      .join(" · ");
     sections.push(
       `<section><h2>Kernzahlen</h2><div class="tiles">${tiles
         .map(([l, v]) => `<div class="tile"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`)
-        .join("")}</div></section>`,
+        .join("")}</div>
+      <p class="sub" style="margin-top:12px">Events im Zeitraum: ${evLine || "keine"}</p></section>`,
     );
   }
 
@@ -400,7 +417,19 @@ function buildHtml(data, sim) {
   {
     let body = noData;
     let tbl = "";
-    if (data.live && completions > 0) {
+    const answerTotal = data.perItem
+      ? quiz.items.reduce(
+          (s, item) => s + [...(data.perItem[item.id] ?? new Map()).values()].reduce((a, b) => a + b, 0),
+          0,
+        )
+      : 0;
+    if (data.live && answerTotal === 0) {
+      body = `<p class="nodata">Noch keine Antwort-Daten: Das Ereignis <code>quiz-response</code> wird erst seit
+        dem Update vom 01.07.2026 gesendet — Abschlüsse davor tragen keine Antworten. Sobald neue
+        Quizze abgeschlossen werden, füllt sich diese Sektion. (Ob Events ankommen, zeigt die
+        Zeile „Events im Zeitraum" oben.)</p>`;
+    }
+    if (data.live && completions > 0 && answerTotal > 0) {
       const rows = quiz.items.map((item) => {
         const m = data.perItem[item.id] ?? new Map();
         const neg = m.get("-1") ?? 0;

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import type { Group } from "@/lib/types";
 import { track, EVENTS } from "@/lib/analytics";
 import { withUtm, fomoMailto } from "@/lib/utm";
+import { readResultsParam } from "@/lib/results";
 
 export function GroupLinks({ group }: { group: Group }) {
   const pathname = usePathname();
@@ -37,7 +38,18 @@ export function GroupLinks({ group }: { group: Group }) {
           href={l.href}
           target={l.dest === "email" ? undefined : "_blank"}
           rel={l.dest === "email" ? undefined : "noopener noreferrer"}
-          onClick={() => track(EVENTS.groupClick, { group: group.slug, dest: l.dest, context: "detail" })}
+          onClick={() => {
+            // When the visitor arrived from their results the URL carries the
+            // encoded answers — attach them so detail-page clicks are joinable
+            // with the interest analysis too.
+            const r = readResultsParam();
+            track(EVENTS.groupClick, {
+              group: group.slug,
+              dest: l.dest,
+              context: "detail",
+              ...(r ? { pick: `${group.slug}|detail|${r}` } : {}),
+            });
+          }}
           className="border-poster bg-navy px-5 py-3 font-heading text-sky transition-colors hover:bg-navy-hover"
         >
           {l.label}

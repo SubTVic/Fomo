@@ -55,11 +55,9 @@ function scoreGroup(userAnswers, userFilters, group) {
   const totalDist = active.reduce((s, [id, u]) => s + Math.abs(u - (map[id] ?? 0)), 0);
   return Math.round((1 - totalDist / (active.length * 2)) * 100);
 }
-function topFive(userAnswers, userFilters) {
-  // KEEP IN SYNC with topWithTies in src/lib/matching.ts: the first 5 plus all
-  // boundary ties (cap 10) — the same set the results screen shows and the
-  // quiz-result-group event records.
-  const positive = groups
+/** Full positive-score ranking, same order as the site. */
+function rankAll(userAnswers, userFilters) {
+  return groups
     .map((g) => ({ g, score: scoreGroup(userAnswers, userFilters, g) }))
     .filter((m) => m.score > 0)
     .sort(
@@ -68,10 +66,27 @@ function topFive(userAnswers, userFilters) {
         (b.g.selfRating.raterCount ?? 0) - (a.g.selfRating.raterCount ?? 0) ||
         a.g.name.localeCompare(b.g.name, "de"),
     );
+}
+
+function topFive(userAnswers, userFilters) {
+  // KEEP IN SYNC with topWithTies in src/lib/matching.ts: the first 5 plus all
+  // boundary ties (cap 10) — the same set the results screen shows and the
+  // quiz-result-group event records.
+  const positive = rankAll(userAnswers, userFilters);
   if (positive.length <= 5) return positive;
   let end = 5;
   while (end < positive.length && end < 10 && positive[end].score === positive[4].score) end++;
   return positive.slice(0, end);
+}
+
+/** Decode the compact ?r= result string (see src/lib/results.ts). */
+function decodeR(r) {
+  const [a, f = ""] = String(r).split("-");
+  if (!a || a.length !== quiz.items.length || !/^[012]+$/.test(a)) return null;
+  const answers = {};
+  quiz.items.forEach((it, i) => (answers[it.id] = Number(a[i]) - 1));
+  const filters = quiz.filters.options.filter((o, i) => f[i] === "1").map((o) => o.attribute);
+  return { answers, filters };
 }
 
 // ---------------------------------------------------------------------------
@@ -175,6 +190,12 @@ async function fetchAll() {
   data.clickDests = await values("group-click", "dest");
   data.selfRecRanks = await values("self-recognition", "rank");
   data.selfRecGroups = await values("self-recognition", "group");
+  // Self-contained "pick" payloads (slug|rank|answers) — the revealed-
+  // preference data for the clicked-vs-ranked analysis.
+  data.picks = new Map();
+  for (const ev of ["group-click", "group-detail-open"]) {
+    for (const [k, n] of await values(ev, "pick")) data.picks.set(k, (data.picks.get(k) ?? 0) + n);
+  }
   return data;
 }
 
@@ -627,6 +648,81 @@ function buildHtml(data, sim) {
          ["Rang der eigenen Gruppe", "Anzahl"],
          [...ranks.entries()].sort((a, b) => String(a[0]).localeCompare(String(b[0]), "de", { numeric: true })),
        )}</section>`,
+    );
+  }
+
+  // --- 5d Geklickt vs. gerankt (revealed preference) -------------------------
+  if (data.live && data.picks?.size) {
+    let total = 0;
+    let decodable = 0;
+    let rank1 = 0;
+    let beyond3 = 0;
+    let gapSum = 0;
+    let gapN = 0;
+    // Per item: mean |user−clicked| minus |user−top1| (weighted by clicks).
+    const itemAcc = new Map(quiz.items.map((it) => [it.id, { d: 0, w: 0 }]));
+    const gMap = (g) => {
+      const m = {};
+      for (const a of g.selfRating.answers) m[a.itemId] = a.value;
+      return m;
+    };
+    for (const [key, n] of data.picks) {
+      total += n;
+      const [slug, , ...rest] = key.split("|");
+      const decoded = decodeR(rest.join("|"));
+      const clickedGroup = groups.find((g) => g.slug === slug);
+      if (!decoded || !clickedGroup) continue;
+      decodable += n;
+      const ranked = rankAll(decoded.answers, decoded.filters);
+      if (!ranked.length) continue;
+      const idx = ranked.findIndex((m) => m.g.slug === slug);
+      const clickedScore =
+        idx >= 0 ? ranked[idx].score : scoreGroup(decoded.answers, [], clickedGroup);
+      if (idx === 0) rank1 += n;
+      if (idx > 2 || idx < 0) beyond3 += n;
+      gapSum += (ranked[0].score - clickedScore) * n;
+      gapN += n;
+      const mc = gMap(clickedGroup);
+      const mt = gMap(ranked[0].g);
+      for (const it of quiz.items) {
+        const u = decoded.answers[it.id] ?? 0;
+        if (u === 0) continue;
+        const acc = itemAcc.get(it.id);
+        acc.d += (Math.abs(u - (mc[it.id] ?? 0)) - Math.abs(u - (mt[it.id] ?? 0))) * n;
+        acc.w += n;
+      }
+    }
+    const itemRows = quiz.items
+      .map((it) => {
+        const a = itemAcc.get(it.id);
+        return { title: it.shortTitle ?? it.id, text: it.text, delta: a.w ? a.d / a.w : 0, w: a.w };
+      })
+      .filter((r) => r.w > 0)
+      .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+    sections.push(
+      `<section><h2>Geklickt vs. gerankt: Folgt das Interesse dem Ranking?</h2>
+       <p class="sub">Klicks als „ehrliches Interesse": Wir vergleichen die geklickte Gruppe mit den
+       Antworten der Person und mit ihrer #1-Empfehlung. Klicken viele eine schlechter platzierte
+       Gruppe, gewichtet der Algorithmus etwas anders als das echte Interesse. Zählung in Klicks,
+       nicht Personen; kleines n = nur Hinweise.</p>
+       <div class="tiles">
+         <div class="tile"><div class="v">${decodable}</div><div class="l">auswertbare Klicks (von ${total})</div></div>
+         <div class="tile"><div class="v">${decodable ? pct(rank1 / decodable) : "–"}</div><div class="l">Klick auf die #1</div></div>
+         <div class="tile"><div class="v">${decodable ? pct(beyond3 / decodable) : "–"}</div><div class="l">Klick jenseits der Top 3</div></div>
+         <div class="tile"><div class="v">${gapN ? (gapSum / gapN).toFixed(1) : "–"}</div><div class="l">Ø Score-Abstand zur #1 (Punkte)</div></div>
+       </div>
+       ${
+         itemRows.length
+           ? `<h3>Welche Fragen der Algorithmus anders gewichtet als das Interesse</h3>
+       <p class="sub">Δ &gt; 0: Bei dieser Frage passt die <em>geklickte</em> Gruppe schlechter zur Antwort als die #1 —
+       die Frage zählt fürs Ranking offenbar mehr, als sie den Leuten wichtig ist (Kandidat für geringeres Gewicht in v3).
+       Δ &lt; 0: Das Interesse folgt dieser Frage stärker als das Ranking.</p>
+       ${table(
+         ["Frage", "Δ (Distanz geklickt − #1)", "Basis (Klicks)"],
+         itemRows.slice(0, 10).map((r) => [r.text, (r.delta >= 0 ? "+" : "") + r.delta.toFixed(2), r.w]),
+       )}`
+           : ""
+       }</section>`,
     );
   }
 

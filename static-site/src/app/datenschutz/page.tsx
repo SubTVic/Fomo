@@ -90,7 +90,10 @@ E-Mail: fomo@yeti-dresden.org`}
             Angabe, ob du bereits Mitglied einer Hochschulgruppe bist (und welcher), und – zur
             Verbesserung des Frage- und Matching-Konzepts – die{" "}
             <strong className="text-navy">gegebenen Quiz-Antworten (die 21 Fragen und die gewählten
-            Filter)</strong>. Diese Ereignisse enthalten keine Namen, keine Kontaktdaten und keine ID;
+            Filter)</strong>. Interaktions-Ereignisse rund um dein Ergebnis (Gruppen-Klicks, Feedback,
+            Mitglieds-Angabe) enthalten diese Antworten zusätzlich in kodierter Form, damit wir
+            auswerten können, wie gut unsere Empfehlungen zum tatsächlichen Interesse passen.
+            Diese Ereignisse enthalten keine Namen, keine Kontaktdaten und keine ID;
             sie lassen sich keiner Person zuordnen und werden nur
             aggregiert ausgewertet. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes
             Interesse an der Verbesserung des Angebots). Ist Umami nicht konfiguriert, findet

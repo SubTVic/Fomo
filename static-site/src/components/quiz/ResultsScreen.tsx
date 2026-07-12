@@ -219,8 +219,8 @@ export function ResultsScreen({
         </Link>
       </div>
 
-      <ResultsFeedback lang={lang} />
-      <SelfRecognition matches={matches} lang={lang} />
+      <ResultsFeedback lang={lang} r={resultsParam} />
+      <SelfRecognition matches={matches} lang={lang} r={resultsParam} />
     </div>
   );
 }
@@ -231,13 +231,21 @@ export function ResultsScreen({
  * abandoned Studie 2). Anonymous: group slug + rank only, and entirely
  * optional.
  */
-function SelfRecognition({ matches, lang }: { matches: MatchResult[]; lang: "de" | "en" }) {
+function SelfRecognition({
+  matches,
+  lang,
+  r,
+}: {
+  matches: MatchResult[];
+  lang: "de" | "en";
+  r: string;
+}) {
   const [state, setState] = useState<"ask" | "pick" | "done">("ask");
   const [slug, setSlug] = useState("");
   const options = [...matches].sort((a, b) => a.group.name.localeCompare(b.group.name, "de"));
 
   function answerNo() {
-    track(EVENTS.selfRecognition, { group: "none", rank: "n/a" });
+    track(EVENTS.selfRecognition, { group: "none", rank: "n/a", r });
     setState("done");
   }
   function submit() {
@@ -245,13 +253,17 @@ function SelfRecognition({ matches, lang }: { matches: MatchResult[]; lang: "de"
     if (slug === "__absent__") {
       // Their group is not among the (verified) options — the algorithm cannot
       // find it at all. Worth counting separately.
-      track(EVENTS.selfRecognition, { group: "absent", rank: "absent" });
+      track(EVENTS.selfRecognition, { group: "absent", rank: "absent", r });
     } else {
       const positive = matches.filter((m) => m.score > 0);
       const idx = positive.findIndex((m) => m.group.slug === slug);
+      // With r attached, each member answer is a complete self-recognition
+      // data point (answers + own group + our rank) — Studie-2 data for free.
       track(EVENTS.selfRecognition, {
         group: slug,
         rank: idx >= 0 ? String(idx + 1) : "filtered",
+        r,
+        pick: `${slug}|${idx >= 0 ? idx + 1 : "filtered"}|${r}`,
       });
     }
     setState("done");
@@ -339,12 +351,14 @@ function SelfRecognition({ matches, lang }: { matches: MatchResult[]; lang: "de"
  * One-tap satisfaction signal ("War das hilfreich?"). Anonymous, no follow-up
  * question — a rough but honest quality metric without a survey.
  */
-function ResultsFeedback({ lang }: { lang: "de" | "en" }) {
+function ResultsFeedback({ lang, r }: { lang: "de" | "en"; r: string }) {
   const [given, setGiven] = useState<"up" | "down" | null>(null);
 
   function give(value: "up" | "down") {
     if (given) return;
-    track(EVENTS.resultsFeedback, { value });
+    // r = encoded answers: lets us learn which answer PROFILES are unhappy
+    // (e.g. many-neutral or heavily-filtered profiles voting 👎).
+    track(EVENTS.resultsFeedback, { value, r });
     setGiven(value);
   }
 
@@ -446,6 +460,10 @@ function ResultRow({
                       dest: link.dest,
                       context: "results",
                       rank,
+                      // Self-contained for analysis: clicked group + rank + the
+                      // encoded answers in ONE value, so the report can compare
+                      // revealed interest (the click) against the ranking.
+                      pick: `${group.slug}|${rank}|${resultsParam}`,
                     })
                   }
                   className={`border-2 border-navy px-4 py-2 font-semibold transition-colors ${
@@ -459,7 +477,14 @@ function ResultRow({
               ))}
               <Link
                 href={detailHref}
-                onClick={() => track(EVENTS.groupDetailOpen, { group: group.slug, context: "results", rank })}
+                onClick={() =>
+                  track(EVENTS.groupDetailOpen, {
+                    group: group.slug,
+                    context: "results",
+                    rank,
+                    pick: `${group.slug}|${rank}|${resultsParam}`,
+                  })
+                }
                 className="border-2 border-navy bg-card px-4 py-2 font-semibold text-navy transition-colors hover:bg-surface"
               >
                 {lang === "en" ? "Open profile" : "Profil öffnen"}

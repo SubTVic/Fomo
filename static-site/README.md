@@ -111,7 +111,9 @@ the full list and `docs/DATEN-SAMMELN-KONZEPT.md` for the rationale):
   quiz, how often"), `quiz-edit` (re-entering the questions from the
   results), `quiz-restart`
 - **Results interaction:** `results-tab`, `results-show-more`,
-  `results-zero-hits`, `results-feedback` (👍/👎), `results-share-copy`
+  `results-zero-hits`, `results-feedback` (👍/👎), `results-share-copy`,
+  `self-recognition` (voluntary "already a member? which group?" + the rank
+  our ranking gave that group — the passive self-recognition study)
 - **Group engagement:** `group-click` (`dest`: website/instagram/email,
   `context`: browse/results/detail, `rank` where applicable),
   `group-detail-open`

@@ -7,6 +7,7 @@ import type { Group } from "@/lib/types";
 import { categoryColorOf, isUnverified } from "@/lib/data";
 import { groupCategory, groupLongText, groupShortText } from "@/lib/group-copy";
 import { track, EVENTS } from "@/lib/analytics";
+import { withUtm } from "@/lib/utm";
 import { UnverifiedNotice } from "./UnverifiedNotice";
 
 interface GroupBrowserProps {
@@ -228,7 +229,7 @@ function GroupTile({ group, lang }: { group: Group; lang: "de" | "en" }) {
         </Link>
         {website && (
           <a
-            href={website}
+            href={withUtm(website)}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => track(EVENTS.groupClick, { group: group.slug, dest: "website", context: "browse" })}

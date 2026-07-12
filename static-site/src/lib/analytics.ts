@@ -47,6 +47,10 @@ export const EVENTS = {
   resultsZeroHits: "results-zero-hits",
   resultsFeedback: "results-feedback",
   resultsShareCopy: "results-share-copy",
+  // Voluntary, anonymous: "already a member of a group? which one?" plus the
+  // rank OUR ranking gave that group — the self-recognition metric (does the
+  // algorithm find your own group?) collected passively instead of a study.
+  selfRecognition: "self-recognition",
   groupsCategoryFilter: "groups-category-filter",
   groupsShowUnverified: "groups-show-unverified",
   langSwitch: "lang-switch",

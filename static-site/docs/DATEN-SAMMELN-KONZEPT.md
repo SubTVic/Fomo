@@ -36,6 +36,7 @@ brauchen.
 | `results-zero-hits` | 0 Treffer angezeigt | – |
 | `results-feedback` | 👍/👎 auf der Ergebnisseite | `up`/`down` |
 | `results-share-copy` | „Teilen"-Link kopiert | – |
+| `self-recognition` | freiwillige Frage auf der Ergebnisseite | „Schon Mitglied? In welcher Gruppe?" + der Rang, den UNSER Ranking dieser Gruppe gab → passiver Selbsterkennungs-Test (Ersatz für Studie 2) |
 | `group-click` | Klick auf Website/Instagram/Mail | Gruppen-Slug, Ziel, `context` (browse/results/detail), `rank` (bei Ergebnissen) |
 | `group-detail-open` | Klick auf „Profil öffnen" | Gruppen-Slug, `context`, `rank` |
 | `groups-category-filter` | Kategorie-Chip beim Browsen | Kategorie-Name |

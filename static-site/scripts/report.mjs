@@ -172,6 +172,9 @@ async function fetchAll() {
   data.feedback = await values("results-feedback", "value");
   data.clicksByGroup = await values("group-click", "group");
   data.clickContexts = await values("group-click", "context");
+  data.clickDests = await values("group-click", "dest");
+  data.selfRecRanks = await values("self-recognition", "rank");
+  data.selfRecGroups = await values("self-recognition", "group");
   return data;
 }
 
@@ -482,6 +485,23 @@ function buildHtml(data, sim) {
         ["Frage", "Zustimmung", "Neutral", "Ablehnung"],
         rows.map((r) => r.raw),
       );
+      // Item diagnosis: flag weak questions automatically. High neutral share
+      // = the item doesn't trigger an opinion; high dominance = everyone
+      // answers the same → no discrimination. Both are v3 removal candidates.
+      const diag = rows
+        .map((r) => ({
+          label: r.label,
+          neutral: r.mid,
+          dominance: Math.max(r.neg, r.mid, r.pos),
+          flag: r.mid >= 0.5 ? "⚠ hohe Neutral-Quote" : Math.max(r.neg, r.pos) >= 0.75 ? "⚠ sehr einseitig" : "",
+        }))
+        .sort((a, b) => b.neutral - a.neutral);
+      const flagged = diag.filter((d) => d.flag).length;
+      tbl += `<details class="tbl"><summary>Item-Diagnose — Streichkandidaten für Working-Set v3 (${flagged} markiert)</summary>
+        <table><thead><tr><th>Frage</th><th>Neutral-Quote</th><th>stärkste Antwort</th><th>Befund</th></tr></thead><tbody>${diag
+          .map((d) => `<tr><td>${esc(d.label)}</td><td>${pct(d.neutral)}</td><td>${pct(d.dominance)}</td><td>${esc(d.flag)}</td></tr>`)
+          .join("")}</tbody></table>
+        <p class="sub" style="margin-top:8px">Faustregeln: Neutral ≥ 50 % = Frage erzeugt keine Meinung; eine Seite ≥ 75 % = Frage trennt nicht. Bei kleinem n nur Hinweise.</p></details>`;
     }
     sections.push(
       `<section><h2>Welche Wahl treffen die Studierenden?</h2>
@@ -540,6 +560,73 @@ function buildHtml(data, sim) {
       `<section><h2>Top-Gruppen in den Ergebnissen</h2>
        <p class="sub">Wie oft eine Gruppe in den Top 5 eines abgeschlossenen Quiz auftauchte (${completions} Abschlüsse im Zeitraum).</p>
        ${hbarChart(rows)}${table(["Gruppe", "Top-5-Auftritte", "Anteil"], rows.map((r) => [r.label, r.value, r.extra]))}</section>`,
+    );
+  }
+
+  // --- 5b Funnel & Conversion ----------------------------------------------
+  if (data.live && (data.clicksByGroup?.size || starts > 0)) {
+    const sum = (m) => [...(m ?? new Map()).values()].reduce((a, b) => a + b, 0);
+    const clicksTotal = sum(data.clicksByGroup);
+    const resultClicks = data.clickContexts?.get("results") ?? 0;
+    const emailClicks = data.clickDests?.get("email") ?? 0;
+    const steps = [
+      ["Quiz-Starts", starts],
+      ["Abschlüsse", completions],
+      ["Gruppen-Klicks aus den Ergebnissen", resultClicks],
+      ["E-Mail-Klicks (Kontaktabsicht)", emailClicks],
+    ];
+    const destLine = [...(data.clickDests ?? new Map()).entries()]
+      .map(([d, n]) => `${esc(d)}&thinsp;×&thinsp;${n}`)
+      .join(" · ");
+    const topClicked = [...(data.clicksByGroup ?? new Map()).entries()]
+      .map(([slug, n]) => ({ label: groupName.get(slug) ?? slug, value: n }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 15);
+    sections.push(
+      `<section><h2>Funnel: Vom Quiz zur Gruppe</h2>
+       <p class="sub">Wie weit kommen die Leute? Klicks auf Website/Instagram/E-Mail einer Gruppe sind das
+       stärkste messbare Signal für „will Kontakt aufnehmen". Achtung: Zählung sind <em>Klicks</em>,
+       nicht eindeutige Personen (jemand kann mehrere Gruppen anklicken). Was NACH dem Klick
+       passiert, sehen wir nicht mehr — dafür tragen alle ausgehenden Links UTM-Parameter
+       (<code>utm_source=fomo-dresden</code>) und E-Mails den Betreff „Anfrage über FOMO", sodass
+       die Gruppen selbst FOMO-Zulauf erkennen und nach der Erstiwoche befragt werden können.</p>
+       <div class="tiles">${steps
+         .map(([l, v]) => `<div class="tile"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`)
+         .join("")}</div>
+       <p class="sub" style="margin-top:12px">Klick-Ziele gesamt: ${destLine || "–"} · Klicks gesamt: ${clicksTotal}</p>
+       ${topClicked.length ? `<h3>Meistgeklickte Gruppen</h3>${hbarChart(topClicked)}` : ""}
+       ${table(["Gruppe", "Klicks"], topClicked.map((r) => [r.label, r.value]))}</section>`,
+    );
+  }
+
+  // --- 5c Selbsterkennung (Algorithmus-Güte) --------------------------------
+  if (data.live && data.selfRecRanks?.size) {
+    const ranks = data.selfRecRanks;
+    const nonMembers = ranks.get("n/a") ?? 0;
+    const absent = ranks.get("absent") ?? 0;
+    const filtered = ranks.get("filtered") ?? 0;
+    const numeric = [...ranks.entries()]
+      .filter(([k]) => /^\d+$/.test(k))
+      .map(([k, n]) => [parseInt(k, 10), n]);
+    const members = numeric.reduce((s, [, n]) => s + n, 0) + absent + filtered;
+    const within = (lim) => numeric.filter(([r]) => r <= lim).reduce((s, [, n]) => s + n, 0);
+    const rate = (x) => (members ? pct(x / members) : "–");
+    sections.push(
+      `<section><h2>Selbsterkennung: Findet der Algorithmus die eigene Gruppe?</h2>
+       <p class="sub">Mitglieder geben freiwillig an, in welcher Gruppe sie sind — wir prüfen, auf welchem
+       Rang unser Matching diese Gruppe für sie platziert hat. Der direkteste Qualitätsmesser für
+       Fragen + Algorithmus (ersetzt die verworfene Studie 2). Bisher ${members} Mitglieder-Angaben,
+       ${nonMembers} Nicht-Mitglieder.</p>
+       <div class="tiles">
+         <div class="tile"><div class="v">${rate(within(1))}</div><div class="l">eigene Gruppe auf #1</div></div>
+         <div class="tile"><div class="v">${rate(within(3))}</div><div class="l">in den Top 3</div></div>
+         <div class="tile"><div class="v">${rate(within(5))}</div><div class="l">in den Top 5</div></div>
+         <div class="tile"><div class="v">${members ? pct((absent + filtered) / members) : "–"}</div><div class="l">nicht auffindbar (unverifiziert/gefiltert)</div></div>
+       </div>
+       ${table(
+         ["Rang der eigenen Gruppe", "Anzahl"],
+         [...ranks.entries()].sort((a, b) => String(a[0]).localeCompare(String(b[0]), "de", { numeric: true })),
+       )}</section>`,
     );
   }
 

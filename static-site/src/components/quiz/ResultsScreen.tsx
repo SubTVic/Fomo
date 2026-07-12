@@ -7,6 +7,7 @@ import type { Group, MatchResult, QuizFilters } from "@/lib/types";
 import { topWithTies } from "@/lib/matching";
 import { groupCategory, groupShortText } from "@/lib/group-copy";
 import { track, EVENTS } from "@/lib/analytics";
+import { withUtm, fomoMailto } from "@/lib/utm";
 import { ShareButton } from "./ShareButton";
 import { CompareGroups } from "./CompareGroups";
 
@@ -219,6 +220,117 @@ export function ResultsScreen({
       </div>
 
       <ResultsFeedback lang={lang} />
+      <SelfRecognition matches={matches} lang={lang} />
+    </div>
+  );
+}
+
+/**
+ * Passive self-recognition study: members tell us their group, we record the
+ * rank OUR ranking gave it (the gold-standard algorithm metric — replaces the
+ * abandoned Studie 2). Anonymous: group slug + rank only, and entirely
+ * optional.
+ */
+function SelfRecognition({ matches, lang }: { matches: MatchResult[]; lang: "de" | "en" }) {
+  const [state, setState] = useState<"ask" | "pick" | "done">("ask");
+  const [slug, setSlug] = useState("");
+  const options = [...matches].sort((a, b) => a.group.name.localeCompare(b.group.name, "de"));
+
+  function answerNo() {
+    track(EVENTS.selfRecognition, { group: "none", rank: "n/a" });
+    setState("done");
+  }
+  function submit() {
+    if (!slug) return;
+    if (slug === "__absent__") {
+      // Their group is not among the (verified) options — the algorithm cannot
+      // find it at all. Worth counting separately.
+      track(EVENTS.selfRecognition, { group: "absent", rank: "absent" });
+    } else {
+      const positive = matches.filter((m) => m.score > 0);
+      const idx = positive.findIndex((m) => m.group.slug === slug);
+      track(EVENTS.selfRecognition, {
+        group: slug,
+        rank: idx >= 0 ? String(idx + 1) : "filtered",
+      });
+    }
+    setState("done");
+  }
+
+  const t =
+    lang === "en"
+      ? {
+          q: "One quick question for our statistics: are you already a member of a student group?",
+          yes: "Yes",
+          no: "No",
+          pick: "Which one?",
+          absent: "— my group is not in the list —",
+          send: "Submit",
+          thanks: "Thanks — this helps us improve the matching!",
+        }
+      : {
+          q: "Kurze Frage für unsere Statistik: Bist du schon Mitglied einer Hochschulgruppe?",
+          yes: "Ja",
+          no: "Nein",
+          pick: "In welcher?",
+          absent: "— meine Gruppe ist nicht in der Liste —",
+          send: "Absenden",
+          thanks: "Danke — das hilft uns, das Matching zu verbessern!",
+        };
+
+  return (
+    <div className="mt-4 border-2 border-navy bg-surface p-4 text-center">
+      {state === "done" ? (
+        <p className="text-sm font-semibold text-navy">{t.thanks}</p>
+      ) : state === "ask" ? (
+        <>
+          <p className="text-sm text-body">{t.q}</p>
+          <div className="mt-3 flex justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => setState("pick")}
+              className="border-2 border-navy px-5 py-2 text-sm font-semibold text-navy transition-colors hover:bg-card"
+            >
+              {t.yes}
+            </button>
+            <button
+              type="button"
+              onClick={answerNo}
+              className="border-2 border-navy px-5 py-2 text-sm font-semibold text-navy transition-colors hover:bg-card"
+            >
+              {t.no}
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="text-sm text-body">{t.pick}</p>
+          <div className="mx-auto mt-3 flex max-w-[420px] flex-col gap-2 sm:flex-row">
+            <select
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              aria-label={t.pick}
+              className="min-w-0 flex-1 border-2 border-navy bg-card px-2 py-2 text-sm text-navy"
+            >
+              <option value="">…</option>
+              {options.map((m) => (
+                <option key={m.group.slug} value={m.group.slug}>
+                  {m.group.name}
+                </option>
+              ))}
+              <option value="__absent__">{t.absent}</option>
+            </select>
+            <button
+              type="button"
+              onClick={submit}
+              disabled={!slug}
+              className="border-2 border-navy px-5 py-2 text-sm font-semibold text-navy transition-colors enabled:hover:bg-card disabled:opacity-40"
+            >
+              {t.send}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -380,7 +492,7 @@ function buildLinks(group: Group, lang: "de" | "en") {
   const links: Array<{ href: string; label: string; external: boolean; primary?: boolean; dest: string }> = [];
   if (group.contactEmail) {
     links.push({
-      href: `mailto:${group.contactEmail}`,
+      href: fomoMailto(group.contactEmail, lang),
       label: lang === "en" ? "Write e-mail" : "E-Mail schreiben",
       external: false,
       primary: true,
@@ -388,8 +500,8 @@ function buildLinks(group: Group, lang: "de" | "en") {
     });
   }
   if (group.websiteUrl)
-    links.push({ href: group.websiteUrl, label: "Website", external: true, dest: "website" });
+    links.push({ href: withUtm(group.websiteUrl), label: "Website", external: true, dest: "website" });
   if (group.instagramUrl)
-    links.push({ href: group.instagramUrl, label: "Instagram", external: true, dest: "instagram" });
+    links.push({ href: withUtm(group.instagramUrl), label: "Instagram", external: true, dest: "instagram" });
   return links;
 }

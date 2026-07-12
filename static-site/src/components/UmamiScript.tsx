@@ -30,6 +30,10 @@ export function UmamiScript() {
     <Script
       src={src}
       data-website-id={websiteId}
+      // Never record query strings in pageview URLs: the results link carries
+      // the full encoded answer vector (?r=…) — without this, Umami would
+      // store a second copy of every user's answers attached to the pageview.
+      data-exclude-search="true"
       strategy="afterInteractive"
       defer
     />

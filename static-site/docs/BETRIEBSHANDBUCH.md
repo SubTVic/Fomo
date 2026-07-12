@@ -125,13 +125,17 @@ einmalig in Vercel einen „Deploy Hook" (Settings → Git) erstellen und die
 URL als GitHub-Secret `VERCEL_DEPLOY_HOOK_URL` hinterlegen. Sofort
 aktualisieren: GitHub → Actions → „Weekly report redeploy" → „Run workflow".
 
-**Frischen Bericht auf Knopfdruck — ohne Deployment:** GitHub → **Actions** →
-„**Report erstellen (ohne Deploy)**" → „Run workflow" (optional Zeitraum in
-Tagen angeben) → nach ~1 Minute den fertigen Lauf öffnen → unten unter
-„Artifacts" **fomo-report** herunterladen (ZIP mit einer HTML-Datei, im
-Browser öffnen). Einmalige Einrichtung: GitHub → Repo → Settings → Secrets
-and variables → Actions → zwei Secrets anlegen: `UMAMI_API_KEY` und
-`UMAMI_WEBSITE_ID` (dieselben Werte wie in Vercel).
+**Zwei Knöpfe, zwei Zwecke — nicht verwechseln:**
+
+| GitHub-Action | Was sie tut | Was sie NICHT tut |
+|---|---|---|
+| „**Report erstellen (ohne Deploy)**" | Erzeugt eine **Download-Datei**: fertigen Lauf öffnen → unten „Artifacts" → `fomo-report` (ZIP mit HTML) | Ändert die Website **nicht** — `/report/` bleibt wie er ist |
+| „**Weekly report redeploy**" (läuft montags automatisch, geht auch manuell) | Baut die **Website** neu → `/report/` auf fomo-dresden.app wird aktuell | Erzeugt keine Download-Datei |
+
+Einmalige Einrichtung für den Download-Knopf: GitHub → Repo → Settings →
+Secrets and variables → Actions → zwei Secrets: `UMAMI_API_KEY` und
+`UMAMI_WEBSITE_ID` (dieselben Werte wie in Vercel). Für den Redeploy-Knopf
+zusätzlich das Secret `VERCEL_DEPLOY_HOOK_URL` (siehe oben).
 
 Für Fortgeschrittene gibt es den Bericht auch lokal: `npm run report` im
 Ordner `static-site/` (Details in der README, Abschnitt „Report generator").

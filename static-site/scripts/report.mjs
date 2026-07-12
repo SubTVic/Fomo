@@ -659,6 +659,7 @@ function buildHtml(data, sim) {
     let beyond3 = 0;
     let gapSum = 0;
     let gapN = 0;
+    let ratioSum = 0; // clickedScore / top1Score, weighted — the Quiz-Score
     // Per item: mean |user−clicked| minus |user−top1| (weighted by clicks).
     const itemAcc = new Map(quiz.items.map((it) => [it.id, { d: 0, w: 0 }]));
     const gMap = (g) => {
@@ -681,6 +682,7 @@ function buildHtml(data, sim) {
       if (idx === 0) rank1 += n;
       if (idx > 2 || idx < 0) beyond3 += n;
       gapSum += (ranked[0].score - clickedScore) * n;
+      if (ranked[0].score > 0) ratioSum += (clickedScore / ranked[0].score) * n;
       gapN += n;
       const mc = gMap(clickedGroup);
       const mt = gMap(ranked[0].g);
@@ -706,11 +708,16 @@ function buildHtml(data, sim) {
        Gruppe, gewichtet der Algorithmus etwas anders als das echte Interesse. Zählung in Klicks,
        nicht Personen; kleines n = nur Hinweise.</p>
        <div class="tiles">
+         <div class="tile" style="border-width:4px"><div class="v">${gapN ? pct(ratioSum / gapN) : "–"}</div><div class="l">Quiz-Score</div></div>
          <div class="tile"><div class="v">${decodable}</div><div class="l">auswertbare Klicks (von ${total})</div></div>
          <div class="tile"><div class="v">${decodable ? pct(rank1 / decodable) : "–"}</div><div class="l">Klick auf die #1</div></div>
          <div class="tile"><div class="v">${decodable ? pct(beyond3 / decodable) : "–"}</div><div class="l">Klick jenseits der Top 3</div></div>
          <div class="tile"><div class="v">${gapN ? (gapSum / gapN).toFixed(1) : "–"}</div><div class="l">Ø Score-Abstand zur #1 (Punkte)</div></div>
        </div>
+       <p class="sub" style="margin-top:10px"><strong>Quiz-Score</strong> = Ø (Match-Score der <em>geklickten</em> Gruppe ÷ Match-Score der #1-Empfehlung).
+       100 % = die Leute klicken Gruppen an, die genauso gut zu ihren Antworten passen wie unsere Top-Empfehlung —
+       das Quiz trifft ihr Interesse. Je niedriger, desto stärker weicht das echte Interesse vom Ranking ab.
+       DIE Kennzahl, um Fragen-/Algorithmus-Änderungen über die Zeit zu vergleichen.</p>
        ${
          itemRows.length
            ? `<h3>Welche Fragen der Algorithmus anders gewichtet als das Interesse</h3>

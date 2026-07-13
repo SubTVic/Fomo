@@ -20,6 +20,10 @@ export const FAQ_DE: FaqEntry[] = [
     a: "An der TU Dresden gibt es über 90 studentische Hochschulgruppen und Vereine — von Sport, Musik und Theater über Robotik, Coding und Rennwagenbau bis zu Ehrenamt, Nachhaltigkeit, Hochschulpolitik und internationalen Communities. FOMO listet sie alle mit Beschreibung und Kontakt.",
   },
   {
+    q: "Wie finde ich Hochschulgruppen in Dresden?",
+    a: "Es gibt drei Wege: die offizielle Liste des StuRa TU Dresden, die Kennenlern-Events zum Semesterstart (z. B. das Meet & Greet in der Erstsemesterwoche) — und FOMO. FOMO ist das durchsuchbare Verzeichnis aller Dresdner Hochschulgruppen mit Beschreibung, Kategorie und Kontakt, plus einem Quiz, das dir in 3 Minuten die Gruppen vorschlägt, die zu dir passen.",
+  },
+  {
     q: "Wie finde ich die passende Hochschulgruppe für mich?",
     a: "Am schnellsten mit dem FOMO-Quiz: Du beantwortest 21 kurze Fragen zu deinen Interessen und deinem Zeitbudget, und FOMO vergleicht deine Antworten mit den Selbstauskünften der Gruppen. Das dauert etwa 3 Minuten, ist anonym und läuft komplett in deinem Browser.",
   },
@@ -45,6 +49,10 @@ export const FAQ_EN: FaqEntry[] = [
   {
     q: "Which student groups exist at TU Dresden?",
     a: "TU Dresden has over 90 student groups — from sports, music and theatre to robotics, coding and race-car building, plus volunteering, sustainability, student politics and international communities. FOMO lists them all with a description and contact details.",
+  },
+  {
+    q: "How do I find student groups in Dresden?",
+    a: "There are three ways: the official list of the StuRa TU Dresden, the meet-ups at the start of each semester (e.g. the Meet & Greet during freshers' week) — and FOMO. FOMO is the searchable directory of all Dresden student groups with descriptions, categories and contact details, plus a quiz that suggests the groups that fit you in 3 minutes.",
   },
   {
     q: "How do I find the right student group for me?",

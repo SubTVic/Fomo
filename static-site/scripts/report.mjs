@@ -589,16 +589,23 @@ function buildHtml(data, sim) {
     const sum = (m) => [...(m ?? new Map()).values()].reduce((a, b) => a + b, 0);
     const clicksTotal = sum(data.clicksByGroup);
     const resultClicks = data.clickContexts?.get("results") ?? 0;
-    const emailClicks = data.clickDests?.get("email") ?? 0;
     const steps = [
       ["Quiz-Starts", starts],
       ["Abschlüsse", completions],
       ["Gruppen-Klicks aus den Ergebnissen", resultClicks],
-      ["E-Mail-Klicks (Kontaktabsicht)", emailClicks],
     ];
-    const destLine = [...(data.clickDests ?? new Map()).entries()]
-      .map(([d, n]) => `${esc(d)}&thinsp;×&thinsp;${n}`)
-      .join(" · ");
+    // Per-platform tiles: the three known destinations always show (0 counts
+    // included), unknown future dests are appended dynamically.
+    const dests = data.clickDests ?? new Map();
+    const DEST_LABELS = new Map([
+      ["website", "Website-Klicks"],
+      ["instagram", "Instagram-Klicks"],
+      ["email", "E-Mail-Klicks (Kontaktabsicht)"],
+    ]);
+    const destTiles = [
+      ...[...DEST_LABELS.keys()],
+      ...[...dests.keys()].filter((d) => !DEST_LABELS.has(d)),
+    ].map((d) => [DEST_LABELS.get(d) ?? `${d}-Klicks`, dests.get(d) ?? 0]);
     const topClicked = [...(data.clicksByGroup ?? new Map()).entries()]
       .map(([slug, n]) => ({ label: groupName.get(slug) ?? slug, value: n }))
       .sort((a, b) => b.value - a.value)
@@ -614,7 +621,11 @@ function buildHtml(data, sim) {
        <div class="tiles">${steps
          .map(([l, v]) => `<div class="tile"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`)
          .join("")}</div>
-       <p class="sub" style="margin-top:12px">Klick-Ziele gesamt: ${destLine || "–"} · Klicks gesamt: ${clicksTotal}</p>
+       <h3>Welche Plattform wird angeklickt?</h3>
+       <p class="sub">Alle Gruppen-Klicks im Zeitraum (Browsen + Ergebnisse + Profilseiten), gesamt: ${clicksTotal}.</p>
+       <div class="tiles">${destTiles
+         .map(([l, v]) => `<div class="tile"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`)
+         .join("")}</div>
        ${topClicked.length ? `<h3>Meistgeklickte Gruppen</h3>${hbarChart(topClicked)}` : ""}
        ${table(["Gruppe", "Klicks"], topClicked.map((r) => [r.label, r.value]))}</section>`,
     );

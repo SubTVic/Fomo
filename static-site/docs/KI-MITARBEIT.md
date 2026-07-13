@@ -81,6 +81,7 @@ static-site/README.md. Regeln:
 | Analytics-Events | `static-site/src/lib/analytics.ts` |
 | Report-Generator (live: `/report/`) | `static-site/scripts/report.mjs` (läuft auch als prebuild) |
 | Betrieb/Übergabe-Doku | `static-site/docs/BETRIEBSHANDBUCH.md` |
+| Offene Aufgaben (zentral) | `TODO.md` im Repo-Root |
 
 ## 6. Was schiefgehen kann (und warum es nicht schlimm ist)
 

@@ -83,7 +83,7 @@ function computeAttributeWeights(groups: GroupData[]): Record<string, number> {
   return weights;
 }
 
-// A1 fix: mirrors src/lib/quiz/matching.ts — see FOMO-Algorithmus-Fixes-Plan.md
+// A1 fix: mirrors src/lib/quiz/matching.ts — see CLAUDE-pläne/archiv/FOMO-Algorithmus-Fixes-Plan.md
 function computeItemCountsPerAttribute(theses: ThesisData[]): Record<string, number> {
   const counts: Record<string, number> = {};
   for (const thesis of theses) {

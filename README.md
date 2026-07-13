@@ -4,7 +4,7 @@
 
 FOMO is an open-source web app that matches TU Dresden freshmen with student organizations through an interactive quiz — like [Wahl-O-Mat](https://www.wahl-o-mat.de/), but for campus life.
 
-Answer ~20 questions about your interests, values, and time budget, and get personalized recommendations from 83+ student groups — with contact info, links, and logos.
+Answer 21 questions about your interests, values, and time budget, and get personalized recommendations from 90+ student groups — with contact info, links, and logos.
 
 **Built for:** [StuRa TU Dresden](https://www.stura.tu-dresden.de/) · **🚀 Live:** [www.fomo-dresden.app](https://www.fomo-dresden.app)
 
@@ -36,12 +36,12 @@ Offene Aufgaben: siehe [TODO.md](TODO.md)
 
 ## Features
 
-### Quiz & Matching
+### Quiz & Matching (live: `static-site/`)
 
-- **17 questions** across categories like time budget, politics, sports, culture, and more (Working Set v1.1)
+- **21 Likert questions + 8 activity filters** (Working Set v2) across time budget, values, learning style, and more
 - **Client-side matching algorithm** — no user data leaves the browser (DSGVO-friendly)
-- **Weighted scoring** with inverse mapping and per-attribute item-count normalization
-- **Top results** normalized to 0–100% match score
+- **Only verified groups** (self-rated by the group itself) enter the matching; scraped profiles are browse-only
+- **Top 5 results** (including boundary ties) normalized to 0–100% match score
 
 ### Group Profiles & Registration
 

@@ -47,6 +47,7 @@ auf `main`). Kernfakten für die Arbeit daran:
   `selfRating.answers`; die alten 17 Binär-Attribute werden nicht mehr genutzt.
 - **Nur verifizierte Gruppen** sind im Quiz-Matching (`getMatchableGroups()`);
   gescrapte/unbestätigte nur im Verzeichnis hinter einem Toggle.
+  Datenstand 11.07.2026: 41 verifiziert / 52 unbestätigt / 93 gesamt.
 - Studie 2 wurde verworfen; stattdessen anonyme Live-Daten via Umami
   (Events in `static-site/src/lib/analytics.ts`, Konzept in
   `static-site/docs/DATEN-SAMMELN-KONZEPT.md`). Auswertung:
@@ -55,7 +56,7 @@ auf `main`). Kernfakten für die Arbeit daran:
   Kategorie-Landingpages), Impressum/Datenschutz vorhanden.
 - Doku: `static-site/README.md`, Betrieb für Nicht-Techniker in
   `static-site/docs/BETRIEBSHANDBUCH.md`, KI-Arbeitsregeln in
-  `static-site/docs/KI-MITARBEIT.md`.
+  `static-site/docs/KI-MITARBEIT.md`. **Offene Aufgaben: `TODO.md` (Root).**
 - Die dynamische Root-App bleibt internes Datenerfassungs-Tool
   (Registrierung/Admin) — bei Arbeiten an der öffentlichen Seite NICHT anfassen.
 
@@ -150,17 +151,13 @@ Diese Features kommen nach dem Pilot, wenn die Basis steht und wir Daten haben:
 - Deutsche UI-Texte, englische Code-Kommentare und Variablennamen
 - Commits auf Englisch, konventionelle Commit-Messages (feat:, fix:, docs:, etc.)
 
-## Aktive Plan-Dateien
+## Aufgaben & Pläne
 
-| Datei | Inhalt | Status |
-| --- | --- | --- |
-| FOMO-Algorithmus-Fixes-Plan.md | Algorithmus-Fixes, Working Set v2, Validierung | ✅ Aktiv – ab 05.05.2026 |
+**Alle offenen Aufgaben stehen in `TODO.md` (Root)** — das ist die eine
+zentrale To-do-Datei (Stand Juli 2026). Es gibt keine aktiven Plan-Dateien
+mehr; alle abgeschlossenen Pläne (Phase 2, Varianten-System,
+Algorithmus-Fixes, V2-Integration, Studie 2) liegen als Referenz in
+`CLAUDE-pläne/archiv/`.
 
-Archivierte Pläne (nicht mehr aktiv, aber als Referenz in `CLAUDE-pläne/archiv/`):
-
-- `FOMO-Phase2-Plan-Claude-Code.md` — Phase-2-Hauptplan (abgelöst)
-- `VARIANT-SYSTEM-PLAN.md` — Varianten-System (implementiert)
-- `LIVE-QUIZ-PLAN.md` — von Phase-2-Plan abgelöst
-- `ACTION-PLAN.md` — Phase-1-Bugs (erledigt)
-
-Lies die CLAUDE.md und dann `CLAUDE-pläne/FOMO-Algorithmus-Fixes-Plan.md` bevor du mit der Implementierung anfängst. Bei Widersprüchen gilt: diese CLAUDE.md hat Priorität.
+Lies die CLAUDE.md und dann `TODO.md` bevor du mit der Implementierung
+anfängst. Bei Widersprüchen gilt: diese CLAUDE.md hat Priorität.

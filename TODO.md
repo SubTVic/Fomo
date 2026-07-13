@@ -1,116 +1,190 @@
 # FOMO – Offene Aufgaben
 
-Stand: 19. Mai 2026
+**Stand: 12. Juli 2026** — die **eine zentrale To-do-Datei** des Projekts.
+(Hier ist `static-site/docs/AUFGABEN-NACH-AUDIT.md` aufgegangen; die alte
+Phasen-To-do von Mai 2026 ist unten unter „Erledigt/Verworfen" archiviert.)
+
+Kontext zum Projekt: `CLAUDE.md` (Root). Betrieb ohne Programmierkenntnisse:
+`static-site/docs/BETRIEBSHANDBUCH.md`.
 
 ---
 
 ## Status-Überblick
 
-| Phase | Status | Beschreibung |
-| --- | --- | --- |
-| Phase 1: Pilot-Studie | ✅ Abgeschlossen | 104 Sessions, Classic gewinnt (45%), Working Set v1.1 archiviert |
-| Phase 2: Gruppen-Registrierung | 🔄 In Arbeit | i18n DE/EN ✅, Selbst-Registrierung + Kontaktliste ✅, Deployment ausstehend |
-| Studie 2: Mitglieder-Validierung | 🔄 In Arbeit | `/pilot` gebaut, Daten werden noch erhoben |
-| Phase 3: Matching & Ergebnisse | ⏳ Geplant | nach Studie-2-Auswertung |
-| Phase 4: Launch | ⏳ Geplant | September 2026, Erstsemester-Woche |
+| Bereich | Status |
+| --- | --- |
+| **Öffentliche Seite** `static-site/` | ✅ **Live auf www.fomo-dresden.app** (Vercel, deployt bei jedem Push auf `main`) |
+| Matching v2 (21 Items + 8 Filter, client-side) | ✅ Live — nur verifizierte Gruppen im Quiz |
+| Datenstand | 41 verifiziert / 52 unbestätigt / 93 gesamt (Export vom 11.07.) |
+| Umami-Tracking + Live-Report `/report/` | ✅ Läuft mit echten Daten (Env-Vars in Vercel gesetzt, 11.07.) |
+| Dynamische Root-App (Registrierung/Admin) | 🔄 Internes Datenerfassungs-Tool, läuft weiter |
+| Studie 2 (Mitglieder-Validierung) | ❌ Verworfen — ersetzt durch anonyme Live-Daten (Umami) |
+| Nächster Meilenstein | **Erstiwoche September 2026** = Haupt-Traffic |
 
 ---
 
-## §1 Working Set V2 (Hybrid-Ansatz)
+## §1 Admin-Aufgaben (kein Code) — Reihenfolge = Wirkung pro Aufwand
 
-- [x] Pilot-1-Daten analysiert (n=102, Diskriminierungs-Δ, Inter-Item-Korrelationen)
-- [x] `data/working-set-v2.json` — 21 Likert-Items + 8 Filter-Optionen (Hybrid-Ansatz)
-- [x] `data/study2-plan.md` — Validierungs-Plan mit Metriken + Item-Trimming-Regeln
-- [x] `src/lib/study2/items.ts` — TypeScript-Modul für WS2-Items
+### 1.1 Drei doppelte Gruppen bereinigen (15 Min) — sichtbar im Live-Report!
+
+Im Live-Report taucht **Rotaract Club Dresden zweimal** in „Meistgeklickte
+Gruppen" auf — die Duplikate klauen sich gegenseitig Klicks und Rankings.
+In der **Admin-App** (dynamische Root-App) je **eine** Kopie deaktivieren,
+dann neu exportieren (`node scripts/export-from-backup.mjs --backup …` in
+`static-site/`, `groups.json` committen).
+
+| Behalten ✅ | Deaktivieren ❌ | Warum |
+|---|---|---|
+| `rotaract-club-dresden` (dresden-vorstand@rotaract.de) | `rotaract-club-dresden-2` (felix.a.mack@…) | **Wichtigster Fall: beide verifiziert, konkurrieren im Quiz.** Offizielle Vorstands-Mail behalten. Im Zweifel Rotaract fragen, welche Anmeldung die „echte" ist. |
+| `technische-universitaet-dresden-robotik-arbeitsgruppe` (verifiziert, 3 Bewertungen) | `tu-dresden-robotik-ag-turag` (unbestätigt) | Verifizierte Kopie ist besser. Logo ist auf beide Slugs verankert, bleibt sichtbar. |
+| `kritmed` | `kritmed-dresden` | Beide unbestätigt — nimm die, unter der die Gruppe erreichbar ist. |
+
+### 1.2 Neun Gruppen ohne Aktivitäts-Filter (E-Mail-Runde) — größter Bias-Hebel
+
+Diese Gruppen haben keine Filter angegeben und können **nie weggefiltert
+werden** → strukturell ~1,8× so oft in den Ergebnissen wie fair. Die
+Live-Daten verschärfen das: **~96 % der Quiz-Durchläufe starten MIT Filtern**
+(25 von 26) — der Vorteil wirkt also praktisch immer. Lösung: eine Angabe
+pro Gruppe, keine Programmierung.
+
+Die 8 Filter (Mehrfachauswahl): Hands-on/Werkstatt · Kunst
+(Theater/Film/Design/Foto) · Wettbewerbe · Musik · Outdoor/Natur ·
+Tech/Digital · Hochschulpolitik · Sport.
+
+| Gruppe | Kontakt |
+|---|---|
+| AufeinanderAchten | info@aufeinanderachten.de |
+| Effektiver Altruismus | dresden@effektiveraltruismus.de |
+| FIRST AID FOR ALL – Dresden | firstaidforall.dresden@mailbox.tu-dresden.de |
+| HSG Grundvorlesung ökologische Nachhaltigkeit | vl.sustainability@tu-dresden.de |
+| Heinrich-Cotta-Club e.V. | *(keine Mail hinterlegt — über Website kontaktieren)* |
+| Hochschul-SMD Dresden | dresden@smd.org |
+| Leo-Club Dresden 'August der Starke' | augustderstarke@leo-clubs.de |
+| Nightline Dresden e.V. | marketing@nightline-dresden.de |
+| VWI HG Dresden e.V. | vorstand@vwi-dresden.de |
+
+**Fertige E-Mail-Vorlage:**
+
+> Betreff: Kurze Rückfrage zu eurem FOMO-Profil (1 Minute)
+>
+> Hallo liebe [Gruppenname],
+>
+> ihr seid auf FOMO gelistet (www.fomo-dresden.app) — dem Quiz, das Erstis
+> passende Hochschulgruppen vorschlägt. Damit euch die richtigen Leute finden,
+> fehlt uns noch **eine** Angabe: In welche dieser Aktivitäts-Kategorien passt
+> ihr? (Mehrfachauswahl, gern auch „keine davon")
+>
+> ☐ Hands-on/Werkstatt ☐ Kunst & Kultur ☐ Wettbewerbe ☐ Musik
+> ☐ Outdoor & Natur ☐ Tech & Digital ☐ Hochschulpolitik ☐ Sport
+>
+> Einfach zurückschreiben, wir tragen es ein. Danke!
+>
+> Viele Grüße, das FOMO-Team
+
+Antworten in der Admin-App eintragen → neu exportieren (wie 1.1).
+
+### 1.3 GitHub-Secrets für die Report-Automatik setzen (5 Min)
+
+GitHub → Repo → Settings → Secrets and variables → Actions:
+
+| Secret | Wofür | Wert |
+|---|---|---|
+| `UMAMI_API_KEY` | Button „Report erstellen (ohne Deploy)" → Download-Artifact | derselbe wie in Vercel |
+| `UMAMI_WEBSITE_ID` | dito | `56708403-b68d-4f0a-957b-55d9b68b9ff0` |
+| `VERCEL_DEPLOY_HOOK_URL` | Montags-Auto-Refresh von `/report/` + Button „Weekly report redeploy" | Vercel → Settings → Git → Deploy Hook erstellen |
+
+(Was die zwei Buttons tun / nicht tun: Betriebshandbuch §7.)
+
+### 1.4 Umami-API-Key rotieren (5 Min, empfohlen)
+
+Der aktuelle Key wurde einmal im Klartext in einem Chat geteilt. In Umami
+einen neuen Key erzeugen → in Vercel (`UMAMI_API_KEY`) und im
+GitHub-Secret (1.3) aktualisieren, alten Key löschen.
+
+### 1.5 Betrieb absichern (einmalig, je 5 Min)
+
+- [ ] **Google Search Console:** Domain verifizieren + Sitemap
+      `https://www.fomo-dresden.app/sitemap.xml` einreichen.
+- [ ] **Uptime-Monitor** (z. B. UptimeRobot, kostenlos) auf
+      www.fomo-dresden.app → mailt bei Ausfall.
+
+### 1.6 Datenpflege-Kampagne (laufend) — der eigentliche Qualitäts-Hebel
+
+- **Mehr Registrierungen:** 41 von 93 verifiziert. Jede weitere verbessert
+  das Matching mehr als jede Code-Änderung — wichtigster Hebel vor der
+  Erstiwoche.
+- **Kategorien:** 62 von 93 Gruppen stehen in „Sonstiges" — jede Zuordnung
+  füllt eine SEO-Kategorieseite und macht den Browse-Filter nützlich.
+- **Logos:** nur ~11 vorhanden; Mitgliederzahlen: 27; „Nächstes Event": 0.
+  Beim Registrierungs-Kontakt gleich mit abfragen.
+- Nach der Erstiwoche: Gruppen fragen, ob FOMO-Zulauf ankam (ausgehende
+  Links tragen `utm_source=fomo-dresden`, Mails den Betreff
+  „Anfrage über FOMO" — die Gruppen können es selbst erkennen).
 
 ---
 
-## §2 Studie 2 — Mitglieder-Validierung (`/pilot`)
+## §2 Entwicklung (Code) — Backlog static-site
 
-- [x] DB-Modelle: `Study2Session` + `Study2Answer`
-- [x] API: `POST /api/study2/submit` + `GET /api/study2/groups`
-- [x] UI: `/pilot` Intro-Screen + `/pilot/quiz` Flow (Filter → 21 Items → Demografie → Feedback → Submit)
-- [x] Admin: `/admin/study2` read-only + CSV/JSON-Export
-- [x] `APP_MODE` → `APP_LIVE` Bool vereinfacht
-- [x] Homepage: 3 CTAs (Studie 2 / Prototyp / Gruppen-Registrierung)
-- [ ] **Deployment auf Vercel** (Studie 2 live schalten)
-- [ ] **Recruitment:** ≥60 Mitglieder-Sessions (3 pro Gruppe × 20 priorisierte Gruppen)
-- [ ] Manual-AC testen (siehe archiv/Studie2-Integration.md §8) + 7 Commits aus §10 anlegen
-
----
-
-## §3 V2-Integration — Gruppen-Self-Rating + Prototype-Update
-
-Plan: `CLAUDE-pläne/V2-Integration.md`
-
-- [x] DB-Migration: `GroupSelfRating` + `GroupSelfRatingAnswer` Modelle
-- [x] `GroupSelfRatingQuiz.tsx` — ersetzt `AttributeChecklist.tsx` im Phase-2-Flow
-- [x] `/api/groups/register-attributes` — erweitert um WS2-Self-Rating + `raterCount`
-- [ ] `/quiz` Prototype — V2-Matching gegen `GroupSelfRating` (Fallback auf alte Attribute)
-- [ ] Homepage: 4. CTA-Block „Alle Gruppen anzeigen" (Browse-Pfad)
-- [ ] Deployment + Pilot-Test mit 3 Gruppen (Elbflorace, IOG, YETI)
+- [ ] **Bias-Simulation an echtes Filterverhalten anpassen:** Die Sim in
+      `static-site/scripts/report.mjs` rechnet mit 50 % filterlosen Profilen;
+      real starten ~96 % MIT Filtern (Live-Report 12.07.). Filterwahl der Sim
+      an die beobachtete Verteilung koppeln → Bias-Abschnitt wird realistischer.
+- [ ] **Neue Report-Abschnitte beobachten:** „Geklickt vs. gerankt"
+      (Quiz-Score) und „Selbsterkennung" erscheinen erst, wenn `pick`- bzw.
+      `self-recognition`-Events eingehen (Tracking live seit 12.07. vormittags).
+      Nach ein paar Tagen prüfen, ob die Zahlen plausibel sind.
+- [ ] **Working-Set v3** (nach der Erstiwoche, wenn n groß genug): Die
+      Item-Diagnose im `/report/` markiert aktuell 4 Streichkandidaten
+      (einseitige Items, u. a. „Hands-on" 77 % Zustimmung, „Einsteiger" 73 %).
+      Bei n=26 noch nicht entscheidungsreif — mit Erstiwochen-Daten neu bewerten.
+- [ ] **Gamification-Backlog** (siehe CLAUDE.md): Ergebnis-Reveal,
+      Persönlichkeits-Profil, Badges, Share-Cards, Leaderboard — erst nach
+      der Erstiwoche, wenn Daten da sind.
 
 ---
 
-## §4 Group Registration — Deployment
+## §3 Dynamische Root-App (internes Tool)
 
-- [x] Token-Einladungen: Email optional (Link ohne Email generierbar)
-- [x] Selbst-Registrierung: 6-Schritt-Formular mit Verantwortliche-Person-Bestätigung
-- [x] `GroupContact`-Modell + Admin-Kontaktliste mit CSV-Export
-- [x] Admin-Backup: JSON-Snapshot aller Tabellen per Button im Dashboard
-- [x] i18n DE/EN — next-intl, `[locale]/` Routen, LanguageSwitcher, alle Pages + Komponenten übersetzt
-- [x] DB-Migration: `textEn`/`hintEn` auf `QuizThesis`, `labelEn`/`descriptionEn` auf `PilotDimension`
-- [x] Quiz-Query: `getActiveQuizTheses(locale)` — liefert EN-Text wenn verfügbar, sonst DE-Fallback
-- [x] Admin-Formulare: EN-Felder für Thesen und Dimensionen editierbar
-- [ ] **Deployment auf Vercel** — Migration auf Prod-DB anwenden, dann deployen
-- [ ] EN-Übersetzungen für Quiz-Thesen im Admin eintragen
-- [ ] Prod-Deployment: Working Set V2 auf Prod importieren
-- [ ] Gruppen-Invite-Links generieren + mailen (→ Phase-2-Flow mit neuem Self-Rating)
-- [ ] Ziel: ≥42 Gruppen mit `GroupSelfRating` (Mindest-Schwelle für verlässliches Matching)
-- [ ] Nach ≥42 Gruppen: `leadershipOpportunities` + `beginnerFriendly` aus Schema entfernen
+Die Root-App bleibt Datenerfassungs-Tool (Registrierung + Admin). Offen:
+
+- [ ] Gruppen-Invite-Links generieren + mailen → Ziel: möglichst viele
+      `GroupSelfRating`-Registrierungen vor der Erstiwoche (siehe §1.6).
+- [ ] Duplikate deaktivieren (siehe §1.1) — passiert in dieser App.
+- [ ] Optional: EN-Übersetzungen für Quiz-Thesen im Admin nachtragen.
 
 ---
 
-## §5 Studie-2-Auswertung (nach Datensammlung)
+## Erledigt / Verworfen (Kurzchronik)
 
-- [ ] Item-Diskriminierung: Δ(Mitglied vs. Nicht-Mitglied) pro Item
-- [ ] Inter-Item-Korrelationen (Drop-Schwelle |r| > 0.7)
-- [ ] Top-K-Recall: Wird Gruppe X von Mitgliedern in Top-5 / Top-10 gefunden? (Ziel: ≥60% / ≥80%)
-- [ ] Filter-Coverage: Wählen Mitglieder den Filter ihrer Gruppe? (Ziel: ≥70%)
-- [ ] Drop-Off pro Item-Position (→ Limit für Live-Quiz-Länge)
-- [ ] `data/working-set-v3.json` — getrimmtes Live-Set (~15–16 Items nach Auswertung)
-
----
-
-## §6 Architektur-Hygiene
-
-- [x] Disclaimer-Banner auf `/quiz`
-- [x] `APP_MODE` → `APP_LIVE` Bool
-- [x] Admin: `/admin/study2` read-only View
-- [x] i18n-Struktur `[locale]/` (DE/EN) vollständig umgesetzt
-- [ ] Umami-Account anlegen + `NEXT_PUBLIC_UMAMI_WEBSITE_ID` in Vercel setzen
-- [ ] CLAUDE.md Phasen-Beschreibung aktualisieren (Phase 2 = Self-Rating, nicht Attribut-Checkliste)
-
----
-
-## §7 Deployment-Checkliste für V2-Launch
-
-In dieser Reihenfolge:
-
-1. `V2-Integration.md` durch Sonnet umsetzen lassen (§3 komplett)
-2. `npm run build` grün
-3. Manual-ACs aus V2-Integration.md §7 testen
-4. DB-Migration auf Prod: `npx prisma migrate deploy`
-5. `APP_LIVE=false` (default) + alle anderen Env-Vars auf Vercel prüfen
-6. Deploy auf Vercel (`git push main`)
-7. Invite-Links für 3 Test-Gruppen generieren → neuen GroupSelfRatingQuiz testen
-8. Studie-2-Recruitment starten
+- ✅ **Juli 2026:** Statische Seite live (www.fomo-dresden.app); Merge
+  `static_alternative` (EN-Routen, Redesign); SEO komplett (Sitemap, hreflang,
+  JSON-LD, Kategorieseiten); Impressum/Datenschutz auf Victor Kling;
+  Umami-Instrumentierung inkl. voller Antwortvektoren + `pick`-Payloads
+  (Nutzer-Entscheidung, dokumentiert in DATEN-SAMMELN-KONZEPT.md);
+  Report-Generator + `/report/` + GitHub-Actions; Audits (Launch, Runtime,
+  Bias) mit Fixes (verified-only Matching, faire Gleichstand-Anzeige, Suche
+  auf /groups, „Antworten ändern", Sprachumschalter überall); Google-Sheets-
+  Anbindung revertiert; Datenexport 41 verifizierte Gruppen.
+- ✅ **Mai–Juni 2026:** Working Set v2 (21 Items + 8 Filter); V2-Integration
+  (GroupSelfRating in der Root-App); Algorithmus-Fixes (Pläne im Archiv:
+  `CLAUDE-pläne/archiv/`).
+- ❌ **Studie 2** (Mitglieder-Validierung über `/pilot`): verworfen wegen zu
+  wenig Rücklauf. Ersatz: anonyme Live-Daten + passiver Selbsterkennungs-Test
+  auf der Ergebnisseite (`self-recognition`-Event).
+- ✅ **Phase 1** (Pilot-Umfrage, Mai 2026): Classic-Variante gewinnt,
+  Working Set v1.1 → abgelöst durch v2.
 
 ---
 
-## Archiviert (erledigt, nicht mehr aktiv)
+## Wo welche Doku liegt (Spickzettel)
 
-- ~~APP_MODE Pilot/Collect/Live~~ → vereinfacht zu APP_LIVE Bool
-- ~~Working Set v1.1~~ → abgelöst durch v2
-- ~~Attribut-Checkliste (AttributeChecklist.tsx)~~ → wird durch GroupSelfRatingQuiz abgelöst
-- ~~Pilot-1-Varianten-System~~ → abgeschlossen
+| Thema | Datei |
+|---|---|
+| Projektkontext, Architektur-Regeln, Design | `CLAUDE.md` (Root) |
+| Statische Seite: Build, Daten-Pipeline, SEO, Analytics | `static-site/README.md` |
+| Betrieb ohne Programmierkenntnisse (Übergabe) | `static-site/docs/BETRIEBSHANDBUCH.md` |
+| Welche Daten wir sammeln + warum (Umami) | `static-site/docs/DATEN-SAMMELN-KONZEPT.md` |
+| Mit einer KI am Code arbeiten (für Externe) | `static-site/docs/KI-MITARBEIT.md` |
+| Self-Hosting auf Uni-Server (Alternative zu Vercel) | `static-site/docs/INBETRIEBNAHME.md` |
+| Scraper-Pipeline (Daten-Refresh ohne Prod-DB) | `static-site/docs/SCRAPING-KONZEPT.md` |
+| Historische Pläne (abgeschlossen) | `CLAUDE-pläne/archiv/` |

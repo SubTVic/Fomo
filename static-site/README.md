@@ -74,6 +74,7 @@ The live site deploys via Vercel instead: every push to `main` that touches
 `static-site/` rebuilds and publishes automatically.
 Which usage data we collect (anonymous, Umami) is in
 [`docs/DATEN-SAMMELN-KONZEPT.md`](docs/DATEN-SAMMELN-KONZEPT.md).
+Open tasks (admin + code) live in the root [`TODO.md`](../TODO.md).
 
 ## SEO
 

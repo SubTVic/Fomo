@@ -39,7 +39,7 @@ export function computeQuizMatches(
 /**
  * Count how many theses map to each attribute.
  * Used to normalize effective weight so multi-item attributes don't dominate.
- * See CLAUDE-pläne/FOMO-Algorithmus-Fixes-Plan.md Track A1.
+ * See CLAUDE-pläne/archiv/FOMO-Algorithmus-Fixes-Plan.md Track A1.
  */
 export function computeItemCountsPerAttribute(theses: QuizThesisData[]): Record<string, number> {
   const counts: Record<string, number> = {};

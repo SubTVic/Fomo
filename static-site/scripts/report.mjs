@@ -33,6 +33,17 @@ const SIM_N = parseInt(getArg("--sim", "20000"), 10);
 const OFFLINE = args.includes("--offline");
 
 const quiz = JSON.parse(readFileSync(join(ROOT, "data/quiz.json"), "utf8"));
+// Algorithm/data change log (data/report-milestones.json) — the newest entry
+// drives the "seit der letzten Änderung" view of the result distribution.
+const MILESTONES = (() => {
+  try {
+    return (
+      JSON.parse(readFileSync(join(ROOT, "data/report-milestones.json"), "utf8")).milestones ?? []
+    );
+  } catch {
+    return [];
+  }
+})();
 const groupsAll = JSON.parse(readFileSync(join(ROOT, "data/groups.json"), "utf8")).groups;
 // Matching runs against verified groups only — mirror src/lib/data.ts.
 const groups = groupsAll.filter((g) => g.selfRating.derived !== true);
@@ -149,20 +160,24 @@ async function apiLogin() {
   return false;
 }
 
-async function api(path, params = {}) {
-  const qs = new URLSearchParams({ startAt: String(startAt), endAt: String(endAt), ...params });
+async function api(path, params = {}, window = null) {
+  const qs = new URLSearchParams({
+    startAt: String(window?.startAt ?? startAt),
+    endAt: String(window?.endAt ?? endAt),
+    ...params,
+  });
   const r = await fetch(`${apiBase}/websites/${WEBSITE}${path}?${qs}`, { headers: authHeader });
   if (!r.ok) throw new Error(`GET ${path} → HTTP ${r.status}: ${(await r.text()).slice(0, 200)}`);
   return r.json();
 }
-/** value→count map for one event property. */
-async function values(eventName, propertyName) {
-  let rows = await api("/event-data/values", { eventName, propertyName });
+/** value→count map for one event property (optional custom time window). */
+async function values(eventName, propertyName, window = null) {
+  let rows = await api("/event-data/values", { eventName, propertyName }, window);
   // Param name differs between Umami versions/deployments — retry with
   // `event` when `eventName` yields nothing.
   if (!Array.isArray(rows) || rows.length === 0) {
     try {
-      rows = await api("/event-data/values", { event: eventName, propertyName });
+      rows = await api("/event-data/values", { event: eventName, propertyName }, window);
     } catch {
       rows = [];
     }
@@ -218,6 +233,30 @@ async function fetchAll() {
   data.picks = new Map();
   for (const ev of ["group-click", "group-detail-open"]) {
     for (const [k, n] of await values(ev, "pick")) data.picks.set(k, (data.picks.get(k) ?? 0) + n);
+  }
+  // Extra time windows for the result distribution: last 14 days + since the
+  // newest milestone — algorithm/data changes become observable without
+  // waiting out the full report window.
+  const lastMilestone = MILESTONES.map((m) => ({ ...m, ts: Date.parse(m.date) }))
+    .filter((m) => Number.isFinite(m.ts) && m.ts <= endAt)
+    .sort((a, b) => b.ts - a.ts)[0];
+  const winDefs = [{ label: "Letzte 14 Tage", win: { startAt: endAt - 14 * 86400_000, endAt } }];
+  if (lastMilestone) {
+    winDefs.push({
+      label: `Seit der letzten Änderung (${lastMilestone.date}: ${lastMilestone.label})`,
+      win: { startAt: lastMilestone.ts, endAt },
+    });
+  }
+  data.windows = [];
+  for (const w of winDefs) {
+    try {
+      const groupsW = await values("quiz-result-group", "group", w.win);
+      const metricsW = await api("/metrics", { type: "event", limit: "500" }, w.win);
+      const completionsW = Number(metricsW.find((m) => m.x === "quiz-complete")?.y ?? 0);
+      data.windows.push({ label: w.label, groups: groupsW, completions: completionsW });
+    } catch {
+      // window views are additive — never block the report
+    }
   }
   return data;
 }
@@ -600,10 +639,29 @@ function buildHtml(data, sim) {
       }))
       .sort((a, b) => b.value - a.value)
       .slice(0, 25);
+    const windowBlocks = (data.windows ?? [])
+      .map((w) => {
+        if (!w.groups?.size || !w.completions) {
+          return `<h3>${esc(w.label)}</h3><p class="sub">Noch keine abgeschlossenen Quizze in diesem Zeitraum.</p>`;
+        }
+        const wRows = [...w.groups.entries()]
+          .map(([slug, n]) => ({
+            label: groupName.get(slug) ?? slug,
+            value: n,
+            extra: `in ${pct(Math.min(1, n / w.completions))} der Quizze`,
+          }))
+          .sort((a, b) => b.value - a.value)
+          .slice(0, 15);
+        return `<h3>${esc(w.label)}</h3>
+          <p class="sub">${w.completions} Abschlüsse in diesem Zeitraum.</p>
+          ${hbarChart(wRows)}${table(["Gruppe", "Top-5-Auftritte", "Anteil"], wRows.map((r) => [r.label, r.value, r.extra]))}`;
+      })
+      .join("");
     sections.push(
       `<section><h2>Top-Gruppen in den Ergebnissen</h2>
        <p class="sub">Wie oft eine Gruppe in den Top 5 eines abgeschlossenen Quiz auftauchte (${completions} Abschlüsse im Zeitraum).</p>
-       ${hbarChart(rows)}${table(["Gruppe", "Top-5-Auftritte", "Anteil"], rows.map((r) => [r.label, r.value, r.extra]))}</section>`,
+       ${hbarChart(rows)}${table(["Gruppe", "Top-5-Auftritte", "Anteil"], rows.map((r) => [r.label, r.value, r.extra]))}
+       ${windowBlocks}</section>`,
     );
   }
 

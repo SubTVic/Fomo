@@ -1,0 +1,9 @@
+{
+  "_comment": "Änderungen an Matching-Algorithmus oder Gruppendaten hier eintragen (Datum aufsteigend, Format YYYY-MM-DD). Der /report/ zeigt für den jüngsten Eintrag automatisch eine 'Seit dieser Änderung'-Ansicht der Top-Gruppen.",
+  "milestones": [
+    {
+      "date": "2026-07-19",
+      "label": "Faire Gleichstands-Sortierung im Matching"
+    }
+  ]
+}

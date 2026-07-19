@@ -137,6 +137,13 @@ Secrets and variables → Actions → zwei Secrets: `UMAMI_API_KEY` und
 `UMAMI_WEBSITE_ID` (dieselben Werte wie in Vercel). Für den Redeploy-Knopf
 zusätzlich das Secret `VERCEL_DEPLOY_HOOK_URL` (siehe oben).
 
+**Nach größeren Änderungen** (neue Quiz-Fragen, Matching-Änderung, großes
+Daten-Update): einen Eintrag mit Datum und Kurzbeschreibung in
+`static-site/data/report-milestones.json` ergänzen (GitHub-Webeditor reicht).
+Der Bericht zeigt dann bei den Top-Gruppen automatisch eine
+„Seit der letzten Änderung"-Ansicht — zusätzlich zur festen
+„Letzte 14 Tage"-Ansicht.
+
 Für Fortgeschrittene gibt es den Bericht auch lokal: `npm run report` im
 Ordner `static-site/` (Details in der README, Abschnitt „Report generator").
 

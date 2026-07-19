@@ -47,6 +47,14 @@ Live-Daten verschärfen das: **~96 % der Quiz-Durchläufe starten MIT Filtern**
 (25 von 26) — der Vorteil wirkt also praktisch immer. Lösung: eine Angabe
 pro Gruppe, keine Programmierung.
 
+**Warum das der wichtigste Hebel gegen „immer dieselben Gruppen oben" ist:**
+Beliebte Filter treffen nur wenige verifizierte Gruppen (Outdoor: 3, Musik: 4,
+Sport: 4 explizit) — der Rest des Pools sind die 9 filterlosen. Bei einem
+12-Gruppen-Pool ist 25 % Top-3-Rate schon der faire Erwartungswert; echte
+Vielfalt entsteht erst durch größere Pools (mehr Registrierungen + diese 9
+Filterangaben). Der Code-Anteil des Problems (deterministischer Tie-Breaker)
+ist seit Juli behoben (faire Gleichstands-Rotation pro Nutzer, s. u.).
+
 Die 8 Filter (Mehrfachauswahl): Hands-on/Werkstatt · Kunst
 (Theater/Film/Design/Foto) · Wettbewerbe · Musik · Outdoor/Natur ·
 Tech/Digital · Hochschulpolitik · Sport.
@@ -125,6 +133,12 @@ GitHub-Secret (1.3) aktualisieren, alten Key löschen.
 
 ## §2 Entwicklung (Code) — Backlog static-site
 
+- [x] **Faire Gleichstands-Sortierung** (Juli 2026): Sortierung nach
+      ungerundetem Score; bei echtem Gleichstand gewinnen explizite
+      Filter-Treffer vor filterlosen Durchrutschern; Rest-Gleichstände
+      rotieren per Nutzer-Hash (deterministisch pro ?r=-Link, aber über die
+      Nutzerschaft gestreut) statt immer raterCount→Alphabet. Simulation:
+      Leo-Club −9pp, Betonbootteam −4pp Top-3-Rate.
 - [ ] **Bias-Simulation an echtes Filterverhalten anpassen:** Die Sim in
       `static-site/scripts/report.mjs` rechnet mit 50 % filterlosen Profilen;
       real starten ~96 % MIT Filtern (Live-Report 12.07.). Filterwahl der Sim

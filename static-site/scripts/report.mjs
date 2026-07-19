@@ -45,27 +45,50 @@ const filterLabel = new Map(quiz.filters.options.map((o) => [o.attribute, o.labe
 // ---------------------------------------------------------------------------
 function scoreGroup(userAnswers, userFilters, group) {
   const groupFilters = group.selfRating.filterSelections ?? [];
-  if (userFilters.length > 0 && groupFilters.length > 0) {
-    if (!userFilters.some((f) => groupFilters.includes(f))) return 0;
+  const explicitFilterMatch =
+    userFilters.length > 0 &&
+    groupFilters.length > 0 &&
+    userFilters.some((f) => groupFilters.includes(f));
+  if (userFilters.length > 0 && groupFilters.length > 0 && !explicitFilterMatch) {
+    return { score: 0, raw: 0, explicitFilterMatch: false };
   }
   const map = {};
   for (const a of group.selfRating.answers) map[a.itemId] = a.value;
   const active = Object.entries(userAnswers).filter(([, v]) => v !== 0);
-  if (active.length === 0) return 50;
+  if (active.length === 0) return { score: 50, raw: 0.5, explicitFilterMatch };
   const totalDist = active.reduce((s, [id, u]) => s + Math.abs(u - (map[id] ?? 0)), 0);
-  return Math.round((1 - totalDist / (active.length * 2)) * 100);
+  const raw = 1 - totalDist / (active.length * 2);
+  return { score: Math.round(raw * 100), raw, explicitFilterMatch };
 }
-/** Full positive-score ranking, same order as the site. */
+function fnv1a(str) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return h >>> 0;
+}
+/** Full positive-score ranking, same order as the site (fair tie-breaking:
+ *  raw fit → explicit filter match → per-user hash → name). */
 function rankAll(userAnswers, userFilters) {
+  const userKey =
+    Object.entries(userAnswers)
+      .map(([id, v]) => id + v)
+      .sort()
+      .join("") +
+    "|" +
+    [...userFilters].sort().join(",");
   return groups
-    .map((g) => ({ g, score: scoreGroup(userAnswers, userFilters, g) }))
-    .filter((m) => m.score > 0)
+    .map((g) => ({ g, d: scoreGroup(userAnswers, userFilters, g), h: fnv1a(`${g.slug}|${userKey}`) }))
+    .filter((m) => m.d.score > 0)
     .sort(
       (a, b) =>
-        b.score - a.score ||
-        (b.g.selfRating.raterCount ?? 0) - (a.g.selfRating.raterCount ?? 0) ||
+        b.d.raw - a.d.raw ||
+        Number(b.d.explicitFilterMatch) - Number(a.d.explicitFilterMatch) ||
+        a.h - b.h ||
         a.g.name.localeCompare(b.g.name, "de"),
-    );
+    )
+    .map(({ g, d }) => ({ g, score: d.score }));
 }
 
 function topFive(userAnswers, userFilters) {
@@ -689,7 +712,7 @@ function buildHtml(data, sim) {
       if (!ranked.length) continue;
       const idx = ranked.findIndex((m) => m.g.slug === slug);
       const clickedScore =
-        idx >= 0 ? ranked[idx].score : scoreGroup(decoded.answers, [], clickedGroup);
+        idx >= 0 ? ranked[idx].score : scoreGroup(decoded.answers, [], clickedGroup).score;
       if (idx === 0) rank1 += n;
       if (idx > 2 || idx < 0) beyond3 += n;
       gapSum += (ranked[0].score - clickedScore) * n;

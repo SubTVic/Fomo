@@ -28,44 +28,99 @@ export function scoreGroup(
   userFilters: string[],
   group: Group,
 ): number {
+  return scoreGroupDetailed(userAnswers, userFilters, group).score;
+}
+
+interface DetailedScore {
+  /** Rounded 0–100 score for display and events. */
+  score: number;
+  /** Unrounded fit ratio — the sort key (avoids rounding-made ties). */
+  raw: number;
+  /** True when the group EXPLICITLY shares a selected filter (not merely
+   *  passing because it never provided filter data). */
+  explicitFilterMatch: boolean;
+}
+
+function scoreGroupDetailed(
+  userAnswers: UserAnswers,
+  userFilters: string[],
+  group: Group,
+): DetailedScore {
   const groupFilters = group.selfRating.filterSelections ?? [];
-  if (userFilters.length > 0 && groupFilters.length > 0) {
-    const overlap = userFilters.some((f) => groupFilters.includes(f));
-    if (!overlap) return 0;
+  const explicitFilterMatch =
+    userFilters.length > 0 &&
+    groupFilters.length > 0 &&
+    userFilters.some((f) => groupFilters.includes(f));
+  if (userFilters.length > 0 && groupFilters.length > 0 && !explicitFilterMatch) {
+    return { score: 0, raw: 0, explicitFilterMatch: false };
   }
 
   const groupMap = answersToMap(group.selfRating.answers);
 
   const active = Object.entries(userAnswers).filter(([, v]) => v !== 0);
-  if (active.length === 0) return 50;
+  if (active.length === 0) return { score: 50, raw: 0.5, explicitFilterMatch };
 
   const totalDist = active.reduce((sum, [itemId, u]) => {
     const g = groupMap[itemId] ?? 0;
     return sum + Math.abs(u - g); // per-item max distance = 2
   }, 0);
 
-  const maxDist = active.length * 2;
-  return Math.round((1 - totalDist / maxDist) * 100);
+  const raw = 1 - totalDist / (active.length * 2);
+  return { score: Math.round(raw * 100), raw, explicitFilterMatch };
 }
 
-/** Score every group and return them sorted best-first. */
+/**
+ * Score every group and return them sorted best-first.
+ *
+ * Sort design (fairness — see the bias section of the /report/):
+ *  1. Unrounded fit first: two groups only tie when their distance to the
+ *     user is IDENTICAL, not merely rounded to the same percent.
+ *  2. At a genuine tie, groups that explicitly share a selected filter beat
+ *     groups that only pass because they never provided filter data (those
+ *     survive every filter and would otherwise be structurally over-shown).
+ *  3. Remaining ties break by a hash of (group, user answers): deterministic
+ *     for the same answers — a shared ?r= link always renders the same order —
+ *     but different across users, so tie exposure is spread over the
+ *     population instead of always favoring the same groups (the previous
+ *     raterCount/alphabet tie-breaker gave a fixed set of groups a permanent
+ *     top-3 seat).
+ */
 export function computeMatches(
   userAnswers: UserAnswers,
   userFilters: string[],
   groups: Group[],
 ): MatchResult[] {
+  const userKey =
+    Object.entries(userAnswers)
+      .map(([id, v]) => id + v)
+      .sort()
+      .join("") +
+    "|" +
+    [...userFilters].sort().join(",");
   return groups
-    .map((group) => ({ group, score: scoreGroup(userAnswers, userFilters, group) }))
+    .map((group) => ({
+      group,
+      detail: scoreGroupDetailed(userAnswers, userFilters, group),
+      tieHash: fnv1a(`${group.slug}|${userKey}`),
+    }))
     .sort(
       (a, b) =>
-        // Primary: best score first. Tie-breakers are only for a *stable,
-        // reproducible* order — equally-scored groups genuinely fit equally
-        // well (the UI marks them "punktgleich"). Prefer the more confident
-        // self-rating (higher raterCount), then alphabetical for determinism.
-        b.score - a.score ||
-        (b.group.selfRating.raterCount ?? 0) - (a.group.selfRating.raterCount ?? 0) ||
+        b.detail.raw - a.detail.raw ||
+        Number(b.detail.explicitFilterMatch) - Number(a.detail.explicitFilterMatch) ||
+        a.tieHash - b.tieHash ||
         a.group.name.localeCompare(b.group.name, "de"),
-    );
+    )
+    .map(({ group, detail }) => ({ group, score: detail.score }));
+}
+
+/** FNV-1a string hash — tiny, deterministic, good spread for tie-breaking. */
+function fnv1a(str: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return h >>> 0;
 }
 
 /**

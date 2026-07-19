@@ -86,7 +86,8 @@ E-Mail: fomo@yeti-dresden.org`}
             Frage für Frage durchlaufen und abgeschlossen wurde, welche Gruppen dabei als
             Ergebnis vorgeschlagen wurden, welche Gruppen-Links angeklickt
             werden (aus dem Browsen, den Ergebnissen oder von Profilseiten), Bedienelemente wie die
-            Vergleichs-Ansicht, Sprachumschaltung oder das optionale 👍/👎-Feedback, die freiwillige
+            Vergleichs-Ansicht, Sprachumschaltung, der Klick auf „Gruppe registrieren" oder das
+            optionale 👍/👎-Feedback, die freiwillige
             Angabe, ob du bereits Mitglied einer Hochschulgruppe bist (und welcher), und – zur
             Verbesserung des Frage- und Matching-Konzepts – die{" "}
             <strong className="text-navy">gegebenen Quiz-Antworten (die 21 Fragen und die gewählten

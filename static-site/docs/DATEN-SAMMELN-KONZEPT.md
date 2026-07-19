@@ -41,6 +41,7 @@ brauchen.
 | `group-detail-open` | Klick auf „Profil öffnen" | Gruppen-Slug, `context`, `rank`, `pick` (s. o.) |
 | `groups-category-filter` | Kategorie-Chip beim Browsen | Kategorie-Name |
 | `groups-show-unverified` | Toggle „Auch unbestätigte…" | neuer Zustand |
+| `register-click` | Klick auf „Gruppe registrieren" (Link zur Registrierungs-App) | `context` (browse/footer/unverified-notice) |
 | `lang-switch` | DE/EN-Umschalter | Zielsprache |
 
 **Hinweis zur Abweichung vom Konzept unten:** Der ursprüngliche Plan (siehe

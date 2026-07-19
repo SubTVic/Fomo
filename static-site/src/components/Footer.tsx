@@ -4,6 +4,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CATEGORY_SEO } from "@/lib/categories";
+import { REGISTER_URL } from "@/lib/site";
+import { track, EVENTS } from "@/lib/analytics";
 
 export function Footer() {
   const pathname = usePathname();
@@ -24,6 +26,15 @@ export function Footer() {
           <Link href={`${prefix}/groups`} className="hover:text-navy">
             {isEnglish ? "Groups" : "Gruppen"}
           </Link>
+          <a
+            href={REGISTER_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track(EVENTS.registerClick, { context: "footer" })}
+            className="hover:text-navy"
+          >
+            {isEnglish ? "Register your group" : "Gruppe registrieren"}
+          </a>
           <Link href="/impressum" className="hover:text-navy">
             {isEnglish ? "Imprint" : "Impressum"}
           </Link>

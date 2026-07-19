@@ -8,6 +8,7 @@ import { categoryColorOf, isUnverified } from "@/lib/data";
 import { groupCategory, groupLongText, groupShortText } from "@/lib/group-copy";
 import { track, EVENTS } from "@/lib/analytics";
 import { withUtm } from "@/lib/utm";
+import { REGISTER_URL } from "@/lib/site";
 import { UnverifiedNotice } from "./UnverifiedNotice";
 
 interface GroupBrowserProps {
@@ -128,6 +129,26 @@ export function GroupBrowser({ groups, categories, lang = "de" }: GroupBrowserPr
             : "Keine Gruppe gefunden — probier einen anderen Suchbegriff oder eine andere Kategorie."}
         </p>
       )}
+
+      <div className="mt-12 border-4 border-navy bg-card p-6 text-center">
+        <p className="font-heading text-lg uppercase text-navy">
+          {lang === "en" ? "Your group is missing?" : "Deine Gruppe fehlt?"}
+        </p>
+        <p className="mx-auto mt-2 max-w-[520px] text-body">
+          {lang === "en"
+            ? "Register your group in a few minutes — verified groups appear in the quiz results and can be found by new students."
+            : "Registriert eure Gruppe in wenigen Minuten — bestätigte Gruppen erscheinen in den Quiz-Ergebnissen und werden von Erstis gefunden."}
+        </p>
+        <a
+          href={REGISTER_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => track(EVENTS.registerClick, { context: "browse" })}
+          className="mt-4 inline-block border-2 border-navy bg-navy px-6 py-3 font-heading text-sm uppercase text-sky transition-colors hover:bg-navy-hover"
+        >
+          {lang === "en" ? "Register your group" : "Gruppe registrieren"}
+        </a>
+      </div>
     </div>
   );
 }

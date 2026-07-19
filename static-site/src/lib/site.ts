@@ -18,6 +18,11 @@ const raw =
 
 export const SITE_URL = raw.replace(/\/$/, "");
 
+// Group self-registration lives in the dynamic app (separate Vercel project,
+// deploys the repo root from `main`). Overridable per environment.
+export const REGISTER_URL =
+  process.env.NEXT_PUBLIC_REGISTER_URL?.trim() || "https://fomo-pi.vercel.app/groups/register";
+
 // Optional subpath (mirrors next.config.ts), e.g. when hosted under /fomo.
 const rawBase = process.env.NEXT_PUBLIC_BASE_PATH?.trim();
 export const BASE_PATH = rawBase && rawBase !== "/" ? rawBase.replace(/\/$/, "") : "";

@@ -53,5 +53,7 @@ export const EVENTS = {
   selfRecognition: "self-recognition",
   groupsCategoryFilter: "groups-category-filter",
   groupsShowUnverified: "groups-show-unverified",
+  // Click on "register your group" (outbound to the dynamic registration app).
+  registerClick: "register-click",
   langSwitch: "lang-switch",
 } as const;

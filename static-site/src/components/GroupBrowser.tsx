@@ -19,7 +19,7 @@ interface GroupBrowserProps {
 
 export function GroupBrowser({ groups, categories, lang = "de" }: GroupBrowserProps) {
   const [active, setActive] = useState("");
-  const [showUnverified, setShowUnverified] = useState(false);
+  const [showUnverified, setShowUnverified] = useState(true);
   const [query, setQuery] = useState("");
 
   const verifiedCount = useMemo(() => groups.filter((g) => !isUnverified(g)).length, [groups]);

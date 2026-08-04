@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 export const groupTranslations: Record<string, string> = {
+  "isc-international-student-club":
+    "The International Social Club (ISC) is a community-driven event organisation that brings together international and local people through social, cultural and professional events. We organise weekly meetups such as language exchanges, hikes, game nights and cultural evenings, as well as larger themed events, workshops and networking activities. Our goal is to help people build friendships, experience new cultures and feel at home in their city. We work with local venues, student organisations and businesses to create welcoming, affordable and high-quality events for everyone.",
+
   "404-university-esports-dresden":
     "404 University Esports Dresden is the registered student group of 404 Multigaming e.V. at TU Dresden. Since 2019, it has connected students through gaming together and competing in the University Esports League, for example in League of Legends and Rocket League. The group organizes LAN tournaments, online competitions and community events on campus.",
 

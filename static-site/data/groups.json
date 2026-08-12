@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "source": "backup: fomo-backup-2026-07-31-10-02-50.json",
-    "generatedAt": "2026-07-31T10:03:36.043Z",
-    "groupCount": 95,
-    "verifiedCount": 45,
-    "derivedCount": 50,
+    "source": "backup: fomo-backup-2026-08-12-10-14-27.json",
+    "generatedAt": "2026-08-12T10:15:26.770Z",
+    "groupCount": 94,
+    "verifiedCount": 48,
+    "derivedCount": 46,
     "note": "All active groups. Verified have real selfRatings; unverified use naive-derived ratings flagged derived:true (excluded from quiz matching)."
   },
   "groups": [
@@ -278,48 +278,48 @@
     },
     {
       "id": "cmmwg2ymh0005ib04y5n2v68u",
-      "name": "AIAS Dresden e.V.",
+      "name": "AIAS Dresden e. V.",
       "slug": "aias-dresden-e-v",
-      "shortDescription": "AIAS Dresden e.V. ist eine studentische Initiative an der TU Dresden, die seit 2015 in Zusammenarbeit mit der DKMS Registrierungsaktionen für potenzielle Stammzellspender durchführt, um Blutkrebspatie",
-      "longDescription": "AIAS Dresden e.V. ist eine studentische Initiative an der TU Dresden, die seit 2015 in Zusammenarbeit mit der DKMS Registrierungsaktionen für potenzielle Stammzellspender durchführt, um Blutkrebspatienten zu helfen. Die Gruppe setzt sich ehrenamtlich dafür ein, möglichst viele Studierende als Stammzellspender zu gewinnen und hat bisher über 7.300 Registrierungen erzielt.",
+      "shortDescription": "AIAS informiert über Blutkrebs und organisiert Registrierungsaktionen für Stammzellspendende auf dem Campus. Unterstütze unser Team und bringe dich je nach Interesse in Events, IT oder Marketing ein.",
+      "longDescription": "Wie wird man in nur 10 Minuten Lebensretter:in?\nIndem man sich als potenzielle:r Stammzellspender:in registriert!\nNoch immer finden viele Blutkrebspatient:innen keine passende Stammzellspende. Das\nmöchten wir ändern. Deshalb engagieren wir von AIAS uns gemeinsam mit der DKMS im Kampf gegen Blutkrebs: Wir organisieren Registrierungsaktionen und informieren über Blutkrebs sowie die Stammzellspende. Dafür sind wir regelmäßig auf dem Campus unterwegs – zum Beispiel mit Registrierungsaktionen in der Bibliothek, der Mensa oder auf Hochschulveranstaltungen wie dem Campus Festival. So machen wir die Registrierung für möglichst viele Studierende einfach und unkompliziert. Mit Erfolg: bereits über 8.000 Menschen haben sich bei unseren Aktionen als potenzielle Stammzellspender:innen registriert. Mehr als 100 von ihnen konnten bereits tatsächlich Stammzellen spenden und so Blutkrebspatient:innen eine neue Lebenschance schenken. Doch unser Einsatz bleibt wichtig: weltweit erhält alle 27 Sekunden, in Deutschland alle 12 Minuten, ein Mensch die Diagnose Blutkrebs. Deshalb freuen wir uns jederzeit über neue engagierte Mitglieder! Bei AIAS kannst du dich ganz nach deinen Interessen einbringen – zum Beispiel in den Bereichen Events, Social Media, Marketing, Fotografie, IT oder Personal. Unterstütze unser Team im Kampf gegen Blutkrebs!",
       "categoryName": "Sonstiges",
       "categoryColor": "",
       "categoryIcon": "",
-      "websiteUrl": "https://aiasdresden.de/",
-      "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
+      "websiteUrl": "https://aias.de/dresden",
+      "instagramUrl": "aiasdresden",
+      "contactEmail": "dresden@aias-germany.de",
+      "memberCount": 11,
       "language": "german",
       "eventFrequency": "low",
       "groupSize": "medium",
-      "motto": null,
-      "foundedYear": null,
+      "motto": "Gemeinsam gegen Blutkrebs",
+      "foundedYear": 2015,
       "logoUrl": null,
       "attributes": {
         "career": false,
         "tech": false,
-        "socialImpact": true,
+        "socialImpact": false,
         "party": false,
         "religion": false,
         "sports": false,
         "networking": false,
         "arts": false,
         "music": false,
-        "timeLow": true,
-        "handsOn": true,
+        "timeLow": false,
+        "handsOn": false,
         "outdoor": false,
         "international": false,
-        "beginnerFriendly": true,
+        "beginnerFriendly": false,
         "competitive": false,
         "financialCost": false,
-        "leadershipOpportunities": true
+        "leadershipOpportunities": false
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
+        "raterCount": 1,
+        "derived": false,
         "filterSelections": [
-          "handsOn"
+          "party"
         ],
         "answers": [
           {
@@ -328,15 +328,15 @@
           },
           {
             "itemId": "WS2-02",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-03",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-04",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-05",
@@ -344,15 +344,15 @@
           },
           {
             "itemId": "WS2-06",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-07",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-08",
-            "value": 0
+            "value": 1
           },
           {
             "itemId": "WS2-09",
@@ -376,7 +376,7 @@
           },
           {
             "itemId": "WS2-14",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-15",
@@ -384,7 +384,7 @@
           },
           {
             "itemId": "WS2-16",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-17",
@@ -392,7 +392,7 @@
           },
           {
             "itemId": "WS2-18",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-19",
@@ -400,11 +400,11 @@
           },
           {
             "itemId": "WS2-20",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-21",
-            "value": 0
+            "value": 1
           }
         ]
       }
@@ -3358,14 +3358,14 @@
       "categoryColor": "",
       "categoryIcon": "",
       "websiteUrl": "https://www.instagram.com/sds.dresden/",
-      "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
+      "instagramUrl": "https://www.instagram.com/sds.dresden/",
+      "contactEmail": "sds@dielinke-dresden.de",
+      "memberCount": 50,
       "language": "german",
       "eventFrequency": "high",
       "groupSize": "small",
       "motto": null,
-      "foundedYear": null,
+      "foundedYear": 2022,
       "logoUrl": null,
       "attributes": {
         "career": false,
@@ -3388,10 +3388,52 @@
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
-        "filterSelections": [],
+        "raterCount": 3,
+        "derived": false,
+        "filterSelections": [
+          "party"
+        ],
         "answers": [
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          },
           {
             "itemId": "WS2-01",
             "value": 1
@@ -3402,11 +3444,11 @@
           },
           {
             "itemId": "WS2-03",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-04",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-05",
@@ -3418,11 +3460,11 @@
           },
           {
             "itemId": "WS2-07",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-08",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-09",
@@ -3430,51 +3472,11 @@
           },
           {
             "itemId": "WS2-10",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-11",
             "value": -1
-          },
-          {
-            "itemId": "WS2-12",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-13",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-14",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-15",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-16",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-17",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-18",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-19",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-20",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-21",
-            "value": 0
           }
         ]
       }
@@ -4284,11 +4286,11 @@
       "name": "Evangelische Studierendengemeinde (ESG) Dresden",
       "slug": "evangelische-studierendengemeinde-dresden-esg",
       "shortDescription": "Wir als ESG Dresden sind eine offene und tolerante christliche Gemeinschaft junger Erwachsener in Studium und Ausbildung. Wir stellen Fragen und infrage, diskutieren, feiern und glauben gemeinsam.",
-      "longDescription": "Als Evangelische Studierendengemeinde (ESG) Dresden lieben und leben wir ein diverses Verständnis unseres Glaubens und Lebens. Du kannst dich mit deinen Interessen und Meinungen einbringen und wirst gehört. Gemeinsam stellen wir Fragen und infrage, nehmen mit offenem Herzen auf und lernen mit christlichen Werten zu leben.\n\nBesonders wichtig ist uns der dienstägliche Gemeindeabend 19 Uhr, zu dem wir Vorträge aus diversen Bereichen von Politik, Wissenschaft, Technik und Kirche hören und diskutieren. Daneben gibt es ein buntes Programm von gemeinsamen Mahlzeiten, Morgenandachten, gemeinsamen Freizeiten und unterschiedlichen Kleingruppen mit ähnlichen Interessen wie z.B. einem Kreativkleinkreis oder Posaunenchor.",
+      "longDescription": "Als Evangelische Studierendengemeinde (ESG) Dresden lieben und leben wir ein diverses Verständnis unseres Glaubens und Lebens. Du kannst dich mit deinen Interessen und Meinungen einbringen und wirst gehört. Gemeinsam stellen wir Fragen und infrage, nehmen mit offenem Herzen auf und lernen, mit christlichen Werten zu leben.\n\nBesonders wichtig ist uns der dienstägliche Gemeindeabend um 19 Uhr, zu dem wir Vorträge aus diversen Bereichen von Politik, Wissenschaft, Technik und Kirche hören und diskutieren. Daneben gibt es ein buntes Programm von gemeinsamen Mahlzeiten, Morgenandachten, gemeinsamen Freizeiten und unterschiedlichen Kleingruppen mit ähnlichen Interessen wie z.B. einem Kreativkleinkreis oder Posaunenchor. ",
       "categoryName": "Sonstiges",
       "categoryColor": "",
       "categoryIcon": "",
-      "websiteUrl": "https://www.esg-dresden.de",
+      "websiteUrl": "https:/www.esg-dresden.de",
       "instagramUrl": "https://www.instagram.com/esg_dresden/",
       "contactEmail": "oeffentlichkeit@esg-dresden.de",
       "memberCount": 26,
@@ -4301,18 +4303,18 @@
       "attributes": {
         "career": false,
         "tech": false,
-        "socialImpact": false,
-        "party": false,
-        "religion": false,
+        "socialImpact": true,
+        "party": true,
+        "religion": true,
         "sports": false,
-        "networking": false,
+        "networking": true,
         "arts": false,
         "music": false,
-        "timeLow": false,
+        "timeLow": true,
         "handsOn": false,
         "outdoor": false,
         "international": false,
-        "beginnerFriendly": false,
+        "beginnerFriendly": true,
         "competitive": false,
         "financialCost": false,
         "leadershipOpportunities": false
@@ -6011,8 +6013,8 @@
       "id": "cms4nqzo70001jx040z1os4lf",
       "name": "ISC - International Social Club",
       "slug": "isc-international-student-club",
-      "shortDescription": "Der International Social Club (ISC) ist eine gemeinschaftsgetragene Eventorganisation, die internationale und lokale Menschen durch soziale, kulturelle und berufliche Veranstaltungen zusammenbringt.",
-      "longDescription": "Der International Social Club (ISC) ist eine gemeinschaftsgetragene Eventorganisation, die internationale und lokale Menschen durch soziale, kulturelle und berufliche Veranstaltungen zusammenbringt. Wir organisieren wöchentliche Treffen wie Sprachaustausch, Wanderungen, Spieleabende und Kulturabende sowie größere Themenveranstaltungen, Workshops und Networking-Aktivitäten. Unser Ziel ist es, Menschen dabei zu helfen, Freundschaften zu schließen, neue Kulturen zu erleben und sich in ihrer Stadt zu Hause zu fühlen. Wir arbeiten mit lokalen Veranstaltungsorten, Studentenorganisationen und Unternehmen zusammen, um einladende, erschwingliche und hochwertige Events für alle zu schaffen.",
+      "shortDescription": "ISC is hosting socializing events for young adults of all nationalities. ",
+      "longDescription": "International Social Club (ISC) is a community-driven event organisation that brings together international and local people through social, cultural and professional events. We organise weekly meetups such as language exchanges, hikes, game nights and cultural evenings, as well as larger themed events, workshops and networking activities. Our goal is to help people build friendships, experience new cultures and feel at home in their city. We work with local venues, student organisations and businesses to create welcoming, affordable and high-quality events for everyone.",
       "categoryName": "Internationales",
       "categoryColor": "#FFD166",
       "categoryIcon": "globe",
@@ -9331,22 +9333,22 @@
     },
     {
       "id": "cmmwg39g4003jib043dqvs097",
-      "name": "Rock Your Life! Dresden e.V.",
+      "name": "Rock Your Life! Dresden e. V.",
       "slug": "rock-your-life-dresden-e-v",
-      "shortDescription": "Rock Your Life! Dresden e.V. ist eine studentische Hochschulgruppe an der TU Dresden, die sich für Bildungsgerechtigkeit einsetzt und Jugendliche aus benachteiligten Familien (14–18 Jahre) im Rahmen e",
-      "longDescription": "Rock Your Life! Dresden e.V. ist eine studentische Hochschulgruppe an der TU Dresden, die sich für Bildungsgerechtigkeit einsetzt und Jugendliche aus benachteiligten Familien (14–18 Jahre) im Rahmen eines kostenlosen 1-zu-1-Mentoring-Programms (R!EACH) mit Studierenden als Mentor*innen zusammenbringt. Ziel ist es, jungen Menschen bei schulischen Herausforderungen, der Berufsorientierung und der Entfaltung ihres individuellen Potenzials zu helfen.",
+      "shortDescription": "ROCK YOUR LIFE! Dresden e.V. unterstützt Jugendliche aus benachteiligten Familien mit einem 1-zu-1-Mentoring durch Studierende und stärkt sie bei Schule, Alltag und Berufswahl.",
+      "longDescription": "Das Rock Your Life Mentoring Programm ist eine wegweisende Initiative, die einen nachhaltigen Beitrag zum gesellschaftlichen Zusammenhalt leistet, indem es gezielt auf soziale Mobilität, unabhängig von der Herkunft, setzt und gleichzeitig den Zusammenhalt und die Solidarität in der Gesellschaft stärkt. Ein zentrales Merkmal des Rock Your Life Mentoring Programms ist seine Ausrichtung auf soziale Mobilität. Indem es jungen Menschen aus unterschiedlichen sozialen Hintergründen die Möglichkeit bietet, sich persönlich weiterzuentwickeln und ihre Fähigkeiten zu entfalten, trägt es dazu bei, soziale Barrieren zu überwinden. Unabhängig von ihrer Herkunft erhalten die Mentees Zugang zu Ressourcen, Unterstützung und Netzwerken, die ihnen helfen, ihre Lebenssituation zu verbessern und ihre Zukunftsaussichten zu erweitern. Dieser inklusive Ansatz ermöglicht es jungen Menschen aus verschiedenen kulturellen, sozialen und ethnischen Hintergründen, gemeinsam an ihren Zielen zu arbeiten und voneinander zu lernen. Indem das Programm Brücken zwischen verschiedenen gesellschaftlichen Gruppen baut, fördert es das Verständnis, die Toleranz und den Respekt füreinander. Darüber hinaus trägt das Rock Your Life Mentoring Programm dazu bei, den Zusammenhalt und die Solidarität in der Gesellschaft zu stärken. Durch die enge Verbindung zwischen Mentor:innen und Mentees entsteht eine unterstützende, ermutigende und inspirierende Gemeinschaft. Diese Form der sozialen Unterstützung wirkt sich positiv auf das Selbstwertgefühl, Selbstvertrauen und die Lebenszufriedenheit aus und schafft ein Gefühl der Verbundenheit und Zugehörigkeit. Ein weiterer wichtiger Aspekt des Rock Your Life Mentoring Programms ist die Entfaltung von Potenzialen. Indem es Mentees aber auch Mentor:innen hilft, ihre individuellen Stärken und Interessen zu entdecken und zu entwickeln, legt es eine solide Basis für eine zukunftsfähige Gesellschaft. Durch die Förderung von Selbstbewusstsein, Selbstvertrauen und Selbstbestimmung ermutigt das Programm die jungen Menschen dazu, ihre Träume zu verfolgen, ihre Ziele zu erreichen und einen positiven Beitrag zur Gesellschaft zu leisten.",
       "categoryName": "Sonstiges",
       "categoryColor": "",
       "categoryIcon": "",
       "websiteUrl": "https://dresden.rockyourlife.de/",
-      "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
+      "instagramUrl": "https://www.instagram.com/rockyourlife_dresden?igsh=OWVnbHpsdWVhNmkz",
+      "contactEmail": "dresden@rockyourlife.de",
+      "memberCount": 1,
       "language": "german",
       "eventFrequency": "medium",
       "groupSize": "medium",
-      "motto": null,
-      "foundedYear": null,
+      "motto": "Chancen geben. Zukunft gestalten.",
+      "foundedYear": 2008,
       "logoUrl": null,
       "attributes": {
         "career": true,
@@ -9361,37 +9363,35 @@
         "timeLow": false,
         "handsOn": false,
         "outdoor": false,
-        "international": false,
+        "international": true,
         "beginnerFriendly": true,
         "competitive": false,
         "financialCost": false,
-        "leadershipOpportunities": true
+        "leadershipOpportunities": false
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
-        "filterSelections": [],
+        "raterCount": 1,
+        "derived": false,
+        "filterSelections": [
+          "party"
+        ],
         "answers": [
           {
-            "itemId": "WS2-01",
-            "value": 1
-          },
-          {
             "itemId": "WS2-02",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-03",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-04",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-05",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-06",
@@ -9399,19 +9399,19 @@
           },
           {
             "itemId": "WS2-07",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-08",
-            "value": 0
+            "value": 1
           },
           {
             "itemId": "WS2-09",
-            "value": 0
+            "value": 1
           },
           {
             "itemId": "WS2-10",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-11",
@@ -9427,11 +9427,11 @@
           },
           {
             "itemId": "WS2-14",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-15",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-16",
@@ -9451,10 +9451,14 @@
           },
           {
             "itemId": "WS2-20",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-21",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-01",
             "value": 0
           }
         ]
@@ -11715,141 +11719,6 @@
           {
             "itemId": "WS2-17",
             "value": 0
-          },
-          {
-            "itemId": "WS2-18",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-19",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-20",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-21",
-            "value": 0
-          }
-        ]
-      }
-    },
-    {
-      "id": "cmmwg3bve004fib04iwsehvpn",
-      "name": "TU Dresden Robotik AG (TURAG)",
-      "slug": "tu-dresden-robotik-ag-turag",
-      "shortDescription": "Die TURAG ist eine studentische Robotikarbeitsgruppe an der TU Dresden, die autonome Roboter entwirft und konstruiert, um praktische Ingenieurs­erfahrung zu sammeln. Jährlich nehmen sie am internation",
-      "longDescription": "Die TURAG ist eine studentische Robotikarbeitsgruppe an der TU Dresden, die autonome Roboter entwirft und konstruiert, um praktische Ingenieurs­erfahrung zu sammeln. Jährlich nehmen sie am internationalen Eurobot-Wettbewerb teil und präsentieren ihre Projekte auf verschiedenen Veranstaltungen.",
-      "categoryName": "Sonstiges",
-      "categoryColor": "",
-      "categoryIcon": "",
-      "websiteUrl": "https://turag.de",
-      "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
-      "language": "german",
-      "eventFrequency": "high",
-      "groupSize": "medium",
-      "motto": null,
-      "foundedYear": null,
-      "logoUrl": null,
-      "attributes": {
-        "career": true,
-        "tech": true,
-        "socialImpact": false,
-        "party": false,
-        "religion": false,
-        "sports": false,
-        "networking": true,
-        "arts": false,
-        "music": false,
-        "timeLow": false,
-        "handsOn": true,
-        "outdoor": false,
-        "international": true,
-        "beginnerFriendly": true,
-        "competitive": true,
-        "financialCost": false,
-        "leadershipOpportunities": true
-      },
-      "nextEvent": null,
-      "selfRating": {
-        "raterCount": 0,
-        "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "competitive",
-          "tech"
-        ],
-        "answers": [
-          {
-            "itemId": "WS2-01",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-02",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-03",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-04",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-05",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-06",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-07",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-08",
-            "value": 0
-          },
-          {
-            "itemId": "WS2-09",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-10",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-11",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-12",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-13",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-14",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-15",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-16",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-17",
-            "value": 1
           },
           {
             "itemId": "WS2-18",

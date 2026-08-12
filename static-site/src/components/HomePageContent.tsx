@@ -8,8 +8,8 @@ const copy = {
   de: {
     eyebrow: "TU DRESDEN",
     title: "Finde deine Hochschulgruppe",
-    intro:
-      "Über 92 Gruppen, eine Frage: Wo passt du rein? Beantworte 21 kurze Fragen und FOMO zeigt dir deine besten Matches — Sport, Tech, Kunst, Engagement und mehr.",
+    intro: (groupCount: number) =>
+      `${groupCount} Gruppen, eine Frage: Wo passt du rein? Beantworte 21 kurze Fragen und FOMO zeigt dir deine besten Matches — Sport, Tech, Kunst, Engagement und mehr.`,
     quiz: "Mach den Test",
     groups: "Alle Hochschulgruppen",
     contactTitle: "Fragen oder Anmerkungen?",
@@ -18,16 +18,16 @@ const copy = {
   en: {
     eyebrow: "TU DRESDEN",
     title: "Find your student group",
-    intro:
-      "Over 92 groups, one question: where do you fit in? Answer 21 short questions and FOMO shows your best matches — sports, tech, arts, volunteering and more.",
+    intro: (groupCount: number) =>
+      `${groupCount} groups, one question: where do you fit in? Answer 21 short questions and FOMO shows your best matches — sports, tech, arts, volunteering and more.`,
     quiz: "Take the test",
     groups: "All student groups",
     contactTitle: "Questions or feedback?",
     contactText: "Please contact us directly.",
   },
-} satisfies Record<Lang, Record<string, string>>;
+} satisfies Record<Lang, { eyebrow: string; title: string; intro: (groupCount: number) => string; quiz: string; groups: string; contactTitle: string; contactText: string }>;
 
-export function HomePageContent({ lang }: { lang: Lang }) {
+export function HomePageContent({ lang, groupCount }: { lang: Lang; groupCount: number }) {
   const t = copy[lang];
   const prefix = lang === "en" ? "/en" : "";
 
@@ -39,7 +39,7 @@ export function HomePageContent({ lang }: { lang: Lang }) {
           {t.title}
         </h1>
         <p className="mt-5 max-w-prose text-base leading-relaxed text-body sm:text-lg">
-          {t.intro}
+          {t.intro(groupCount)}
         </p>
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2">

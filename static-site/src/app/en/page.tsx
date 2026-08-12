@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { HomePageContent } from "@/components/HomePageContent";
 import { seoAlternates, absUrl } from "@/lib/site";
 import { FAQ_EN, faqPageLd } from "@/lib/faq";
+import { getGroups } from "@/lib/data";
 
 const EN_DESCRIPTION =
   "Take a short quiz and find which of 80+ student groups at TU Dresden fit you. Fully anonymous, the matching runs in your browser.";
@@ -26,13 +27,14 @@ export const metadata: Metadata = {
 };
 
 export default function EnglishHomePage() {
+  const groupCount = getGroups().length;
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageLd(FAQ_EN)) }}
       />
-      <HomePageContent lang="en" />
+      <HomePageContent lang="en" groupCount={groupCount} />
     </>
   );
 }

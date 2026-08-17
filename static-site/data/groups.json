@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "source": "backup: fomo-backup-2026-08-12-10-14-27.json",
-    "generatedAt": "2026-08-12T10:15:26.770Z",
-    "groupCount": 94,
-    "verifiedCount": 48,
-    "derivedCount": 46,
+    "source": "backup: fomo-backup-2026-08-17-13-13-59.json",
+    "generatedAt": "2026-08-17T13:14:50.691Z",
+    "groupCount": 95,
+    "verifiedCount": 51,
+    "derivedCount": 44,
     "note": "All active groups. Verified have real selfRatings; unverified use naive-derived ratings flagged derived:true (excluded from quiz matching)."
   },
   "groups": [
@@ -4287,7 +4287,7 @@
       "slug": "evangelische-studierendengemeinde-dresden-esg",
       "shortDescription": "Wir als ESG Dresden sind eine offene und tolerante christliche Gemeinschaft junger Erwachsener in Studium und Ausbildung. Wir stellen Fragen und infrage, diskutieren, feiern und glauben gemeinsam.",
       "longDescription": "Als Evangelische Studierendengemeinde (ESG) Dresden lieben und leben wir ein diverses Verständnis unseres Glaubens und Lebens. Du kannst dich mit deinen Interessen und Meinungen einbringen und wirst gehört. Gemeinsam stellen wir Fragen und infrage, nehmen mit offenem Herzen auf und lernen, mit christlichen Werten zu leben.\n\nBesonders wichtig ist uns der dienstägliche Gemeindeabend um 19 Uhr, zu dem wir Vorträge aus diversen Bereichen von Politik, Wissenschaft, Technik und Kirche hören und diskutieren. Daneben gibt es ein buntes Programm von gemeinsamen Mahlzeiten, Morgenandachten, gemeinsamen Freizeiten und unterschiedlichen Kleingruppen mit ähnlichen Interessen wie z.B. einem Kreativkleinkreis oder Posaunenchor. ",
-      "categoryName": "Sonstiges",
+      "categoryName": "Glaube & Spiritualität",
       "categoryColor": "",
       "categoryIcon": "",
       "websiteUrl": "https:/www.esg-dresden.de",
@@ -6145,22 +6145,22 @@
     },
     {
       "id": "cmmwg336j001vib0491djtkdv",
-      "name": "Islamischer Hochschulbund Dresden",
+      "name": "Islamischer Hochschulbund Dresden (IHD)",
       "slug": "islamischer-hochschulbund-dresden",
-      "shortDescription": "Der IHD ist eine von muslimischen Studierenden und Akademikern gegründete Hochschulgruppe an der TU Dresden, die die islamische Religion, interreligiösen Dialog, internationale Vernetzung und die sozi",
-      "longDescription": "Der IHD ist eine von muslimischen Studierenden und Akademikern gegründete Hochschulgruppe an der TU Dresden, die die islamische Religion, interreligiösen Dialog, internationale Vernetzung und die soziale Integration muslimischer Studierender fördert.",
-      "categoryName": "Sonstiges",
+      "shortDescription": "A welcoming Muslim student community fostering spiritual growth, meaningful dialogue, cultural exchange, volunteering, and purposeful social activities.",
+      "longDescription": "Islamischer Hochschulbund Dresden (IHD) is a welcoming and inclusive student community centered around Islam, bringing together students from diverse cultures, backgrounds, and fields of study. We provide a space to explore and deepen one’s understanding of Islam while building meaningful connections within the university community.\n\nOur activities include study circles, discussions, educational and academic events, sports, social gatherings, volunteering, and community initiatives. We value conversations that encourage reflection, learning, and mutual understanding, and we welcome opportunities for intercultural and interfaith dialogue.\n\nBeyond supporting Muslim students, we aim to contribute positively to university life and society by promoting social integration, mutual respect, responsible engagement, and awareness. Whether you are looking to learn more about Islam, meet like-minded people, contribute to community initiatives, or simply explore a new perspective, you are welcome to join us.",
+      "categoryName": "Glaube & Spiritualität",
       "categoryColor": "",
       "categoryIcon": "",
       "websiteUrl": "https://ih-dresden.de",
-      "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
+      "instagramUrl": "https://www.instagram.com/ihd.tu.dresden",
+      "contactEmail": "ihd.students@gmail.com",
+      "memberCount": 1,
       "language": "both",
       "eventFrequency": "low",
       "groupSize": "small",
-      "motto": null,
-      "foundedYear": null,
+      "motto": "Islam, Humanity & Development",
+      "foundedYear": 2017,
       "logoUrl": null,
       "attributes": {
         "career": false,
@@ -6179,21 +6179,24 @@
         "beginnerFriendly": true,
         "competitive": false,
         "financialCost": false,
-        "leadershipOpportunities": true
+        "leadershipOpportunities": false
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
-        "filterSelections": [],
+        "raterCount": 2,
+        "derived": false,
+        "filterSelections": [
+          "outdoor",
+          "party"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-02",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-03",
@@ -6205,7 +6208,7 @@
           },
           {
             "itemId": "WS2-05",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-06",
@@ -6213,27 +6216,27 @@
           },
           {
             "itemId": "WS2-07",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-08",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-09",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-10",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-11",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-12",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-13",
@@ -6241,7 +6244,7 @@
           },
           {
             "itemId": "WS2-14",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-15",
@@ -6249,23 +6252,23 @@
           },
           {
             "itemId": "WS2-16",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-17",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-18",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-19",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-20",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-21",
@@ -9069,20 +9072,20 @@
       "id": "cmmwg395k003fib047mhz9274",
       "name": "PAUL Consultants e.V.",
       "slug": "paul-consultants-e-v",
-      "shortDescription": "PAUL Consultants ist die studentische Unternehmensberatung der TU Dresden, gegründet 1996, mit Erfahrung aus über 450 Projekten. Studierende aller Fachrichtungen beraten gemeinsam Unternehmen verschie",
-      "longDescription": "PAUL Consultants ist die studentische Unternehmensberatung der TU Dresden, gegründet 1996, mit Erfahrung aus über 450 Projekten. Studierende aller Fachrichtungen beraten gemeinsam Unternehmen verschiedener Branchen und sammeln dabei praktische Erfahrung im Consulting.",
-      "categoryName": "Sonstiges",
+      "shortDescription": "Studentische Unternehmensberatung an der TU Dresden. Wir bearbeiten reale Projekte für echte Kunden – offen für alle Fachrichtungen. Komm vorbei und schau, ob es passt!",
+      "longDescription": "PAUL Consultants e.V. ist die studentische Unternehmensberatung an der TU Dresden. Mit der Erfahrung aus über 450 Projekten beraten wir Unternehmen und Organisationen und helfen ihnen, konkrete Fragen zu beantworten: Wie erschließt man neue Märkte? Wie lassen sich interne Abläufe verbessern? Was uns von Praktika oder Seminararbeiten unterscheidet: Bei uns trägst du von Anfang an echte Verantwortung, arbeitest in kleinen Projektteams und siehst, wie deine Arbeit direkt beim Kunden ankommt.\n\nWir freuen uns über Mitglieder aus allen Fachrichtungen – Wirtschaft, Ingenieurwesen, Psychologie, Informatik und alles dazwischen, denn gute Beratung braucht unterschiedliche Perspektiven. Neben den Projekten bieten wir Workshops, Schulungen und ein starkes Netzwerk aus aktiven Mitgliedern und Alumni. Wer sich einbringen will, findet bei uns einen Platz – ob in einem Beratungsprojekt, in der Vereinsorganisation oder bei der Akquise neuer Kunden. Interesse? Melde dich einfach bei uns!",
+      "categoryName": "Wirtschaft & Karriere",
       "categoryColor": "",
       "categoryIcon": "",
-      "websiteUrl": "https://paul-consultants.de",
-      "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
+      "websiteUrl": "https://paul-consultants.de/",
+      "instagramUrl": "https://www.instagram.com/paulconsultants/",
+      "contactEmail": "vorstand@paul-consultants.de",
+      "memberCount": 26,
       "language": "german",
       "eventFrequency": "high",
       "groupSize": "medium",
-      "motto": null,
-      "foundedYear": null,
+      "motto": "in Projekten Aus Unternehmen Lernen",
+      "foundedYear": 1996,
       "logoUrl": null,
       "attributes": {
         "career": true,
@@ -9105,11 +9108,9 @@
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
-        "filterSelections": [
-          "handsOn"
-        ],
+        "raterCount": 1,
+        "derived": false,
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -9117,7 +9118,7 @@
           },
           {
             "itemId": "WS2-02",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-03",
@@ -9125,7 +9126,7 @@
           },
           {
             "itemId": "WS2-04",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-05",
@@ -9133,11 +9134,11 @@
           },
           {
             "itemId": "WS2-06",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-07",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-08",
@@ -9153,27 +9154,27 @@
           },
           {
             "itemId": "WS2-11",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-12",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-13",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-14",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-15",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-16",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-17",
@@ -9181,15 +9182,15 @@
           },
           {
             "itemId": "WS2-18",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-19",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-20",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-21",
@@ -11866,6 +11867,139 @@
           {
             "itemId": "WS2-20",
             "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmsrjqk880001jw04mv1m6zf9",
+      "name": "TU-Umweltinitiative (tuuwi)",
+      "slug": "tu-umweltinitiative-tuuwi",
+      "shortDescription": "Wir sind eine Gruppe von Studierenden aller Fachrichtungen und Semester, die sich für Umweltschutz und Klimagerechtigkeit engagieren - auf dem Campus und darüber hinaus.",
+      "longDescription": "Kipppunkte, sozialökologische Krise und endloses Wachstum vs. planetare Grenzen – uns allen ist bewusst, dass ganzheitlich gedachter Klima- und Umweltschutz die Grundlage unserer Zukunft ist. Deshalb setzen wir uns seit 1989 an der TU Dresden für Nachhaltigkeit, gesellschaftliche Transformation und einen verantwortungsvollen Umgang mit Ressourcen ein.\nDafür stellen wir immer wieder verschiedene Projekte auf die Beine. Ob Nachhaltigkeitsfestival auf dem Campus, ein Umsonstladen für Studierende oder auch ein klimafreundlicheres Mensa-Angebot - in Arbeitsgruppen und wöchtentlichen Plena sammeln und entwickeln wir Ideen, wie wir Klimagerechtigkeit am Campus und darüber hinaus vorantreiben können.\nEin weiterer Schwerpunkt unseres Engagements liegt im Bereich der Umweltbildung: Unser Ziel ist es, die Studierendem im Laufe ihres Studiums für sozialökologische Themen zu sensibilisieren und ihnen klima- und umweltrelevantes Wissen zu vermitteln. Im Rahmen des studium generale bieten wir deshalb regelmäßige Umweltringvorlesungen zu verschiedensten Themen an.\n\nDein Interesse ist geweckt, du hast selbst eigene Ideen für Projekte oder du möchtest einfach mal vorbeischauen und neue Menschen kennenlernen? Dann komm gerne bei unserem Plenum vorbei - jeden Donnerstag um 18:30 Uhr!",
+      "categoryName": "Nachhaltigkeit",
+      "categoryColor": "#06D6A0",
+      "categoryIcon": "leaf",
+      "websiteUrl": "https://tuuwi.de",
+      "instagramUrl": "https://www.instagram.com/tuuwi_dresden",
+      "contactEmail": "info@tuuwi.de",
+      "memberCount": 11,
+      "language": "german",
+      "eventFrequency": null,
+      "groupSize": null,
+      "motto": null,
+      "foundedYear": 1989,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": true,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": true,
+        "arts": false,
+        "music": false,
+        "timeLow": true,
+        "handsOn": true,
+        "outdoor": true,
+        "international": false,
+        "beginnerFriendly": true,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": true
+      },
+      "nextEvent": null,
+      "selfRating": {
+        "raterCount": 3,
+        "derived": false,
+        "filterSelections": [
+          "party"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-15",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 1
           },
           {
             "itemId": "WS2-21",

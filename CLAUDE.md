@@ -160,7 +160,7 @@ Akzent #5a8a9a. Fallback-Farben der Kategorien: `static-site/data/categories.jso
   `src/lib/export/static-groups.ts` (Daten-Sync, `scripts/export-static-site-groups.ts`)
   und der Notfallweg `static-site/scripts/export-from-backup.mjs`.
 - `APP_MODE` und `APP_LIVE` gibt es nicht (mehr). Pilot, Studie 2, Demo und das alte Quiz
-  wurden in WP-5.2 entfernt; Tabellen dazu fallen mit WP-5.3 weg.
+  wurden in WP-5.2 entfernt, ihre Tabellen in WP-5.3 (Migration `drop_legacy_tables`).
 
 ## Wo was steht
 

@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import type { QuizMatchResult, QuizThesisData } from "@/lib/quiz/types";
 import { ResultCard } from "./ResultCard";

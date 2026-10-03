@@ -24,7 +24,7 @@ Kontext zum Projekt: `CLAUDE.md` (Root). Anleitungen je Aufgabe:
 | Dynamische Root-App (Registrierung/Admin) | 🔄 Internes Tool; Build, Admin-Schutz, Formular repariert (Plan Phase 1), Altlasten-Entfernung folgt (Phase 5) |
 | Qualitäts-Netz | ✅ CI auf jedem PR, Datenprüfung vor jedem Build, Tests, KI-Leitplanken (Plan Phase 2) |
 | Studie 2 (Mitglieder-Validierung) | ❌ Verworfen — ersetzt durch anonyme Live-Daten (Umami) |
-| Nächster Meilenstein | **Next.js-16-Upgrade bis 21.10.2026** (Support-Ende Next 15, Plan Phase 3) |
+| Nächster Meilenstein | Node 24 überall festnageln (Plan WP-3.3); beide Apps laufen auf Next.js 16 (WP-3.1/3.2) |
 
 ---
 
@@ -189,6 +189,15 @@ Die Root-App bleibt Datenerfassungs-Tool (Registrierung + Admin). Offen:
       `tests/study2-integration.spec.ts`, Pfade `/pilot`/`/quiz` in
       `tests/responsive.spec.ts`, `/api/pilot/submit` und `/api/admin/questions`
       in `tests/api-validation.spec.ts`) → aufräumen mit Umsetzungsplan WP-5.2.
+- [ ] **Lint-Warnungen seit Next 16 (WP-3.2):** `react-hooks/set-state-in-effect`
+      in `AttributeChecklist.tsx` und `GroupSelfRatingQuiz.tsx` (Vorbelegung aus
+      geladenen Daten → besser beim Laden statt im Effect setzen) und
+      `react-hooks/preserve-manual-memoization` in `DemoTour.tsx` (fällt mit der
+      Demo in Phase 5 weg). Danach beide Regeln in `eslint.config.mjs` wieder
+      auf `error`.
+- [ ] Startseite der Root-App (`src/app/[locale]/(public)/page.tsx`) ist auch unter
+      `/en` deutsch (fest eingebaute Texte) — klären, ob sie mit Phase 5 überhaupt
+      bleibt; sonst Texte nach `messages/*.json`.
 
 ---
 

@@ -21,6 +21,6 @@ sofort bei Sicherheitswarnungen (GitHub „Dependabot alerts", `npm audit`).
 
 ## Termine im Blick behalten
 
-- **Next.js 15: Support-Ende 21.10.2026** → statische Seite ist auf Next.js 16 (WP-3.1),
-  Root-App folgt (Umsetzungsplan WP-3.2).
+- **Next.js 16:** beide Apps seit Oktober 2026 (WP-3.1/3.2). Nächstes Major-Upgrade wieder
+  mit Codemod (`npx @next/codemod@latest upgrade`) und Browser-Stichprobe.
 - **Prisma 7** bringt Breaking Changes — eigenes Paket, nicht mit anderen Umbauten mischen.

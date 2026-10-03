@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { getActiveGroupCount } from "@/lib/queries/groups";
 import { getSiteConfig } from "@/lib/queries/site-config";

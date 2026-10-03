@@ -77,7 +77,7 @@ FOMO ran a **pilot study** to validate the question set and test 4 different UI 
 
 | Layer | Technology |
 | --- | --- |
-| Framework | [Next.js 15](https://nextjs.org/) (App Router, TypeScript) |
+| Framework | [Next.js 16](https://nextjs.org/) (App Router, TypeScript) |
 | Styling | [Tailwind CSS 4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) |
 | i18n | [next-intl](https://next-intl-docs.vercel.app/) (DE/EN, `localePrefix: "as-needed"`) |
 | Database | [PostgreSQL 16](https://www.postgresql.org/) via [Prisma ORM](https://www.prisma.io/) |

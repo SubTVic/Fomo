@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { STUDY2_ITEMS, STUDY2_FILTER } from "@/lib/study2/items";
 import type { Study2AnswerValue } from "@/lib/study2/items";
 

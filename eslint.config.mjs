@@ -1,16 +1,19 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+// SPDX-License-Identifier: AGPL-3.0-only
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...nextCoreWebVitals,
+  ...nextTypescript,
+  {
+    rules: {
+      // New React Compiler rules in eslint-plugin-react-hooks 7 (Next 16).
+      // Kept as warnings so the upgrade does not change behaviour; the
+      // flagged spots are listed in TODO.md (DemoTour goes away in Phase 5).
+      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/preserve-manual-memoization": "warn",
+    },
+  },
   {
     ignores: [
       "node_modules/**",
@@ -18,6 +21,8 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      // Separate project with its own config.
+      "static-site/**",
     ],
   },
 ];

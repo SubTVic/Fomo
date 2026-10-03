@@ -2,7 +2,7 @@
 "use client";
 
 import { useTranslations, useMessages } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { StepProps } from "./types";
 
 type TimelineEntry = {

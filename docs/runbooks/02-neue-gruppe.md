@@ -43,9 +43,9 @@ ist beabsichtigt. Ins Quiz kommt sie erst über Weg 1 oder 2.
 - **Keine Quiz-Antworten erfinden**, um eine Gruppe „schnell" ins Quiz zu bekommen —
   das verzerrt das Ranking aller Gruppen. Ohne echtes Self-Rating: Verzeichnis, ja;
   Quiz, nein.
-- **Nicht** über „CSV neu importieren" anlegen — das ist ein destruktiver Massen-Import
-  (überschreibt bestehende Gruppen).
+- Massen-Importe (CSV/Scraper) gibt es im Admin nicht mehr (WP-4.4) — sie haben
+  bestehende Gruppen überschrieben. Neue Gruppen immer einzeln anlegen.
 - Slug (URL-Name) nach dem Anlegen **nicht mehr ändern** — sonst brechen Logo-Zuordnung,
-  EN-Übersetzung und geteilte Links.
+  EN-Übersetzung und geteilte Links. Der Admin fragt vor dem Speichern nach.
 - Nach dem Anlegen prüfen, ob es die Gruppe nicht schon gibt (Duplikat) — die App warnt
   nur intern, blockt aber nicht.

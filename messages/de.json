@@ -217,6 +217,9 @@
       "shortDescRequired": "(Pflicht)",
       "shortDescPlaceholder": "Was macht eure Gruppe aus? Was bietet ihr neuen Mitgliedern?",
       "shortDescChars": "{count}/200 Zeichen",
+      "longDesc": "Ausführliche Beschreibung",
+      "longDescPlaceholder": "Was macht ihr genau, wann trefft ihr euch, wie steigt man ein?",
+      "longDescHint": "Erscheint auf eurer Profilseite. Leer lassen = keine ausführliche Beschreibung.",
       "contactEmail": "Kontakt-E-Mail",
       "website": "Website",
       "instagram": "Instagram",
@@ -237,6 +240,7 @@
       "validation": "Bitte prüft die rot markierten Angaben.",
       "categoryId": "Bitte wählt eine Kategorie aus.",
       "shortDescription": "Die Kurzbeschreibung muss 10–200 Zeichen lang sein.",
+      "longDescription": "Die ausführliche Beschreibung darf höchstens 3.000 Zeichen lang sein.",
       "contactEmail": "Bitte gebt eine gültige E-Mail-Adresse an.",
       "websiteUrl": "Bitte gebt eine gültige Web-Adresse an, z. B. eure-gruppe.de.",
       "instagramUrl": "Bitte gebt euren Instagram-Namen (z. B. @eure.gruppe) oder einen Instagram-Link an.",
@@ -245,8 +249,9 @@
     },
     "done": {
       "title": "Profil gespeichert!",
-      "text": "Danke! Euer Profil ist jetzt hinterlegt und wird vom FOMO-Team geprüft.",
-      "allGroupsButton": "Zur Gruppenübersicht"
+      "textLive": "Danke! Eure Änderungen sind gespeichert. Sie erscheinen auf www.fomo-dresden.app, sobald das FOMO-Team die Website das nächste Mal aktualisiert – meist innerhalb weniger Tage. Euren Link könnt ihr für spätere Änderungen wieder benutzen.",
+      "textReview": "Danke! Euer Profil ist gespeichert. Das FOMO-Team prüft es kurz; danach erscheint es auf www.fomo-dresden.app – meist innerhalb weniger Tage.",
+      "siteButton": "Zu fomo-dresden.app"
     }
   },
   "attributeChecklist": {

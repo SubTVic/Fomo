@@ -2,7 +2,7 @@
 
 # Runbook: Eine Gruppe ändert ihre Daten (Attribute, Beschreibung, Kontakt, Logo)
 
-**Stand: Oktober 2026** (nach Umsetzungsplan Phase 1–3, WP-4.1 und WP-4.2). Was sich mit Phase 4
+**Stand: Oktober 2026** (nach Umsetzungsplan Phase 1–3, WP-4.1, 4.2 und 4.4). Was sich mit Phase 4
 ändert, steht unter „Nach dem Umbau".
 
 ## Wichtig vorab (sonst geht die Änderung schief oder verloren)
@@ -10,8 +10,10 @@
 - Gruppendaten leben in der **Datenbank der Admin-App**, nicht in der Website-Datei.
   Eine Korrektur **direkt in `static-site/data/groups.json`** wird beim nächsten
   Daten-Sync **überschrieben**. → Immer über die Admin-App gehen.
-- **Quiz-Antworten (die 21 Fragen) und Aktivitäts-Filter kann die Gruppe nur selbst
-  über ihren Bearbeitungslink ändern** — es gibt dafür keine Admin-Maske.
+- **Quiz-Antworten (die 21 Fragen) und Aktivitäts-Filter** ändert am besten die Gruppe
+  selbst über ihren Bearbeitungslink. Für kleine Korrekturen (z. B. ein falsch gesetzter
+  Filter) können Admins sie auf der Gruppenseite unter **„Quiz-Profil"** bearbeiten —
+  das landet im Änderungsprotokoll. **Keine Antworten erfinden.**
 - **Verifizierte Gruppen bleiben verifiziert, wenn sie etwas korrigieren** (Entscheidung
   E1). Die Änderung geht beim nächsten Daten-Sync live. Admins sehen jede Änderung unter
   **„Änderungen"** (Vorher/Nachher) und können sie mit **„Rückgängig"** zurücknehmen.
@@ -24,7 +26,9 @@
 2. „Gruppen" → die Gruppe suchen → öffnen → Felder ändern → speichern.
 3. **Hinweis:** Auf der öffentlichen Detailseite erscheint im Fließtext nur die
    **lange** Beschreibung (`longDescription`). Eine neue **Kurz**beschreibung sieht man
-   dort nicht, nur in Suchergebnissen/Karten.
+   dort nicht, nur in Suchergebnissen/Karten. Beide Beschreibungen kann die Gruppe auch
+   selbst über ihren Link ändern („Nur Gruppeninfos ändern"); leere Felder werden dabei
+   gelöscht.
 4. Weiter mit „Daten live schalten" unten.
 
 ## Fall B: Quiz-Antworten oder Filter ändern (braucht Bearbeitungslink)

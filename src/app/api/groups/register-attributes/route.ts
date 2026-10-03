@@ -21,11 +21,13 @@ const SubmitSchema = z.object({
   // legacy (optional, beibehalten für Rückwärtskompatibilität)
   confirmedAttributes: z.record(z.enum(ATTRIBUTE_KEYS), z.union([z.literal(0), z.literal(1)])).optional(),
   shortDescription: z.string().min(10).max(200).optional(),
-  websiteUrl: z.preprocess(normalizeWebsiteUrl, z.string().max(500).refine(isHttpUrl).optional().or(z.literal(""))),
-  contactEmail: z.string().trim().email().optional().or(z.literal("")),
-  instagramUrl: z.preprocess(normalizeInstagramUrl, z.string().max(200).refine(isHttpUrl).optional().or(z.literal(""))),
-  memberCount: z.number().int().min(1).max(10000).optional(),
-  foundedYear: z.number().int().min(1900).max(new Date().getFullYear()).optional(),
+  // Optional fields: undefined = keep, null or "" = delete.
+  longDescription: z.string().trim().max(3000).nullable().optional(),
+  websiteUrl: z.preprocess(normalizeWebsiteUrl, z.string().max(500).refine(isHttpUrl).nullable().optional().or(z.literal(""))),
+  contactEmail: z.string().trim().email().nullable().optional().or(z.literal("")),
+  instagramUrl: z.preprocess(normalizeInstagramUrl, z.string().max(200).refine(isHttpUrl).nullable().optional().or(z.literal(""))),
+  memberCount: z.number().int().min(1).max(10000).nullable().optional(),
+  foundedYear: z.number().int().min(1900).max(new Date().getFullYear()).nullable().optional(),
   categoryId: z.string().cuid().optional(),
   // v2: WS2-Self-Rating
   ws2Answers: z.array(z.object({
@@ -52,7 +54,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { token, confirmedAttributes, shortDescription, websiteUrl, contactEmail, instagramUrl, memberCount, foundedYear, categoryId, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
+  const { token, confirmedAttributes, shortDescription, longDescription, websiteUrl, contactEmail, instagramUrl, memberCount, foundedYear, categoryId, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
+
+  // undefined = field not sent (keep), null or "" = delete, otherwise set.
+  const optional = <T,>(key: string, value: T | null | undefined | "") =>
+    value === undefined ? {} : { [key]: value === "" ? null : value };
 
   // Validate the token: reusable edit link, or legacy one-time invite.
   const link = await resolveEditLink(db, token);
@@ -146,11 +152,12 @@ export async function POST(req: NextRequest) {
         ...(wasVerified ? {} : { registrationStatus: RegistrationStatus.SUBMITTED, isVerified: false }),
         submittedAt: now,
         ...(shortDescription ? { shortDescription } : {}),
-        ...(websiteUrl ? { websiteUrl } : {}),
-        ...(contactEmail ? { contactEmail } : {}),
-        ...(instagramUrl ? { instagramUrl } : {}),
-        ...(memberCount !== undefined ? { memberCount } : {}),
-        ...(foundedYear !== undefined ? { foundedYear } : {}),
+        ...optional("longDescription", longDescription),
+        ...optional("websiteUrl", websiteUrl),
+        ...optional("contactEmail", contactEmail),
+        ...optional("instagramUrl", instagramUrl),
+        ...optional("memberCount", memberCount),
+        ...optional("foundedYear", foundedYear),
         ...(categoryId ? { categoryId } : {}),
       },
     });
@@ -186,7 +193,8 @@ export async function POST(req: NextRequest) {
     }
   });
 
-  return NextResponse.json({ success: true });
+  // live: the group stays verified, so the change needs no admin review.
+  return NextResponse.json({ success: true, live: wasVerified });
 }
 
 // GET: Validate token and return group data (for pre-filling the form)
@@ -208,6 +216,7 @@ export async function GET(req: NextRequest) {
       id: true,
       name: true,
       shortDescription: true,
+      longDescription: true,
       websiteUrl: true,
       contactEmail: true,
       instagramUrl: true,

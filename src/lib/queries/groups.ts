@@ -39,6 +39,7 @@ export async function getAllGroupsForAdmin() {
     include: {
       category: true,
       duplicateOf: { select: { id: true, name: true } },
+      selfRating: { select: { _count: { select: { answers: true } } } },
     },
     orderBy: [{ isActive: "desc" }, { name: "asc" }],
   });

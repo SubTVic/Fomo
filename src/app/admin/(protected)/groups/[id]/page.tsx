@@ -9,6 +9,7 @@ import { STUDY2_ITEMS, STUDY2_FILTER } from "@/lib/study2/items";
 import { GroupEditForm } from "./GroupEditForm";
 import { ToggleActiveButton } from "./ToggleActiveButton";
 import { MergeButton } from "./MergeButton";
+import { SelfRatingEditor } from "./SelfRatingEditor";
 import { requireAdminPage } from "@/lib/require-admin";
 
 interface AdminGroupDetailPageProps {
@@ -146,62 +147,32 @@ export default async function AdminGroupDetailPage({
         <GroupEditForm group={group} categories={categories} />
       </div>
 
-      {/* Self-Rating Panel */}
+      {/* Self-Rating: the group's 21 answers + activity filters (editable, logged) */}
       <div className="mt-6 border-2 border-foreground bg-card p-6">
-        <h2 className="font-heading text-lg uppercase mb-1">Self-Rating (WS2)</h2>
-        {group.selfRating ? (
-          <>
-            <p className="text-xs text-muted-foreground mb-4">
-              Eingereicht:{" "}
-              {new Date(group.selfRating.submittedAt).toLocaleString("de-DE")} ·{" "}
-              {group.selfRating.raterCount === 1
-                ? "1 Person"
-                : group.selfRating.raterCount === 2
-                ? "2 Personen"
-                : "3+ Personen"}
-            </p>
-
-            {/* Filter selections */}
-            <div className="mb-4">
-              <p className="text-sm font-medium mb-1">Aktivitäten (Filter)</p>
-              {(() => {
-                const sel = (group.selfRating.filterSelections as string[] | null) ?? [];
-                if (sel.length === 0) return <p className="text-xs text-muted-foreground">Keine Auswahl</p>;
-                const labels = sel.map(
-                  (attr) => STUDY2_FILTER.options.find((o) => o.attribute === attr)?.label ?? attr
-                );
-                return (
-                  <div className="flex flex-wrap gap-1.5">
-                    {labels.map((l) => (
-                      <span key={l} className="border border-foreground px-2 py-0.5 text-xs font-medium">{l}</span>
-                    ))}
-                  </div>
-                );
-              })()}
-            </div>
-
-            {/* Item answers */}
-            <div className="divide-y divide-foreground/10">
-              {STUDY2_ITEMS.map((item) => {
-                const answer = group.selfRating!.answers.find((a) => a.itemId === item.id);
-                const val = answer?.value ?? null;
-                const label =
-                  val === 1 ? "Stimme zu" : val === -1 ? "Stimme nicht zu" : val === 0 ? "Neutral" : "–";
-                const color =
-                  val === 1 ? "text-green-700" : val === -1 ? "text-red-600" : "text-muted-foreground";
-                return (
-                  <div key={item.id} className="flex items-center justify-between gap-4 py-2 text-sm">
-                    <span className="text-muted-foreground w-14 shrink-0 text-xs">{item.id}</span>
-                    <span className="flex-1">{item.text}</span>
-                    <span className={`shrink-0 text-xs font-medium ${color}`}>{label}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </>
-        ) : (
-          <p className="text-sm text-muted-foreground">Noch kein Self-Rating abgegeben.</p>
-        )}
+        <h2 className="font-heading text-lg uppercase mb-1">Quiz-Profil (21 Fragen + Filter)</h2>
+        <p className="text-xs text-muted-foreground mb-4">
+          {group.selfRating
+            ? `Zuletzt eingereicht: ${new Date(group.selfRating.submittedAt).toLocaleString("de-DE")}. `
+            : ""}
+          Änderungen hier landen im Änderungsprotokoll. Im Quiz ist die Gruppe nur, wenn sie
+          verifiziert ist.
+        </p>
+        <SelfRatingEditor
+          groupId={group.id}
+          items={STUDY2_ITEMS.map((i) => ({ id: i.id, text: i.text }))}
+          filters={STUDY2_FILTER.options.map((o) => ({ attribute: o.attribute, label: o.label }))}
+          initial={
+            group.selfRating
+              ? {
+                  raterCount: group.selfRating.raterCount,
+                  filterSelections: Array.isArray(group.selfRating.filterSelections)
+                    ? group.selfRating.filterSelections.filter((x): x is string => typeof x === "string")
+                    : [],
+                  answers: Object.fromEntries(group.selfRating.answers.map((a) => [a.itemId, a.value])),
+                }
+              : null
+          }
+        />
       </div>
     </div>
   );

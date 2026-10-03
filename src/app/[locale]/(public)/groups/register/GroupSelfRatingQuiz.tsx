@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { STUDY2_ITEMS, STUDY2_FILTER } from "@/lib/study2/items";
+import { PUBLIC_SITE_URL } from "@/lib/public-site";
 import type { Study2AnswerValue } from "@/lib/study2/items";
 
 type Step =
@@ -19,6 +20,7 @@ type Step =
 const INFO_FIELDS = [
   "categoryId",
   "shortDescription",
+  "longDescription",
   "contactEmail",
   "websiteUrl",
   "instagramUrl",
@@ -37,6 +39,7 @@ interface GroupData {
   id: string;
   name: string;
   shortDescription: string;
+  longDescription: string | null;
   websiteUrl: string | null;
   contactEmail: string | null;
   instagramUrl: string | null;
@@ -110,6 +113,7 @@ export function GroupSelfRatingQuiz() {
   const [filterSelections, setFilterSelections] = useState<string[]>([]);
   const [raterCount, setRaterCount] = useState<1 | 2 | 3>(1);
   const [description, setDescription] = useState("");
+  const [longDescription, setLongDescription] = useState("");
   const [website, setWebsite] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
@@ -117,6 +121,8 @@ export function GroupSelfRatingQuiz() {
   const [foundedYear, setFoundedYear] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
+  // True when the group stays verified, i.e. the change goes live without review.
+  const [liveWithoutReview, setLiveWithoutReview] = useState(false);
   // True when the answers were pre-filled from an earlier submission.
   const [hasPrefill, setHasPrefill] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -144,6 +150,7 @@ export function GroupSelfRatingQuiz() {
         const g = data.group as GroupData;
         setGroup(g);
         setDescription(g.shortDescription);
+        setLongDescription(g.longDescription ?? "");
         setWebsite(g.websiteUrl ?? "");
         setContactEmail(g.contactEmail ?? "");
         setInstagramUrl(g.instagramUrl ?? "");
@@ -222,16 +229,19 @@ export function GroupSelfRatingQuiz() {
           ws2FilterSelections: filterSelections,
           raterCount,
           shortDescription: description.trim(),
-          websiteUrl: website.trim() || undefined,
-          contactEmail: contactEmail.trim() || undefined,
-          instagramUrl: instagramUrl.trim() || undefined,
-          memberCount: memberCount ? parseInt(memberCount, 10) : undefined,
-          foundedYear: foundedYear ? parseInt(foundedYear, 10) : undefined,
+          // Empty optional fields are sent as null: the group may delete them.
+          longDescription: longDescription.trim() || null,
+          websiteUrl: website.trim() || null,
+          contactEmail: contactEmail.trim() || null,
+          instagramUrl: instagramUrl.trim() || null,
+          memberCount: memberCount ? parseInt(memberCount, 10) : null,
+          foundedYear: foundedYear ? parseInt(foundedYear, 10) : null,
           categoryId: categoryId || undefined,
         }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        setLiveWithoutReview(data.live === true);
         setSubmitStatus("done");
         return;
       }
@@ -304,14 +314,14 @@ export function GroupSelfRatingQuiz() {
         <div className="w-full max-w-[520px] border-4 border-foreground bg-card px-6 py-10 sm:px-8">
           <h1 className="font-heading text-xl uppercase mb-4">{t("done.title")}</h1>
           <p className="text-muted-foreground text-sm">
-            {t("done.text")}
+            {liveWithoutReview ? t("done.textLive") : t("done.textReview")}
           </p>
-          <Link
-            href="/groups"
+          <a
+            href={PUBLIC_SITE_URL}
             className="mt-6 inline-block bg-foreground px-6 py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
           >
-            {t("done.allGroupsButton")}
-          </Link>
+            {t("done.siteButton")}
+          </a>
         </div>
       </div>
     );
@@ -515,6 +525,22 @@ export function GroupSelfRatingQuiz() {
               <span className="text-xs text-muted-foreground">
                 {t("description.shortDescChars", { count: description.trim().length })}
               </span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium" htmlFor="long-description">
+                {t("description.longDesc")}
+              </label>
+              <textarea
+                id="long-description"
+                rows={6}
+                value={longDescription}
+                onChange={(e) => { setLongDescription(e.target.value); clearFieldError("longDescription"); }}
+                maxLength={3000}
+                placeholder={t("description.longDescPlaceholder")}
+                className={`${inputClass("longDescription")} resize-y`}
+              />
+              {fieldError("longDescription")}
+              <span className="text-xs text-muted-foreground">{t("description.longDescHint")}</span>
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">{t("description.contactEmail")}</label>

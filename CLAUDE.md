@@ -42,8 +42,9 @@ Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`. Automatisierung: Pla
 
 - **NIE `static-site/data/groups.json` von Hand editieren** (ein Hook blockiert das).
   Der nächste Export überschreibt es. Korrekturen gehören in die **DB** (Admin-App).
-- **NIE `npm run import:groups` oder „CSV neu importieren"/„Scraper-JSON"** im Admin
-  benutzen — überschreibt Verifizierung, Slugs, Texte und reaktiviert Duplikate.
+- **NIE `npm run import:groups`** benutzen — überschreibt Verifizierung, Slugs, Texte und
+  reaktiviert Duplikate. (Die Admin-Knöpfe „CSV neu importieren"/„Scraper-JSON" sind seit
+  WP-4.4 entfernt.)
 - **Nur verifizierte Gruppen mit echtem Self-Rating kommen ins Quiz**
   (`getMatchableGroups`). Korrekturen einer **verifizierten** Gruppe lassen die
   Verifizierung stehen (E1); jede Änderung landet im Protokoll `GroupChangeLog`

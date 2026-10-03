@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Merge a self-registered duplicate group (source=id) into an existing group (target).
-// Transfers selfRating + content fields, then deletes the source.
+// Transfers selfRating, content fields, category, contacts and edit links,
+// then deletes the source. Logged in the target's change log.
 // keepSourceData=true: source's content overwrites target (use when source has the better data).
 // keepSourceData=false (default): only fill in missing fields on target.
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requireAdminApi } from "@/lib/require-admin";
+import { recordChange, snapshotGroup } from "@/lib/change-log";
 
 const MergeSchema = z.object({
   targetGroupId: z.string().min(1),
@@ -53,9 +56,10 @@ export async function POST(
   if (!target) return NextResponse.json({ error: "Target-Gruppe nicht gefunden" }, { status: 404 });
 
   // Transfer selfRating to target (upsert — target may already have one)
-  if (source.selfRating) {
+  async function transferSelfRating(tx: Prisma.TransactionClient) {
+    if (!source?.selfRating) return;
     const { raterCount, filterSelections, answers } = source.selfRating;
-    await db.groupSelfRating.upsert({
+    await tx.groupSelfRating.upsert({
       where: { groupId: targetGroupId },
       create: {
         groupId: targetGroupId,
@@ -119,6 +123,7 @@ export async function POST(
   transfer("language");
   transfer("eventFrequency");
   transfer("groupSize");
+  transfer("categoryId");
 
   // Boolean attributes — only overwrite when keepSourceData
   if (keepSourceData) {
@@ -141,12 +146,31 @@ export async function POST(
   contentUpdate.isVerified = false;
 
   try {
-    if (Object.keys(contentUpdate).length > 0) {
-      await db.group.update({ where: { id: targetGroupId }, data: contentUpdate });
-    }
+    await db.$transaction(async (tx) => {
+      const before = await snapshotGroup(tx, targetGroupId);
+      await transferSelfRating(tx);
+      if (Object.keys(contentUpdate).length > 0) {
+        await tx.group.update({ where: { id: targetGroupId }, data: contentUpdate });
+      }
+      // Keep the people and the group's edit links: move them instead of
+      // letting the cascade delete them with the source.
+      await tx.groupContact.updateMany({ where: { groupId: sourceId }, data: { groupId: targetGroupId } });
+      await tx.groupEditToken.updateMany({ where: { groupId: sourceId }, data: { groupId: targetGroupId } });
 
-    // Delete source (cascades invites, pilot answers, study2 sessions, selfRating)
-    await db.group.delete({ where: { id: sourceId } });
+      // Delete source (cascades invites, pilot answers, study2 sessions, selfRating)
+      await tx.group.delete({ where: { id: sourceId } });
+
+      const after = await snapshotGroup(tx, targetGroupId);
+      if (before && after) {
+        await recordChange(tx, {
+          groupId: targetGroupId,
+          source: "admin",
+          before,
+          after,
+          reviewedByEmail: guard.admin.email,
+        });
+      }
+    });
 
     return NextResponse.json({ success: true, targetGroupId });
   } catch (err) {

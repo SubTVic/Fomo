@@ -217,6 +217,9 @@
       "shortDescRequired": "(required)",
       "shortDescPlaceholder": "What makes your group special? What do you offer new members?",
       "shortDescChars": "{count}/200 characters",
+      "longDesc": "Detailed description",
+      "longDescPlaceholder": "What exactly do you do, when do you meet, how can people join?",
+      "longDescHint": "Shown on your profile page. Leave empty for no detailed description.",
       "contactEmail": "Contact email",
       "website": "Website",
       "instagram": "Instagram",
@@ -237,6 +240,7 @@
       "validation": "Please check the fields marked in red.",
       "categoryId": "Please choose a category.",
       "shortDescription": "The short description must be 10–200 characters long.",
+      "longDescription": "The detailed description can be at most 3,000 characters long.",
       "contactEmail": "Please enter a valid email address.",
       "websiteUrl": "Please enter a valid web address, e.g. your-group.org.",
       "instagramUrl": "Please enter your Instagram name (e.g. @your.group) or an Instagram link.",
@@ -245,8 +249,9 @@
     },
     "done": {
       "title": "Profile saved!",
-      "text": "Thank you! Your profile has been saved and will be reviewed by the FOMO team.",
-      "allGroupsButton": "Browse all groups"
+      "textLive": "Thank you! Your changes are saved. They will appear on www.fomo-dresden.app the next time the FOMO team updates the website – usually within a few days. You can reuse your link for later changes.",
+      "textReview": "Thank you! Your profile is saved. The FOMO team will take a quick look; after that it appears on www.fomo-dresden.app – usually within a few days.",
+      "siteButton": "Go to fomo-dresden.app"
     }
   },
   "attributeChecklist": {

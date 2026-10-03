@@ -23,7 +23,7 @@ funktionieren. Spaß und Wissenschaftlichkeit sind kein Widerspruch.
 | Live auf | **www.fomo-dresden.app** (Vercel-Projekt `fomo-static`) | fomo-pi.vercel.app (Vercel-Projekt `fomo`) |
 | Technik | Next.js **Static Export** (`output: "export"`), kein Server, keine DB | Next.js + Prisma + **PostgreSQL** + Auth.js v5 |
 | Daten | `static-site/data/*.json` (zur Build-Zeit eingebacken) | PostgreSQL — **die Quelle der Wahrheit für Gruppen** |
-| Matching | **client-side**, `static-site/src/lib/matching.ts` | keins mehr (altes Quiz/Pilot/Demo leiten auf die Live-Seite um; Code-Entfernung: Plan Phase 5) |
+| Matching | **client-side**, `static-site/src/lib/matching.ts` | keins (alte URLs `/quiz`, `/pilot`, `/demo`, `/groups` leiten per `next.config.ts` auf die Live-Seite um) |
 
 **Bei Arbeiten an der öffentlichen Seite: nur `static-site/` anfassen.**
 
@@ -31,25 +31,34 @@ funktionieren. Spaß und Wissenschaftlichkeit sind kein Widerspruch.
 
 ```
 Admin-App (Gruppe bearbeitet per Link / Admin pflegt)
-  → Admin: „Backup herunterladen" (JSON, enthält PII — nie ins Repo!)
-  → cd static-site && node scripts/export-from-backup.mjs --backup <datei>
-  → node scripts/validate-data.mjs
-  → groups.json auf einem Branch committen → PR → CI grün → Merge → ~2 Min live
+  → GitHub Actions „Daten-Sync" (.github/workflows/sync-groups.yml, per Hand gestartet)
+      holt /api/admin/export/static-groups (Bearer EXPORT_TOKEN, nur öffentliches Format)
+      → validate-data.mjs → PR „Daten-Sync <Datum>" mit Änderungsliste
+  → CI grün → Merge → ~2 Min live
 ```
-Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`. Automatisierung: Plan WP-4.5.
+Export-Logik: `src/lib/export/static-groups.ts` (gleiches Format wie der Notfallweg
+`static-site/scripts/export-from-backup.mjs`, ein Test hält beide gleich).
+Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`.
 
 ### Do's & Don'ts der Datenpflege
 
 - **NIE `static-site/data/groups.json` von Hand editieren** (ein Hook blockiert das).
   Der nächste Export überschreibt es. Korrekturen gehören in die **DB** (Admin-App).
-- **NIE `npm run import:groups` oder „CSV neu importieren"/„Scraper-JSON"** im Admin
-  benutzen — überschreibt Verifizierung, Slugs, Texte und reaktiviert Duplikate.
-- **Eine Gruppen-Einreichung setzt `isVerified=false`.** Nur verifizierte Gruppen mit
-  echtem Self-Rating kommen ins Quiz (`getMatchableGroups`). Nach jeder Korrektur muss
-  ein Admin neu verifizieren (bis Plan WP-4.1).
+- **Keinen Massen-Import aus CSV/Scraper-JSON** wiederbeleben — er überschrieb Verifizierung,
+  Slugs, Texte und reaktivierte Duplikate. (Admin-Knöpfe seit WP-4.4, `npm run import:groups`
+  seit WP-5.2 entfernt; die Sperre in `.claude/settings.json` bleibt.)
+- **Nur verifizierte Gruppen mit echtem Self-Rating kommen ins Quiz**
+  (`getMatchableGroups`). Korrekturen einer **verifizierten** Gruppe lassen die
+  Verifizierung stehen (E1); jede Änderung landet im Protokoll `GroupChangeLog`
+  (`src/lib/change-log.ts`, Admin-Seite „Änderungen" mit „Rückgängig"). Einreichungen
+  **unbestätigter** Gruppen brauchen weiter eine Admin-Verifizierung.
 - **Logos und EN-Übersetzungen leben außerhalb der DB:** `static-site/public/group-logos/`
   + `static-site/data/logos.json` (nach Slug), EN-Texte in
-  `static-site/src/lib/group-translations.ts`.
+  `static-site/data/group-translations.json` (mit `sourceHash`; `validate-data.mjs`
+  warnt, wenn sich der deutsche Text seitdem geändert hat). Ohne EN-Text zeigt `/en`
+  ehrlich den deutschen Text mit Hinweis — kein Wort-für-Wort-„Übersetzer".
+- **Kategorien:** eine Liste in `static-site/data/categories.json` (Name DE/EN, Farbe,
+  SEO-Seite). Neue Kategorie in der DB → dort ergänzen, sonst bricht die Datenprüfung.
 - **Backup-Dateien NIE committen oder lesen** — Kontakt-PII und gültige Tokens.
 - `validate-data.mjs` läuft **automatisch vor jedem Build** (`prebuild`) und in der CI:
   kaputte Ratings, doppelte Slugs, unbekannte Filter/Kategorien, kaputte Links
@@ -59,8 +68,9 @@ Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`. Automatisierung: Pla
 
 - **21 WS2-Items + 8 Aktivitäts-Filter.** Die 17 Binär-Attribute sind Altbestand; sie
   dienen nur noch dazu, Profile **unbestätigter** Gruppen abzuleiten.
-- **Items liegen doppelt:** `data/working-set-v2.json` (Registrierung) und
-  `static-site/data/quiz.json` (Website). Beide synchron halten (Check: Plan WP-4.7).
+- **Items liegen doppelt:** `data/working-set-v2.json` (Registrierung, Modul
+  `src/lib/ws2-items.ts`) und `static-site/data/quiz.json` (Website). Beide gemeinsam
+  ändern — `scripts/check-items-sync.mjs` prüft das in der CI.
 - Gruppen und Studis beantworten **dieselben** Items. Item-IDs folgen `WS2-\d{2}`.
 - **Matching:** mittlere absolute Distanz über die **nicht-neutralen** Antworten
   (`score = round((1 − Σ|user − group| / (n · 2)) · 100)`), Filter als **harte**
@@ -102,7 +112,7 @@ keine History-Umschreibung, keine Sicherheitsdetails in Commits/PRs/Doku (Repo i
 # Statische Seite
 cd static-site && npm ci && node scripts/validate-data.mjs && npx tsc --noEmit && npm run lint && npm test && npm run build
 # Root-App (ohne echte DB)
-npm ci && npx tsc --noEmit && npx eslint src scripts prisma tests && npm test
+npm ci && node scripts/check-items-sync.mjs && npx tsc --noEmit && npx eslint src scripts prisma tests && npm test
 DATABASE_URL="postgresql://x:x@localhost:5432/x" DIRECT_URL="$DATABASE_URL" AUTH_SECRET=dummy npx next build
 # E2E gegen lokale DB: docker compose up -d db && npx prisma migrate dev && npx prisma db seed && npm run test:e2e
 ```
@@ -116,7 +126,9 @@ und `root`) auf jedem PR. Node-Version: **24** (`.nvmrc`, `engines` in beiden `p
 - **Root-App:** Next.js 16, Prisma 6, PostgreSQL 16, Auth.js v5 (Credentials),
   next-intl, Zod, Vitest + Playwright. Admin-Zugriff nur über
   `requireAdminApi()`/`requireAdminPage()` (`src/lib/require-admin.ts`, prüft
-  Aktiv-Status und Rolle in der DB). Der Build migriert die DB **nicht**.
+  Aktiv-Status und Rolle in der DB). Backup, Löschen, Zusammenführen und
+  Admin-Verwaltung nur mit `{ role: "SUPER_ADMIN" }`. Login: E-Mail klein geschrieben,
+  Sperre nach Fehlversuchen (`src/lib/login-guard.ts`). Der Build migriert die DB **nicht**.
 - **Lizenz:** AGPL-3.0.
 - **Sprach-Routing der Root-App:** `src/proxy.ts` (next-intl; hieß bis Next 15
   `middleware.ts`). Interne Links in `src/app/[locale]/` immer mit `Link` aus
@@ -145,19 +157,20 @@ Akzent #5a8a9a. Fallback-Farben der Kategorien: `static-site/data/categories.jso
 
 ## Fallstricke mit irreführenden Namen
 
-- `src/lib/study2/items.ts` ist **nicht** das verworfene „Studie 2", sondern das
-  **Kern-Item-Set der Registrierung** (Umbenennung: Plan WP-4.7).
-- Route `/pilot` = Studie 2 (verworfen, leitet um); `/api/pilot/*` = Pilot 1 (abgeschlossen).
 - Filter-Attribut `party` = **„Hochschulpolitik & Mitbestimmung"**, nicht „Feiern".
 - `scripts/export-static-data.ts` ist veraltet — die richtigen Exporter sind
-  `static-site/scripts/export-from-backup.mjs` bzw. `scripts/export-static-site-groups.ts`.
-- `APP_MODE` gibt es nicht (nur `APP_LIVE` für die Landingpage der Root-App).
+  `src/lib/export/static-groups.ts` (Daten-Sync, `scripts/export-static-site-groups.ts`)
+  und der Notfallweg `static-site/scripts/export-from-backup.mjs`.
+- `APP_MODE` und `APP_LIVE` gibt es nicht (mehr). Pilot, Studie 2, Demo und das alte Quiz
+  wurden in WP-5.2 entfernt, ihre Tabellen in WP-5.3 (Migration `drop_legacy_tables`).
 
 ## Wo was steht
 
 - **Runbooks je Aufgabe:** [`docs/runbooks/`](docs/runbooks/README.md) (Index der 12
   typischen Wartungsaufgaben).
 - Betrieb ohne Programmierkenntnisse: `static-site/docs/BETRIEBSHANDBUCH.md`.
+- Löschfristen und Betroffenenanfragen: `docs/datenschutz-loeschkonzept.md`
+  (automatische Löschung: `scripts/cleanup.ts`).
 - Mit KI an der statischen Seite arbeiten: `static-site/docs/KI-MITARBEIT.md`.
 - Übergabe-Audit mit allen Befunden: `docs/uebergabe/audit.md`; Umbauplan:
   `docs/uebergabe/umsetzungsplan.md`; Hintergrund: `docs/uebergabe/recherche-umsetzung.md`.

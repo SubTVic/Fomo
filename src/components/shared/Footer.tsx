@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { YetiBadge } from "./YetiBadge";
 
 export function Footer() {
@@ -25,7 +26,13 @@ export function Footer() {
               </a>
             </span>
           </div>
-          <span>
+          <span className="flex flex-wrap gap-4">
+            <Link href="/impressum" className="hover:underline">
+              {t("imprint")}
+            </Link>
+            <Link href="/datenschutz" className="hover:underline">
+              {t("privacy")}
+            </Link>
             <a
               href="https://www.gnu.org/licenses/agpl-3.0.html"
               target="_blank"

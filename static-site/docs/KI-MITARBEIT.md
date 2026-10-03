@@ -48,7 +48,7 @@ static-site/README.md. Regeln:
 4. Jede neue Quellcode-Datei bekommt den Header:
    // SPDX-License-Identifier: AGPL-3.0-only
 5. UI-Texte auf Deutsch (englische Zwillinge unter /en pflegen:
-   quiz-translations.ts, group-copy.ts), Code-Kommentare auf Englisch,
+   quiz-translations.ts, data/group-translations.json), Code-Kommentare auf Englisch,
    Commits auf Englisch (feat:/fix:/docs:).
 6. Design: Brutalist-Poster-Stil — 4px Navy-Borders (#1a2a35), Hintergrund
    #ADD8E6, Archivo Black für Headlines, Lexend für Text. Mobile-first,
@@ -81,7 +81,8 @@ static-site/README.md. Regeln:
 | Seiten (EN) | `static-site/src/app/en/` |
 | Quiz-Logik & Matching | `static-site/src/lib/matching.ts`, `results.ts`, Komponenten in `src/components/quiz/` |
 | Gruppendaten | `static-site/data/groups.json` (+ `logos.json`, `quiz.json`) |
-| EN-Übersetzungen | `static-site/src/lib/group-translations.ts`, `quiz-translations.ts` |
+| EN-Übersetzungen | `static-site/data/group-translations.json` (Gruppen), `src/lib/quiz-translations.ts` |
+| Kategorien (DE/EN, Farbe, SEO) | `static-site/data/categories.json` |
 | FAQ (Landing) | `static-site/src/lib/faq.ts` |
 | SEO (Sitemap, Strukturdaten) | `static-site/src/app/sitemap.ts`, `src/lib/site.ts` |
 | Analytics-Events | `static-site/src/lib/analytics.ts` |

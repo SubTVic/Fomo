@@ -107,7 +107,7 @@ DATABASE_URL="postgresql://x:x@localhost:5432/x" DIRECT_URL="$DATABASE_URL" AUTH
 # E2E gegen lokale DB: docker compose up -d db && npx prisma migrate dev && npx prisma db seed && npm run test:e2e
 ```
 Dieselben Schritte laufen in der CI (`.github/workflows/ci.yml`, Jobs `static-site`
-und `root`) auf jedem PR. Node-Version: `.nvmrc` (24).
+und `root`) auf jedem PR. Node-Version: **24** (`.nvmrc`, `engines` in beiden `package.json`).
 
 ## Tech-Stack
 

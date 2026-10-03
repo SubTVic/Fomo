@@ -24,7 +24,7 @@ Kontext zum Projekt: `CLAUDE.md` (Root). Anleitungen je Aufgabe:
 | Dynamische Root-App (Registrierung/Admin) | 🔄 Internes Tool; Build, Admin-Schutz, Formular repariert (Plan Phase 1), Altlasten-Entfernung folgt (Phase 5) |
 | Qualitäts-Netz | ✅ CI auf jedem PR, Datenprüfung vor jedem Build, Tests, KI-Leitplanken (Plan Phase 2) |
 | Studie 2 (Mitglieder-Validierung) | ❌ Verworfen — ersetzt durch anonyme Live-Daten (Umami) |
-| Nächster Meilenstein | Node 24 überall festnageln (Plan WP-3.3); beide Apps laufen auf Next.js 16 (WP-3.1/3.2) |
+| Nächster Meilenstein | Datenpflege reparieren (Plan Phase 4); Next.js 16 + Node 24 erledigt (Phase 3) |
 
 ---
 
@@ -169,6 +169,11 @@ GitHub-Secret (1.3) aktualisieren, alten Key löschen.
       `ResultsScreen` setzen Animations-State im Effect zurück (besser per `key`
       bzw. im Klick-Handler). Danach die Regel in `eslint.config.mjs` wieder auf
       `error` stellen. Verhalten mit dem Quiz-Durchlauf (375 px) gegenprüfen.
+- [ ] **Self-Hosting: echte 404 statt Startseite** (`static-site/nginx.conf`):
+      `try_files … /index.html` liefert unbekannte Pfade als Startseite mit
+      Status 200 aus (Soft-404, schlecht für Suchmaschinen). Beim Server-Stack
+      (Plan WP-6.2) auf `try_files $uri $uri/ $uri.html =404;` umstellen und testen.
+      Betrifft nur Docker/nginx, nicht Vercel.
 
 ---
 

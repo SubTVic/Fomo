@@ -916,7 +916,7 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 2.7 | 🧑 Branch-Schutz | ⬜ | – |
 | 3.1 | Next 16 statische Seite | ✅ | #16 |
 | 3.2 | Next 16 Root-App | ✅ | #17 |
-| 3.3 | Node 24 | ⬜ | |
+| 3.3 | Node 24 | ✅ | #18 |
 | 4.1 | Verifizierung bleibt + Protokoll | ⬜ | |
 | 4.2 | Dauerhafter Bearbeitungslink | ⬜ | |
 | 4.3 | Link anfordern per Mail | ⬜ | |

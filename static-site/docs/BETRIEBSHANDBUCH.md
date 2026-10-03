@@ -94,7 +94,8 @@ Registrierung bewegen.**
 | Startseiten-Texte (DE+EN) | `static-site/src/components/HomePageContent.tsx` |
 | Quiz-Fragen + Filter (DE) | `static-site/data/quiz.json` |
 | Quiz-Fragen (EN) | `static-site/src/lib/quiz-translations.ts` |
-| Gruppen-Beschreibungen (EN) | `static-site/src/lib/group-translations.ts` |
+| Gruppen-Beschreibungen (EN) | `static-site/data/group-translations.json` (Text + `sourceHash`; die Datenprüfung meldet veraltete Übersetzungen mit dem neuen Hash) |
+| Kategorien (Name DE/EN, Farbe, SEO-Seite) | `static-site/data/categories.json` |
 | Impressum / Datenschutz | `static-site/src/app/impressum/page.tsx`, `…/datenschutz/page.tsx` |
 
 ⚠️ Quiz-Fragen ändern ist heikel: **Formulierung** ändern ist okay; Fragen

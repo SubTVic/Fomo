@@ -54,7 +54,11 @@ Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`.
   **unbestätigter** Gruppen brauchen weiter eine Admin-Verifizierung.
 - **Logos und EN-Übersetzungen leben außerhalb der DB:** `static-site/public/group-logos/`
   + `static-site/data/logos.json` (nach Slug), EN-Texte in
-  `static-site/src/lib/group-translations.ts`.
+  `static-site/data/group-translations.json` (mit `sourceHash`; `validate-data.mjs`
+  warnt, wenn sich der deutsche Text seitdem geändert hat). Ohne EN-Text zeigt `/en`
+  ehrlich den deutschen Text mit Hinweis — kein Wort-für-Wort-„Übersetzer".
+- **Kategorien:** eine Liste in `static-site/data/categories.json` (Name DE/EN, Farbe,
+  SEO-Seite). Neue Kategorie in der DB → dort ergänzen, sonst bricht die Datenprüfung.
 - **Backup-Dateien NIE committen oder lesen** — Kontakt-PII und gültige Tokens.
 - `validate-data.mjs` läuft **automatisch vor jedem Build** (`prebuild`) und in der CI:
   kaputte Ratings, doppelte Slugs, unbekannte Filter/Kategorien, kaputte Links

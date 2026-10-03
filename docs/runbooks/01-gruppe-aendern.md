@@ -74,7 +74,7 @@ nach einer Bestätigungsrunde):
    markiert, im Quiz auffindbar.
 
 Logos und EN-Texte stehen nicht in der Datenbank — die bei Bedarf separat nachziehen
-(Fall C, `group-translations.ts`).
+(Fall C, `static-site/data/group-translations.json`).
 
 **Der Sync bricht ab**, wenn mehr als 20 % der veröffentlichten Gruppen wegfallen würden
 (Schutz vor einer falschen/leeren Datenbank). Ist das gewollt (z. B. große

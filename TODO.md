@@ -169,6 +169,11 @@ GitHub-Secret (1.3) aktualisieren, alten Key löschen.
       `ResultsScreen` setzen Animations-State im Effect zurück (besser per `key`
       bzw. im Klick-Handler). Danach die Regel in `eslint.config.mjs` wieder auf
       `error` stellen. Verhalten mit dem Quiz-Durchlauf (375 px) gegenprüfen.
+- [ ] **Kategorieseiten: Überschrift bricht mitten im Wort** (375 px): „HOCHSCHULGRUPPEN“
+      ist in Archivo Black `text-3xl` breiter als die Spalte und bricht ohne
+      Trennstrich („HOCHSCHULGRUPP / EN“). Betrifft alle `/groups/kategorie/*`.
+      Lösung z. B. `text-2xl sm:text-4xl` oder `&shy;` in den SEO-Titeln
+      (`data/categories.json`). Gefunden bei WP-4.6.
 - [ ] **Self-Hosting: echte 404 statt Startseite** (`static-site/nginx.conf`):
       `try_files … /index.html` liefert unbekannte Pfade als Startseite mit
       Status 200 aus (Soft-404, schlecht für Suchmaschinen). Beim Server-Stack

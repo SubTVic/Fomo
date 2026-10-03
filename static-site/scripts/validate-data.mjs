@@ -6,7 +6,9 @@
 //
 //   node scripts/validate-data.mjs [--groups data/groups.json] [--quiz data/quiz.json]
 //                                  [--categories data/categories.json]
+//                                  [--translations data/group-translations.json]
 
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 
 const args = process.argv.slice(2);
@@ -17,6 +19,7 @@ const getArg = (name, def) => {
 const groupsPath = getArg("--groups", "data/groups.json");
 const quizPath = getArg("--quiz", "data/quiz.json");
 const categoriesPath = getArg("--categories", "data/categories.json");
+const translationsPath = getArg("--translations", "data/group-translations.json");
 
 // Verified groups whose links were already broken when URL checking was
 // introduced (Oct 2026). They only warn until the next data sync fixes them
@@ -37,11 +40,12 @@ const warnings = [];
 const err = (m) => errors.push(m);
 const warn = (m) => warnings.push(m);
 
-let groups, quiz, categories;
+let groups, quiz, categories, translations;
 try {
   groups = JSON.parse(readFileSync(groupsPath, "utf8")).groups;
   quiz = JSON.parse(readFileSync(quizPath, "utf8"));
   categories = JSON.parse(readFileSync(categoriesPath, "utf8")).categories;
+  translations = JSON.parse(readFileSync(translationsPath, "utf8")).translations;
 } catch (e) {
   console.error(`FEHLER: Datendateien nicht lesbar (kaputtes JSON?): ${e.message}`);
   process.exit(2);
@@ -105,6 +109,25 @@ for (const g of groups) {
 
   for (const f of sr.filterSelections ?? []) {
     if (!filterAttrs.has(f)) err(`${where}: unbekannter Filter "${f}"`);
+  }
+}
+
+// English translations (data/group-translations.json): flag ones whose German
+// source text changed since they were written, and ones for groups that no
+// longer exist. Warnings only — the site then still shows the old English text.
+function sourceHash(text) {
+  return createHash("sha256").update(String(text ?? "").replace(/\s+/g, " ").trim(), "utf8").digest("hex").slice(0, 16);
+}
+const groupBySlug = new Map(groups.map((g) => [g.slug, g]));
+for (const [slug, t] of Object.entries(translations)) {
+  const g = groupBySlug.get(slug);
+  if (!g) {
+    warn(`Übersetzung für unbekannte Gruppe "${slug}" — Eintrag in data/group-translations.json löschen`);
+    continue;
+  }
+  const current = sourceHash(g.longDescription || g.shortDescription);
+  if (t.sourceHash !== current) {
+    warn(`${slug}: englische Übersetzung veraltet (deutscher Text geändert) — Text prüfen und sourceHash auf "${current}" setzen`);
   }
 }
 

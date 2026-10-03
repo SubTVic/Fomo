@@ -8,7 +8,7 @@ import { getAllGroupsForAdmin } from "@/lib/queries/groups";
 import { VerifyButton } from "./VerifyButton";
 import { GenerateInvitesButton } from "./GenerateInvitesButton";
 import { InviteButton } from "./InviteButton";
-import { DeleteGroupButton } from "./DeleteGroupButton";
+import { DeleteButton } from "../DeleteButton";
 import { ToggleActiveButton } from "./[id]/ToggleActiveButton";
 import { requireAdminPage } from "@/lib/require-admin";
 
@@ -39,7 +39,8 @@ interface AdminGroupsPageProps {
 }
 
 export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageProps) {
-  await requireAdminPage();
+  const admin = await requireAdminPage();
+  const isSuperAdmin = admin.role === "SUPER_ADMIN";
   const { filter } = await searchParams;
   const allGroups = await getAllGroupsForAdmin();
 
@@ -197,7 +198,12 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
                           groupName={group.name}
                           contactEmail={group.contactEmail}
                         />
-                        <DeleteGroupButton groupId={group.id} groupName={group.name} />
+                        {isSuperAdmin && (
+                          <DeleteButton
+                            url={`/api/admin/groups/${group.id}`}
+                            title={`${group.name} löschen`}
+                          />
+                        )}
                       </div>
                     </td>
                   </tr>

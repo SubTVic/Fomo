@@ -18,7 +18,7 @@ Answer 21 questions about your interests, values, and time budget, and get perso
 | Phase 3: Matching & Results | ✅ Live | Working Set v2 (21 Items), Matching v2 client-side in `static-site/` |
 | Phase 4: Launch | ✅ Live seit Juli 2026 | **www.fomo-dresden.app** (statische Version, Vercel); Erstiwoche Sept. 2026 = Haupt-Traffic |
 
-Offene Aufgaben: siehe [TODO.md](TODO.md)
+Offene Aufgaben: siehe [TODO.md](TODO.md) · Anleitungen für Betrieb und Wartung: [docs/runbooks/](docs/runbooks/README.md) · Hinweise für KI-Agenten: [CLAUDE.md](CLAUDE.md)
 
 ### Two apps in this repo
 
@@ -45,9 +45,10 @@ Offene Aufgaben: siehe [TODO.md](TODO.md)
 
 ### Group Profiles & Registration
 
-- **83 TU Dresden student groups** from the StuRa directory
-- **AI-scraped attributes** via Anthropic API with web search — 17 boolean matching attributes per group
-- **Token-based invite links** — groups review and correct their scraped profile via a secure link (email optional)
+- **95 TU Dresden student groups** in the public directory (data export 17.08.2026: 51 verified, 44 unverified)
+- **Self-rating:** each group answers the same 21 items + 8 filters as the students; only these verified profiles enter the matching
+- **Unverified groups** (not yet registered) get a profile derived from scraped data — shown in the directory only, never in the quiz
+- **Reusable edit links** — groups review and update their profile via a personal link (created by an admin, valid 12 months, revocable)
 - **Self-registration flow** — 6-step form for groups not yet in the system, including a responsible-person confirmation with contact list storage
 - **Admin contact list** — all responsible contacts saved with consent confirmation, exportable as CSV
 
@@ -64,10 +65,13 @@ FOMO ran a **pilot study** to validate the question set and test 4 different UI 
 
 **Result:** Classic won with 45% preference. 104 sessions completed, Working Set v1.1 frozen.
 
+The pilot, study 2, the demo tour and the prototype quiz have since been removed from the app (plan WP-5.2); their data was archived outside the repository before removal.
+
 ### Security
 
 - Input validation with Zod schemas on all API routes
-- Rate limiting (10 submissions/hour per IP) with automatic cleanup
+- Central admin guard (`src/lib/require-admin.ts`): every admin route/page checks the session, active status and role against the database
+- Rate limiting on self-registration (in-memory, per IP)
 - Security headers (X-Frame-Options, X-Content-Type-Options, Referrer-Policy)
 - No localStorage/sessionStorage (avoids SecurityError in sandboxed environments)
 
@@ -75,7 +79,7 @@ FOMO ran a **pilot study** to validate the question set and test 4 different UI 
 
 | Layer | Technology |
 | --- | --- |
-| Framework | [Next.js 15](https://nextjs.org/) (App Router, TypeScript) |
+| Framework | [Next.js 16](https://nextjs.org/) (App Router, TypeScript) |
 | Styling | [Tailwind CSS 4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) |
 | i18n | [next-intl](https://next-intl-docs.vercel.app/) (DE/EN, `localePrefix: "as-needed"`) |
 | Database | [PostgreSQL 16](https://www.postgresql.org/) via [Prisma ORM](https://www.prisma.io/) |
@@ -89,7 +93,7 @@ FOMO ran a **pilot study** to validate the question set and test 4 different UI 
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) >= 20
+- [Node.js](https://nodejs.org/) 24 (see `.nvmrc`)
 - [Docker](https://www.docker.com/) (for PostgreSQL)
 
 ### Setup
@@ -97,7 +101,7 @@ FOMO ran a **pilot study** to validate the question set and test 4 different UI 
 ```bash
 # Clone the repository
 git clone https://github.com/SubTVic/Fomo.git
-cd Fomo/Github/fomo
+cd Fomo
 
 # Set up environment variables
 cp .env.example .env
@@ -132,11 +136,7 @@ npx prisma studio        # Database GUI
 npx prisma migrate dev   # Create new migration (local DB only)
 npm run db:status        # Show pending migrations
 npm run db:migrate       # Apply migrations (deliberately, after a backup — see Deployment)
-npm run import:groups    # Import groups from CSV
-
-# Validation scripts (require exported pilot data in data/archives/)
-npx tsx scripts/validation/self-recognition-test.ts --verbose
-npx tsx scripts/validation/item-discrimination-analysis.ts --output data/item-empirical-validity-report.md
+node scripts/check-items-sync.mjs   # Registration items = website items
 ```
 
 ## Project Structure
@@ -145,49 +145,44 @@ npx tsx scripts/validation/item-discrimination-analysis.ts --output data/item-em
 src/
 ├── app/
 │   ├── [locale]/           # i18n routes (DE/EN)
-│   │   └── (public)/       # Public pages (landing, group register)
-│   │       └── groups/register/    # Token-based & self-registration (6-step form)
+│   │   └── (public)/       # Public pages (landing, group register, edit link)
+│   │       ├── groups/register/    # Token-based & self-registration (6-step form)
+│   │       └── gruppe/bearbeiten/  # Reusable edit link
 │   ├── admin/              # Admin dashboard (protected)
 │   │   └── (protected)/
+│   │       ├── aenderungen/ # Change log with undo
 │   │       ├── contacts/   # Contact list (responsible persons, CSV export)
-│   │       └── groups/     # Group management, invite links, verify
+│   │       ├── groups/     # Group management, edit links, verify, merge
+│   │       └── users/      # Admin accounts
 │   └── api/
 │       ├── auth/           # Auth.js handler
 │       ├── groups/         # Group registration & attribute submission
-│       └── admin/          # Admin: groups, invites, scraper import, verify, backup
-├── components/
-│   ├── quiz/               # Live quiz components
-│   │   ├── QuizRouter.tsx          # Quiz orchestrator (welcome → quiz → results)
-│   │   ├── QuizWelcome.tsx         # Welcome screen
-│   │   └── results/               # Result display
-│   ├── variants/classic/   # Classic (Wahl-O-Mat style) quiz variant
-│   ├── ui/                 # shadcn/ui components
-│   └── shared/             # Shared layout components
+│       └── admin/          # Admin: groups, edit links, verify, changes, export, backup
+├── components/shared/      # Shared layout components
 ├── lib/
-│   ├── quiz/                       # Live quiz logic
-│   │   ├── types.ts                # QuizThesisData, QuizGroupData, etc.
-│   │   ├── matching.ts             # Client-side matching algorithm
-│   │   ├── attribute-labels.ts     # German labels for group attributes
-│   │   └── __tests__/             # Vitest unit tests
-│   ├── queries/quiz.ts             # Server-side quiz queries
+│   ├── ws2-items.ts                # The 21 WS2 items used by the registration form
+│   ├── change-log.ts               # Change log (snapshot, diff, undo)
+│   ├── edit-token.ts               # Reusable edit links
+│   ├── export/static-groups.ts     # Export for the public site (Daten-Sync)
+│   ├── require-admin.ts            # Admin guard (session + DB active/role check)
+│   ├── normalize-url.ts            # Website/Instagram normalization for group input
 │   ├── rate-limit.ts               # In-memory rate limiter
 │   ├── db.ts                       # Prisma singleton
 │   └── auth.ts                     # Auth.js configuration
-└── types/                  # Shared TypeScript types
+└── proxy.ts                # Locale routing (next-intl)
 
 data/
 ├── working-set-v1.json             # 17-item quiz question set (v1.1)
 ├── hsg-profiles-scraped.json       # 83 group profiles (AI-scraped attributes)
 ├── group-attributes-schema.json    # Attribute definitions + scraper prompts
-├── item-empirical-validity-report.md
-└── archives/                       # Pilot data exports
+├── working-set-v2.json             # The 21 items + 8 filters (registration; = static-site/data/quiz.json)
+└── item-empirical-validity-report.md
 
 scripts/
-├── scraper/                # AI scraper (Anthropic API + web search)
-├── validation/
-│   ├── self-recognition-test.ts    # Tests if members' answers rank their group top
-│   └── item-discrimination-analysis.ts
-└── import-*.ts             # Data import utilities
+├── scraper/                        # AI scraper (Anthropic API + web search)
+├── export-static-site-groups.ts    # Export groups.json from a local DB
+├── check-items-sync.mjs            # Registration items = website items
+└── generate-invites.ts             # One-off invite generator from 2026 (legacy one-time links)
 
 prisma/
 ├── schema.prisma           # Data model
@@ -199,24 +194,19 @@ prisma/
 
 ### Matching Algorithm
 
-```text
-score(User, Group) = Σ effWeight_i × similarity_i / Σ effWeight_i
+The live matching runs in the browser in [`static-site/src/lib/matching.ts`](static-site/src/lib/matching.ts):
 
-effWeight_i = userWeight_i × attrWeight_attr × (1 / itemCount_attr)
-```
+- Users and groups answer the same 21 items with **agree (1) / neutral (0) / disagree (−1)**.
+- **Filters are a hard constraint:** if both the user and the group picked activity filters and they don't overlap, the group scores 0.
+- Over the user's **non-neutral** answers: `score = round((1 − Σ|user − group| / (n · 2)) · 100)`; with no active answers the score is 50.
+- Sorting: unrounded fit, then an explicit filter match, then a deterministic per-user hash (fair tie-breaking that keeps shared `?r=` links stable). The results show the top 5 plus boundary ties (max. 10).
+- Only **verified** groups (`getMatchableGroups()`) are ranked.
 
-- **3 answer options:** Agree (1.0), Neutral (0.5), Disagree (0.0)
-- **User weight:** `|normalized - 0.5| × 2` — Neutral answers have zero weight (ignored)
-- **Attribute weight:** `2 × min(yes, no) / n` — attributes with a 50/50 split across groups score highest; all-same attributes score 0
-- **Item-count normalization:** `1 / itemCount_attr` — prevents attributes mapped by multiple questions from dominating the score
-- **Similarity:** `1 - |userValue - groupAttribute|` (with inverse-mapping support)
-- **Minimum threshold:** ≥ 5 non-neutral answers required, otherwise no results shown
-
-Results are normalized to 0–100% and sorted descending. All computation runs client-side — no user data ever reaches the server.
+No user data reaches a server. (The older weighted v1 formula in `src/lib/quiz/` belongs to the retired prototype quiz.)
 
 ### Data Model
 
-The schema covers the **production quiz** (QuizThesis, QuizThesisAttribute, Group, Category, GroupInvite) and retains pilot study tables (PilotSession, PilotAnswer) for archival. Groups have 17 boolean matching attributes. Each QuizThesis maps to one or more group attributes (optionally inverse) and carries optional `hint`/`textEn`/`hintEn` fields for bilingual display.
+Core tables: **Group**, **Category**, **GroupSelfRating** + answers (the group's 21-item profile and filters), **GroupInvite** (edit-link tokens), **GroupContact**, **Admin**. Pilot, study 2, prototype-quiz and CMS tables were dropped in plan WP-5.3 (data archived outside the repository beforehand). The 17 boolean attributes on Group are legacy; they only derive profiles for unverified groups.
 
 **GroupContact** stores responsible persons who self-registered a group (`isResponsible: true`, `source: "self-registration"`). The admin dashboard exposes a contact list view with CSV export and a one-click JSON backup of the entire database.
 
@@ -227,7 +217,6 @@ The schema covers the **production quiz** (QuizThesis, QuizThesisAttribute, Grou
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
 | `NEXTAUTH_SECRET` | Yes | Random string (`openssl rand -base64 32`) |
 | `NEXTAUTH_URL` | Yes | App URL (e.g., `http://localhost:3000`) |
-| `APP_LIVE` | No | `true` switches landing CTA to live quiz; default `false` shows prelaunch CTAs |
 | `ANTHROPIC_API_KEY` | Scraper only | API key for AI-based group profile scraping |
 | `DIRECT_URL` | Vercel only | Direct (non-pooled) DB connection for migrations |
 
@@ -267,8 +256,8 @@ Contributions are welcome! Please:
 2. Create a feature branch (`git checkout -b feat/my-feature`)
 3. Use [conventional commits](https://www.conventionalcommits.org/) in English (`feat:`, `fix:`, `docs:`, etc.)
 4. Add `// SPDX-License-Identifier: AGPL-3.0-only` to every new source file
-5. Ensure `npm run build` passes
-6. Open a Pull Request
+5. Run the checks listed in [CLAUDE.md → Prüfbefehle](CLAUDE.md#prüfbefehle) (the same run in CI)
+6. Open a Pull Request — never push to `main` directly (it deploys live)
 
 ### Coding Conventions
 
@@ -286,4 +275,4 @@ You may use, modify, and distribute this code. If you run a modified version as 
 
 ## Contact
 
-A project by [Yeti](yeti-dresden.org) in cooperation with the [StuRa TU Dresden](https://www.stura.tu-dresden.de/).
+A project by [Yeti](https://yeti-dresden.org) in cooperation with the [StuRa TU Dresden](https://www.stura.tu-dresden.de/).

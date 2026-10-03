@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 
 const updateSchema = z.object({
   name: z.string().min(1).optional(),
-  email: z.string().email().optional(),
+  email: z.string().trim().toLowerCase().email().optional(),
   role: z.enum(["SUPER_ADMIN", "EDITOR"]).optional(),
   isActive: z.boolean().optional(),
 });

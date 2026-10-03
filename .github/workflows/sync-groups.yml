@@ -1,0 +1,105 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# "Website aktualisieren": pulls the current group data from the admin app,
+# checks it and opens a pull request that updates static-site/data/groups.json
+# (Umsetzungsplan WP-4.5). Start it by hand: Actions → "Daten-Sync" → Run workflow.
+#
+# Needs (one time, see docs/runbooks/01-gruppe-aendern.md):
+#   - secret EXPORT_TOKEN (same value as EXPORT_TOKEN in the admin app's Vercel env)
+#   - optional variable EXPORT_URL (default: the Vercel admin app)
+#   - Settings → Actions → General → "Allow GitHub Actions to create and approve
+#     pull requests" switched on
+name: Daten-Sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      allow_large_removal:
+        description: "Auch syncen, wenn mehr als 20 % der Gruppen wegfallen würden (nur nach Prüfung!)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: sync-groups
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Daten-Sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      EXPORT_URL: ${{ vars.EXPORT_URL || 'https://fomo-pi.vercel.app/api/admin/export/static-groups' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Export aus der Admin-App holen
+        env:
+          EXPORT_TOKEN: ${{ secrets.EXPORT_TOKEN }}
+        run: |
+          if [ -z "$EXPORT_TOKEN" ]; then
+            echo "::error::Secret EXPORT_TOKEN fehlt (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+          curl --fail-with-body --silent --show-error --max-time 60 \
+            -H "Authorization: Bearer $EXPORT_TOKEN" "$EXPORT_URL" -o "$RUNNER_TEMP/groups.json"
+          node -e '
+            const d = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
+            if (!Array.isArray(d.groups) || d.groups.length === 0) { console.error("Export ist leer."); process.exit(1); }
+            console.log(`${d.groups.length} Gruppen exportiert.`);
+          ' "$RUNNER_TEMP/groups.json"
+
+      - name: Änderungen zusammenfassen
+        env:
+          ALLOW_LARGE_REMOVAL: ${{ inputs.allow_large_removal }}
+        run: |
+          LIMIT=0.2
+          if [ "$ALLOW_LARGE_REMOVAL" = "true" ]; then LIMIT=1; fi
+          status=0
+          node static-site/scripts/diff-groups.mjs static-site/data/groups.json "$RUNNER_TEMP/groups.json" \
+            --max-removed-share "$LIMIT" > "$RUNNER_TEMP/summary.md" || status=$?
+          cat "$RUNNER_TEMP/summary.md" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then exit "$status"; fi
+          cp "$RUNNER_TEMP/groups.json" static-site/data/groups.json
+
+      - name: Daten prüfen
+        working-directory: static-site
+        run: node scripts/validate-data.mjs
+
+      - name: Pull Request öffnen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if grep -q "Keine inhaltlichen Änderungen" "$RUNNER_TEMP/summary.md"; then
+            echo "Keine inhaltlichen Änderungen – kein Pull Request nötig." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          STAMP="$(date -u +%Y-%m-%d-%H%M)"
+          BRANCH="daten-sync/$STAMP"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add static-site/data/groups.json
+          git commit -m "chore(data): sync groups.json from admin app ($STAMP)"
+          git push origin "$BRANCH"
+          {
+            echo "Automatischer Export aus der Admin-App (Workflow „Daten-Sync“)."
+            echo
+            cat "$RUNNER_TEMP/summary.md"
+            echo
+            echo "Nach grüner CI und kurzem Blick auf die Vorschau mergen – ca. 2 Minuten später ist es live."
+          } > "$RUNNER_TEMP/body.md"
+          gh pr create --base main --head "$BRANCH" --title "Daten-Sync $(date -u +%d.%m.%Y)" --body-file "$RUNNER_TEMP/body.md"
+          # Pull requests opened with GITHUB_TOKEN do not trigger pull_request
+          # workflows; workflow_dispatch is the documented exception.
+          gh workflow run ci.yml --ref "$BRANCH"

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Group } from "@/lib/types";
 import { categoryColorOf, isUnverified } from "@/lib/data";
-import { groupCategory, groupLongText, groupShortText } from "@/lib/group-copy";
+import { categoryLabel } from "@/lib/categories";
+import { GERMAN_ONLY_NOTE, groupCategory, groupLongText, groupShortText, isGermanOnly } from "@/lib/group-copy";
 import { track, EVENTS } from "@/lib/analytics";
 import { withUtm } from "@/lib/utm";
 import { REGISTER_URL } from "@/lib/site";
@@ -38,7 +39,7 @@ export function GroupBrowser({ groups, categories, lang = "de" }: GroupBrowserPr
   const availableCategories = categories
     .map((category) => ({
       key: category.name,
-      label: lang === "en" ? categoryNameToEnglish(category.name) : category.name,
+      label: categoryLabel(category.name, lang),
     }))
     .filter((category) => (countByCategory.get(category.label) ?? 0) > 0);
 
@@ -157,22 +158,6 @@ function sortKey(name: string) {
   return name.replace(/^\d+\s*/, "").trim();
 }
 
-function categoryNameToEnglish(name: string) {
-  return (
-    {
-      "Internationales": "International",
-      "Kunst & Kultur": "Arts & culture",
-      "Nachhaltigkeit": "Sustainability",
-      "Politik & Gesellschaft": "Politics & society",
-      "Sonstiges": "Other",
-      "Soziales Engagement": "Social engagement",
-      "Sport & Bewegung": "Sports & movement",
-      "Technik & Wissenschaft": "Technology & science",
-      "Wirtschaft & Karriere": "Business & career",
-    }[name] ?? name
-  );
-}
-
 function FilterButton({
   active,
   onClick,
@@ -222,7 +207,13 @@ function GroupTile({ group, lang }: { group: Group; lang: "de" | "en" }) {
       )}
 
       <div className="mt-3 text-base leading-relaxed text-body">
-        <p className={expanded ? "whitespace-pre-line" : "line-clamp-4"}>{text}</p>
+        <p
+          className={expanded ? "whitespace-pre-line" : "line-clamp-4"}
+          lang={isGermanOnly(group, lang) ? "de" : undefined}
+        >
+          {text}
+        </p>
+        {isGermanOnly(group, lang) && <p className="mt-1 text-xs italic text-muted">{GERMAN_ONLY_NOTE}</p>}
         {canExpand && (
           <button
             type="button"

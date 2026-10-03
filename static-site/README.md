@@ -9,7 +9,7 @@ the browser; the only thing that ever leaves it is optional anonymous Umami
 analytics (see Analytics below and the Datenschutz page).
 
 The dynamic app in the repo root stays the data-collection tool (admin,
-registration, Study 2) and is untouched by this folder.
+group registration and edit links) and is untouched by this folder.
 
 ## Develop & build
 
@@ -17,8 +17,13 @@ registration, Study 2) and is untouched by this folder.
 cd static-site
 npm install
 npm run dev      # http://localhost:3000
+npm test         # unit tests (matching, share links, data, report parity)
 npm run build    # → static-site/out/  (the deployable bundle)
 ```
+
+`npm run build` first runs `prebuild`: the data gate `scripts/validate-data.mjs`
+(broken data stops the build — also on Vercel) and the report generator. CI
+(`.github/workflows/ci.yml`) runs validate, typecheck, tests and build on every PR.
 
 ## Data
 
@@ -50,7 +55,7 @@ Refreshing `data/groups.json` without prod DB access — full concept in
 | `scrape-llm.mjs` | `scrape:llm` | LLM scraper (Claude reads the "Über uns" text). Needs `ANTHROPIC_API_KEY`; falls back to the keyword scraper per group on any error or with `--offline`. |
 | `derive-selfrating.mjs` | `derive` | Merge: real registrations (`--overrides`) always win over scraped data. |
 | `export-from-backup.mjs` | — | Rebuild `groups.json` from an admin backup JSON (mirrors the prod exporter). |
-| `validate-data.mjs` | `validate` | Integrity gate before going live. |
+| `validate-data.mjs` | `validate` | Integrity gate; runs automatically before every build (ratings, slugs, filters, categories from `data/categories.json`, links of verified groups). |
 | `update-data.sh` | — | Build + zero-downtime symlink swap (see `docs/INBETRIEBNAHME.md`). |
 
 The LLM scraper needs `@anthropic-ai/sdk` (run `npm install`) and uses

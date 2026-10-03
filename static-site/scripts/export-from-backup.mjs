@@ -67,6 +67,39 @@ for (const a of backup.groupSelfRatingAnswers) {
 let verifiedCount = 0;
 let derivedCount = 0;
 
+// Manual corrections (data/corrections.json, keyed by slug) win over the backup.
+const CORRECTABLE = ["categoryName", "memberCount", "websiteUrl", "instagramUrl", "contactEmail", "shortDescription", "longDescription"];
+const correctionsPath = getArg("--corrections", "data/corrections.json");
+let corrections = {};
+try {
+  corrections = JSON.parse(readFileSync(correctionsPath, "utf8")).corrections ?? {};
+} catch {
+  console.warn(`⚠ no corrections file at ${correctionsPath} — exporting backup values as-is`);
+}
+const catByName = new Map(backup.categories.map((c) => [c.name, c]));
+
+/** Normalize a website to a valid http(s) URL; null if it cannot be repaired. */
+function normalizeWebsite(raw) {
+  if (!raw) return null;
+  let u = String(raw).trim().replace(/^(https?):\/+/i, "$1://");
+  if (!/^https?:\/\//i.test(u)) u = `https://${u}`;
+  try {
+    const url = new URL(u);
+    return url.hostname.includes(".") ? u : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Instagram: accept a full URL or a bare @handle / handle. */
+function normalizeInstagram(raw) {
+  if (!raw) return null;
+  const u = String(raw).trim();
+  if (/^https?:\/\//i.test(u)) return normalizeWebsite(u);
+  const handle = u.replace(/^@/, "");
+  return /^[A-Za-z0-9._]{1,30}$/.test(handle) ? `https://www.instagram.com/${handle}` : null;
+}
+
 const groups = backup.groups
   .filter((g) => g.isActive)
   .sort((a, b) => a.name.localeCompare(b.name, "de"))
@@ -112,19 +145,25 @@ const groups = backup.groups
           }
         : null;
 
+    const fix = corrections[g.slug] ?? {};
+    for (const k of Object.keys(fix)) if (!CORRECTABLE.includes(k)) throw new Error(`corrections: "${k}" not allowed (${g.slug})`);
+    const finalCat = fix.categoryName ? catByName.get(fix.categoryName) : cat;
+    if (fix.categoryName && !finalCat) throw new Error(`corrections: unknown category "${fix.categoryName}" (${g.slug}) — will not create one`);
+    const v = (k) => (k in fix ? fix[k] : g[k]);
+
     return {
       id: g.id,
       name: g.name,
       slug: g.slug,
-      shortDescription: g.shortDescription,
-      longDescription: g.longDescription,
-      categoryName: cat?.name ?? "Sonstiges",
-      categoryColor: cat?.color ?? "",
-      categoryIcon: cat?.icon ?? "",
-      websiteUrl: g.websiteUrl ?? null,
-      instagramUrl: g.instagramUrl ?? null,
-      contactEmail: g.contactEmail ?? null,
-      memberCount: g.memberCount ?? null,
+      shortDescription: v("shortDescription"),
+      longDescription: v("longDescription"),
+      categoryName: finalCat?.name ?? "Sonstiges",
+      categoryColor: finalCat?.color ?? "",
+      categoryIcon: finalCat?.icon ?? "",
+      websiteUrl: normalizeWebsite(v("websiteUrl")),
+      instagramUrl: normalizeInstagram(v("instagramUrl")),
+      contactEmail: v("contactEmail") ?? null,
+      memberCount: v("memberCount") ?? null,
       language: g.language ?? null,
       eventFrequency: g.eventFrequency ?? null,
       groupSize: g.groupSize ?? null,

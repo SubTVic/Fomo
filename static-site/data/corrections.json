@@ -1,0 +1,11 @@
+{
+  "_note": "Manual corrections applied on top of the admin-DB backup by scripts/export-from-backup.mjs (keyed by slug). Idempotent; survives re-exports. Remove an entry once the dynamic DB carries the same value. Allowed fields: categoryName, memberCount, websiteUrl, instagramUrl, contactEmail, shortDescription, longDescription.",
+  "corrections": {
+    "evangelische-studierendengemeinde-dresden-esg": { "categoryName": "Glaube & Spiritualität", "websiteUrl": "https://www.esg-dresden.de" },
+    "folkloretanzensemble-thea-maass-der-tu-dresden": { "categoryName": "Kunst & Kultur", "websiteUrl": "https://tu-te.de" },
+    "islamischer-hochschulbund-dresden": { "memberCount": 10 },
+    "studentische-wasserwacht-dresden": { "categoryName": "Soziales Engagement", "memberCount": 40, "websiteUrl": "http://www.studentische-ww-dd.de" },
+    "nightline-dresden-e-v": { "contactEmail": "mitmachen@nightline-dresden.de" },
+    "interessengemeinschaft-boerse-an-der-tu-dresden-e-v": { "categoryName": "Wirtschaft & Karriere" }
+  }
+}

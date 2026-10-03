@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "source": "backup: fomo-backup-2026-08-17-13-13-59.json",
-    "generatedAt": "2026-08-17T13:14:50.691Z",
-    "groupCount": 95,
-    "verifiedCount": 51,
-    "derivedCount": 44,
+    "source": "backup: 088c9f3e-fomo-backup-2026-10-03-10-44-33.json",
+    "generatedAt": "2026-10-03T10:47:43.436Z",
+    "groupCount": 96,
+    "verifiedCount": 54,
+    "derivedCount": 42,
     "note": "All active groups. Verified have real selfRatings; unverified use naive-derived ratings flagged derived:true (excluded from quiz matching)."
   },
   "groups": [
@@ -286,7 +286,7 @@
       "categoryColor": "",
       "categoryIcon": "",
       "websiteUrl": "https://aias.de/dresden",
-      "instagramUrl": "aiasdresden",
+      "instagramUrl": "https://www.instagram.com/aiasdresden",
       "contactEmail": "dresden@aias-germany.de",
       "memberCount": 11,
       "language": "german",
@@ -681,61 +681,61 @@
     },
     {
       "id": "cmmwg2z2e000bib04pcm2mgbt",
-      "name": "altBau e.V. - Alumniverein Bauingenieurwesen TU Dresden",
+      "name": "altBau e.V. – Alumniverein Bauingenieurwesen TU Dresden",
       "slug": "altbau-e-v-alumniverein-bauingenieurwesen-tu-dresden",
-      "shortDescription": "altBau e.V. ist ein gemeinnütziger Alumniverein bestehend aus aktuellen und ehemaligen Studierenden der Fakultät Bauingenieurwesen der TU Dresden, der sich um die Vernetzung innerhalb der Fakultät küm",
-      "longDescription": "altBau e.V. ist ein gemeinnütziger Alumniverein bestehend aus aktuellen und ehemaligen Studierenden der Fakultät Bauingenieurwesen der TU Dresden, der sich um die Vernetzung innerhalb der Fakultät kümmert. Im Fokus stehen die Vernetzung der Alumni, ein Absolventenball sowie eine bauspezifische Firmenkontaktmesse.",
+      "shortDescription": "Der altBau e.V. ist Dein Verein für die Vernetzung in und um die Fakultät Bauingenieurwesen während und nach dem Studium.",
+      "longDescription": "Unsere Mission: Mit der Fakultät verbunden bleiben\n\nWir sind ein gemeinnütziger Verein bestehend aus aktuellen und ehemaligen Studierenden, der sich während und nach dem Studium um die Vernetzung innerhalb der Fakultät Bauingenieurwesen kümmert.  Hierfür treffen wir uns in regelmäßigen Vereinssitzungen, um verschiedene Veranstaltungen und Aktionen zu planen und unser Netzwerk zu erweitern. Unsere Hauptarbeit liegt in der Organisation eines Absolventenballs, einer Firmenkontaktmesse sowie der Alumniarbeit.\n\n\nUnsere 3 Standbeine:\n- Alumnivernetzung\n- Absolventenball\n- Firmenkontaktmesse (bauMarkt)",
       "categoryName": "Sonstiges",
       "categoryColor": "",
       "categoryIcon": "",
-      "websiteUrl": "https://altbau-tud.de",
-      "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
+      "websiteUrl": "https://altbau-tud.de/",
+      "instagramUrl": "https://www.instagram.com/altbau_tud",
+      "contactEmail": "altbau-dresden@outlook.de",
+      "memberCount": 11,
       "language": "german",
       "eventFrequency": "low",
       "groupSize": "small",
-      "motto": null,
-      "foundedYear": null,
+      "motto": "Mit der Fakultät verbunden blieben",
+      "foundedYear": 2023,
       "logoUrl": null,
       "attributes": {
-        "career": true,
+        "career": false,
         "tech": false,
         "socialImpact": false,
-        "party": true,
+        "party": false,
         "religion": false,
         "sports": false,
-        "networking": true,
+        "networking": false,
         "arts": false,
         "music": false,
         "timeLow": false,
         "handsOn": false,
         "outdoor": false,
         "international": false,
-        "beginnerFriendly": true,
+        "beginnerFriendly": false,
         "competitive": false,
         "financialCost": false,
-        "leadershipOpportunities": true
+        "leadershipOpportunities": false
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
+        "raterCount": 3,
+        "derived": false,
         "filterSelections": [
           "party"
         ],
         "answers": [
           {
             "itemId": "WS2-01",
-            "value": 1
+            "value": -1
           },
           {
             "itemId": "WS2-02",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-03",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-04",
@@ -743,7 +743,7 @@
           },
           {
             "itemId": "WS2-05",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-06",
@@ -751,15 +751,15 @@
           },
           {
             "itemId": "WS2-07",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-08",
             "value": 1
           },
           {
+            "itemId": "WS2-08",
+            "value": 0
+          },
+          {
             "itemId": "WS2-09",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-10",
@@ -771,15 +771,15 @@
           },
           {
             "itemId": "WS2-12",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-13",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-14",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-15",
@@ -787,7 +787,7 @@
           },
           {
             "itemId": "WS2-16",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-17",
@@ -795,7 +795,7 @@
           },
           {
             "itemId": "WS2-18",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-19",
@@ -807,7 +807,7 @@
           },
           {
             "itemId": "WS2-21",
-            "value": 0
+            "value": 1
           }
         ]
       }
@@ -3092,7 +3092,7 @@
       "categoryColor": "",
       "categoryIcon": "",
       "websiteUrl": "https://dresden.sicherheitspolitik.de/aktuelles",
-      "instagramUrl": "dias_dresden",
+      "instagramUrl": "https://www.instagram.com/dias_dresden",
       "contactEmail": "dresden@sicherheitspolitik.de",
       "memberCount": 26,
       "language": "german",
@@ -3355,8 +3355,8 @@
       "shortDescription": "DIE LINKE.SDS Dresden ist die Dresdner Ortsgruppe des Sozialistisch-Demokratischen Studierendenverbands, die sich hauptsächlich an der TU Dresden engagiert und sich wöchentlich trifft, um über aktuell",
       "longDescription": "DIE LINKE.SDS Dresden ist die Dresdner Ortsgruppe des Sozialistisch-Demokratischen Studierendenverbands, die sich hauptsächlich an der TU Dresden engagiert und sich wöchentlich trifft, um über aktuelle politische Themen zu diskutieren, sich weiterzubilden und linken Aktivismus zu betreiben. Die Gruppe setzt sich gegen Rechtsruck, Neoliberalismus und soziale Ungerechtigkeit ein und arbeitet in Bereichen wie Antifaschismus, Feminismus und Klimapolitik.",
       "categoryName": "Politik & Gesellschaft",
-      "categoryColor": "",
-      "categoryIcon": "",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
       "websiteUrl": "https://www.instagram.com/sds.dresden/",
       "instagramUrl": "https://www.instagram.com/sds.dresden/",
       "contactEmail": "sds@dielinke-dresden.de",
@@ -3490,7 +3490,7 @@
       "categoryName": "Soziales Engagement",
       "categoryColor": "#EF476F",
       "categoryIcon": "heart",
-      "websiteUrl": "effektiveraltruismus.de",
+      "websiteUrl": "https://effektiveraltruismus.de",
       "instagramUrl": null,
       "contactEmail": "dresden@effektiveraltruismus.de",
       "memberCount": 1,
@@ -4290,7 +4290,7 @@
       "categoryName": "Glaube & Spiritualität",
       "categoryColor": "",
       "categoryIcon": "",
-      "websiteUrl": "https:/www.esg-dresden.de",
+      "websiteUrl": "https://www.esg-dresden.de",
       "instagramUrl": "https://www.instagram.com/esg_dresden/",
       "contactEmail": "oeffentlichkeit@esg-dresden.de",
       "memberCount": 26,
@@ -4554,10 +4554,10 @@
       "slug": "folkloretanzensemble-thea-maass-der-tu-dresden",
       "shortDescription": "Seit 1950 zählt das Folkloretanzensemble „Thea Maass“ der TU Dresden zu den leistungsstärksten und künstlerisch profiliertesten Amateurtanzgruppen Deutschlands.",
       "longDescription": "Unter der Leitung der Tanzpädagogin und Choreografin Maud Butter widmen sich gegenwärtig etwa 40 Tänzer und Musiker der Pflege und Interpretation deutscher Tanzfolklore sowie der tänzerischen Umsetzung von überlieferten Bräuchen aus verschiedenen deutschen Regionen in anspruchsvollen Bühnenchoreografien. Dabei steht der feinfühlige und verantwortungsbewusste Umgang mit unserem Kulturerbe im Vordergrund der Gestaltung thematischer und handlungsbezogener Werke mit den vielfältigen Mitteln des Folkloretanzes.\n\nGanz im Sinne der lange Zeit für das Ensemble wirkenden Choreografin und Tanzregisseurin Thea Maass ist das Ziel der Gruppe, Menschen die Folklore in ihrer lebendigen Natürlichkeit, ihrem ausdrucksstarken Formenreichtum und in ihrer ganzen Schönheit nahe zu bringen.\n\nGelegenheit dazu bietet sich dem vorwiegend aus Studenten und Absolventen der TU Dresden bestehenden Ensemble nicht nur bei regionalen und landesweiten Auftritten, sondern als Mitglied des Internationalen Rats für die Organisation von Folklorefestivals und Volkskunst (CIOFF) auch bei zahlreichen Folklorefestivals und Tanzwettbewerben im Ausland. Im Kontakt mit Folkloregruppen und Menschen aus der ganzen Welt erfährt das Ensemble nicht nur selbst immer wieder neue Impulse in seiner künstlerischen Arbeit, sondern trägt in seiner Vielseitigkeit auch zu einem regen Austausch zwischen den Kulturen bei.",
-      "categoryName": "Politik & Gesellschaft",
-      "categoryColor": "#E63946",
-      "categoryIcon": "megaphone",
-      "websiteUrl": "tu-te.de",
+      "categoryName": "Kunst & Kultur",
+      "categoryColor": "#9B5DE5",
+      "categoryIcon": "palette",
+      "websiteUrl": "https://tu-te.de",
       "instagramUrl": "https://www.instagram.com/theamaass_dance/",
       "contactEmail": "info@tu-te.de",
       "memberCount": 26,
@@ -5483,7 +5483,7 @@
       "categoryName": "Sonstiges",
       "categoryColor": "",
       "categoryIcon": "",
-      "websiteUrl": "tud.vote",
+      "websiteUrl": "https://tud.vote",
       "instagramUrl": "https://www.instagram.com/studis_im_senat?igsh=a3pmYzcxYnIxb3E4",
       "contactEmail": "studis_im_senat@mailbox.tu-dresden.de",
       "memberCount": 11,
@@ -5881,8 +5881,8 @@
       "shortDescription": "Die IGB Dresden ist ein 1995 gegründeter studentischer Börsenverein an der TU Dresden, der börseninteressierte Studierende und Privatinvestoren mit Wissen und Netzwerk unterstützt.",
       "longDescription": "Die IGB Dresden ist ein 1995 gegründeter studentischer Börsenverein an der TU Dresden, der börseninteressierte Studierende, Privatinvestoren und Bürger durch wöchentliche Diskussionsrunden, Vorträge, Seminare und Börsenfahrten zusammenbringt. Ziel ist es, Wissen über Kapitalmärkte und Finanzthemen zu vermitteln und ein Netzwerk in die Finanzwelt aufzubauen.",
       "categoryName": "Wirtschaft & Karriere",
-      "categoryColor": "#EF476F",
-      "categoryIcon": "heart",
+      "categoryColor": "",
+      "categoryIcon": "",
       "websiteUrl": "https://www.igboerse.de",
       "instagramUrl": null,
       "contactEmail": null,
@@ -6155,7 +6155,7 @@
       "websiteUrl": "https://ih-dresden.de",
       "instagramUrl": "https://www.instagram.com/ihd.tu.dresden",
       "contactEmail": "ihd.students@gmail.com",
-      "memberCount": 1,
+      "memberCount": 10,
       "language": "both",
       "eventFrequency": "low",
       "groupSize": "small",
@@ -8684,7 +8684,7 @@
       "categoryIcon": "heart",
       "websiteUrl": "https://nightline-dresden.de/",
       "instagramUrl": "https://www.instagram.com/nightlinedresden?igsh=MW12bnhneHFicTVlbg==",
-      "contactEmail": "marketing@nightline-dresden.de",
+      "contactEmail": "mitmachen@nightline-dresden.de",
       "memberCount": 11,
       "language": "german",
       "eventFrequency": "high",
@@ -9195,6 +9195,139 @@
           {
             "itemId": "WS2-21",
             "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmufcd6070001l0047pa7hctl",
+      "name": "Psycho-Path e.V.",
+      "slug": "psycho-path-e-v",
+      "shortDescription": "Als studentische Redaktion bringen wir gemeinsam eine Zeitschrift heraus, die sich mit psychologischen und studentischen Themen befasst. Mittlerweile findet man uns an Unis in ganz Deutschland.",
+      "longDescription": "Der Psycho-Path ist ein gemeinnütziger Verein, der im Jahr 2000 als Projekt des FSR Psychologie gestartet ist. Seitdem haben wir uns weiterentwickelt - mindestens einmal pro Jahr bringen wir eine professionelle Zeitschrift heraus, die sich mit vielfältigen Themen rund um die Psychologie beschäftigt. Themen der letzten Jahre waren beispielsweise Stigmatisierung, forensische Psychologie oder die Psychologie des Spielens. Unsere Auflage wächst stetig - dieses Semester (2026) haben wir z.B. 4500 Exemplare drucken und an Unis in ganz Deutschland versenden lassen. Vielleicht hast du uns ja in deinem Ersti-Beutel gefunden? \nBei uns kann jede Person mitmachen, die sich für psychologische Themen interessiert - ihr müsst nicht unbedingt Psychologie studieren. Wir suchen Menschen, die Lust haben auf Layout, Social Media, Recherche, Interviews, Artikel schreiben, Werbekampagnen und so weiter. Wir freuen uns auf neue Menschen mit frischen Ideen!",
+      "categoryName": "Kunst & Kultur",
+      "categoryColor": "#9B5DE5",
+      "categoryIcon": "palette",
+      "websiteUrl": "https://psycho-path.de/",
+      "instagramUrl": "https://www.instagram.com/psycho_path_official/",
+      "contactEmail": "zeitung@psycho-path.de",
+      "memberCount": 11,
+      "language": "german",
+      "eventFrequency": null,
+      "groupSize": null,
+      "motto": null,
+      "foundedYear": 2000,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "nextEvent": null,
+      "selfRating": {
+        "raterCount": 1,
+        "derived": false,
+        "filterSelections": [
+          "arts"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
           }
         ]
       }
@@ -10412,13 +10545,13 @@
       "slug": "studentische-wasserwacht-dresden",
       "shortDescription": "In der Studentischen Wasserwacht Dresden engagieren wir uns ehrenamtlich als Rettungsschwimmer. Dafür trainieren wir wöchentlich in der Schwimmhalle und bilden uns regelmäßig weiter.",
       "longDescription": "Als eine humanitäre und wassersporttreibende Gemeinschaft des Deutschen Roten Kreuzes setzen wir uns ehrenamtlich für die Sicherheit anderer am und im Wasser ein. Zu unseren Aufgaben zählen: Dienste in Schwimmbädern und am Meer, Absicherung von Veranstaltungen an und auf dem Wasser, Einsätze bei Hochwasser und Katastrophen, Prävention von Badeunfällen und die Aus- und Fortbildung von Einsatzkräften. Unsere Wasserwacht Ortsgruppe arbeitet dabei seit ihrem Bestehen eng mit dem Dresdner Hochschulsportzentrum (DHSZ) zusammen.\n\nWir treffen uns wöchentlich zum Rettungsschwimmtraining, um unsere Einsatzfähigkeit als Rettungsschwimmer zu verbessern bzw. zu erhalten. Zu diesem Zweck bieten wir den Mitgliedern auch verschiedene Ausbildungen trainingsbegleitend, in Gruppenstunden oder über Dachorganisationen an. Der soziale Aspekt und persönliche Austausch mit Gleichgesinnten kommen dabei auch nicht zu kurz. \n\nMehr Infos zu uns findest du auf unserer Webseite.",
-      "categoryName": "Sonstiges",
-      "categoryColor": "",
-      "categoryIcon": "",
-      "websiteUrl": "www.studentische-ww-dd.de",
+      "categoryName": "Soziales Engagement",
+      "categoryColor": "#EF476F",
+      "categoryIcon": "heart",
+      "websiteUrl": "http://www.studentische-ww-dd.de",
       "instagramUrl": "https://www.instagram.com/wasserwacht.dresden?igsh=cmxiaTBnNnd4ODJz",
       "contactEmail": "kontakt@studentische-ww-dd.de",
-      "memberCount": 100,
+      "memberCount": 40,
       "language": "german",
       "eventFrequency": "high",
       "groupSize": "large",
@@ -11342,20 +11475,20 @@
       "id": "cmmwg3bfi0049ib04nxf3b1wh",
       "name": "Therapie mal anders",
       "slug": "therapie-mal-anders",
-      "shortDescription": "Veranstaltungsreihe der Hochschulgruppe 'Kritische Psychologie' an der TU Dresden, organisiert von Psychologiestudierenden, die Themen aus Psychologie und Psychotherapie im gesellschaftspolitischen Ko",
-      "longDescription": "Veranstaltungsreihe der Hochschulgruppe 'Kritische Psychologie' an der TU Dresden, organisiert von Psychologiestudierenden, die Themen aus Psychologie und Psychotherapie im gesellschaftspolitischen Kontext beleuchtet, die im regulären Curriculum keinen Platz finden. Schwerpunkte sind u.a. Diskriminierung, Rassismus, Klassismus und Gender im psychotherapeutischen Raum.",
+      "shortDescription": "Wir haben uns zusammengetan, weil uns eine gesellschaftskritische Perspektive in der Psychologie oft zu kurz kommt und freuen uns, wenn du mit uns in den Austausch kommen möchtest.:)",
+      "longDescription": "Uns ist bewusst, dass sich strukturelle Ungerechtigkeiten ebenso in der Psychologie widerspiegeln wie in anderen gesellschaftlichen Räumen auch. Deswegen ist es uns wichtig, Lehrinhalte sowie eigene Denk- und Verhaltensweisen gesellschaftskritisch zu hinterfragen. Wir haben uns als Gruppe zusammengetan, weil uns das in vielen Kontexten zu kurz kommt. Ursprünglich hat sich \"Therapie mal anders\" als Untergruppe der Kritischen Psychologie Dresden gegründet. Von 2019 bis 2026 haben wir im Semestertakt eine Veranstaltungsreihe organisiert, in der wir Referierende eingeladen haben, um ihre Expertise zu Themen wie Rassismus, Queerfeindlichkeit oder solidarischer Gesundheitsversorgung zu teilen (einen detaillierten Einblick findet ihr auf unserer Website: https://kritpsydd.noblogs.org/). Momentan arbeiten wir an der Konzeption einer Wanderausstellung und starten einen Lesekreis. Wir treffen uns wöchentlich zum Plenum und freuen uns immer über neue Personen und Ideen. Wenn das für dich interessant klingt, schreib uns gerne eine Nachricht (unter therapiemalanders@gmail.com oder per Insta (@therapiemalanders)). :)",
       "categoryName": "Sonstiges",
       "categoryColor": "",
       "categoryIcon": "",
-      "websiteUrl": "https://kritpsydd.noblogs.org/therapie-mal-anders/",
-      "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
+      "websiteUrl": "https://kritpsydd.noblogs.org/",
+      "instagramUrl": "https://www.instagram.com/therapiemalanders/",
+      "contactEmail": "therapiemalanders@gmail.com",
+      "memberCount": 11,
       "language": "german",
       "eventFrequency": "high",
       "groupSize": "small",
       "motto": null,
-      "foundedYear": null,
+      "foundedYear": 2019,
       "logoUrl": null,
       "attributes": {
         "career": false,
@@ -11371,24 +11504,24 @@
         "handsOn": false,
         "outdoor": false,
         "international": false,
-        "beginnerFriendly": false,
+        "beginnerFriendly": true,
         "competitive": false,
         "financialCost": false,
         "leadershipOpportunities": true
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
+        "raterCount": 3,
+        "derived": false,
         "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-02",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-03",
@@ -11396,7 +11529,7 @@
           },
           {
             "itemId": "WS2-04",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-05",
@@ -11408,7 +11541,7 @@
           },
           {
             "itemId": "WS2-07",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-08",
@@ -11420,7 +11553,7 @@
           },
           {
             "itemId": "WS2-10",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-11",
@@ -11432,27 +11565,27 @@
           },
           {
             "itemId": "WS2-13",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-14",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-15",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-16",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-17",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-18",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-19",
@@ -11460,11 +11593,11 @@
           },
           {
             "itemId": "WS2-20",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-21",
-            "value": 0
+            "value": 1
           }
         ]
       }

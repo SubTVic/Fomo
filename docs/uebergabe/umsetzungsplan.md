@@ -907,8 +907,8 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 1.6 | Migration aus Build | ✅ | #8 |
 | 1.7 | Repo-Hygiene | ✅ | #9 |
 | 1.8 | 🧑 Checkliste Phase 1 | ⬜ | – |
-| 2.1 | Test-Setup Root | ✅ | wp-2-1-test-setup |
-| 2.2 | Matching-Tests | ⬜ | |
+| 2.1 | Test-Setup Root | ✅ | #10 |
+| 2.2 | Matching-Tests | ✅ | wp-2-2-matching-tests |
 | 2.3 | Validierung im Build | ⬜ | |
 | 2.4 | CI | ⬜ | |
 | 2.5 | KI-Leitplanken | ⬜ | |

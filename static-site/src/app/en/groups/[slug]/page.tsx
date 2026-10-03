@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getGroups, getGroupBySlug, getQuizFilters, categoryColorOf, isUnverified } from "@/lib/data";
-import { groupCategory, groupLongText, groupShortText } from "@/lib/group-copy";
+import { GERMAN_ONLY_NOTE, groupCategory, groupLongText, groupShortText, isGermanOnly } from "@/lib/group-copy";
 import { translateQuizFilters } from "@/lib/quiz-translations";
 import { GroupLinks } from "@/components/GroupLinks";
 import { GroupLogo } from "@/components/GroupLogo";
@@ -96,7 +96,7 @@ export default async function EnglishGroupDetailPage({
           </div>
         </div>
 
-        {group.motto && <p className="mt-2 text-lg italic text-accent-muted">"{group.motto}"</p>}
+        {group.motto && <p className="mt-2 text-lg italic text-accent-muted">&quot;{group.motto}&quot;</p>}
 
         {isUnverified(group) && (
           <div className="mt-4">
@@ -104,7 +104,10 @@ export default async function EnglishGroupDetailPage({
           </div>
         )}
 
-        <p className="mt-5 whitespace-pre-line text-body">{groupLongText(group, "en")}</p>
+        <p className="mt-5 whitespace-pre-line text-body" lang={isGermanOnly(group, "en") ? "de" : undefined}>
+          {groupLongText(group, "en")}
+        </p>
+        {isGermanOnly(group, "en") && <p className="mt-2 text-xs italic text-muted">{GERMAN_ONLY_NOTE}</p>}
 
         {meta.length > 0 && (
           <dl className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">

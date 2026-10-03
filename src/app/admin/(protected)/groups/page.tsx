@@ -5,37 +5,20 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { RegistrationStatus } from "@prisma/client";
 import { getAllGroupsForAdmin } from "@/lib/queries/groups";
-import { ImportGroupsButton } from "./ImportGroupsButton";
-import { ScraperImportButton } from "./ScraperImportButton";
 import { VerifyButton } from "./VerifyButton";
 import { GenerateInvitesButton } from "./GenerateInvitesButton";
 import { InviteButton } from "./InviteButton";
-import { DeleteGroupButton } from "./DeleteGroupButton";
+import { DeleteButton } from "../DeleteButton";
 import { ToggleActiveButton } from "./[id]/ToggleActiveButton";
 import { requireAdminPage } from "@/lib/require-admin";
 
-const MATCHING_ATTRS = [
-  "career",
-  "tech",
-  "socialImpact",
-  "party",
-  "religion",
-  "sports",
-  "networking",
-  "arts",
-  "music",
-  "timeLow",
-  "handsOn",
-  "outdoor",
-  "international",
-  "beginnerFriendly",
-  "competitive",
-  "financialCost",
-  "leadershipOpportunities",
-] as const;
-
-function countTrueAttributes(group: Record<string, unknown>): number {
-  return MATCHING_ATTRS.filter((attr) => group[attr] === true).length;
+/** Same rule as the export: only verified groups with a real self-rating are matched. */
+function profileLabel(group: { isVerified: boolean; selfRating: { _count: { answers: number } } | null }) {
+  const real = (group.selfRating?._count.answers ?? 0) > 0;
+  return {
+    real,
+    inQuiz: real && group.isVerified,
+  };
 }
 
 function regStatusLabel(status: RegistrationStatus | null): { text: string; className: string } {
@@ -56,7 +39,8 @@ interface AdminGroupsPageProps {
 }
 
 export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageProps) {
-  await requireAdminPage();
+  const admin = await requireAdminPage();
+  const isSuperAdmin = admin.role === "SUPER_ADMIN";
   const { filter } = await searchParams;
   const allGroups = await getAllGroupsForAdmin();
 
@@ -89,8 +73,6 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
             + Neue Gruppe
           </Link>
           <GenerateInvitesButton />
-          <ScraperImportButton />
-          <ImportGroupsButton />
         </div>
       </div>
 
@@ -135,7 +117,7 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
                 <th className="px-4 py-3 text-left font-medium">Name</th>
                 <th className="px-4 py-3 text-left font-medium">Kategorie</th>
                 <th className="px-4 py-3 text-left font-medium">Beschreibung</th>
-                <th className="px-4 py-3 text-center font-medium">Attribute</th>
+                <th className="px-4 py-3 text-center font-medium">Profil</th>
                 <th className="px-4 py-3 text-center font-medium">Registrierung</th>
                 <th className="px-4 py-3 text-center font-medium">Status</th>
                 <th className="px-4 py-3 text-center font-medium">Verifizierung</th>
@@ -144,7 +126,7 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
             </thead>
             <tbody className="divide-y">
               {filtered.map((group) => {
-                const attrCount = countTrueAttributes(group as Record<string, unknown>);
+                const profile = profileLabel(group);
                 const regStatus = regStatusLabel(group.registrationStatus);
                 return (
                   <tr key={group.id} className="hover:bg-muted/20 transition-colors">
@@ -170,15 +152,21 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
                         {group.shortDescription}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-4 py-3 text-center whitespace-nowrap">
                       <span
                         className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                          attrCount >= 5
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-muted text-muted-foreground"
+                          profile.real ? "bg-blue-100 text-blue-800" : "bg-muted text-muted-foreground"
                         }`}
+                        title={
+                          profile.real
+                            ? "Die Gruppe hat die 21 Fragen selbst beantwortet."
+                            : "Kein eigenes Profil – wird aus alten Attributen abgeleitet (nur Verzeichnis)."
+                        }
                       >
-                        {attrCount} / {MATCHING_ATTRS.length}
+                        {profile.real ? "echt" : "abgeleitet"}
+                      </span>
+                      <span className="block text-[10px] text-muted-foreground mt-0.5">
+                        {profile.inQuiz ? "im Quiz" : "nicht im Quiz"}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -210,7 +198,12 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
                           groupName={group.name}
                           contactEmail={group.contactEmail}
                         />
-                        <DeleteGroupButton groupId={group.id} groupName={group.name} />
+                        {isSuperAdmin && (
+                          <DeleteButton
+                            url={`/api/admin/groups/${group.id}`}
+                            title={`${group.name} löschen`}
+                          />
+                        )}
                       </div>
                     </td>
                   </tr>

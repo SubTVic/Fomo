@@ -216,6 +216,17 @@ model Admin {
   @@map("admins")
 }
 
+// Failed admin logins (rate limit, src/lib/login-guard.ts). Only a hash of the
+// normalized e-mail is stored; rows older than a day are deleted.
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  emailHash String
+  createdAt DateTime @default(now())
+
+  @@index([emailHash, createdAt])
+  @@map("login_attempts")
+}
+
 // ─── Gruppen-Selbst-Rating (Phase 2, WS2-Items) ──────────────────
 
 model GroupSelfRating {

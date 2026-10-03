@@ -126,7 +126,9 @@ und `root`) auf jedem PR. Node-Version: **24** (`.nvmrc`, `engines` in beiden `p
 - **Root-App:** Next.js 16, Prisma 6, PostgreSQL 16, Auth.js v5 (Credentials),
   next-intl, Zod, Vitest + Playwright. Admin-Zugriff nur über
   `requireAdminApi()`/`requireAdminPage()` (`src/lib/require-admin.ts`, prüft
-  Aktiv-Status und Rolle in der DB). Der Build migriert die DB **nicht**.
+  Aktiv-Status und Rolle in der DB). Backup, Löschen, Zusammenführen und
+  Admin-Verwaltung nur mit `{ role: "SUPER_ADMIN" }`. Login: E-Mail klein geschrieben,
+  Sperre nach Fehlversuchen (`src/lib/login-guard.ts`). Der Build migriert die DB **nicht**.
 - **Lizenz:** AGPL-3.0.
 - **Sprach-Routing der Root-App:** `src/proxy.ts` (next-intl; hieß bis Next 15
   `middleware.ts`). Interne Links in `src/app/[locale]/` immer mit `Link` aus

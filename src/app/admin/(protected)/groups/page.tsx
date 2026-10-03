@@ -39,7 +39,8 @@ interface AdminGroupsPageProps {
 }
 
 export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageProps) {
-  await requireAdminPage();
+  const admin = await requireAdminPage();
+  const isSuperAdmin = admin.role === "SUPER_ADMIN";
   const { filter } = await searchParams;
   const allGroups = await getAllGroupsForAdmin();
 
@@ -197,7 +198,9 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
                           groupName={group.name}
                           contactEmail={group.contactEmail}
                         />
-                        <DeleteGroupButton groupId={group.id} groupName={group.name} />
+                        {isSuperAdmin && (
+                          <DeleteGroupButton groupId={group.id} groupName={group.name} />
+                        )}
                       </div>
                     </td>
                   </tr>

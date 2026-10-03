@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { getActiveGroupCount } from "@/lib/queries/groups";
 import { getSiteConfig } from "@/lib/queries/site-config";
 import { YetiBadge } from "@/components/shared/YetiBadge";
+import { PUBLIC_QUIZ_URL } from "@/lib/public-site";
 
 export const dynamic = "force-dynamic";
 
@@ -94,51 +95,6 @@ function PrelaunchCta({ groupCount, t }: { groupCount: number; t: any }) {
       <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-            {t("prelaunch.studyLabel")}
-          </p>
-          <h2 className="font-heading text-[clamp(18px,3vw,28px)] uppercase leading-tight mb-2.5">
-            {t("prelaunch.studyTitle")}
-          </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-            {t("prelaunch.studyText")}
-          </p>
-        </div>
-        <div className="flex flex-col items-center sm:items-end gap-2">
-          <Link
-            href="/pilot"
-            className="bg-foreground text-primary-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-[#2a3a45] transition-colors"
-          >
-            {t("prelaunch.studyButton")}
-          </Link>
-          <span className="text-[11px] text-muted-foreground">{t("prelaunch.studyMeta")}</span>
-        </div>
-      </div>
-
-      <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center bg-accent">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
-            {t("prelaunch.protoLabel")}
-          </p>
-          <h2 className="font-heading text-[clamp(18px,3vw,24px)] uppercase leading-tight mb-2.5">
-            {t("prelaunch.protoTitle")}
-          </h2>
-          <p className="text-sm leading-relaxed text-muted-foreground max-w-[480px]">
-            {t("prelaunch.protoText")}
-          </p>
-        </div>
-        <div className="flex flex-col items-center sm:items-end gap-2">
-          <Link
-            href="/quiz"
-            className="border-2 border-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-foreground hover:text-primary-foreground transition-colors"
-          >
-            {t("prelaunch.protoButton")}
-          </Link>
-        </div>
-      </div>
-
-      <div className="border-t-4 border-foreground px-6 py-8 sm:px-8 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[3px] text-muted-foreground mb-2">
             {t("prelaunch.groupsLabel")}
           </p>
           <h2 className="font-heading text-[clamp(18px,3vw,24px)] uppercase leading-tight mb-2.5">
@@ -190,16 +146,13 @@ function LiveCta({ groupCount, t }: { groupCount: number; t: any }) {
           </p>
         </div>
         <div className="flex flex-col items-center sm:items-end gap-2">
-          <Link
-            href="/quiz"
+          <a
+            href={PUBLIC_QUIZ_URL}
             className="bg-foreground text-primary-foreground px-10 py-4 font-heading text-base uppercase tracking-wider hover:bg-[#2a3a45] transition-colors"
           >
             {t("live.quizButton")}
-          </Link>
+          </a>
           <span className="text-[11px] text-muted-foreground">{t("live.quizMeta")}</span>
-          <Link href="/demo" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
-            {t("live.demoLink")}
-          </Link>
           <Link href="/groups" className="text-[11px] text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors">
             {t("live.allGroupsLink")}
           </Link>

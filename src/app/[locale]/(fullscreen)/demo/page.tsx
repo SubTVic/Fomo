@@ -1,13 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { getQuizGroups } from "@/lib/queries/quiz";
-import { DemoTour } from "@/components/demo/DemoTour";
-import { DEMO_THESES } from "@/components/demo/demo-theses";
+import { redirect } from "next/navigation";
+import { PUBLIC_QUIZ_URL } from "@/lib/public-site";
 
-export const dynamic = "force-dynamic";
-
-export default async function DemoPage() {
-  const groups = await getQuizGroups();
-
-  return <DemoTour theses={DEMO_THESES} groups={groups} />;
+// Former demo tour. Decommissioned: the live quiz runs on the public website.
+export default function DemoPage() {
+  redirect(PUBLIC_QUIZ_URL);
 }

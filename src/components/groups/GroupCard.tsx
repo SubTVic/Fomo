@@ -3,10 +3,10 @@
 "use client";
 
 import { useState } from "react";
-import type { GroupWithCategory } from "@/types";
+import type { PublicGroup } from "@/types";
 
 interface GroupCardProps {
-  group: GroupWithCategory;
+  group: PublicGroup;
 }
 
 export function GroupCard({ group }: GroupCardProps) {

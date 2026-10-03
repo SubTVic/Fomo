@@ -165,6 +165,11 @@ Die Root-App bleibt Datenerfassungs-Tool (Registrierung + Admin). Offen:
       `GroupSelfRating`-Registrierungen vor der Erstiwoche (siehe §1.6).
 - [ ] Duplikate deaktivieren (siehe §1.1) — passiert in dieser App.
 - [ ] Optional: EN-Übersetzungen für Quiz-Thesen im Admin nachtragen.
+- [ ] E2E-Specs sind veraltet und testen stillgelegte Seiten/Endpunkte
+      (`tests/pilot-survey.spec.ts`, `tests/variant-switch.spec.ts`,
+      `tests/study2-integration.spec.ts`, Pfade `/pilot`/`/quiz` in
+      `tests/responsive.spec.ts`, `/api/pilot/submit` und `/api/admin/questions`
+      in `tests/api-validation.spec.ts`) → aufräumen mit Umsetzungsplan WP-5.2.
 
 ---
 

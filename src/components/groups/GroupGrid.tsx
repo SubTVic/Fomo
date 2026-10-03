@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { GroupCard } from "./GroupCard";
-import type { GroupWithCategory } from "@/types";
+import type { PublicGroup } from "@/types";
 
 interface GroupGridProps {
-  groups: GroupWithCategory[];
+  groups: PublicGroup[];
 }
 
 export function GroupGrid({ groups }: GroupGridProps) {

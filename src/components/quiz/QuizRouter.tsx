@@ -40,24 +40,8 @@ export function QuizRouter({ theses, groups }: QuizRouterProps) {
 
   const surveyState = useSurveyState(syntheticQuestions, [syntheticDimension]);
 
-  const handleSubmit = useCallback(async () => {
-    if (!startedAt.current) return;
-    const answeredCount = Object.values(surveyState.state.answers).filter(
-      (v) => v === "1" || v === "5"
-    ).length;
-    await fetch("/api/quiz/session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        startedAt: startedAt.current,
-        completedAt: Date.now(),
-        questionCount: answeredCount,
-        resultCount: 0,
-      }),
-    }).catch(() => {
-      // Fire-and-forget — tracking failure must not block the user
-    });
-  }, [surveyState.state.answers]);
+  // The session-tracking endpoint was removed; this legacy quiz is decommissioned.
+  const handleSubmit = useCallback(async () => {}, []);
 
   const handleBlockComplete = useCallback(() => {
     setPhase("results");

@@ -352,6 +352,14 @@ export function GroupSelfRatingQuiz() {
             >
               {t("intro.startButton")}
             </button>
+            {hasPrefill && (
+              <button
+                onClick={() => setStep({ type: "description" })}
+                className="w-full border-2 border-foreground py-3 font-heading text-sm uppercase tracking-wider hover:bg-foreground/5 transition-colors"
+              >
+                {t("intro.infoOnlyButton")}
+              </button>
+            )}
           </div>
         </div>
       </div>

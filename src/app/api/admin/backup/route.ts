@@ -20,6 +20,7 @@ export async function GET() {
     groupSelfRatings,
     groupSelfRatingAnswers,
     groupChangeLogs,
+    groupEditTokens,
     admins,
     siteConfig,
     quizSessions,
@@ -40,6 +41,7 @@ export async function GET() {
     db.groupSelfRating.findMany(),
     db.groupSelfRatingAnswer.findMany(),
     db.groupChangeLog.findMany(),
+    db.groupEditToken.findMany(),
     db.admin.findMany({
       // omit password hashes from backup for safety
       select: {
@@ -80,6 +82,7 @@ export async function GET() {
     groupSelfRatings,
     groupSelfRatingAnswers,
     groupChangeLogs,
+    groupEditTokens,
     admins,
     siteConfig,
     quizSessions,

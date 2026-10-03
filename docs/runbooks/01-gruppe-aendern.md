@@ -2,7 +2,7 @@
 
 # Runbook: Eine Gruppe ändert ihre Daten (Attribute, Beschreibung, Kontakt, Logo)
 
-**Stand: Oktober 2026** (nach Umsetzungsplan Phase 1–3 und WP-4.1). Was sich mit Phase 4
+**Stand: Oktober 2026** (nach Umsetzungsplan Phase 1–3, WP-4.1 und WP-4.2). Was sich mit Phase 4
 ändert, steht unter „Nach dem Umbau".
 
 ## Wichtig vorab (sonst geht die Änderung schief oder verloren)
@@ -29,13 +29,14 @@
 
 ## Fall B: Quiz-Antworten oder Filter ändern (braucht Bearbeitungslink)
 
-1. Admin-App → „Gruppen" → bei der Gruppe auf **„Einladen"** → **„Link erstellen"**.
-   Der Link erscheint **einmal** — kopieren.
-2. Den Link **selbst per Mail** an die Gruppe schicken (die App versendet nichts!).
-   Nur an eine hinterlegte Adresse. Der Link ist wie ein Passwort.
+1. Hat die Gruppe ihren **dauerhaften Bearbeitungslink** noch, reicht der. Sonst:
+   Admin-App → „Gruppen" → **„Bearbeitungslink"** → **„Link erzeugen"** (Details und
+   Mustertext: [Runbook 03](03-link-verloren.md)). Der Link erscheint **nur einmal**.
+2. Den Link per **„Mail an …"** bzw. selbst per Mail schicken (die App versendet
+   nichts). Nur an eine hinterlegte Adresse. Der Link ist wie ein Passwort.
 3. Die Gruppe öffnet den Link, ändert ihre Antworten/Filter (bisherige Antworten sind
-   vorausgefüllt) und sendet ab (~5 Min). Der Link gilt **30 Tage** und funktioniert
-   **nur einmal**.
+   vorausgefüllt) und sendet ab (~5 Min) — oder wählt **„Nur Gruppeninfos ändern"**.
+   Der Link gilt **12 Monate** und funktioniert **mehrfach**.
 4. **Danach in der Admin-App:** unter **„Änderungen"** prüfen, was die Gruppe geändert
    hat → „Gesehen" (oder „Rückgängig", falls etwas nicht stimmt). War die Gruppe noch
    **unbestätigt**: Filter „Eingereicht" → Gruppe öffnen → **„Verifizieren"**.
@@ -85,5 +86,5 @@ Braucht einen Rechner mit Node.js + das Repo:
 
 ## Nach dem Umbau (Umsetzungsplan Phase 4)
 
-- WP-4.2/4.3: Dauerhafter, selbst anforderbarer Bearbeitungslink statt Einmal-Link.
+- WP-4.3: Gruppen fordern ihren Link selbst per Mail an (wartet auf E3).
 - WP-4.5: Daten-Sync per GitHub Action statt Backup → Terminal → Commit.

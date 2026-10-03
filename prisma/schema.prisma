@@ -110,6 +110,7 @@ model Group {
   selfRating     GroupSelfRating?
   contacts       GroupContact[]
   changeLogs     GroupChangeLog[]
+  editTokens     GroupEditToken[]
 
   @@index([categoryId])
   @@index([isActive])
@@ -147,6 +148,25 @@ model GroupInvite {
 
   @@index([groupId])
   @@map("group_invites")
+}
+
+// ─── Dauerhafter Bearbeitungslink (ersetzt GroupInvite für neue Links) ──
+// Reusable for 12 months, revocable. Only sha256(token) is stored; the token
+// itself is shown to the admin once (see src/lib/edit-token.ts).
+
+model GroupEditToken {
+  id         String    @id @default(cuid())
+  groupId    String
+  tokenHash  String    @unique
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
+  revokedAt  DateTime?
+  expiresAt  DateTime
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId])
+  @@map("group_edit_tokens")
 }
 
 // ─── Gruppen-Kontakte (Verantwortliche Personen) ─────────────────

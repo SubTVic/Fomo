@@ -192,7 +192,8 @@
       "text": "Please answer the following 21 statements from the perspective of your group. Imagine a typical member is speaking:",
       "quote": "\"Members of our group would agree with this statement.\"",
       "duration": "This takes about 5 minutes. Your answers will be used directly as the matching profile for the FOMO quiz.",
-      "startButton": "Start now"
+      "startButton": "Start now",
+      "infoOnlyButton": "Only change group info →"
     },
     "filter": {
       "label": "Activities",

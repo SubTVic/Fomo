@@ -25,8 +25,9 @@ exportieren".
 
 1. Admin-App → „Gruppen" → **„+ Neue Gruppe"** → Name, Kurzbeschreibung, Kategorie,
    Mail. (Das legt nur Stammdaten an — **noch kein Quiz-Profil**.)
-2. Bei der Gruppe **„Einladen" → „Link erstellen"** → Link kopieren → **selbst per Mail**
-   schicken.
+2. Bei der Gruppe **„Bearbeitungslink" → „Link erzeugen"** → **„Mail an …"** (oder
+   kopieren und selbst schicken). Der Link gilt 12 Monate und mehrfach
+   ([Runbook 03](03-link-verloren.md)).
 3. Die Gruppe füllt über den Link die 21 Fragen + Filter aus.
 4. Admin-App → prüfen → **verifizieren**.
 5. Daten live schalten (siehe Runbook 01).

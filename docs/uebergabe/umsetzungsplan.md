@@ -909,8 +909,8 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 1.8 | 🧑 Checkliste Phase 1 | ⬜ | – |
 | 2.1 | Test-Setup Root | ✅ | #10 |
 | 2.2 | Matching-Tests | ✅ | #11 |
-| 2.3 | Validierung im Build | ✅ | wp-2-3-validate-in-build |
-| 2.4 | CI | ⬜ | |
+| 2.3 | Validierung im Build | ✅ | #12 |
+| 2.4 | CI | ✅ | wp-2-4-ci |
 | 2.5 | KI-Leitplanken | ⬜ | |
 | 2.6 | Doku-Abgleich | ⬜ | |
 | 2.7 | 🧑 Branch-Schutz | ⬜ | – |

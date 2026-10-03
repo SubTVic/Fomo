@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
-import { STUDY2_ITEMS, STUDY2_FILTER } from "@/lib/study2/items";
+import { WS2_ITEMS, WS2_FILTER } from "@/lib/ws2-items";
 import { GroupEditForm } from "./GroupEditForm";
 import { ToggleActiveButton } from "./ToggleActiveButton";
 import { MergeButton } from "./MergeButton";
@@ -159,8 +159,8 @@ export default async function AdminGroupDetailPage({
         </p>
         <SelfRatingEditor
           groupId={group.id}
-          items={STUDY2_ITEMS.map((i) => ({ id: i.id, text: i.text }))}
-          filters={STUDY2_FILTER.options.map((o) => ({ attribute: o.attribute, label: o.label }))}
+          items={WS2_ITEMS.map((i) => ({ id: i.id, text: i.text }))}
+          filters={WS2_FILTER.options.map((o) => ({ attribute: o.attribute, label: o.label }))}
           initial={
             group.selfRating
               ? {

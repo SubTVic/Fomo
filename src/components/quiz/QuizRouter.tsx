@@ -8,7 +8,7 @@ import type { QuizThesisData, QuizGroupData } from "@/lib/quiz/types";
 import type { Dimension, PilotQuestion } from "@/lib/pilot-questions";
 import { useSurveyState } from "@/components/survey/useSurveyState";
 import { computeQuizMatches, computeV2Match } from "@/lib/quiz/matching";
-import { STUDY2_ITEMS } from "@/lib/study2/items";
+import { WS2_ITEMS } from "@/lib/ws2-items";
 import { QuizWelcome } from "./QuizWelcome";
 import { QuizResults } from "./results/QuizResults";
 import { ClassicSurvey } from "@/components/variants/classic/ClassicSurvey";
@@ -113,7 +113,7 @@ export function QuizRouter({ theses, groups }: QuizRouterProps) {
 
     // Build thesis → WS2 item mapping through shared attributes (first match per thesis)
     const attrToItemId: Record<string, string> = {};
-    for (const item of STUDY2_ITEMS) {
+    for (const item of WS2_ITEMS) {
       for (const a of item.attributes) {
         if (!attrToItemId[a.attribute]) attrToItemId[a.attribute] = item.id;
       }

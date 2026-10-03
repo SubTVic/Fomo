@@ -68,8 +68,9 @@ Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`.
 
 - **21 WS2-Items + 8 Aktivitäts-Filter.** Die 17 Binär-Attribute sind Altbestand; sie
   dienen nur noch dazu, Profile **unbestätigter** Gruppen abzuleiten.
-- **Items liegen doppelt:** `data/working-set-v2.json` (Registrierung) und
-  `static-site/data/quiz.json` (Website). Beide synchron halten (Check: Plan WP-4.7).
+- **Items liegen doppelt:** `data/working-set-v2.json` (Registrierung, Modul
+  `src/lib/ws2-items.ts`) und `static-site/data/quiz.json` (Website). Beide gemeinsam
+  ändern — `scripts/check-items-sync.mjs` prüft das in der CI.
 - Gruppen und Studis beantworten **dieselben** Items. Item-IDs folgen `WS2-\d{2}`.
 - **Matching:** mittlere absolute Distanz über die **nicht-neutralen** Antworten
   (`score = round((1 − Σ|user − group| / (n · 2)) · 100)`), Filter als **harte**
@@ -111,7 +112,7 @@ keine History-Umschreibung, keine Sicherheitsdetails in Commits/PRs/Doku (Repo i
 # Statische Seite
 cd static-site && npm ci && node scripts/validate-data.mjs && npx tsc --noEmit && npm run lint && npm test && npm run build
 # Root-App (ohne echte DB)
-npm ci && npx tsc --noEmit && npx eslint src scripts prisma tests && npm test
+npm ci && node scripts/check-items-sync.mjs && npx tsc --noEmit && npx eslint src scripts prisma tests && npm test
 DATABASE_URL="postgresql://x:x@localhost:5432/x" DIRECT_URL="$DATABASE_URL" AUTH_SECRET=dummy npx next build
 # E2E gegen lokale DB: docker compose up -d db && npx prisma migrate dev && npx prisma db seed && npm run test:e2e
 ```
@@ -154,8 +155,6 @@ Akzent #5a8a9a. Fallback-Farben der Kategorien: `static-site/data/categories.jso
 
 ## Fallstricke mit irreführenden Namen
 
-- `src/lib/study2/items.ts` ist **nicht** das verworfene „Studie 2", sondern das
-  **Kern-Item-Set der Registrierung** (Umbenennung: Plan WP-4.7).
 - Route `/pilot` = Studie 2 (verworfen, leitet um); `/api/pilot/*` = Pilot 1 (abgeschlossen).
 - Filter-Attribut `party` = **„Hochschulpolitik & Mitbestimmung"**, nicht „Feiern".
 - `scripts/export-static-data.ts` ist veraltet — die richtigen Exporter sind

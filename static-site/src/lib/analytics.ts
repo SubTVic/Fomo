@@ -45,6 +45,8 @@ export const EVENTS = {
   resultsTab: "results-tab",
   resultsShowMore: "results-show-more",
   resultsZeroHits: "results-zero-hits",
+  // Results withheld: fewer than MIN_ACTIVE_ANSWERS non-neutral answers.
+  resultsTooFewAnswers: "results-too-few-answers",
   resultsFeedback: "results-feedback",
   resultsShareCopy: "results-share-copy",
   // Voluntary, anonymous: "already a member of a group? which one?" plus the

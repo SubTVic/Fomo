@@ -7,6 +7,7 @@
 //   node scripts/validate-data.mjs [--groups data/groups.json] [--quiz data/quiz.json]
 
 import { readFileSync } from "node:fs";
+import { isAbsoluteHttpUrl } from "./url-normalize.mjs";
 
 const args = process.argv.slice(2);
 const getArg = (name, def) => {
@@ -37,6 +38,11 @@ const filterAttrs = new Set(quiz.filters.options.map((o) => o.attribute));
 if (!Array.isArray(groups) || groups.length === 0) err("groups[] is empty");
 if (itemIds.length === 0) err("quiz.items[] is empty");
 
+// The UI resolves badge colours per CATEGORY (src/lib/data.ts), so a group
+// without its own colour is fine as long as its category has one somewhere.
+const coloredCategories = new Set(groups.filter((g) => g.categoryColor).map((g) => g.categoryName));
+const colorlessCategories = new Set();
+
 const slugs = new Set();
 for (const g of groups) {
   const where = g.slug || g.name || "<unknown>";
@@ -47,10 +53,20 @@ for (const g of groups) {
     if (slugs.has(g.slug)) err(`duplicate slug: ${g.slug}`);
     slugs.add(g.slug);
   }
-  if (!g.categoryColor) warn(`${where}: categoryColor missing (UI falls back to grey)`);
+  if (g.categoryName && !coloredCategories.has(g.categoryName)) colorlessCategories.add(g.categoryName);
   if (!g.longDescription) warn(`${where}: longDescription empty`);
   if (!g.websiteUrl && !g.instagramUrl && !g.contactEmail)
     warn(`${where}: no contact links at all`);
+  // A scheme-less value ("tud.vote") renders as a RELATIVE link → 404 on the
+  // site. export-from-backup.mjs normalises these; anything left is an error.
+  for (const [field, value] of [
+    ["websiteUrl", g.websiteUrl],
+    ["instagramUrl", g.instagramUrl],
+    ["nextEvent.url", g.nextEvent?.url],
+  ]) {
+    if (value && !isAbsoluteHttpUrl(value))
+      err(`${where}: ${field} "${value}" is not an absolute http(s) URL (would render as a broken relative link)`);
+  }
 
   const sr = g.selfRating;
   if (!sr || !Array.isArray(sr.answers)) {
@@ -88,6 +104,9 @@ for (const [stem, list] of byStem) {
   if (list.length > 1)
     warn(`possible duplicate group ("${stem}"): ${list.join(" + ")} — deactivate one copy in the admin DB`);
 }
+
+for (const c of colorlessCategories)
+  warn(`category "${c}" has no colour on any group (badges fall back to grey)`);
 
 console.log(`Checked ${groups.length} groups against ${itemIds.length} quiz items.`);
 if (warnings.length) {

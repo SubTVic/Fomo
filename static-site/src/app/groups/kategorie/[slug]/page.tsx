@@ -81,7 +81,7 @@ export default async function CategoryPage({
 
       <div className="mt-7 grid gap-4">
         {inCategory.map((g) => (
-          <article key={g.id} className="border-poster bg-card p-5">
+          <article key={g.id} className="min-w-0 border-poster bg-card p-5">
             <div className="flex items-start justify-between gap-3">
               <h2 className="min-w-0 hyphens-auto break-words font-heading text-lg text-navy">
                 <Link href={`/groups/${g.slug}/`} className="hover:underline">

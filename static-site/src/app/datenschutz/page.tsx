@@ -16,7 +16,10 @@ export const metadata: Metadata = {
 export default function DatenschutzPage() {
   return (
     <div className="mx-auto w-full max-w-[760px] px-4 py-10 sm:px-6">
-      <h1 className="text-3xl text-navy sm:text-4xl">Datenschutzerklärung</h1>
+      {/* Soft hyphen: the single Archivo-Black word is ~100px wider than a 375px screen. */}
+      <h1 className="hyphens-manual break-words text-3xl text-navy sm:text-4xl">
+        {"Datenschutz\u00ADerklärung"}
+      </h1>
 
       <div className="mt-8 space-y-8 text-body">
         <section>

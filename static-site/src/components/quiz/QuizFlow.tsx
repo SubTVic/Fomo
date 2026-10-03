@@ -1,9 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Group, QuizFilters, QuizItem, MatchResult } from "@/lib/types";
-import { computeMatches, topWithTies, type UserAnswers } from "@/lib/matching";
+import {
+  activeAnswerCount,
+  computeMatches,
+  MIN_ACTIVE_ANSWERS,
+  topWithTies,
+  type UserAnswers,
+} from "@/lib/matching";
 import { encodeResults, decodeResults, readResultsParam } from "@/lib/results";
 import { track, EVENTS } from "@/lib/analytics";
 import { FilterScreen } from "./FilterScreen";
@@ -30,6 +36,12 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [answers, setAnswers] = useState<UserAnswers>({});
   const [index, setIndex] = useState(0);
+  // True while re-answering after "Antworten ändern": the run was already
+  // counted once, so the funnel/response events must not fire a second time
+  // (that inflated quiz-complete above quiz-start and double-counted the
+  // answer vector in the report). Reset by "Von vorne beginnen" (new run).
+  const editing = useRef(false);
+  const resultsCounted = useRef(false);
 
   // Restore a saved/shared result from the URL on first load.
   useEffect(() => {
@@ -65,14 +77,14 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
   // at quiz-start/complete. Lets us see exactly where people drop off without
   // relying on an unreliable beforeunload hook.
   useEffect(() => {
-    if (phase !== "items") return;
+    if (phase !== "items" || editing.current) return;
     // index as string — see the note in finish(): only string values can be
     // enumerated by Umami's values API (the funnel needs counts per index).
     track(EVENTS.quizItemView, { index: String(index), itemId: items[index]?.id, total: items.length });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, index]);
 
-  const answeredCount = Object.values(answers).filter((v) => v !== 0).length;
+  const answeredCount = activeAnswerCount(answers);
 
   function toggleFilter(attribute: string) {
     setSelectedFilters((prev) =>
@@ -102,35 +114,45 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
   }
 
   function finish(finalAnswers: UserAnswers) {
-    const nonNeutral = Object.values(finalAnswers).filter((v) => v !== 0).length;
-    track(EVENTS.quizComplete, { answered: nonNeutral, filters: selectedFilters.length });
-    // Anonymous research payload: one property per item (id → -1|0|1) plus the
-    // selected multiple-choice filters. No identifier is attached; this only
-    // leaves the browser if Umami is configured (see Datenschutz).
-    // Values as STRINGS on purpose: Umami's event-data "values" API only
-    // enumerates string-typed data — number-typed fields can't be aggregated
-    // into a distribution, which left the report's answer charts empty.
-    const answerData: Record<string, string> = {};
-    for (const item of items) answerData[item.id] = String(finalAnswers[item.id] ?? 0);
-    track(EVENTS.quizResponse, {
-      ...answerData,
-      filters: selectedFilters.length ? selectedFilters.join(",") : "none",
-      answered: nonNeutral,
-    });
+    const nonNeutral = activeAnswerCount(finalAnswers);
+    // A re-completion after "Antworten ändern" was already counted on the
+    // first pass (quiz-edit records the edit) — only the result groups may
+    // still be owed, if the first pass fell below the answer minimum.
+    if (!editing.current) {
+      track(EVENTS.quizComplete, { answered: nonNeutral, filters: selectedFilters.length });
+      // Anonymous research payload: one property per item (id → -1|0|1) plus the
+      // selected multiple-choice filters. No identifier is attached; this only
+      // leaves the browser if Umami is configured (see Datenschutz).
+      // Values as STRINGS on purpose: Umami's event-data "values" API only
+      // enumerates string-typed data — number-typed fields can't be aggregated
+      // into a distribution, which left the report's answer charts empty.
+      const answerData: Record<string, string> = {};
+      for (const item of items) answerData[item.id] = String(finalAnswers[item.id] ?? 0);
+      track(EVENTS.quizResponse, {
+        ...answerData,
+        filters: selectedFilters.length ? selectedFilters.join(",") : "none",
+        answered: nonNeutral,
+      });
+    }
     // Which groups the quiz produced: one event per initially shown result
     // (top 5 incl. boundary ties — the same set ResultsScreen displays).
-    // Fired only on a real completion — restoring a shared ?r= link does not
-    // re-count.
-    topWithTies(computeMatches(finalAnswers, selectedFilters, groups)).forEach((m, i) =>
-      // rank as string (enumerable via the values API); score stays numeric.
-      track(EVENTS.quizResultGroup, { group: m.group.slug, rank: String(i + 1), score: m.score }),
-    );
+    // Fired once per run, on the first completion that actually shows
+    // results (none below the answer minimum) — restoring a shared ?r= link
+    // does not re-count.
+    if (!resultsCounted.current && nonNeutral >= MIN_ACTIVE_ANSWERS) {
+      resultsCounted.current = true;
+      topWithTies(computeMatches(finalAnswers, selectedFilters, groups)).forEach((m, i) =>
+        // rank as string (enumerable via the values API); score stays numeric.
+        track(EVENTS.quizResultGroup, { group: m.group.slug, rank: String(i + 1), score: m.score }),
+      );
+    }
     setPhase("results");
   }
 
   /** Back into the questions with everything preserved — cheaper than restart. */
   function editAnswers() {
     track(EVENTS.quizEdit);
+    editing.current = true;
     setIndex(0);
     setPhase("items");
   }
@@ -142,6 +164,8 @@ export function QuizFlow({ items, filters, groups, lang = "de" }: QuizFlowProps)
 
   function restart() {
     track(EVENTS.quizRestart);
+    editing.current = false;
+    resultsCounted.current = false;
     setSelectedFilters([]);
     setAnswers({});
     setIndex(0);

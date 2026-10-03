@@ -13,6 +13,7 @@
 // Only the sanitized groups.json output is public.
 
 import { readFileSync, writeFileSync } from "node:fs";
+import { normalizeWebUrl, normalizeInstagramUrl } from "./url-normalize.mjs";
 
 const args = process.argv.slice(2);
 const getArg = (n, d) => {
@@ -107,7 +108,7 @@ const groups = backup.groups
             date: g.nextEventDate,
             time: g.nextEventTime ?? null,
             location: g.nextEventLocation ?? null,
-            url: g.nextEventUrl ?? null,
+            url: normalizeWebUrl(g.nextEventUrl),
             isOpen: g.nextEventIsOpen ?? false,
           }
         : null;
@@ -121,8 +122,8 @@ const groups = backup.groups
       categoryName: cat?.name ?? "Sonstiges",
       categoryColor: cat?.color ?? "",
       categoryIcon: cat?.icon ?? "",
-      websiteUrl: g.websiteUrl ?? null,
-      instagramUrl: g.instagramUrl ?? null,
+      websiteUrl: normalizeWebUrl(g.websiteUrl),
+      instagramUrl: normalizeInstagramUrl(g.instagramUrl),
       contactEmail: g.contactEmail ?? null,
       memberCount: g.memberCount ?? null,
       language: g.language ?? null,

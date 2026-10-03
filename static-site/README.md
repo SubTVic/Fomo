@@ -110,9 +110,11 @@ the full list and `docs/DATEN-SAMMELN-KONZEPT.md` for the rationale):
   per initially shown result — top 5 incl. boundary ties: `group` slug,
   `rank`, `score` — the frequency table for "which groups come out of the
   quiz, how often"), `quiz-edit` (re-entering the questions from the
-  results), `quiz-restart`
+  results; the re-run does not fire the funnel/response events again),
+  `quiz-restart`
 - **Results interaction:** `results-tab`, `results-show-more`,
-  `results-zero-hits`, `results-feedback` (👍/👎), `results-share-copy`,
+  `results-zero-hits`, `results-too-few-answers` (results withheld below
+  5 non-neutral answers), `results-feedback` (👍/👎), `results-share-copy`,
   `self-recognition` (voluntary "already a member? which group?" + the rank
   our ranking gave that group — the passive self-recognition study)
 - **Group engagement:** `group-click` (`dest`: website/instagram/email,

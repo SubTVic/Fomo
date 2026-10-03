@@ -13,6 +13,19 @@ import type { Group, MatchResult, SelfRatingAnswer } from "./types";
 export type UserAnswers = Record<string, number>;
 
 /**
+ * Minimum number of non-neutral answers before results are shown (CLAUDE.md,
+ * Matching-Algorithmus). Below it the score is noise: all-neutral gives every
+ * group exactly 50 % (a 10-way tie for "#1"), and 1–2 answers already yield
+ * "100 %" matches.
+ */
+export const MIN_ACTIVE_ANSWERS = 5;
+
+/** Count of non-neutral answers — the matching signal. */
+export function activeAnswerCount(answers: UserAnswers): number {
+  return Object.values(answers).filter((v) => v !== 0).length;
+}
+
+/**
  * Mean-absolute-distance score between one user and one group.
  *
  *  - Filter hard constraint: if the user AND the group each picked filters and

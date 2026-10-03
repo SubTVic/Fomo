@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// API: Submit confirmed attributes via invite token (no login needed)
+// API: Load and submit a group's profile via edit link (no login needed)
 
 import { NextRequest, NextResponse } from "next/server";
 import { RegistrationStatus } from "@prisma/client";
@@ -9,17 +9,8 @@ import { isHttpUrl, normalizeInstagramUrl, normalizeWebsiteUrl } from "@/lib/nor
 import { recordChange, snapshotGroup } from "@/lib/change-log";
 import { editLinkError, resolveEditLink } from "@/lib/edit-token";
 
-const ATTRIBUTE_KEYS = [
-  "career", "tech", "language", "social_impact", "party", "religion",
-  "sports", "networking", "arts", "music", "time_low", "hands_on",
-  "outdoor", "international", "beginner_friendly", "competitive",
-  "event_frequency", "leadership_opportunities", "group_size",
-] as const;
-
 const SubmitSchema = z.object({
   token: z.string().min(1),
-  // legacy (optional, beibehalten für Rückwärtskompatibilität)
-  confirmedAttributes: z.record(z.enum(ATTRIBUTE_KEYS), z.union([z.literal(0), z.literal(1)])).optional(),
   shortDescription: z.string().min(10).max(200).optional(),
   // Optional fields: undefined = keep, null or "" = delete.
   longDescription: z.string().trim().max(3000).nullable().optional(),
@@ -54,7 +45,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { token, confirmedAttributes, shortDescription, longDescription, websiteUrl, contactEmail, instagramUrl, memberCount, foundedYear, categoryId, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
+  const { token, shortDescription, longDescription, websiteUrl, contactEmail, instagramUrl, memberCount, foundedYear, categoryId, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
 
   // undefined = field not sent (keep), null or "" = delete, otherwise set.
   const optional = <T,>(key: string, value: T | null | undefined | "") =>
@@ -73,45 +64,6 @@ export async function POST(req: NextRequest) {
   if (!group) {
     const { error, status } = editLinkError("invalid");
     return NextResponse.json({ error }, { status });
-  }
-
-  // Map confirmed attributes to the boolean columns on Group
-  const booleanUpdates: Record<string, boolean> = {};
-  const attrToPrismaField: Record<string, string> = {
-    career: "career",
-    tech: "tech",
-    language: "language",
-    social_impact: "socialImpact",
-    party: "party",
-    religion: "religion",
-    sports: "sports",
-    networking: "networking",
-    arts: "arts",
-    music: "music",
-    time_low: "timeLow",
-    hands_on: "handsOn",
-    outdoor: "outdoor",
-    international: "international",
-    beginner_friendly: "beginnerFriendly",
-    competitive: "competitive",
-    event_frequency: "eventFrequency",
-    leadership_opportunities: "leadershipOpportunities",
-    group_size: "groupSize",
-  };
-
-  const booleanAttrs = [
-    "career", "tech", "social_impact", "party", "religion", "sports",
-    "networking", "arts", "music", "time_low", "hands_on", "outdoor",
-    "international", "beginner_friendly", "competitive", "leadership_opportunities",
-  ];
-
-  if (confirmedAttributes) {
-    for (const attr of booleanAttrs) {
-      const prismaField = attrToPrismaField[attr];
-      if (prismaField && confirmedAttributes[attr as keyof typeof confirmedAttributes] !== undefined) {
-        booleanUpdates[prismaField] = confirmedAttributes[attr as keyof typeof confirmedAttributes] === 1;
-      }
-    }
   }
 
   const now = new Date();
@@ -147,8 +99,6 @@ export async function POST(req: NextRequest) {
     await tx.group.update({
       where: { id: groupId },
       data: {
-        ...booleanUpdates,
-        ...(confirmedAttributes ? { confirmedAttributes: JSON.parse(JSON.stringify(confirmedAttributes)) } : {}),
         ...(wasVerified ? {} : { registrationStatus: RegistrationStatus.SUBMITTED, isVerified: false }),
         submittedAt: now,
         ...(shortDescription ? { shortDescription } : {}),
@@ -224,16 +174,7 @@ export async function GET(req: NextRequest) {
       foundedYear: true,
       categoryId: true,
       category: { select: { id: true, name: true } },
-      scraperAttributes: true,
-      confirmedAttributes: true,
       registrationStatus: true,
-      // All boolean attributes for current state
-      career: true, tech: true, socialImpact: true, party: true,
-      religion: true, sports: true, networking: true, arts: true,
-      music: true, timeLow: true, handsOn: true, outdoor: true,
-      international: true, beginnerFriendly: true, competitive: true,
-      leadershipOpportunities: true, financialCost: true,
-      language: true, eventFrequency: true, groupSize: true,
       // V2 self-rating for pre-filling
       selfRating: {
         select: {

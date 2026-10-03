@@ -198,6 +198,9 @@ Die Root-App bleibt Datenerfassungs-Tool (Registrierung + Admin). Offen:
       in `GroupSelfRatingQuiz.tsx` (Vorbelegung aus geladenen Daten → besser beim
       Laden statt im Effect setzen). Danach die Regel in `eslint.config.mjs`
       wieder auf `error`.
+- [ ] 🧑 **Löschkonzept abstimmen** (`docs/datenschutz-loeschkonzept.md`): Fristen mit dem
+      StuRa klären (Kontakte, Änderungsprotokoll, Backups, inaktive Gruppen) und bis zum
+      Server-Umzug `scripts/cleanup.ts --apply` regelmäßig von Hand ausführen lassen.
 - [ ] Altdaten in `data/` prüfen (seit WP-5.2 von keinem Code mehr gelesen):
       `hg_MERGED.csv`, `study2-plan.md`, `group-verification-deploy-checklist.md`,
       `Pictures/`; dazu `scripts/generate-invites.ts` (einmaliger Einladungs-Export

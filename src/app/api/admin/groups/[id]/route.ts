@@ -121,12 +121,12 @@ export async function PUT(
   return NextResponse.json({ ok: true, group: updated });
 }
 
-// DELETE: remove a group
+// DELETE: remove a group (super admins only)
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const guard = await requireAdminApi();
+  const guard = await requireAdminApi({ role: "SUPER_ADMIN" });
   if (!guard.ok) return guard.response;
 
   const { id } = await params;

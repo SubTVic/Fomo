@@ -4,12 +4,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-interface DeleteGroupButtonProps {
-  groupId: string;
-  groupName: string;
+interface DeleteButtonProps {
+  /** API endpoint that handles DELETE. */
+  url: string;
+  /** Tooltip, e.g. "Gruppe X löschen". */
+  title: string;
 }
 
-export function DeleteGroupButton({ groupId, groupName }: DeleteGroupButtonProps) {
+/** "Löschen" with an inline "Sicher? Ja/Nein" confirmation. */
+export function DeleteButton({ url, title }: DeleteButtonProps) {
   const router = useRouter();
   const [confirming, setConfirming] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
@@ -20,7 +23,7 @@ export function DeleteGroupButton({ groupId, groupName }: DeleteGroupButtonProps
     setError("");
 
     try {
-      const res = await fetch(`/api/admin/groups/${groupId}`, {
+      const res = await fetch(url, {
         method: "DELETE",
       });
 
@@ -43,7 +46,7 @@ export function DeleteGroupButton({ groupId, groupName }: DeleteGroupButtonProps
       <button
         onClick={() => setConfirming(true)}
         className="rounded border border-destructive/30 px-2 py-1 text-xs text-destructive hover:bg-destructive/10 transition-colors"
-        title={`${groupName} löschen`}
+        title={title}
       >
         Löschen
       </button>

@@ -206,7 +206,7 @@ No user data reaches a server. (The older weighted v1 formula in `src/lib/quiz/`
 
 ### Data Model
 
-Core tables: **Group**, **Category**, **GroupSelfRating** + answers (the group's 21-item profile and filters), **GroupInvite** (edit-link tokens), **GroupContact**, **Admin**. Pilot, study 2 and prototype-quiz tables (PilotSession, Study2Session, QuizThesis, …) are no longer used by the code and are dropped in plan WP-5.3. The 17 boolean attributes on Group are legacy; they only derive profiles for unverified groups.
+Core tables: **Group**, **Category**, **GroupSelfRating** + answers (the group's 21-item profile and filters), **GroupInvite** (edit-link tokens), **GroupContact**, **Admin**. Pilot, study 2, prototype-quiz and CMS tables were dropped in plan WP-5.3 (data archived outside the repository beforehand). The 17 boolean attributes on Group are legacy; they only derive profiles for unverified groups.
 
 **GroupContact** stores responsible persons who self-registered a group (`isResponsible: true`, `source: "self-registration"`). The admin dashboard exposes a contact list view with CSV export and a one-click JSON backup of the entire database.
 

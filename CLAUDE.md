@@ -126,7 +126,9 @@ und `root`) auf jedem PR. Node-Version: **24** (`.nvmrc`, `engines` in beiden `p
 - **Root-App:** Next.js 16, Prisma 6, PostgreSQL 16, Auth.js v5 (Credentials),
   next-intl, Zod, Vitest + Playwright. Admin-Zugriff nur über
   `requireAdminApi()`/`requireAdminPage()` (`src/lib/require-admin.ts`, prüft
-  Aktiv-Status und Rolle in der DB). Der Build migriert die DB **nicht**.
+  Aktiv-Status und Rolle in der DB). Backup, Löschen, Zusammenführen und
+  Admin-Verwaltung nur mit `{ role: "SUPER_ADMIN" }`. Login: E-Mail klein geschrieben,
+  Sperre nach Fehlversuchen (`src/lib/login-guard.ts`). Der Build migriert die DB **nicht**.
 - **Lizenz:** AGPL-3.0.
 - **Sprach-Routing der Root-App:** `src/proxy.ts` (next-intl; hieß bis Next 15
   `middleware.ts`). Interne Links in `src/app/[locale]/` immer mit `Link` aus
@@ -160,13 +162,15 @@ Akzent #5a8a9a. Fallback-Farben der Kategorien: `static-site/data/categories.jso
   `src/lib/export/static-groups.ts` (Daten-Sync, `scripts/export-static-site-groups.ts`)
   und der Notfallweg `static-site/scripts/export-from-backup.mjs`.
 - `APP_MODE` und `APP_LIVE` gibt es nicht (mehr). Pilot, Studie 2, Demo und das alte Quiz
-  wurden in WP-5.2 entfernt; Tabellen dazu fallen mit WP-5.3 weg.
+  wurden in WP-5.2 entfernt, ihre Tabellen in WP-5.3 (Migration `drop_legacy_tables`).
 
 ## Wo was steht
 
 - **Runbooks je Aufgabe:** [`docs/runbooks/`](docs/runbooks/README.md) (Index der 12
   typischen Wartungsaufgaben).
 - Betrieb ohne Programmierkenntnisse: `static-site/docs/BETRIEBSHANDBUCH.md`.
+- Löschfristen und Betroffenenanfragen: `docs/datenschutz-loeschkonzept.md`
+  (automatische Löschung: `scripts/cleanup.ts`).
 - Mit KI an der statischen Seite arbeiten: `static-site/docs/KI-MITARBEIT.md`.
 - Übergabe-Audit mit allen Befunden: `docs/uebergabe/audit.md`; Umbauplan:
   `docs/uebergabe/umsetzungsplan.md`; Hintergrund: `docs/uebergabe/recherche-umsetzung.md`.

@@ -23,7 +23,7 @@ funktionieren. Spaß und Wissenschaftlichkeit sind kein Widerspruch.
 | Live auf | **www.fomo-dresden.app** (Vercel-Projekt `fomo-static`) | fomo-pi.vercel.app (Vercel-Projekt `fomo`) |
 | Technik | Next.js **Static Export** (`output: "export"`), kein Server, keine DB | Next.js + Prisma + **PostgreSQL** + Auth.js v5 |
 | Daten | `static-site/data/*.json` (zur Build-Zeit eingebacken) | PostgreSQL — **die Quelle der Wahrheit für Gruppen** |
-| Matching | **client-side**, `static-site/src/lib/matching.ts` | keins mehr (altes Quiz/Pilot/Demo leiten auf die Live-Seite um; Code-Entfernung: Plan Phase 5) |
+| Matching | **client-side**, `static-site/src/lib/matching.ts` | keins (alte URLs `/quiz`, `/pilot`, `/demo`, `/groups` leiten per `next.config.ts` auf die Live-Seite um) |
 
 **Bei Arbeiten an der öffentlichen Seite: nur `static-site/` anfassen.**
 
@@ -44,9 +44,9 @@ Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`.
 
 - **NIE `static-site/data/groups.json` von Hand editieren** (ein Hook blockiert das).
   Der nächste Export überschreibt es. Korrekturen gehören in die **DB** (Admin-App).
-- **NIE `npm run import:groups`** benutzen — überschreibt Verifizierung, Slugs, Texte und
-  reaktiviert Duplikate. (Die Admin-Knöpfe „CSV neu importieren"/„Scraper-JSON" sind seit
-  WP-4.4 entfernt.)
+- **Keinen Massen-Import aus CSV/Scraper-JSON** wiederbeleben — er überschrieb Verifizierung,
+  Slugs, Texte und reaktivierte Duplikate. (Admin-Knöpfe seit WP-4.4, `npm run import:groups`
+  seit WP-5.2 entfernt; die Sperre in `.claude/settings.json` bleibt.)
 - **Nur verifizierte Gruppen mit echtem Self-Rating kommen ins Quiz**
   (`getMatchableGroups`). Korrekturen einer **verifizierten** Gruppe lassen die
   Verifizierung stehen (E1); jede Änderung landet im Protokoll `GroupChangeLog`
@@ -155,12 +155,12 @@ Akzent #5a8a9a. Fallback-Farben der Kategorien: `static-site/data/categories.jso
 
 ## Fallstricke mit irreführenden Namen
 
-- Route `/pilot` = Studie 2 (verworfen, leitet um); `/api/pilot/*` = Pilot 1 (abgeschlossen).
 - Filter-Attribut `party` = **„Hochschulpolitik & Mitbestimmung"**, nicht „Feiern".
 - `scripts/export-static-data.ts` ist veraltet — die richtigen Exporter sind
   `src/lib/export/static-groups.ts` (Daten-Sync, `scripts/export-static-site-groups.ts`)
   und der Notfallweg `static-site/scripts/export-from-backup.mjs`.
-- `APP_MODE` gibt es nicht (nur `APP_LIVE` für die Landingpage der Root-App).
+- `APP_MODE` und `APP_LIVE` gibt es nicht (mehr). Pilot, Studie 2, Demo und das alte Quiz
+  wurden in WP-5.2 entfernt; Tabellen dazu fallen mit WP-5.3 weg.
 
 ## Wo was steht
 

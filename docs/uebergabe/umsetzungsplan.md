@@ -924,8 +924,8 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 4.5 | Sync automatisieren (Vercel) | ✅ | #22 |
 | 4.6 | Kategorien/Übersetzungen | ✅ | #23 |
 | 4.7 | Eine Item-Quelle | ✅ | #24 |
-| 5.1 | 🧑 Archiv | ⬜ | – |
-| 5.2 | Altlasten entfernen | ⬜ | |
+| 5.1 | 🧑 Archiv | 🟡 Backup liegt vor (03.10.2026); Ablage im StuRa-Speicher + Löschfrist offen | – |
+| 5.2 | Altlasten entfernen | ✅ | #25 |
 | 5.3 | DB verschlanken | ⬜ | |
 | 5.4 | Rollen/Login | ⬜ | |
 | 5.5 | Löschkonzept | ⬜ | |

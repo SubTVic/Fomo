@@ -912,7 +912,7 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 2.3 | Validierung im Build | ✅ | #12 |
 | 2.4 | CI | ✅ | #13 |
 | 2.5 | KI-Leitplanken | ✅ | #14 |
-| 2.6 | Doku-Abgleich | ✅ | wp-2-6-docs |
+| 2.6 | Doku-Abgleich | ✅ | #15 |
 | 2.7 | 🧑 Branch-Schutz | ⬜ | – |
 | 3.1 | Next 16 statische Seite | ⬜ | |
 | 3.2 | Next 16 Root-App | ⬜ | |

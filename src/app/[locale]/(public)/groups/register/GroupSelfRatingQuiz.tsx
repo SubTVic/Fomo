@@ -5,9 +5,9 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { STUDY2_ITEMS, STUDY2_FILTER } from "@/lib/study2/items";
+import { WS2_ITEMS, WS2_FILTER } from "@/lib/ws2-items";
 import { PUBLIC_SITE_URL } from "@/lib/public-site";
-import type { Study2AnswerValue } from "@/lib/study2/items";
+import type { Ws2AnswerValue } from "@/lib/ws2-items";
 
 type Step =
   | { type: "intro" }
@@ -76,9 +76,9 @@ function AnswerButton({
   onClick,
 }: {
   label: string;
-  value: Study2AnswerValue;
-  current: Study2AnswerValue;
-  onClick: (v: Study2AnswerValue) => void;
+  value: Ws2AnswerValue;
+  current: Ws2AnswerValue;
+  onClick: (v: Ws2AnswerValue) => void;
 }) {
   const isSelected = current === value;
   return (
@@ -109,7 +109,7 @@ export function GroupSelfRatingQuiz() {
   const [error, setError] = useState("");
   const [group, setGroup] = useState<GroupData | null>(null);
   const [step, setStep] = useState<Step>({ type: "intro" });
-  const [answers, setAnswers] = useState<Record<string, Study2AnswerValue>>({});
+  const [answers, setAnswers] = useState<Record<string, Ws2AnswerValue>>({});
   const [filterSelections, setFilterSelections] = useState<string[]>([]);
   const [raterCount, setRaterCount] = useState<1 | 2 | 3>(1);
   const [description, setDescription] = useState("");
@@ -161,9 +161,9 @@ export function GroupSelfRatingQuiz() {
 
         // Pre-fill from previous selfRating if it exists
         if (g.selfRating?.answers?.length) {
-          const prev: Record<string, Study2AnswerValue> = {};
+          const prev: Record<string, Ws2AnswerValue> = {};
           for (const a of g.selfRating.answers) {
-            prev[a.itemId] = a.value as Study2AnswerValue;
+            prev[a.itemId] = a.value as Ws2AnswerValue;
           }
           setAnswers(prev);
           setFilterSelections(
@@ -173,8 +173,8 @@ export function GroupSelfRatingQuiz() {
           setHasPrefill(true);
         } else {
           // Initialize all items to 0 (neutral)
-          const init: Record<string, Study2AnswerValue> = {};
-          for (const item of STUDY2_ITEMS) {
+          const init: Record<string, Ws2AnswerValue> = {};
+          for (const item of WS2_ITEMS) {
             init[item.id] = 0;
           }
           setAnswers(init);
@@ -196,11 +196,11 @@ export function GroupSelfRatingQuiz() {
     );
   }, []);
 
-  const setAnswer = useCallback((itemId: string, value: Study2AnswerValue) => {
+  const setAnswer = useCallback((itemId: string, value: Ws2AnswerValue) => {
     setAnswers((prev) => ({ ...prev, [itemId]: value }));
     // Auto-advance to next item
-    const idx = STUDY2_ITEMS.findIndex((i) => i.id === itemId);
-    if (idx < STUDY2_ITEMS.length - 1) {
+    const idx = WS2_ITEMS.findIndex((i) => i.id === itemId);
+    if (idx < WS2_ITEMS.length - 1) {
       setTimeout(() => setStep({ type: "item", index: idx + 1 }), 180);
     } else {
       setTimeout(() => setStep({ type: "description" }), 180);
@@ -214,7 +214,7 @@ export function GroupSelfRatingQuiz() {
     setError("");
     setFieldErrors({});
 
-    const ws2Answers = STUDY2_ITEMS.map((item) => ({
+    const ws2Answers = WS2_ITEMS.map((item) => ({
       itemId: item.id,
       value: answers[item.id] ?? 0,
     }));
@@ -327,13 +327,13 @@ export function GroupSelfRatingQuiz() {
     );
   }
 
-  const totalSteps = 2 + STUDY2_ITEMS.length + 2; // filter + items + description + raterCount (intro not counted)
+  const totalSteps = 2 + WS2_ITEMS.length + 2; // filter + items + description + raterCount (intro not counted)
 
   function currentStepIndex(): number {
     if (step.type === "filter") return 1;
     if (step.type === "item") return 2 + step.index;
-    if (step.type === "description") return 2 + STUDY2_ITEMS.length;
-    if (step.type === "raterCount") return 2 + STUDY2_ITEMS.length + 1;
+    if (step.type === "description") return 2 + WS2_ITEMS.length;
+    if (step.type === "raterCount") return 2 + WS2_ITEMS.length + 1;
     return 0;
   }
 
@@ -392,7 +392,7 @@ export function GroupSelfRatingQuiz() {
             <p className="mt-1 text-xs text-primary-foreground/50">{t("filter.multi")}</p>
           </div>
           <div className="px-6 py-6 sm:px-8 flex flex-col gap-2">
-            {STUDY2_FILTER.options.map((opt) => {
+            {WS2_FILTER.options.map((opt) => {
               const isOn = filterSelections.includes(opt.attribute);
               return (
                 <button
@@ -432,7 +432,7 @@ export function GroupSelfRatingQuiz() {
 
   // ── Item ──
   if (step.type === "item") {
-    const item = STUDY2_ITEMS[step.index];
+    const item = WS2_ITEMS[step.index];
     const current = answers[item.id] ?? 0;
     const itemNum = step.index + 1;
 
@@ -442,7 +442,7 @@ export function GroupSelfRatingQuiz() {
           <ProgressBar current={currentStepIndex()} total={totalSteps} />
           <div className="bg-foreground text-primary-foreground px-6 py-5 sm:px-8">
             <p className="text-xs uppercase tracking-wider text-primary-foreground/50 mb-1">
-              {t("item.questionOf", { current: itemNum, total: STUDY2_ITEMS.length })}
+              {t("item.questionOf", { current: itemNum, total: WS2_ITEMS.length })}
             </p>
             <p className="text-xs text-primary-foreground/60 mb-2 italic">
               {t("item.memberWouldAgree")}
@@ -466,7 +466,7 @@ export function GroupSelfRatingQuiz() {
               </button>
               <button
                 onClick={() =>
-                  step.index < STUDY2_ITEMS.length - 1
+                  step.index < WS2_ITEMS.length - 1
                     ? setStep({ type: "item", index: step.index + 1 })
                     : setStep({ type: "description" })
                 }
@@ -610,7 +610,7 @@ export function GroupSelfRatingQuiz() {
               {t("description.continueButton")}
             </button>
             <button
-              onClick={() => setStep({ type: "item", index: STUDY2_ITEMS.length - 1 })}
+              onClick={() => setStep({ type: "item", index: WS2_ITEMS.length - 1 })}
               className="text-xs text-center text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
             >
               {t("description.backButton")}

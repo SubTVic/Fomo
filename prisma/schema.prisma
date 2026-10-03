@@ -89,28 +89,22 @@ model Group {
   motto             String?   // Slogan der Gruppe
   foundedYear       Int?
 
-  // ─── Scraper & Registration ──────────────────────────────────
-  // JSON: {career: {value:1, confidence:0.8, reason:"..."}, ...}
-  scraperAttributes   Json?
-  // JSON: {career: 1, tech: 0, ...} — final confirmed binary values
-  confirmedAttributes Json?
-  registrationStatus  RegistrationStatus?
-  submittedAt         DateTime?
-  verifiedAt          DateTime?
+  // ─── Registration ────────────────────────────────────────────
+  registrationStatus RegistrationStatus?
+  submittedAt        DateTime?
+  verifiedAt         DateTime?
 
   // Optional: self-registration that may be a duplicate of an existing group
   duplicateOfGroupId String?
   duplicateOf        Group?  @relation("GroupDuplicate", fields: [duplicateOfGroupId], references: [id], onDelete: SetNull)
   duplicates         Group[] @relation("GroupDuplicate")
 
-  category       Category          @relation(fields: [categoryId], references: [id])
-  pilotAnswers   GroupPilotAnswer[]
-  invites        GroupInvite[]
-  study2Sessions Study2Session[]
-  selfRating     GroupSelfRating?
-  contacts       GroupContact[]
-  changeLogs     GroupChangeLog[]
-  editTokens     GroupEditToken[]
+  category   Category         @relation(fields: [categoryId], references: [id])
+  invites    GroupInvite[]
+  selfRating GroupSelfRating?
+  contacts   GroupContact[]
+  changeLogs GroupChangeLog[]
+  editTokens GroupEditToken[]
 
   @@index([categoryId])
   @@index([isActive])
@@ -118,22 +112,6 @@ model Group {
   @@index([registrationStatus])
   @@map("groups")
 }
-
-// Answers from groups to pilot survey questions (bridges pilot ↔ quiz)
-model GroupPilotAnswer {
-  id         String @id @default(cuid())
-  groupId    String
-  questionId String // e.g. "D1Q1"
-  value      String // "1"-"5"
-
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-
-  @@unique([groupId, questionId])
-  @@index([groupId])
-  @@map("group_pilot_answers")
-}
-
-// ─── Gruppen-Einladung (Token-basierte Registrierung) ────────────
 
 model GroupInvite {
   id        String    @id @default(cuid())
@@ -238,182 +216,15 @@ model Admin {
   @@map("admins")
 }
 
-// ─── Site Configuration (CMS) ────────────────────────────────────
+// Failed admin logins (rate limit, src/lib/login-guard.ts). Only a hash of the
+// normalized e-mail is stored; rows older than a day are deleted.
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  emailHash String
+  createdAt DateTime @default(now())
 
-model SiteConfig {
-  key       String   @id          // e.g. "hero_title", "image_1_src"
-  value     String   @db.Text     // Text content or image URL
-  updatedAt DateTime @updatedAt
-
-  @@map("site_config")
-}
-
-// ─── Analytics (anonymous) ───────────────────────────────────────
-
-model QuizSession {
-  id           String    @id @default(cuid())
-  startedAt    DateTime  @default(now())
-  completedAt  DateTime?
-  questionCount Int      @default(0) // How many questions were answered
-  resultCount  Int       @default(0) // How many results were shown
-  // No personal data, no IP, no user agent
-  // Just aggregate stats for understanding usage
-
-  @@map("quiz_sessions")
-}
-
-// ─── Quiz-Thesen (Live-Quiz) ──────────────────────────────────────
-
-model QuizThesis {
-  id         String   @id @default(cuid())
-  text       String   @db.Text       // Thesis statement shown to users (German)
-  textEn     String?  @db.Text       // English translation (optional, falls back to text)
-  shortTitle String   @db.VarChar(50) // Short label, e.g. "Zeitaufwand"
-  hint       String?  @db.VarChar(200) // Visible explanation below the thesis, e.g. "z.B. Religion, Philosophie, Ethik"
-  hintEn     String?  @db.VarChar(200) // English hint (optional)
-  order      Int      @default(0)
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  attributes QuizThesisAttribute[]
-
-  @@map("quiz_theses")
-}
-
-model QuizThesisAttribute {
-  id        String  @id @default(cuid())
-  thesisId  String
-  attribute String  // e.g. "career", "timeLow", "networking"
-  isInverse Boolean @default(false)
-
-  thesis QuizThesis @relation(fields: [thesisId], references: [id], onDelete: Cascade)
-
-  @@unique([thesisId, attribute])
-  @@index([thesisId])
-  @@map("quiz_thesis_attributes")
-}
-
-// ─── Pilot-Fragebogen (Dimensionen & Fragen) ─────────────────────
-// Pilot survey questions are managed via the admin dashboard
-
-model PilotDimension {
-  id            String @id  // "D1", "D2", etc.
-  label         String      // "Zeitbudget & Verbindlichkeit"
-  labelEn       String?     // English label (optional)
-  emoji         String @default("")
-  description   String @default("")
-  descriptionEn String?     // English description (optional)
-  blockIndex    Int    @default(0) // 0–3: which variant block this dimension belongs to
-  order         Int    @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  questions PilotSurveyQuestion[]
-
-  @@map("pilot_dimensions")
-}
-
-model PilotSurveyQuestion {
-  id          String   @id  // "D1Q1", "D1Q2", etc. or "S1" for standalone
-  dimensionId String?       // null = standalone item (no dimension)
-  text        String   @db.Text
-  order       Int      @default(0)
-  isInverse   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  dimension PilotDimension? @relation(fields: [dimensionId], references: [id], onDelete: Cascade)
-
-  @@index([dimensionId])
-  @@map("pilot_survey_questions")
-}
-
-// ─── Pilot-Umfrage (Sessions & Antworten) ────────────────────────
-// Responses from the pilot survey (4 UI variants: scroll/classic/swipe/chat)
-
-model PilotSession {
-  id          String    @id @default(cuid())
-  variant     String    // Legacy single-variant or "mixed" for multi-variant flow
-  startedAt   DateTime  @default(now())
-  completedAt DateTime?
-
-  // Multi-variant flow: JSON array of variant keys in the order shown
-  variantOrder     String? // e.g. '["swipe","scroll","chat","classic"]'
-  preferredVariant String? // User's favourite variant, e.g. "swipe"
-  preferenceReason String? @db.Text // Why they preferred it
-
-  // Demographics (collected at the end)
-  semester   String? // e.g. "1", "3", "5+"
-  isMember   String? // "yes" | "no" | "was"
-  groupNames String? // free text, comma-separated
-
-  // Open feedback
-  feedbackConfusing String? @db.Text
-  feedbackMissing   String? @db.Text
-
-  answers PilotAnswer[]
-
-  @@index([variant])
-  @@index([completedAt])
-  @@map("pilot_sessions")
-}
-
-model PilotAnswer {
-  id         String @id @default(cuid())
-  sessionId  String
-  questionId String // e.g. "D1Q1"
-  value      String // Likert "1"-"5" or free text
-
-  session PilotSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-
-  @@unique([sessionId, questionId])
-  @@index([sessionId])
-  @@map("pilot_answers")
-}
-
-// ─── Studie 2 (Mitglieder-Validierung) ───────────────────────────
-
-model Study2Session {
-  id                  String    @id @default(cuid())
-  startedAt           DateTime  @default(now())
-  completedAt         DateTime?
-
-  // Pflicht: Mitglied einer Gruppe
-  groupId             String?   // FK auf Group, null wenn nur Freitext
-  groupNameFreeText   String?   // Fallback wenn Gruppe nicht in DB
-
-  // Filter-Antwort (Multi-Select, JSON-Array von attribute-IDs)
-  filterSelections    Json?     // z.B. ["handsOn","music"]
-
-  // Demografie
-  semester            String?   // "1","2","3","4","5","6+"
-  studyField          String?   // freier Studiengang-Text
-  isMember            String?   @default("yes") // immer "yes" hier, aber konsistent mit Pilot 1
-
-  // Optionales Freitext-Feedback (wie Pilot 1)
-  feedbackConfusing   String?   @db.Text
-  feedbackMissing     String?   @db.Text
-
-  group   Group?           @relation(fields: [groupId], references: [id], onDelete: SetNull)
-  answers Study2Answer[]
-
-  @@index([groupId])
-  @@index([completedAt])
-  @@map("study2_sessions")
-}
-
-model Study2Answer {
-  id         String  @id @default(cuid())
-  sessionId  String
-  itemId     String  // z.B. "WS2-01"
-  value      Int     // -1 | 0 | 1
-
-  session Study2Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-
-  @@unique([sessionId, itemId])
-  @@index([sessionId])
-  @@map("study2_answers")
+  @@index([emailHash, createdAt])
+  @@map("login_attempts")
 }
 
 // ─── Gruppen-Selbst-Rating (Phase 2, WS2-Items) ──────────────────

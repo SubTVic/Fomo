@@ -74,7 +74,7 @@ nach einer Bestätigungsrunde):
    markiert, im Quiz auffindbar.
 
 Logos und EN-Texte stehen nicht in der Datenbank — die bei Bedarf separat nachziehen
-(Fall C, `group-translations.ts`).
+(Fall C, `static-site/data/group-translations.json`).
 
 **Der Sync bricht ab**, wenn mehr als 20 % der veröffentlichten Gruppen wegfallen würden
 (Schutz vor einer falschen/leeren Datenbank). Ist das gewollt (z. B. große
@@ -92,7 +92,7 @@ approve pull requests" einschalten. Läuft die Admin-App woanders, die Actions-V
 ### Notfallweg (wenn GitHub Actions oder der Export-Endpunkt nicht gehen)
 
 Braucht einen Rechner mit Node.js + das Repo:
-1. Admin-App → Dashboard → **„Backup herunterladen"** (JSON). ⚠️ **Enthält
+1. Admin-App → Dashboard → **„Backup herunterladen"** (JSON, nur als SUPER_ADMIN). ⚠️ **Enthält
    persönliche Daten + Tokens — niemals ins Repo/GitHub!**
 2. Im Repo:
    ```

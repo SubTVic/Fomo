@@ -7,10 +7,10 @@ import { z } from "zod";
 import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 import { recordChange, snapshotGroup } from "@/lib/change-log";
-import { STUDY2_FILTER, STUDY2_ITEMS } from "@/lib/study2/items";
+import { WS2_FILTER, WS2_ITEMS } from "@/lib/ws2-items";
 
-const ITEM_IDS = new Set(STUDY2_ITEMS.map((i) => i.id));
-const FILTER_ATTRS = new Set(STUDY2_FILTER.options.map((o) => o.attribute));
+const ITEM_IDS = new Set(WS2_ITEMS.map((i) => i.id));
+const FILTER_ATTRS = new Set(WS2_FILTER.options.map((o) => o.attribute));
 
 const schema = z.object({
   raterCount: z.union([z.literal(1), z.literal(2), z.literal(3)]),
@@ -22,7 +22,7 @@ const schema = z.object({
         value: z.union([z.literal(-1), z.literal(0), z.literal(1)]),
       }),
     )
-    .length(STUDY2_ITEMS.length)
+    .length(WS2_ITEMS.length)
     .refine((a) => new Set(a.map((x) => x.itemId)).size === a.length, "duplicate itemId"),
 });
 

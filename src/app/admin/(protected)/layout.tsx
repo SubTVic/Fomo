@@ -6,7 +6,7 @@ import { requireAdminPage } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  await requireAdminPage();
+  const admin = await requireAdminPage();
   const openChanges = await db.groupChangeLog.count({ where: { reviewedAt: null } });
 
   return (
@@ -21,7 +21,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               Änderungen{openChanges > 0 ? ` (${openChanges})` : ""}
             </Link>
             <Link href="/admin/contacts" className="hover:underline">Kontakte</Link>
-            <Link href="/admin/users" className="hover:underline">Admins</Link>
+            {admin.role === "SUPER_ADMIN" && (
+              <Link href="/admin/users" className="hover:underline">Admins</Link>
+            )}
           </nav>
           <form
             action={async () => {

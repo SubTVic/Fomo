@@ -13,7 +13,9 @@
     "a": "Ein",
     "project": "Projekt",
     "poweredBy": "powered by",
-    "tagline": "Über 100 Hochschulgruppen. Eine Stadt. Ein Tool."
+    "tagline": "Über 100 Hochschulgruppen. Eine Stadt. Ein Tool.",
+    "imprint": "Impressum",
+    "privacy": "Datenschutz"
   },
   "landing": {
     "label": "Für Hochschulgruppen",

@@ -8,7 +8,8 @@ import { requireAdminApi } from "@/lib/require-admin";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const guard = await requireAdminApi();
+  // Contains all contact data: super admins only.
+  const guard = await requireAdminApi({ role: "SUPER_ADMIN" });
   if (!guard.ok) return guard.response;
 
   const [

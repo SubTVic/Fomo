@@ -19,7 +19,8 @@ interface AdminGroupDetailPageProps {
 export default async function AdminGroupDetailPage({
   params,
 }: AdminGroupDetailPageProps) {
-  await requireAdminPage();
+  const admin = await requireAdminPage();
+  const isSuperAdmin = admin.role === "SUPER_ADMIN";
   const { id } = await params;
 
   const [group, categories] = await Promise.all([
@@ -106,12 +107,14 @@ export default async function AdminGroupDetailPage({
               </a>
             </p>
           </div>
-          <MergeButton
-            sourceGroupId={group.id}
-            sourceGroupName={group.name}
-            targetGroupId={group.duplicateOf.id}
-            targetGroupName={group.duplicateOf.name}
-          />
+          {isSuperAdmin && (
+            <MergeButton
+              sourceGroupId={group.id}
+              sourceGroupName={group.name}
+              targetGroupId={group.duplicateOf.id}
+              targetGroupName={group.duplicateOf.name}
+            />
+          )}
         </div>
       )}
 
@@ -130,12 +133,14 @@ export default async function AdminGroupDetailPage({
                 >
                   {dup.name}
                 </a>
-                <MergeButton
-                  sourceGroupId={dup.id}
-                  sourceGroupName={dup.name}
-                  targetGroupId={group.id}
-                  targetGroupName={group.name}
-                />
+                {isSuperAdmin && (
+                  <MergeButton
+                    sourceGroupId={dup.id}
+                    sourceGroupName={dup.name}
+                    targetGroupId={group.id}
+                    targetGroupName={group.name}
+                  />
+                )}
               </div>
             ))}
           </div>

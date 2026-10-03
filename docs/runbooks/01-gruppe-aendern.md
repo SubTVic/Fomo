@@ -92,7 +92,7 @@ approve pull requests" einschalten. Läuft die Admin-App woanders, die Actions-V
 ### Notfallweg (wenn GitHub Actions oder der Export-Endpunkt nicht gehen)
 
 Braucht einen Rechner mit Node.js + das Repo:
-1. Admin-App → Dashboard → **„Backup herunterladen"** (JSON). ⚠️ **Enthält
+1. Admin-App → Dashboard → **„Backup herunterladen"** (JSON, nur als SUPER_ADMIN). ⚠️ **Enthält
    persönliche Daten + Tokens — niemals ins Repo/GitHub!**
 2. Im Repo:
    ```

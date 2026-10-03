@@ -126,7 +126,8 @@ The app runs at [http://localhost:3000](http://localhost:3000).
 npm run dev              # Dev server (Turbopack)
 npm run build            # Production build
 npm run lint             # Linting
-npm run test             # Run unit tests (Vitest)
+npm test                 # Unit tests (Vitest, src/**/*.test.ts)
+npm run test:e2e         # End-to-end tests (Playwright, tests/*.spec.ts; needs a local DB)
 npx prisma studio        # Database GUI
 npx prisma migrate dev   # Create new migration (local DB only)
 npm run db:status        # Show pending migrations

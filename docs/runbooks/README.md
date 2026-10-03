@@ -9,7 +9,7 @@ Texte nur über **Branch + Pull Request**.
 
 | # | Aufgabe | Runbook | Ohne Technik machbar? |
 |---|---|---|---|
-| 1 | Gruppe ändert Beschreibung, Kontakt, Antworten oder Logo | [01 Gruppe ändern](01-gruppe-aendern.md) | Admin-App ja; „Daten live schalten" braucht Node.js |
+| 1 | Gruppe ändert Beschreibung, Kontakt, Antworten oder Logo | [01 Gruppe ändern](01-gruppe-aendern.md) | Admin-App + Klick auf GitHub („Daten-Sync") |
 | 2 | Neue Gruppe ins Quiz bringen | [02 Neue Gruppe](02-neue-gruppe.md) | wie 1 |
 | 3 | Gruppe ausblenden / aufgelöst | [06 Gruppe ausblenden](06-gruppe-ausblenden.md) | wie 1 |
 | 4 | Gruppe hat ihren Link verloren | [03 Link verloren](03-link-verloren.md) | ja (Admin-Login) |

@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { YetiBadge } from "./YetiBadge";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { PUBLIC_SITE_URL } from "@/lib/public-site";
 
 export function Navbar() {
   const t = useTranslations("nav");
@@ -13,12 +14,12 @@ export function Navbar() {
           FOMO
         </Link>
         <div className="flex items-center gap-3">
-          <Link
-            href="/groups"
+          <a
+            href={`${PUBLIC_SITE_URL}/groups/`}
             className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             {t("allGroups")}
-          </Link>
+          </a>
           <LanguageSwitcher />
           <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider">
             <span className="text-muted-foreground">|</span>

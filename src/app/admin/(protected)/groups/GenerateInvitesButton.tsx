@@ -33,9 +33,9 @@ export function GenerateInvitesButton() {
         registrationStatus: string | null;
       }[];
 
-      // Filter to groups that have emails and haven't been invited yet
+      // Groups with an email that have not submitted yet (status empty or INVITED)
       const toInvite = groups.filter(
-        (g) => g.contactEmail && (!g.registrationStatus || g.registrationStatus === "invited"),
+        (g) => g.contactEmail && (!g.registrationStatus || g.registrationStatus === "INVITED"),
       );
 
       if (toInvite.length === 0) {
@@ -51,7 +51,6 @@ export function GenerateInvitesButton() {
           invites: toInvite.map((g) => ({
             groupId: g.id,
             email: g.contactEmail!,
-            expiresInDays: 30,
           })),
         }),
       });
@@ -60,14 +59,13 @@ export function GenerateInvitesButton() {
 
       if (res.ok && data.success) {
         setStatus("done");
-        setMessage(`${data.invites.length} Einladungen generiert`);
+        setMessage(`${data.invites.length} Bearbeitungslinks erzeugt (12 Monate gültig)`);
 
         // Build CSV for easy copy-paste into email tool
-        const lines = ["name,email,token,link"];
+        const lines = ["name,email,link"];
         for (const inv of data.invites) {
           const group = toInvite.find((g) => g.id === inv.groupId);
-          const link = `${window.location.origin}/groups/register?token=${inv.token}`;
-          lines.push(`"${group?.name ?? ""}","${inv.email}","${inv.token}","${link}"`);
+          lines.push(`"${group?.name ?? ""}","${inv.email}","${inv.link}"`);
         }
         setCsvOutput(lines.join("\n"));
       } else {
@@ -111,7 +109,7 @@ export function GenerateInvitesButton() {
             onClick={(e) => (e.target as HTMLTextAreaElement).select()}
           />
           <p className="text-xs text-muted-foreground mt-1">
-            CSV mit Einladungslinks — klicken zum Markieren, dann kopieren.
+            CSV mit Bearbeitungslinks — wird nur jetzt angezeigt. Klicken zum Markieren, dann kopieren.
           </p>
         </div>
       )}

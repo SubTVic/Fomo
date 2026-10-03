@@ -60,3 +60,7 @@ fomo-backup-*.json
 *backup*.json
 *.dump
 *.sql.gz
+
+# Claude Code: personal settings and worktrees stay local
+.claude/settings.local.json
+.claude/worktrees/

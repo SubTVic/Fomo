@@ -1,17 +1,20 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// API: Generate invite tokens for groups (admin only)
+// API: Generate edit links for groups in bulk (admin only).
+// Since WP-4.2 these are reusable edit tokens (12 months, revocable), no longer
+// one-time GroupInvite rows; old invite links keep working (see edit-token.ts).
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Prisma, RegistrationStatus } from "@prisma/client";
 import { db } from "@/lib/db";
 import { requireAdminApi } from "@/lib/require-admin";
-import crypto from "crypto";
+import { createEditToken, editLink } from "@/lib/edit-token";
 
 const InviteSchema = z.object({
   groupId: z.string().min(1),
   email: z.string().email().optional().nullable(),
-  expiresInDays: z.number().int().min(1).max(90).default(30),
+  // Ignored since WP-4.2 (edit links are valid for 12 months); kept for old clients.
+  expiresInDays: z.number().int().min(1).max(366).optional(),
 });
 
 const BulkInviteSchema = z.object({
@@ -41,20 +44,9 @@ export async function POST(req: NextRequest) {
   const errors: { groupId: string; error: string }[] = [];
 
   for (const invite of parsed.data.invites) {
-    const token = crypto.randomBytes(16).toString("hex"); // 32 chars
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + invite.expiresInDays);
-
     let created;
     try {
-      created = await db.groupInvite.create({
-        data: {
-          token,
-          groupId: invite.groupId,
-          email: invite.email ?? null,
-          expiresAt,
-        },
-      });
+      created = await createEditToken(db, invite.groupId);
     } catch (err) {
       // M5: catch foreign key violation (group doesn't exist)
       if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2003") {
@@ -77,6 +69,7 @@ export async function POST(req: NextRequest) {
       groupId: invite.groupId,
       email: invite.email,
       token: created.token,
+      link: editLink(req.nextUrl.origin, created.token),
       expiresAt: created.expiresAt.toISOString(),
     });
   }

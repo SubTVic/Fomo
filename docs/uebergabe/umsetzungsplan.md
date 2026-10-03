@@ -904,8 +904,8 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 1.3 | Next.js-Patch 15.5.x | ✅ | #5 |
 | 1.4 | Datenleck `/groups`, alte Endpunkte | ✅ | #6 |
 | 1.5 | Formular-Bugs | ✅ | #7 |
-| 1.6 | Migration aus Build | ✅ | wp-1-6-no-migrate-in-build |
-| 1.7 | Repo-Hygiene | ⬜ | |
+| 1.6 | Migration aus Build | ✅ | #8 |
+| 1.7 | Repo-Hygiene | ✅ | wp-1-7-repo-hygiene |
 | 1.8 | 🧑 Checkliste Phase 1 | ⬜ | – |
 | 2.1 | Test-Setup Root | ⬜ | |
 | 2.2 | Matching-Tests | ⬜ | |

@@ -35,7 +35,7 @@ dann neu exportieren (`node scripts/export-from-backup.mjs --backup …` in
 
 | Behalten ✅ | Deaktivieren ❌ | Warum |
 |---|---|---|
-| `rotaract-club-dresden` (dresden-vorstand@rotaract.de) | `rotaract-club-dresden-2` (felix.a.mack@…) | **Wichtigster Fall: beide verifiziert, konkurrieren im Quiz.** Offizielle Vorstands-Mail behalten. Im Zweifel Rotaract fragen, welche Anmeldung die „echte" ist. |
+| `rotaract-club-dresden` (dresden-vorstand@rotaract.de) | `rotaract-club-dresden-2` (private Adresse eines Mitglieds) | **Wichtigster Fall: beide verifiziert, konkurrieren im Quiz.** Offizielle Vorstands-Mail behalten. Im Zweifel Rotaract fragen, welche Anmeldung die „echte" ist. |
 | `technische-universitaet-dresden-robotik-arbeitsgruppe` (verifiziert, 3 Bewertungen) | `tu-dresden-robotik-ag-turag` (unbestätigt) | Verifizierte Kopie ist besser. Logo ist auf beide Slugs verankert, bleibt sichtbar. |
 | `kritmed` | `kritmed-dresden` | Beide unbestätigt — nimm die, unter der die Gruppe erreichbar ist. |
 
@@ -165,6 +165,11 @@ Die Root-App bleibt Datenerfassungs-Tool (Registrierung + Admin). Offen:
       `GroupSelfRating`-Registrierungen vor der Erstiwoche (siehe §1.6).
 - [ ] Duplikate deaktivieren (siehe §1.1) — passiert in dieser App.
 - [ ] Optional: EN-Übersetzungen für Quiz-Thesen im Admin nachtragen.
+- [ ] **Git-History bereinigen (Entscheidung E2, nur Repo-Owner):** Die Datei
+      `data/admin-export.json` (Pilot-Sessions mit Freitexten) ist aus dem
+      aktuellen Stand entfernt, steht aber noch in der History des öffentlichen
+      Repos. Falls E2 = ja: Owner bereinigt mit `git filter-repo`, danach müssen
+      alle Klone neu geklont werden. Siehe Umsetzungsplan §2/WP-1.8.
 - [ ] E2E-Specs sind veraltet und testen stillgelegte Seiten/Endpunkte
       (`tests/pilot-survey.spec.ts`, `tests/variant-switch.spec.ts`,
       `tests/study2-integration.spec.ts`, Pfade `/pilot`/`/quiz` in

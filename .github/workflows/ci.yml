@@ -7,6 +7,8 @@ on:
   pull_request:
   push:
     branches: [main]
+  # Started by the "Daten-Sync" workflow for its pull request (see sync-groups.yml).
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -35,6 +37,8 @@ jobs:
         run: node scripts/validate-data.mjs
       - name: Typecheck
         run: npx tsc --noEmit
+      - name: Lint
+        run: npm run lint
       - name: Unit tests
         run: npm test
       - name: Build
@@ -59,6 +63,8 @@ jobs:
           cache-dependency-path: package-lock.json
       - run: npm ci
       - run: npx prisma generate
+      - name: Quiz items in sync (registration = website)
+        run: node scripts/check-items-sync.mjs
       - name: Typecheck
         run: npx tsc --noEmit
       - name: Lint

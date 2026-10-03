@@ -2,9 +2,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { STUDY2_ITEMS, STUDY2_FILTER } from "@/lib/study2/items";
-import type { Study2AnswerValue } from "@/lib/study2/items";
+import { Link } from "@/i18n/navigation";
+import { WS2_ITEMS, WS2_FILTER } from "@/lib/ws2-items";
+import type { Ws2AnswerValue } from "@/lib/ws2-items";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -31,7 +31,7 @@ interface FormData {
   onboardingInfo: string;
 
   // Step 4: WS2-Profil
-  ws2Answers: Record<string, Study2AnswerValue>;
+  ws2Answers: Record<string, Ws2AnswerValue>;
   ws2FilterSelections: string[];
   raterCount: 1 | 2 | 3;
 
@@ -61,7 +61,7 @@ const INITIAL: FormData = {
   meetingSchedule: "",
   language: "",
   onboardingInfo: "",
-  ws2Answers: Object.fromEntries(STUDY2_ITEMS.map((i) => [i.id, 0 as Study2AnswerValue])),
+  ws2Answers: Object.fromEntries(WS2_ITEMS.map((i) => [i.id, 0 as Ws2AnswerValue])),
   ws2FilterSelections: [],
   raterCount: 1,
   responsibleName: "",
@@ -113,7 +113,7 @@ export function GroupRegisterForm() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function setWs2Answer(itemId: string, value: Study2AnswerValue) {
+  function setWs2Answer(itemId: string, value: Ws2AnswerValue) {
     setForm((prev) => ({
       ...prev,
       ws2Answers: { ...prev.ws2Answers, [itemId]: value },
@@ -135,7 +135,7 @@ export function GroupRegisterForm() {
   async function handleSubmit() {
     setIsSubmitting(true);
     try {
-      const ws2Answers = STUDY2_ITEMS.map((item) => ({
+      const ws2Answers = WS2_ITEMS.map((item) => ({
         itemId: item.id,
         value: form.ws2Answers[item.id] ?? 0,
       }));
@@ -570,12 +570,12 @@ function Step4({
   form: FormData;
   quizScreen: QuizScreen;
   setQuizScreen: (s: QuizScreen) => void;
-  setWs2Answer: (itemId: string, value: Study2AnswerValue) => void;
+  setWs2Answer: (itemId: string, value: Ws2AnswerValue) => void;
   toggleFilter: (attribute: string) => void;
   onDone: () => void;
   set: <K extends keyof FormData>(k: K, v: FormData[K]) => void;
 }) {
-  const totalItems = STUDY2_ITEMS.length;
+  const totalItems = WS2_ITEMS.length;
 
   // ── Intro ──
   if (quizScreen === "intro") {
@@ -609,7 +609,7 @@ function Step4({
           <span className="text-xs">(Mehrfachauswahl · nicht Pflicht)</span>
         </p>
         <div className="flex flex-col gap-2">
-          {STUDY2_FILTER.options.map((opt) => {
+          {WS2_FILTER.options.map((opt) => {
             const isOn = form.ws2FilterSelections.includes(opt.attribute);
             return (
               <button
@@ -691,13 +691,13 @@ function Step4({
 
   // ── Item ──
   const itemIndex = quizScreen as number;
-  const item = STUDY2_ITEMS[itemIndex];
+  const item = WS2_ITEMS[itemIndex];
   if (!item) return null; // guard against unexpected state
 
   const current = form.ws2Answers[item.id] ?? 0;
   const itemNum = itemIndex + 1;
 
-  function handleAnswer(value: Study2AnswerValue) {
+  function handleAnswer(value: Ws2AnswerValue) {
     setWs2Answer(item.id, value);
     if (itemIndex < totalItems - 1) {
       setTimeout(() => setQuizScreen(itemIndex + 1), 180);
@@ -706,7 +706,7 @@ function Step4({
     }
   }
 
-  const answerBtns: { label: string; value: Study2AnswerValue }[] = [
+  const answerBtns: { label: string; value: Ws2AnswerValue }[] = [
     { label: "Stimme nicht zu", value: -1 },
     { label: "Neutral", value: 0 },
     { label: "Stimme zu", value: 1 },
@@ -868,9 +868,15 @@ function Step6({
         <p className="font-semibold text-foreground mb-2">Datenschutz & Nutzung</p>
         <p>
           Eure Daten werden ausschließlich für FOMO – das Hochschulgruppen-Matching der TU Dresden
-          – verwendet. Stammdaten (Name, Beschreibung, Kontakt) werden öffentlich angezeigt.
-          Antworten auf Quiz-Fragen fließen anonym in den Matching-Algorithmus ein. Ihr könnt eure
-          Registrierung jederzeit widerrufen.
+          – verwendet. Die Angaben zur Gruppe (Name, Beschreibung, Kontakt der Gruppe) und eure
+          Selbsteinschätzung werden auf der FOMO-Website öffentlich angezeigt bzw. fürs Matching
+          genutzt. Name, E-Mail und Rolle der verantwortlichen Person sind nicht öffentlich und
+          dienen nur Rückfragen. Ihr könnt eure Einwilligung jederzeit per E-Mail an
+          fomo@yeti-dresden.org widerrufen. Details:{" "}
+          <Link href="/datenschutz" target="_blank" className="underline text-foreground">
+            Datenschutzerklärung
+          </Link>
+          .
         </p>
       </div>
 
@@ -882,8 +888,8 @@ function Step6({
           className="mt-0.5 h-4 w-4 border-border accent-primary"
         />
         <span className="text-sm">
-          Ich stimme der Nutzung der Daten für FOMO zu und bestätige, dass ich berechtigt bin,
-          diese Gruppe zu registrieren.{" "}
+          Ich willige in die Verarbeitung der Daten wie in der Datenschutzerklärung beschrieben
+          ein und bestätige, dass ich berechtigt bin, diese Gruppe zu registrieren.{" "}
           <span className="text-muted-foreground">*</span>
         </span>
       </label>

@@ -32,14 +32,14 @@ Eine Frage steht an **drei** Stellen, die zusammenpassen müssen:
 1. `static-site/data/quiz.json` — deutscher Text (Feld `text` beim passenden `WS2-xx`).
 2. `static-site/src/lib/quiz-translations.ts` — englische Fassung (nach Item-ID).
 3. `data/working-set-v2.json` (Repo-Root, **Registrierungs-App**) — damit Gruppen und
-   Studis denselben Text sehen. *(Bis zum Umbau zwei getrennte Quellen; wenn Schritt 3
-   ausgelassen wird, sehen Gruppen die alte Formulierung.)*
+   Studis denselben Text sehen. **Pflicht:** Die CI prüft, dass beide Dateien gleich
+   sind (`scripts/check-items-sync.mjs`); fehlt Schritt 3, wird der PR rot.
 
 Optional: Eintrag mit Datum in `static-site/data/report-milestones.json`, damit der
 Report die Änderung ab diesem Datum getrennt ausweist.
 
-Vorgehen: Branch → in `quiz.json` und `quiz-translations.ts` ändern → (für Konsistenz
-auch `working-set-v2.json`) → PR → CI grün (baut die Seite und prüft die Daten) → Merge.
+Vorgehen: Branch → in `quiz.json`, `working-set-v2.json` und `quiz-translations.ts`
+ändern → PR → CI grün (baut die Seite, prüft Daten und Item-Gleichheit) → Merge.
 
 ## ⚠️ Was NICHT ohne technische Begleitung tun
 
@@ -54,6 +54,7 @@ auch `working-set-v2.json`) → PR → CI grün (baut die Seite und prüft die D
 
 ## Konsistenz-Check
 
-Nach der Änderung kurz prüfen, dass `data/working-set-v2.json` und
-`static-site/data/quiz.json` für das geänderte Item denselben Text/dieselbe ID haben.
-**[nach Umbau]** Ein automatischer Sync-Check in der CI (Umsetzungsplan WP-4.7) übernimmt das.
+Läuft automatisch in der CI (Job `root`, Schritt „Quiz items in sync"): IDs,
+Reihenfolge, Texte, Kurztitel, Matching-Attribute und Filter von
+`data/working-set-v2.json` und `static-site/data/quiz.json` müssen gleich sein.
+Lokal: `node scripts/check-items-sync.mjs`.

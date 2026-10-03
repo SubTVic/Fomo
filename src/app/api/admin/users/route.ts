@@ -28,7 +28,8 @@ export async function GET() {
 }
 
 const createSchema = z.object({
-  email: z.string().email(),
+  // Stored lower-case: login normalizes the address the same way.
+  email: z.string().trim().toLowerCase().email(),
   name: z.string().min(1).optional(),
   password: z.string().min(8),
   role: z.enum(["SUPER_ADMIN", "EDITOR"]),

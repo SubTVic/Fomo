@@ -1,29 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { db } from "@/lib/db";
-import type { GroupWithCategory } from "@/types";
-
-// All active groups with their category (for overview page)
-export async function getActiveGroups(): Promise<GroupWithCategory[]> {
-  return db.group.findMany({
-    where: { isActive: true },
-    include: { category: true },
-    orderBy: { name: "asc" },
-  });
-}
-
-// Single group by slug (for detail view)
-export async function getGroupBySlug(slug: string): Promise<GroupWithCategory | null> {
-  return db.group.findUnique({
-    where: { slug, isActive: true },
-    include: { category: true },
-  });
-}
-
-// Count of active groups (for landing page stats)
-export async function getActiveGroupCount(): Promise<number> {
-  return db.group.count({ where: { isActive: true } });
-}
 
 // All groups including inactive (for admin)
 export async function getAllGroupsForAdmin() {
@@ -31,6 +8,7 @@ export async function getAllGroupsForAdmin() {
     include: {
       category: true,
       duplicateOf: { select: { id: true, name: true } },
+      selfRating: { select: { _count: { select: { answers: true } } } },
     },
     orderBy: [{ isActive: "desc" }, { name: "asc" }],
   });

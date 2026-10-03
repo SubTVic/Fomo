@@ -21,7 +21,7 @@ services:
 
   # One-shot builder (run by update-data.sh). Produces ./out on the host.
   builder:
-    image: node:22-alpine
+    image: node:24-alpine
     profiles: ["build"]
     working_dir: /app
     env_file:

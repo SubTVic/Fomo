@@ -1,10 +1,14 @@
 # FOMO – Offene Aufgaben
 
-**Stand: 12. Juli 2026** — die **eine zentrale To-do-Datei** des Projekts.
+**Stand: Oktober 2026** (Status-Tabelle; einzelne Abschnitte unten älter) — die
+**eine zentrale To-do-Datei** des Projekts. Der laufende Umbau (Sicherheit, Tests,
+Datenpflege, Umzug auf den StuRa-Server) ist in Arbeitspakete gegliedert:
+`docs/uebergabe/umsetzungsplan.md` (§9 = Fortschritt).
 (Hier ist `static-site/docs/AUFGABEN-NACH-AUDIT.md` aufgegangen; die alte
 Phasen-To-do von Mai 2026 ist unten unter „Erledigt/Verworfen" archiviert.)
 
-Kontext zum Projekt: `CLAUDE.md` (Root). Betrieb ohne Programmierkenntnisse:
+Kontext zum Projekt: `CLAUDE.md` (Root). Anleitungen je Aufgabe:
+`docs/runbooks/`. Betrieb ohne Programmierkenntnisse:
 `static-site/docs/BETRIEBSHANDBUCH.md`.
 
 ---
@@ -15,11 +19,12 @@ Kontext zum Projekt: `CLAUDE.md` (Root). Betrieb ohne Programmierkenntnisse:
 | --- | --- |
 | **Öffentliche Seite** `static-site/` | ✅ **Live auf www.fomo-dresden.app** (Vercel, deployt bei jedem Push auf `main`) |
 | Matching v2 (21 Items + 8 Filter, client-side) | ✅ Live — nur verifizierte Gruppen im Quiz |
-| Datenstand | 41 verifiziert / 52 unbestätigt / 93 gesamt (Export vom 11.07.) |
+| Datenstand | 51 verifiziert / 44 unbestätigt / 95 gesamt (Export vom 17.08.) |
 | Umami-Tracking + Live-Report `/report/` | ✅ Läuft mit echten Daten (Env-Vars in Vercel gesetzt, 11.07.) |
-| Dynamische Root-App (Registrierung/Admin) | 🔄 Internes Datenerfassungs-Tool, läuft weiter |
+| Dynamische Root-App (Registrierung/Admin) | 🔄 Internes Tool; Build, Admin-Schutz, Formular repariert (Plan Phase 1), Altlasten-Entfernung folgt (Phase 5) |
+| Qualitäts-Netz | ✅ CI auf jedem PR, Datenprüfung vor jedem Build, Tests, KI-Leitplanken (Plan Phase 2) |
 | Studie 2 (Mitglieder-Validierung) | ❌ Verworfen — ersetzt durch anonyme Live-Daten (Umami) |
-| Nächster Meilenstein | **Erstiwoche September 2026** = Haupt-Traffic |
+| Nächster Meilenstein | **Next.js-16-Upgrade bis 21.10.2026** (Support-Ende Next 15, Plan Phase 3) |
 
 ---
 
@@ -151,7 +156,7 @@ GitHub-Secret (1.3) aktualisieren, alten Key löschen.
       Item-Diagnose im `/report/` markiert aktuell 4 Streichkandidaten
       (einseitige Items, u. a. „Hands-on" 77 % Zustimmung, „Einsteiger" 73 %).
       Bei n=26 noch nicht entscheidungsreif — mit Erstiwochen-Daten neu bewerten.
-- [ ] **Gamification-Backlog** (siehe CLAUDE.md): Ergebnis-Reveal,
+- [ ] **Gamification-Backlog:** Ergebnis-Reveal,
       Persönlichkeits-Profil, Badges, Share-Cards, Leaderboard — erst nach
       der Erstiwoche, wenn Daten da sind.
 - [ ] **Link-Prüfung scharf schalten:** `static-site/scripts/validate-data.mjs`
@@ -168,7 +173,6 @@ Die Root-App bleibt Datenerfassungs-Tool (Registrierung + Admin). Offen:
 - [ ] Gruppen-Invite-Links generieren + mailen → Ziel: möglichst viele
       `GroupSelfRating`-Registrierungen vor der Erstiwoche (siehe §1.6).
 - [ ] Duplikate deaktivieren (siehe §1.1) — passiert in dieser App.
-- [ ] Optional: EN-Übersetzungen für Quiz-Thesen im Admin nachtragen.
 - [ ] **Git-History bereinigen (Entscheidung E2, nur Repo-Owner):** Die Datei
       `data/admin-export.json` (Pilot-Sessions mit Freitexten) ist aus dem
       aktuellen Stand entfernt, steht aber noch in der History des öffentlichen

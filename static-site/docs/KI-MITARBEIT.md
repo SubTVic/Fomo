@@ -23,8 +23,12 @@ CLI/VS-Code-Extension). Cursor o. ä. funktioniert auch. Ein reines
 Chat-Fenster ist mühsam, weil man alles von Hand kopieren muss.
 
 Das Repo ist vorbereitet: Die **`CLAUDE.md`** im Root (Projektkontext,
-Design-Regeln, Architektur-Prinzipien) liest Claude Code automatisch. Dazu
-`static-site/README.md` und die Konzepte in `static-site/docs/`.
+Datenpipeline, Do's & Don'ts) liest Claude Code automatisch; andere Agenten
+finden über `AGENTS.md` dorthin. Dazu `static-site/README.md`, die Runbooks in
+`docs/runbooks/` und die Konzepte in `static-site/docs/`. **Leitplanken sind
+technisch eingebaut** (`.claude/settings.json`): Claude Code kann z. B.
+`groups.json` nicht von Hand ändern, keine `.env`-Dateien lesen und nicht auf
+`main` pushen.
 
 ## 3. Die goldenen Regeln (der KI immer mitgeben)
 
@@ -51,8 +55,10 @@ static-site/README.md. Regeln:
    alles muss bei 375px funktionieren (keine horizontalen Overflows!).
 7. Das Quiz matcht NUR verifizierte Gruppen (getMatchableGroups, nicht
    getGroups) — das nicht ändern.
-8. Vor jedem Push: cd static-site && npm run build muss fehlerfrei
-   durchlaufen. Bei Datenänderungen zusätzlich: node scripts/validate-data.mjs
+8. Vor jedem Push: cd static-site && npm test && npm run build muss
+   fehlerfrei durchlaufen (der Build prüft die Daten automatisch mit).
+   static-site/data/groups.json NIE von Hand ändern — sie wird aus der
+   Datenbank der Admin-App erzeugt.
 9. Arbeite auf einem Feature-Branch, nie direkt auf main (main deployt
    automatisch live).
 ```
@@ -64,8 +70,8 @@ static-site/README.md. Regeln:
 3. **Lokal testen:** `cd static-site && npm install && npm run dev`
    → http://localhost:3000 — im Browser ansehen, besonders in der
    Handy-Ansicht (375px)
-4. **Build-Gate:** `npm run build` muss grün sein (macht die KI meist selbst)
-5. **Push + Pull Request** → Review → Merge → geht automatisch live
+4. **Build-Gate:** `npm test && npm run build` müssen grün sein (macht die KI meist selbst)
+5. **Push + Pull Request** → CI (grüner Haken) → Review → Merge → geht automatisch live
 
 ## 5. Wo was liegt (Spickzettel)
 
@@ -81,12 +87,13 @@ static-site/README.md. Regeln:
 | Analytics-Events | `static-site/src/lib/analytics.ts` |
 | Report-Generator (live: `/report/`) | `static-site/scripts/report.mjs` (läuft auch als prebuild) |
 | Betrieb/Übergabe-Doku | `static-site/docs/BETRIEBSHANDBUCH.md` |
+| Anleitungen je Aufgabe | `docs/runbooks/README.md` |
 | Offene Aufgaben (zentral) | `TODO.md` im Repo-Root |
 
 ## 6. Was schiefgehen kann (und warum es nicht schlimm ist)
 
-- Baut der Branch nicht, blockiert Vercel das Deployment — die Live-Seite
-  bleibt einfach auf dem alten Stand.
+- Baut der Branch nicht, zeigt die CI im Pull Request einen roten Haken, und
+  Vercel blockiert das Deployment — die Live-Seite bleibt auf dem alten Stand.
 - Jede Änderung ist über die Git-Historie per Revert rückgängig zu machen.
 - Einzige echte Vorsicht: **niemals Backup-Dateien aus der Admin-App
   committen** (enthalten persönliche Kontaktdaten) — nur die generierte

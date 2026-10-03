@@ -2,6 +2,8 @@
 
 # Runbook: Website-Text oder Quiz-Frage ändern
 
+**Stand: Oktober 2026.**
+
 Betrifft nur die **statische Seite** (`static-site/`). Geht über den GitHub-Webeditor,
 kein Terminal nötig — aber immer auf einem **Branch + Pull Request**, nie direkt auf
 `main`.
@@ -17,8 +19,9 @@ kein Terminal nötig — aber immer auf einem **Branch + Pull Request**, nie dir
   `…/datenschutz/page.tsx`.
 
 Vorgehen: Datei auf GitHub öffnen → Stift → Text **nur zwischen den Anführungszeichen**
-ändern → „Commit" auf einen neuen Branch → Pull Request → Preview-Deploy ansehen →
-Merge. Ein Syntaxfehler lässt den Build scheitern; dann bleibt die alte Seite online.
+ändern → „Commit" auf einen neuen Branch → Pull Request → CI (grüner Haken) und
+Preview-Deploy ansehen → Merge. Ein Syntaxfehler lässt CI und Build scheitern; dann
+bleibt die alte Seite online.
 
 > Achtung: Zahlen wie „21 Fragen" oder „über 90 Gruppen" stehen an mehreren Stellen
 > hartkodiert. Wenn sich so eine Zahl ändert, alle Vorkommen suchen (GitHub-Suche).
@@ -36,8 +39,7 @@ Optional: Eintrag mit Datum in `static-site/data/report-milestones.json`, damit 
 Report die Änderung ab diesem Datum getrennt ausweist.
 
 Vorgehen: Branch → in `quiz.json` und `quiz-translations.ts` ändern → (für Konsistenz
-auch `working-set-v2.json`) → PR → `cd static-site && npm run build` grün? →
-`node scripts/validate-data.mjs` ohne Fehler? → Merge.
+auch `working-set-v2.json`) → PR → CI grün (baut die Seite und prüft die Daten) → Merge.
 
 ## ⚠️ Was NICHT ohne technische Begleitung tun
 
@@ -54,4 +56,4 @@ auch `working-set-v2.json`) → PR → `cd static-site && npm run build` grün? 
 
 Nach der Änderung kurz prüfen, dass `data/working-set-v2.json` und
 `static-site/data/quiz.json` für das geänderte Item denselben Text/dieselbe ID haben.
-**[nach Umbau]** Ein automatischer Sync-Check (Audit B3) übernimmt das.
+**[nach Umbau]** Ein automatischer Sync-Check in der CI (Umsetzungsplan WP-4.7) übernimmt das.

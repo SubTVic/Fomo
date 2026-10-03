@@ -1,64 +1,80 @@
 # FOMO – Projektkontext für Claude Code
 
+**Stand: Oktober 2026.** Diese Datei beschreibt den **tatsächlichen** Stand. Offene
+Aufgaben: **`TODO.md`**. Laufender Umbau (Arbeitspakete, Regeln, Fortschritt):
+**`docs/uebergabe/umsetzungsplan.md`** — vor jedem Arbeitspaket dessen §1 lesen.
+
 ## Vision
 
-FOMO hilft Erstis der TU Dresden, passende Hochschulgruppen zu finden. Jedes Jahr stehen über 6.300 neue Studierende vor dem Problem, dass sie die 100+ Hochschulgruppen nicht kennen. FOMO löst das mit einem Quiz: ~20 Fragen beantworten, algorithmisches Matching, Top-Empfehlungen mit Kontaktinfos.
+FOMO hilft Erstis der TU Dresden, passende Hochschulgruppen zu finden: 21 Fragen
+beantworten, Matching im Browser, Top-Empfehlungen mit Kontaktinfos. Finanziert vom
+StuRa TU Dresden, live seit Juli 2026 auf **www.fomo-dresden.app**. Haupt-Traffic:
+Erstiwoche (September). Langfristig auf andere Hochschulen übertragbar.
 
-Das Projekt wird vom StuRa TU Dresden finanziert (3.000€) und soll im September 2026 zur Erstsemester-Woche live gehen. Langfristig ist FOMO auf andere Hochschulen skalierbar (Leipzig, Chemnitz, etc.).
+**Zielgruppe:** 18–25, ~80 % mobil. Die App soll sich wie ein Consumer-Produkt
+anfühlen, nicht wie ein Behördenformular. Mobile-first, alles muss bei 375 px
+funktionieren. Spaß und Wissenschaftlichkeit sind kein Widerspruch.
 
-**Zielgruppe:** 18-25 Jahre, 80% mobil, digital-affin, kurze Aufmerksamkeitsspanne. Die App muss sich anfühlen wie ein modernes Consumer-Produkt, nicht wie ein Behördenformular. Spaß und Geschwindigkeit sind genauso wichtig wie statistische Korrektheit.
+## ⚠️ Das Wichtigste zuerst: Es gibt ZWEI Apps in diesem Repo
 
-## Phasen-Überblick
+| | **Statische Seite** `static-site/` | **Root-App** `src/`, `prisma/` |
+|---|---|---|
+| Zweck | **die öffentliche Seite** (Quiz, Verzeichnis, Report) | **internes** Tool: Registrierung, Bearbeitungslinks, Admin |
+| Live auf | **www.fomo-dresden.app** (Vercel-Projekt `fomo-static`) | fomo-pi.vercel.app (Vercel-Projekt `fomo`) |
+| Technik | Next.js **Static Export** (`output: "export"`), kein Server, keine DB | Next.js + Prisma + **PostgreSQL** + Auth.js v5 |
+| Daten | `static-site/data/*.json` (zur Build-Zeit eingebacken) | PostgreSQL — **die Quelle der Wahrheit für Gruppen** |
+| Matching | **client-side**, `static-site/src/lib/matching.ts` | keins mehr (altes Quiz/Pilot/Demo leiten auf die Live-Seite um; Code-Entfernung: Plan Phase 5) |
 
-### Phase 1: Pilot-Umfrage (✅ abgeschlossen – Mai 2026)
+**Bei Arbeiten an der öffentlichen Seite: nur `static-site/` anfassen.**
 
-**Ergebnis:** 67 Sessions, Classic-Variante gewinnt (45%), Working Set v1.1 eingefroren (17 Items).
+## Die Datenpipeline (so kommen Gruppendaten live)
 
-**Was gebaut wurde:** Landing Page, 4 Quiz-Varianten (scroll, classic, swipe, chat), Admin-Dashboard mit Statistiken, CSV-Export.
+```
+Admin-App (Gruppe bearbeitet per Link / Admin pflegt)
+  → Admin: „Backup herunterladen" (JSON, enthält PII — nie ins Repo!)
+  → cd static-site && node scripts/export-from-backup.mjs --backup <datei>
+  → node scripts/validate-data.mjs
+  → groups.json auf einem Branch committen → PR → CI grün → Merge → ~2 Min live
+```
+Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`. Automatisierung: Plan WP-4.5.
 
-### Phase 2: Hochschulgruppen-Registrierung (April/Mai 2026)
+### Do's & Don'ts der Datenpflege
 
-**Ziel:** Die ~83 Gruppen bestätigen/korrigieren ihre 17 binären Attribute auf einer Checkliste.
+- **NIE `static-site/data/groups.json` von Hand editieren** (ein Hook blockiert das).
+  Der nächste Export überschreibt es. Korrekturen gehören in die **DB** (Admin-App).
+- **NIE `npm run import:groups` oder „CSV neu importieren"/„Scraper-JSON"** im Admin
+  benutzen — überschreibt Verifizierung, Slugs, Texte und reaktiviert Duplikate.
+- **Eine Gruppen-Einreichung setzt `isVerified=false`.** Nur verifizierte Gruppen mit
+  echtem Self-Rating kommen ins Quiz (`getMatchableGroups`). Nach jeder Korrektur muss
+  ein Admin neu verifizieren (bis Plan WP-4.1).
+- **Logos und EN-Übersetzungen leben außerhalb der DB:** `static-site/public/group-logos/`
+  + `static-site/data/logos.json` (nach Slug), EN-Texte in
+  `static-site/src/lib/group-translations.ts`.
+- **Backup-Dateien NIE committen oder lesen** — Kontakt-PII und gültige Tokens.
+- `validate-data.mjs` läuft **automatisch vor jedem Build** (`prebuild`) und in der CI:
+  kaputte Ratings, doppelte Slugs, unbekannte Filter/Kategorien, kaputte Links
+  verifizierter Gruppen brechen den Build ab.
 
-**Was gebaut wird:** Token-basierte Einladungslinks, Attribut-Checkliste (vom Scraper vorausgefüllt), Admin-Verifizierung.
+## Quiz, Items, Matching
 
-**Wichtig:** Die Gruppen werden auf Attribut-Ebene eingeordnet, nicht auf Fragen-Ebene. Die Studierenden-Fragen können sich ändern ohne dass die Gruppen nochmal ran müssen.
-
-### Phase 3: Matching & Ergebnisse (Mai–Juli 2026)
-
-**Ziel:** Studenten-Antworten mit Gruppen-Profilen matchen, Empfehlungen anzeigen.
-
-**Was gebaut wird:** Matching-Algorithmus (client-side, läuft im Browser), Ergebnisseite mit Top 5-10 Gruppen.
-
-**Client-side Matching:** Keine Nutzerdaten werden an den Server geschickt — DSGVO-konform by design.
-
-### Phase 4: Launch (August/September 2026)
-
-**Ziel:** APP_MODE=live umschalten, Gewinner-Variante als Default, StuRa-Abnahme.
-
-## ⚡ Stand Juli 2026 — was WIRKLICH live ist (überschreibt Obiges bei Widerspruch)
-
-Die öffentliche FOMO-Seite ist **nicht** die dynamische App, sondern der
-**statische Export in `static-site/`** — live auf **www.fomo-dresden.app**
-(eigenes Vercel-Projekt, Root Directory `static-site`, deployt bei jedem Push
-auf `main`). Kernfakten für die Arbeit daran:
-
-- Matching v2 (21 WS2-Items + 8 Filter) läuft client-side gegen
-  `selfRating.answers`; die alten 17 Binär-Attribute werden nicht mehr genutzt.
-- **Nur verifizierte Gruppen** sind im Quiz-Matching (`getMatchableGroups()`);
-  gescrapte/unbestätigte nur im Verzeichnis hinter einem Toggle.
-  Datenstand 11.07.2026: 41 verifiziert / 52 unbestätigt / 93 gesamt.
-- Studie 2 wurde verworfen; stattdessen anonyme Live-Daten via Umami
-  (Events in `static-site/src/lib/analytics.ts`, Konzept in
-  `static-site/docs/DATEN-SAMMELN-KONZEPT.md`). Auswertung:
-  `npm run report` bzw. live unter `/report/` (baut bei jedem Deploy).
-- DE + EN (unter `/en/`), SEO komplett (Sitemap, hreflang, JSON-LD,
-  Kategorie-Landingpages), Impressum/Datenschutz vorhanden.
-- Doku: `static-site/README.md`, Betrieb für Nicht-Techniker in
-  `static-site/docs/BETRIEBSHANDBUCH.md`, KI-Arbeitsregeln in
-  `static-site/docs/KI-MITARBEIT.md`. **Offene Aufgaben: `TODO.md` (Root).**
-- Die dynamische Root-App bleibt internes Datenerfassungs-Tool
-  (Registrierung/Admin) — bei Arbeiten an der öffentlichen Seite NICHT anfassen.
+- **21 WS2-Items + 8 Aktivitäts-Filter.** Die 17 Binär-Attribute sind Altbestand; sie
+  dienen nur noch dazu, Profile **unbestätigter** Gruppen abzuleiten.
+- **Items liegen doppelt:** `data/working-set-v2.json` (Registrierung) und
+  `static-site/data/quiz.json` (Website). Beide synchron halten (Check: Plan WP-4.7).
+- Gruppen und Studis beantworten **dieselben** Items. Item-IDs folgen `WS2-\d{2}`.
+- **Matching:** mittlere absolute Distanz über die **nicht-neutralen** Antworten
+  (`score = round((1 − Σ|user − group| / (n · 2)) · 100)`), Filter als **harte**
+  Bedingung, ohne aktive Antworten 50. Sortierung nach ungerundetem Fit, dann
+  expliziter Filtertreffer, dann Hash (fair, aber deterministisch pro Antworten).
+  Angezeigt: Top 5 + Gleichstände, max. 10. Es gibt **keine** Gewichtsformel und
+  **keine** „≥ 5 Antworten"-Schwelle (beides Altbestand aus v1).
+- `static-site/scripts/report.mjs` hat eine Kopie des Matchings; ein Paritätstest
+  (`static-site/src/lib/__tests__/report-parity.test.ts`) hält sie synchron.
+- **Item-Reihenfolge, IDs und Filternamen NICHT ändern** ohne Migration: `?r=`-Links
+  und der Report kodieren positionsbasiert (`docs/runbooks/07-quiz-item-aendern.md`).
+- **Nur verifizierte Gruppen** im Quiz (`getMatchableGroups`, **nie** `getGroups`).
+- Verzeichnis `/groups`: Toggle „unbestätigte anzeigen" steht **standardmäßig an**.
+- Datenstand im Repo (Export 17.08.2026): 95 Gruppen, 51 verifiziert, 44 unbestätigt.
 
 ## Leitplanken (technisch erzwungen)
 
@@ -75,104 +91,71 @@ auf `main`). Kernfakten für die Arbeit daran:
 - Selbsttest: `sh .claude/hooks/test-guards.sh` (im Terminal ausführen).
 - Persönliche Ausnahmen gehören in `.claude/settings.local.json` (nicht im Repo).
 
+Außerdem gilt (siehe Plan §1): keine Verbindung zu Produktivsystemen, Migrationen nur
+lokal erzeugen/testen (ausführen tut ein Mensch nach Backup: `npm run db:migrate`),
+keine History-Umschreibung, keine Sicherheitsdetails in Commits/PRs/Doku (Repo ist
+öffentlich).
+
+## Prüfbefehle
+
+```bash
+# Statische Seite
+cd static-site && npm ci && node scripts/validate-data.mjs && npx tsc --noEmit && npm test && npm run build
+# Root-App (ohne echte DB)
+npm ci && npx tsc --noEmit && npx eslint src scripts prisma tests && npm test
+DATABASE_URL="postgresql://x:x@localhost:5432/x" DIRECT_URL="$DATABASE_URL" AUTH_SECRET=dummy npx next build
+# E2E gegen lokale DB: docker compose up -d db && npx prisma migrate dev && npx prisma db seed && npm run test:e2e
+```
+Dieselben Schritte laufen in der CI (`.github/workflows/ci.yml`, Jobs `static-site`
+und `root`) auf jedem PR. Node-Version: `.nvmrc` (24).
+
 ## Tech-Stack
 
-- **Framework:** Next.js 15 (App Router, TypeScript)
-- **Styling:** Tailwind CSS + shadcn/ui
-- **Datenbank:** PostgreSQL 16 (lokal Docker, Production Vercel Postgres)
-- **ORM:** Prisma
-- **Auth:** Auth.js (NextAuth v5) – Credentials, Phase 4: SAML/SSO
-- **Deployment:** Vercel (Pilot/Collect), später Uni-Server (Docker)
-- **Testing:** Vitest + Playwright
-- **Lizenz:** AGPL-3.0
+- **Statische Seite:** Next.js 15 (App Router, TS), Static Export, Tailwind 4,
+  DE + EN (`/en/`), Umami (anonym), Vitest. Deploy: Vercel.
+- **Root-App:** Next.js 15, Prisma 6, PostgreSQL 16, Auth.js v5 (Credentials),
+  next-intl, Zod, Vitest + Playwright. Admin-Zugriff nur über
+  `requireAdminApi()`/`requireAdminPage()` (`src/lib/require-admin.ts`, prüft
+  Aktiv-Status und Rolle in der DB). Der Build migriert die DB **nicht**.
+- **Lizenz:** AGPL-3.0. Next.js 15 hat am **21.10.2026** Support-Ende (Plan Phase 3).
 
-## Architektur-Prinzipien
+## Konventionen
 
-1. **Mobile-first:** 80% der Nutzer sind auf dem Handy. Jede Seite muss auf 375px gut aussehen.
-2. **Client-side Matching:** Fragen + Gruppenprofile werden einmal geladen, Matching im Browser. Keine Nutzerdaten an den Server.
-3. **Kein localStorage/sessionStorage:** Kann SecurityError in Sandbox-Umgebungen werfen. State nur über React State oder URL-Parameter.
-4. **APP_MODE:** Umgebungsvariable steuert was die App zeigt (pilot/collect/live). Kein Code-Umbau nötig beim Phasenwechsel.
-5. **Seed-Daten auf Deutsch:** Die App ist für TU Dresden, alle UI-Texte und Daten auf Deutsch.
-6. **SPDX-Header:** Jede Quellcode-Datei braucht `// SPDX-License-Identifier: AGPL-3.0-only`.
+- Server Components by default, `"use client"` nur wenn nötig. API-Routen mit Zod.
+- **Deutsche UI-Texte**, englische Code-Kommentare/Variablen, englische
+  konventionelle Commits (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`).
+- **Kein localStorage/sessionStorage** (SecurityError-Risiko) — State nur über
+  React-State oder URL-Parameter.
+- **SPDX-Header** in jeder Quellcode-Datei: `// SPDX-License-Identifier: AGPL-3.0-only`
+  (Markdown: `<!-- SPDX-License-Identifier: AGPL-3.0-only -->`).
+- **Nie direkt auf `main` pushen** — `main` deployt live. Immer Branch + PR + grüne
+  CI + Preview ansehen.
 
-## Design-Philosophie
+## Design
 
-**Das Quiz soll sich anfühlen wie eine App, nicht wie eine Umfrage.**
+Brutalist-Poster-Stil: dicke Borders (4px solid #1a2a35), Uppercase-Headlines,
+klares Grid. Fonts: **Archivo Black** (Headlines), **Lexend** 300–700 (Text).
+Farben: Hintergrund #ADD8E6, Primär/Text dunkel #1a2a35, Karten #fff, Button
+#1a2a35 auf #ADD8E6-Text (Hover #2a3a45), Text body #5a7a8a, muted #7a9aaa/#8aaaba,
+Akzent #5a8a9a. Fallback-Farben der Kategorien: `static-site/data/categories.json`.
 
-Die Zielgruppe nutzt TikTok, Instagram, Tinder. Sie erwarten:
+## Fallstricke mit irreführenden Namen
 
-- Sofortige Reaktion auf Input (keine Ladezeiten, keine Seitenreloads)
-- Animationen und Micro-Interactions (Buttons die reagieren, Karten die sliden)
-- Visuelles Feedback (Fortschrittsbalken, Farben die sich ändern, Emojis)
-- Kurze Texte, große Touch-Targets, ein Gedanke pro Screen
+- `src/lib/study2/items.ts` ist **nicht** das verworfene „Studie 2", sondern das
+  **Kern-Item-Set der Registrierung** (Umbenennung: Plan WP-4.7).
+- Route `/pilot` = Studie 2 (verworfen, leitet um); `/api/pilot/*` = Pilot 1 (abgeschlossen).
+- Filter-Attribut `party` = **„Hochschulpolitik & Mitbestimmung"**, nicht „Feiern".
+- `scripts/export-static-data.ts` ist veraltet — die richtigen Exporter sind
+  `static-site/scripts/export-from-backup.mjs` bzw. `scripts/export-static-site-groups.ts`.
+- `APP_MODE` gibt es nicht (nur `APP_LIVE` für die Landingpage der Root-App).
 
-Spaß und Wissenschaftlichkeit sind kein Widerspruch – das ist die zentrale Designaufgabe.
+## Wo was steht
 
-## Farbschema & Typografie (Light Blue Theme)
-
-```text
-Fonts:
-  Headlines:      'Archivo Black', sans-serif
-  Body:           'Lexend', wght 300–700
-
-Farben:
-  Hintergrund:    #ADD8E6 (Light Blue)
-  Primär/Dunkel:  #1a2a35 (Dark Navy)
-  Weiß:           #fff (Poster/Card-Hintergrund)
-  Button:         #1a2a35 bg, #ADD8E6 text
-  Button Hover:   #2a3a45
-  Text dunkel:    #1a2a35
-  Text body:      #5a7a8a
-  Text muted:     #7a9aaa / #8aaaba
-  Text footer:    #4a7a8a
-  Akzent muted:   #5a8a9a
-  Placeholder bg: linear-gradient(135deg, #e8f4f8, #d4eaf0)
-```
-
-Stilistik: Brutalist-Poster-Ästhetik mit dicken Borders (4px solid #1a2a35), Uppercase-Headlines, klarem Grid-Layout.
-
-## Matching-Algorithmus
-
-```text
-score(User, Group) = Σ effWeight_i × similarity_i / Σ effWeight_i
-
-effWeight_i  = userWeight_i × attrWeight_attr × (1 / itemCount_attr)
-
-userWeight:  |normalized - 0.5| × 2  (Neutral = 0, wird ignoriert)
-attrWeight:  2 × min(yes, no) / n    (50/50-Split = 1.0, alle gleich = 0.0)
-itemCount:   Anzahl Items auf dieses Attribut (verhindert Mehrfachzählung)
-Similarity:  1 - |userValue - groupAttribute|  (mit Inverse-Support)
-Minimum:     ≥ 5 nicht-neutrale Antworten, sonst keine Ergebnisse
-```
-
-Alles client-side — keine Nutzerdaten an den Server. Implementierung: `src/lib/quiz/matching.ts`.
-
-## Gamification-Backlog (NICHT JETZT BAUEN – aber architektonisch vorbereiten)
-
-Diese Features kommen nach dem Pilot, wenn die Basis steht und wir Daten haben:
-
-- **Ergebnis-Reveal:** Karten werden einzeln aufgedeckt mit Countdown/Animation
-- **Persönlichkeits-Profil:** Radar-Chart ("Du bist ein kreativer Teamplayer!")
-- **Badges:** "Der Entdecker" (viele internationale Gruppen), "Der Macher" (hands-on), etc.
-- **Share-Cards:** Generierte Bilder für Instagram Stories ("Mein FOMO-Ergebnis")
-- **Leaderboard:** "X Erstis haben heute FOMO gemacht" als Social Proof
-
-## Coding-Konventionen
-
-- Alle Komponenten als funktionale Components mit TypeScript
-- Server Components by default, 'use client' nur wenn nötig
-- API-Routen mit Zod-Validation für Input
-- Prisma-Queries nur in Server Components oder API-Routen
-- Deutsche UI-Texte, englische Code-Kommentare und Variablennamen
-- Commits auf Englisch, konventionelle Commit-Messages (feat:, fix:, docs:, etc.)
-
-## Aufgaben & Pläne
-
-**Alle offenen Aufgaben stehen in `TODO.md` (Root)** — das ist die eine
-zentrale To-do-Datei (Stand Juli 2026). Es gibt keine aktiven Plan-Dateien
-mehr; alle abgeschlossenen Pläne (Phase 2, Varianten-System,
-Algorithmus-Fixes, V2-Integration, Studie 2) liegen als Referenz in
-`CLAUDE-pläne/archiv/`.
-
-Lies die CLAUDE.md und dann `TODO.md` bevor du mit der Implementierung
-anfängst. Bei Widersprüchen gilt: diese CLAUDE.md hat Priorität.
+- **Runbooks je Aufgabe:** [`docs/runbooks/`](docs/runbooks/README.md) (Index der 12
+  typischen Wartungsaufgaben).
+- Betrieb ohne Programmierkenntnisse: `static-site/docs/BETRIEBSHANDBUCH.md`.
+- Mit KI an der statischen Seite arbeiten: `static-site/docs/KI-MITARBEIT.md`.
+- Übergabe-Audit mit allen Befunden: `docs/uebergabe/audit.md`; Umbauplan:
+  `docs/uebergabe/umsetzungsplan.md`; Hintergrund: `docs/uebergabe/recherche-umsetzung.md`.
+- Abgeschlossene alte Pläne: `CLAUDE-pläne/archiv/`.
+- Gamification-Ideen (Reveal, Profil, Badges, Share-Cards): Backlog in `TODO.md`.

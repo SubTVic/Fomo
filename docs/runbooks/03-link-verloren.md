@@ -2,6 +2,8 @@
 
 # Runbook: Gruppe hat ihren Bearbeitungslink verloren / abgelaufen
 
+**Stand: Oktober 2026** (bis Umsetzungsplan WP-4.2/4.3).
+
 **Kurz:** Einen neuen Link kann **nur ein Admin** erzeugen. Die App verschickt keine
 Mails, es gibt keinen „Link neu anfordern"-Knopf für die Gruppe, und alte Links lassen
 sich nicht wieder anzeigen. Ein Link ist **einmalig** nutzbar und **30 Tage** gültig.
@@ -38,7 +40,8 @@ sich nicht wieder anzeigen. Ein Link ist **einmalig** nutzbar und **30 Tage** g�
 - Nach erfolgreichem Absenden ist der Link verbraucht — für die nächste Änderung
   braucht es wieder einen neuen.
 
-## Nach dem Umbau (Audit-Vorschlag A3)
+## Nach dem Umbau (Umsetzungsplan WP-4.2/4.3)
 
-Ein **dauerhafter**, pro Gruppe stabiler Bearbeitungslink plus eine Seite „Link neu
-zuschicken" macht dieses Runbook überflüssig.
+Ein **dauerhafter**, pro Gruppe stabiler Bearbeitungslink plus eine Seite „Link
+anfordern" (Mail nur an die hinterlegte Adresse) macht dieses Runbook weitgehend
+überflüssig.

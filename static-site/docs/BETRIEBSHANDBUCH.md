@@ -11,50 +11,57 @@ dafür gibt es `INBETRIEBNAHME.md` und die README.
 
 ## 1. Was ist FOMO technisch? (in 3 Sätzen)
 
-FOMO ist eine **statische Website**: Sie besteht nur aus fertigen Dateien, hat
-keine Datenbank und keinen eigenen Server. Das Quiz-Matching läuft komplett im
-Browser der Nutzer:innen — es gibt nichts, das „abstürzen" kann, keine Server
-zu warten, keine Sicherheitsupdates einzuspielen. Die laufenden Kosten sind
-**0 €** (Vercel Free Tier) plus die Domain (~15 €/Jahr).
+Die **öffentliche Seite** www.fomo-dresden.app ist eine **statische Website**:
+fertige Dateien, keine Datenbank, kein eigener Server; das Quiz-Matching läuft im
+Browser der Nutzer:innen. **Dahinter** steht aber die **Registrierungs-/Admin-App**
+(fomo-pi.vercel.app) mit einer **Datenbank**: Dort registrieren sich Gruppen und
+pflegen Admins die Daten. Diese App **braucht Pflege** — Software-Updates (2× im
+Jahr, `docs/runbooks/12-updates.md`), Admin-Zugänge, Backups. Laufende Kosten heute:
+Vercel- und Datenbank-Gratistarif plus Domain (~15 €/Jahr).
 
 ## 2. Die Konten (Zugänge, die man braucht)
 
 | Konto | Wofür | Kritisch? |
 |---|---|---|
 | **GitHub** (`SubTVic/Fomo`) | Hier liegt der gesamte Code + die Gruppendaten | ⭐ Ja — wer das hat, kontrolliert alles |
-| **Vercel** | Hosting; baut die Seite bei jeder Änderung automatisch neu | ⭐ Ja |
+| **Vercel** | Hosting beider Apps (`fomo-static` = Website, `fomo` = Admin-App) | ⭐ Ja |
+| **Datenbank** (PostgreSQL, über Vercel/Neon) | Gruppendaten, Kontakte, Admins der Admin-App | ⭐ Ja |
+| **Admin-App-Login** (fomo-pi.vercel.app/admin) | Gruppen pflegen, verifizieren, Links erzeugen | ⭐ Ja — mind. 2 SUPER_ADMINs |
 | **Domain-Registrar** (fomo-dresden.app) | Die Internetadresse; jährliche Verlängerung! | ⭐ Ja — Ablauf = Seite weg |
 | **Umami** | Anonyme Statistik (Besucher, Quiz-Antworten) | Nein — Seite läuft auch ohne |
 | **E-Mail** fomo@yeti-dresden.org | Kontaktadresse aus Impressum/Landing | Ja (rechtlich: Impressum) |
 
-**Übergabe-Checkliste:** Alle 5 Zugänge übergeben + Impressum aktualisieren
+**Übergabe-Checkliste:** Alle Zugänge übergeben + Impressum aktualisieren
 (verantwortliche Person mit Anschrift ändern in
 `static-site/src/app/impressum/page.tsx` und `datenschutz/page.tsx`).
 
 ## 3. Wie funktionieren Änderungen? (das Grundprinzip)
 
 ```
-Datei auf GitHub ändern  →  Vercel baut automatisch neu  →  in ~2 Min live
+Datei auf GitHub ändern (auf einem Branch)  →  Pull Request  →  automatische
+Prüfung (CI) grün  →  Merge  →  Vercel baut neu  →  in ~2 Min live
 ```
 
-Für **alle** Routineänderungen reicht der GitHub-Webeditor (Datei öffnen →
-Stift-Symbol → ändern → „Commit changes"). Man braucht keinen eigenen Computer
-mit Entwicklungsumgebung. Wenn ein Fehler passiert: Auf GitHub gibt es eine
+Für Texte reicht der GitHub-Webeditor (Datei öffnen → Stift-Symbol → ändern →
+„Commit changes" → **„Create a new branch"** wählen → Pull Request). **Nie direkt
+auf `main` speichern** — `main` geht sofort live. Man braucht keinen eigenen
+Computer mit Entwicklungsumgebung. Gruppendaten laufen anders (§4). Wenn ein Fehler passiert: Auf GitHub gibt es eine
 Historie — jede Änderung lässt sich per „Revert" rückgängig machen, und Vercel
 kann per Klick auf ein älteres Deployment zurückschalten
 (Deployments → ⋯ → „Promote to Production").
 
 ## 4. Die häufigste Aufgabe: Gruppendaten aktualisieren
 
-Alle Inhalte (Gruppen, Beschreibungen, Kontakte) stehen in **einer Datei**:
-`static-site/data/groups.json`.
+Die Website liest die Gruppen aus **einer Datei**, `static-site/data/groups.json`.
+Diese Datei wird aber **aus der Datenbank der Admin-App erzeugt** — die Quelle der
+Wahrheit ist die Admin-App.
 
-**Einzelne Angabe korrigieren** (z. B. neue E-Mail einer Gruppe):
-1. Datei auf GitHub öffnen → Stift → die Stelle suchen (Strg+F, Gruppenname)
-2. Wert ändern — nur Text **zwischen den Anführungszeichen** anfassen
-3. Commit → fertig. Vercel prüft beim Bauen automatisch, ob die Datei noch
-   gültig ist; bei kaputtem JSON schlägt der Build fehl und die **alte Seite
-   bleibt einfach online** (nichts geht kaputt).
+**Einzelne Angabe korrigieren** (z. B. neue E-Mail einer Gruppe): in der
+**Admin-App** ändern und danach die Daten live schalten — Schritt für Schritt in
+`docs/runbooks/01-gruppe-aendern.md`. **Nicht** in `groups.json` auf GitHub ändern:
+Der nächste Export überschreibt das wieder. Vor jedem Build prüft eine automatische
+Datenprüfung die Datei (Antwortwerte, doppelte Gruppen, Filter, Kategorien, Links);
+bei Fehlern bricht der Build ab und die **alte Seite bleibt online**.
 
 **Neue Registrierungen einspielen** (aus der Registrierungs-App):
 Das ist der einzige Schritt, der einen Computer mit Node.js braucht (einmalige
@@ -69,7 +76,8 @@ werden — nur die erzeugte `groups.json` ist öffentlich unbedenklich.
 
 **Wichtig zu wissen:** Nur **bestätigte** Gruppen (von der Gruppe selbst
 ausgefüllt) erscheinen in den Quiz-Ergebnissen. Gescrapte/unbestätigte Gruppen
-sind nur im Verzeichnis unter „Auch unbestätigte Gruppen anzeigen" sichtbar.
+stehen nur im Verzeichnis, als „unbestätigt" markiert (Schalter „Auch unbestätigte
+Gruppen anzeigen", standardmäßig an).
 Der beste Weg, eine Gruppe „ins Matching zu bringen", ist also: **sie zur
 Registrierung bewegen.**
 
@@ -153,7 +161,8 @@ Ordner `static-site/` (Details in der README, Abschnitt „Report generator").
 |---|---|---|
 | Seite ganz weg | Domain abgelaufen ODER Vercel-Konto-Problem | Registrar/Vercel-Status prüfen |
 | Änderung wird nicht sichtbar | Build fehlgeschlagen | Vercel → Deployments → Log ansehen; meist kaputtes JSON → Änderung auf GitHub reverten |
-| Gruppe fehlt im Quiz | Gruppe ist unbestätigt | Registrierung anstoßen (siehe §4) |
+| Gruppe fehlt im Quiz | Gruppe ist unbestätigt oder nach einer Korrektur nicht neu verifiziert | Admin-App → verifizieren → Daten live schalten (Runbook 01) |
+| Build rot „Datenprüfung FEHLGESCHLAGEN" | Fehler in den Gruppendaten (Meldung nennt Gruppe + Feld) | In der Admin-App korrigieren, neu exportieren |
 | Logo erscheint nicht | Slug/Dateiname in logos.json falsch | Schreibweise + `%20` prüfen |
 | Statistik leer | `UMAMI_WEBSITE_ID` fehlt in Vercel | Vercel → Settings → Env Vars, dann Redeploy |
 
@@ -171,4 +180,6 @@ jede:r Webentwickler:in übernehmen.
 | **Nach Erstiwoche** | Bericht sichern: www.fomo-dresden.app/report/ aufrufen und als PDF/HTML speichern → an StuRa |
 | **Bei Personenwechsel** | Impressum/Datenschutz aktualisieren (§2), Zugänge übergeben |
 | **Montags (automatisch)** | Der /report/ aktualisiert sich per GitHub-Automatik von selbst (§7) |
-| **Sonst** | Nichts. Statische Seite = keine Sicherheitsupdates nötig. |
+| **Juli/August** | Bestätigungsrunde mit den Gruppen (`docs/runbooks/08-jaehrliche-bestaetigungsrunde.md`) |
+| **2× jährlich** | Software-Updates der Admin-App und der Website (`docs/runbooks/12-updates.md`) |
+| **Sonst** | Nichts. Alle Einzelaufgaben: `docs/runbooks/README.md`. |

@@ -2,6 +2,8 @@
 
 # Runbook: Neue Hochschulgruppe aufnehmen
 
+**Stand: Oktober 2026.**
+
 **Ziel:** Die Gruppe soll im **Quiz** auftauchen. Das geht **nur**, wenn die Gruppe
 ihr Profil (21 Fragen + Filter) selbst ausfüllt — erfundene Antworten verfälschen das
 Matching aller Gruppen. Deshalb gibt es zwei Wege, beide enden mit „verifizieren +

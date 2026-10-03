@@ -280,7 +280,7 @@ Nicht tun · 🧑 danach · Commit-Vorschlag**.
 - [ ] In der Admin-App: 7 kaputte URLs + ESG-Website korrigieren (oder nach WP-1.5 einmal
       jede betroffene Gruppe speichern), Duplikate deaktivieren (Rotaract `-2`, kritmed),
       Kategorie-Handkorrekturen (ESG, IG Börse, DIE LINKE.SDS) in der DB nachziehen.
-- [ ] Danach **ein** Daten-Sync nach `docs/uebergabe/runbooks/01-gruppe-aendern.md`.
+- [ ] Danach **ein** Daten-Sync nach `docs/runbooks/01-gruppe-aendern.md`.
 - [ ] E2 entschieden; falls ja: History-Bereinigung durch den Owner.
 
 ---
@@ -911,8 +911,8 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 2.2 | Matching-Tests | ✅ | #11 |
 | 2.3 | Validierung im Build | ✅ | #12 |
 | 2.4 | CI | ✅ | #13 |
-| 2.5 | KI-Leitplanken | ✅ | wp-2-5-ai-guardrails |
-| 2.6 | Doku-Abgleich | ⬜ | |
+| 2.5 | KI-Leitplanken | ✅ | #14 |
+| 2.6 | Doku-Abgleich | ✅ | wp-2-6-docs |
 | 2.7 | 🧑 Branch-Schutz | ⬜ | – |
 | 3.1 | Next 16 statische Seite | ⬜ | |
 | 3.2 | Next 16 Root-App | ⬜ | |

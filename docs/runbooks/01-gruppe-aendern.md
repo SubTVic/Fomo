@@ -2,7 +2,7 @@
 
 # Runbook: Eine Gruppe ändert ihre Daten (Attribute, Beschreibung, Kontakt, Logo)
 
-**Gilt für den HEUTIGEN Stand.** Was sich nach Umsetzung der Audit-Vorschläge
+**Stand: Oktober 2026** (nach Umsetzungsplan Phase 1+2). Was sich mit Phase 4
 ändert, steht unter „Nach dem Umbau".
 
 ## Wichtig vorab (sonst geht die Änderung schief oder verloren)
@@ -37,10 +37,9 @@
    **„Verifizieren"** klicken. **Dieser Schritt ist entscheidend** — ohne ihn fällt die
    Gruppe beim nächsten Export aus dem Quiz.
 
-> ⚠️ Bekannter Bug (bis zum Fix): Wenn die Gruppe nur ein Feld wie Mitgliederzahl
-> ändert und ein anderes vorausgefülltes Feld unverändert lässt, kann der alte Wert
-> gespeichert werden, obwohl „Profil gespeichert!" erscheint. Im Zweifel die
-> Stammdaten nach dem Absenden in der Admin-Maske gegenprüfen (Fall A).
+Website und Instagram dürfen die Gruppen auch ohne `https://` eingeben
+(`verein.de`, `@verein`) — die App ergänzt das beim Speichern. Ungültige Angaben
+werden rot am jeweiligen Feld angezeigt; der Link bleibt dabei gültig.
 
 ## Fall C: Logo ändern/hinzufügen
 
@@ -63,10 +62,11 @@ Braucht einen Rechner mit Node.js + das Repo:
    node scripts/export-from-backup.mjs --backup <pfad/zum/backup.json>
    node scripts/validate-data.mjs
    ```
-   `validate-data.mjs` muss ohne Fehler durchlaufen (Warnungen sind ok).
+   `validate-data.mjs` muss ohne Fehler durchlaufen (Warnungen sind ok). Dieselbe
+   Prüfung läuft auch automatisch vor jedem Build — kaputte Daten gehen nicht live.
 3. Logos/EN-Texte, die nur in den Website-Dateien stehen, bei Bedarf nachziehen.
 4. `static-site/data/groups.json` **auf einem Branch** committen → Pull Request →
-   Review → Merge nach `main`. Vercel baut, nach ~2 Min live.
+   CI muss grün sein → Review → Merge nach `main`. Vercel baut, nach ~2 Min live.
 5. Gegencheck auf www.fomo-dresden.app: Gruppe korrekt, nicht als „unbestätigt"
    markiert, im Quiz auffindbar.
 
@@ -75,11 +75,13 @@ Braucht einen Rechner mit Node.js + das Repo:
 - „Profil gespeichert", aber live nichts geändert → Export/Commit vergessen, oder
   Hand-Edit in `groups.json` wurde vom Export überschrieben.
 - Gruppe aus dem Quiz verschwunden → nach Einreichung nicht „verifiziert".
-- Bearbeiten scheitert mit „Validation failed" → vorausgefüllte Website/Instagram ist
-  keine vollständige URL (`https://…`). Erst in der Admin-Maske korrigieren.
+- Build/CI rot mit „Datenprüfung FEHLGESCHLAGEN" → die Meldung nennt Gruppe und Feld.
+  In der Admin-App korrigieren und neu exportieren — **nicht** `groups.json` von Hand
+  ändern.
 
-## Nach dem Umbau (Audit-Vorschläge A1/A3/A4)
+## Nach dem Umbau (Umsetzungsplan Phase 4)
 
-- Daten-Sync per GitHub Action statt Backup→Terminal→Commit.
-- Dauerhafter, selbst-anforderbarer Bearbeitungslink statt Einmal-Token.
-- Re-Submit setzt die Verifizierung nicht mehr zurück (bzw. 1-Klick-Re-Verify).
+- WP-4.1: Eine Korrektur setzt die Verifizierung nicht mehr zurück; Admins sehen ein
+  Änderungsprotokoll mit „Rückgängig".
+- WP-4.2/4.3: Dauerhafter, selbst anforderbarer Bearbeitungslink statt Einmal-Link.
+- WP-4.5: Daten-Sync per GitHub Action statt Backup → Terminal → Commit.

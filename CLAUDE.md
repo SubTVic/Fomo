@@ -100,7 +100,7 @@ keine History-Umschreibung, keine Sicherheitsdetails in Commits/PRs/Doku (Repo i
 
 ```bash
 # Statische Seite
-cd static-site && npm ci && node scripts/validate-data.mjs && npx tsc --noEmit && npm test && npm run build
+cd static-site && npm ci && node scripts/validate-data.mjs && npx tsc --noEmit && npm run lint && npm test && npm run build
 # Root-App (ohne echte DB)
 npm ci && npx tsc --noEmit && npx eslint src scripts prisma tests && npm test
 DATABASE_URL="postgresql://x:x@localhost:5432/x" DIRECT_URL="$DATABASE_URL" AUTH_SECRET=dummy npx next build
@@ -111,13 +111,14 @@ und `root`) auf jedem PR. Node-Version: `.nvmrc` (24).
 
 ## Tech-Stack
 
-- **Statische Seite:** Next.js 15 (App Router, TS), Static Export, Tailwind 4,
+- **Statische Seite:** Next.js 16 (App Router, TS, Turbopack), Static Export, Tailwind 4,
   DE + EN (`/en/`), Umami (anonym), Vitest. Deploy: Vercel.
 - **Root-App:** Next.js 15, Prisma 6, PostgreSQL 16, Auth.js v5 (Credentials),
   next-intl, Zod, Vitest + Playwright. Admin-Zugriff nur über
   `requireAdminApi()`/`requireAdminPage()` (`src/lib/require-admin.ts`, prüft
   Aktiv-Status und Rolle in der DB). Der Build migriert die DB **nicht**.
-- **Lizenz:** AGPL-3.0. Next.js 15 hat am **21.10.2026** Support-Ende (Plan Phase 3).
+- **Lizenz:** AGPL-3.0. Next.js 15 hat am **21.10.2026** Support-Ende — die statische
+  Seite ist auf 16 (WP-3.1), die Root-App folgt (Plan WP-3.2).
 
 ## Konventionen
 

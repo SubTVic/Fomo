@@ -35,6 +35,8 @@ jobs:
         run: node scripts/validate-data.mjs
       - name: Typecheck
         run: npx tsc --noEmit
+      - name: Lint
+        run: npm run lint
       - name: Unit tests
         run: npm test
       - name: Build

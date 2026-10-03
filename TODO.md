@@ -163,6 +163,12 @@ GitHub-Secret (1.3) aktualisieren, alten Key löschen.
       lässt 7 verifizierte Gruppen mit kaputten Links (`KNOWN_BAD_URLS`) vorerst
       nur warnen. Nach dem nächsten Daten-Sync mit korrigierten URLs (WP-1.8)
       die Liste leeren — dann bricht jeder kaputte Link den Build ab.
+- [ ] **Lint-Warnungen `react-hooks/set-state-in-effect` abbauen** (seit Next 16,
+      WP-3.1): `BackLink`, `Navbar`, `QuizFlow` lesen `window.location` erst nach
+      dem Laden (z. B. auf `useSyncExternalStore` umstellen); `ItemScreen` und
+      `ResultsScreen` setzen Animations-State im Effect zurück (besser per `key`
+      bzw. im Klick-Handler). Danach die Regel in `eslint.config.mjs` wieder auf
+      `error` stellen. Verhalten mit dem Quiz-Durchlauf (375 px) gegenprüfen.
 
 ---
 

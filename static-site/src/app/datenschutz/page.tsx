@@ -28,7 +28,7 @@ export default function DatenschutzPage() {
             <strong className="text-navy"> keiner Person zugeordnet</strong>. Sofern die
             Reichweitenmessung aktiviert ist, werden deine Quiz-Antworten zusätzlich in
             <strong className="text-navy"> anonymer, aggregierter Form</strong> zur Verbesserung des
-            Angebots erfasst (ohne Identifikationsmerkmal) – Details unten unter „Reichweitenmessung".
+            Angebots erfasst (ohne Identifikationsmerkmal) – Details unten unter „Reichweitenmessung“.
           </p>
         </section>
 
@@ -86,7 +86,7 @@ E-Mail: fomo@yeti-dresden.org`}
             Frage für Frage durchlaufen und abgeschlossen wurde, welche Gruppen dabei als
             Ergebnis vorgeschlagen wurden, welche Gruppen-Links angeklickt
             werden (aus dem Browsen, den Ergebnissen oder von Profilseiten), Bedienelemente wie die
-            Vergleichs-Ansicht, Sprachumschaltung, der Klick auf „Gruppe registrieren" oder das
+            Vergleichs-Ansicht, Sprachumschaltung, der Klick auf „Gruppe registrieren“ oder das
             optionale 👍/👎-Feedback, die freiwillige
             Angabe, ob du bereits Mitglied einer Hochschulgruppe bist (und welcher), und – zur
             Verbesserung des Frage- und Matching-Konzepts – die{" "}

@@ -96,7 +96,7 @@ export default async function EnglishGroupDetailPage({
           </div>
         </div>
 
-        {group.motto && <p className="mt-2 text-lg italic text-accent-muted">"{group.motto}"</p>}
+        {group.motto && <p className="mt-2 text-lg italic text-accent-muted">&quot;{group.motto}&quot;</p>}
 
         {isUnverified(group) && (
           <div className="mt-4">

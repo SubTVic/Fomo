@@ -914,7 +914,7 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 2.5 | KI-Leitplanken | ✅ | #14 |
 | 2.6 | Doku-Abgleich | ✅ | #15 |
 | 2.7 | 🧑 Branch-Schutz | ⬜ | – |
-| 3.1 | Next 16 statische Seite | ⬜ | |
+| 3.1 | Next 16 statische Seite | ✅ | #16 |
 | 3.2 | Next 16 Root-App | ⬜ | |
 | 3.3 | Node 24 | ⬜ | |
 | 4.1 | Verifizierung bleibt + Protokoll | ⬜ | |

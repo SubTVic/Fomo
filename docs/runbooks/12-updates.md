@@ -15,11 +15,12 @@ sofort bei Sicherheitswarnungen (GitHub „Dependabot alerts", `npm audit`).
 4. `npm audit` — nur `npm audit fix` **ohne** `--force`.
 5. Prüfen: Root `npx tsc --noEmit && npm test && npx next build` (Dummy-Env wie in
    [Runbook 05](05-fehlersuche-und-deploy.md#wie-man-selbst-nachsieht-was-kaputt-ist)),
-   `static-site`: `npm test && npm run build`. Danach Stichprobe im Browser (375 px):
+   `static-site`: `npm run lint && npm test && npm run build`. Danach Stichprobe im Browser (375 px):
    Startseite, Quiz bis Ergebnis, Gruppenseite, Admin-Login.
 6. PR → CI grün → Preview ansehen → Merge.
 
 ## Termine im Blick behalten
 
-- **Next.js 15: Support-Ende 21.10.2026** → Upgrade auf Next.js 16 (Umsetzungsplan Phase 3).
+- **Next.js 15: Support-Ende 21.10.2026** → statische Seite ist auf Next.js 16 (WP-3.1),
+  Root-App folgt (Umsetzungsplan WP-3.2).
 - **Prisma 7** bringt Breaking Changes — eigenes Paket, nicht mit anderen Umbauten mischen.

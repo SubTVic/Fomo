@@ -1,6 +1,6 @@
 # FOMO – Offene Aufgaben
 
-**Stand: 12. Juli 2026** — die **eine zentrale To-do-Datei** des Projekts.
+**Stand: 3. Oktober 2026** (Audit Okt. 2026 eingearbeitet, s. §0) — die **eine zentrale To-do-Datei** des Projekts.
 (Hier ist `static-site/docs/AUFGABEN-NACH-AUDIT.md` aufgegangen; die alte
 Phasen-To-do von Mai 2026 ist unten unter „Erledigt/Verworfen" archiviert.)
 
@@ -15,17 +15,68 @@ Kontext zum Projekt: `CLAUDE.md` (Root). Betrieb ohne Programmierkenntnisse:
 | --- | --- |
 | **Öffentliche Seite** `static-site/` | ✅ **Live auf www.fomo-dresden.app** (Vercel, deployt bei jedem Push auf `main`) |
 | Matching v2 (21 Items + 8 Filter, client-side) | ✅ Live — nur verifizierte Gruppen im Quiz |
-| Datenstand | 41 verifiziert / 52 unbestätigt / 93 gesamt (Export vom 11.07.) |
+| Datenstand | 51 verifiziert / 44 unbestätigt / 95 gesamt (Export vom 17.08. — **seit 7 Wochen nicht aktualisiert**) |
 | Umami-Tracking + Live-Report `/report/` | ✅ Läuft mit echten Daten (Env-Vars in Vercel gesetzt, 11.07.) |
 | Dynamische Root-App (Registrierung/Admin) | 🔄 Internes Datenerfassungs-Tool, läuft weiter |
 | Studie 2 (Mitglieder-Validierung) | ❌ Verworfen — ersetzt durch anonyme Live-Daten (Umami) |
-| Nächster Meilenstein | **Erstiwoche September 2026** = Haupt-Traffic |
+| Erstiwoche September 2026 | ✅ vorbei — jetzt: Erstiwochen-Daten auswerten (§2) |
+
+---
+
+## §0 Audit Oktober 2026 — Ergebnis
+
+Kompletter Audit (Build, Daten, Laufzeit-Crawl aller 208 Seiten bei 375px,
+Quiz-Durchläufe DE/EN mit Analytics-Mock, SEO, Sicherheit, Root-App, Doku).
+
+**Direkt behoben (im Audit-Commit):**
+
+- 7 Gruppen-Links ohne `https://` (z. B. „tud.vote", Instagram-Handle
+  „aiasdresden") wurden als *relative* Links gerendert → 404 auf
+  Detailseite + Ergebnisliste. Daten repariert; `export-from-backup.mjs`
+  normalisiert ab jetzt automatisch (`scripts/url-normalize.mjs`),
+  `validate-data.mjs` blockiert nicht-absolute URLs.
+- Mindestregel aus CLAUDE.md (≥ 5 nicht-neutrale Antworten) fehlte: Nur
+  „Neutral" ergab 10 Gruppen alle auf „Platz 1 / 50 %", 2 Antworten schon
+  „100 %". Jetzt Hinweis + „Antworten ändern" statt Schein-Ranking (neues
+  Event `results-too-few-answers`).
+- „Antworten ändern" zählte jeden zweiten Durchlauf erneut als
+  `quiz-complete`/`quiz-response`/`quiz-item-view` → Report-n aufgebläht.
+  Jetzt einmal pro Durchlauf. **Achtung bei Auswertung:** Daten vor dem
+  3.10. enthalten diese Doppelzählungen (Abschlüsse > Starts möglich).
+- Mobile Overflow: H1 „Datenschutzerklärung" (102px) und Karten auf
+  `/groups/kategorie/wirtschaft-karriere/` (3px).
+- Next.js 15.5.12 → 15.5.27 (beide Apps; div. kritische Advisories),
+  next-auth beta.30 → beta.32 (`@auth/core`-Advisory) + kompatible
+  `npm audit fix`-Patches in der Root-App.
+- **Root-App-Build war auf `main` kaputt** (Typfehler in
+  `scripts/export-static-site-groups.ts`) → jeder Vercel-Deploy der
+  Registrierungs-App ist gescheitert, Sicherheitsupdates wären nie live
+  gegangen. Behoben; `next build` wieder grün.
+- Validator meldete 62× „categoryColor missing" (Rauschen, UI löst Farben
+  pro Kategorie auf) → jetzt nur noch Kategorien ganz ohne Farbe.
+- Report-Workflow: Eingabe `days` nicht mehr direkt in die Shell
+  interpoliert.
+
+**Offen aus dem Audit → in §1/§2/§3 unten einsortiert** (markiert mit „Audit 10/26").
 
 ---
 
 ## §1 Admin-Aufgaben (kein Code) — Reihenfolge = Wirkung pro Aufwand
 
+### 1.0 Vercel prüfen: Registrierungs-App deployt wieder? (5 Min) — Audit 10/26
+
+Der Root-Build war auf `main` kaputt (s. §0). Nach dem Merge im Vercel-
+Dashboard des **Root-Projekts** (fomo-pi.vercel.app) prüfen, dass der neue
+Deploy grün ist, und nachsehen, seit wann Deploys fehlgeschlagen sind. Dabei
+gleich prüfen: Ist in der Produktions-DB noch der Seed-Admin
+`admin@fomo.dev` mit dem Dev-Passwort aus `prisma/seed.ts` aktiv? Falls ja:
+löschen oder Passwort ändern (das Passwort steht öffentlich im Repo).
+
 ### 1.1 Drei doppelte Gruppen bereinigen (15 Min) — sichtbar im Live-Report!
+
+**Audit 10/26: immer noch offen** (Export 17.08.) — Rotaract erscheint im
+Quiz-Ergebnis weiterhin **zweimal in derselben Liste** (im Audit reproduziert).
+TURAG ist inzwischen erledigt; Rotaract + kritmed nicht.
 
 Im Live-Report taucht **Rotaract Club Dresden zweimal** in „Meistgeklickte
 Gruppen" auf — die Duplikate klauen sich gegenseitig Klicks und Rankings.
@@ -39,7 +90,7 @@ dann neu exportieren (`node scripts/export-from-backup.mjs --backup …` in
 | `technische-universitaet-dresden-robotik-arbeitsgruppe` (verifiziert, 3 Bewertungen) | `tu-dresden-robotik-ag-turag` (unbestätigt) | Verifizierte Kopie ist besser. Logo ist auf beide Slugs verankert, bleibt sichtbar. |
 | `kritmed` | `kritmed-dresden` | Beide unbestätigt — nimm die, unter der die Gruppe erreichbar ist. |
 
-### 1.2 Neun Gruppen ohne Aktivitäts-Filter (E-Mail-Runde) — größter Bias-Hebel
+### 1.2 Zehn Gruppen ohne Aktivitäts-Filter (E-Mail-Runde) — größter Bias-Hebel
 
 Diese Gruppen haben keine Filter angegeben und können **nie weggefiltert
 werden** → strukturell ~1,8× so oft in den Ergebnissen wie fair. Die
@@ -70,6 +121,7 @@ Tech/Digital · Hochschulpolitik · Sport.
 | Leo-Club Dresden 'August der Starke' | augustderstarke@leo-clubs.de |
 | Nightline Dresden e.V. | marketing@nightline-dresden.de |
 | VWI HG Dresden e.V. | vorstand@vwi-dresden.de |
+| PAUL Consultants e.V. *(neu seit Export 17.08.)* | vorstand@paul-consultants.de |
 
 **Fertige E-Mail-Vorlage:**
 
@@ -111,6 +163,13 @@ GitHub-Secret (1.3) aktualisieren, alten Key löschen.
 
 ### 1.5 Betrieb absichern (einmalig, je 5 Min)
 
+- [ ] **Datenschutzerklärung ergänzen (Audit 10/26):** Umami wird als
+      Reichweitenmessung beschrieben, aber der **Anbieter/Empfänger** (Umami
+      Cloud, Script von `cloud.umami.is`, Serverstandort/AV-Vertrag) ist nicht
+      genannt — Art. 13 DSGVO verlangt die Empfänger. Text unter
+      `static-site/src/app/datenschutz/page.tsx`, danach „Stand" aktualisieren.
+      Juristisch prüfen lassen (im Code steht noch ein PLACEHOLDER-Kommentar).
+
 - [ ] **Google Search Console:** Domain verifizieren + Sitemap
       `https://www.fomo-dresden.app/sitemap.xml` einreichen.
 - [ ] **Uptime-Monitor** (z. B. UptimeRobot, kostenlos) auf
@@ -118,12 +177,18 @@ GitHub-Secret (1.3) aktualisieren, alten Key löschen.
 
 ### 1.6 Datenpflege-Kampagne (laufend) — der eigentliche Qualitäts-Hebel
 
-- **Mehr Registrierungen:** 41 von 93 verifiziert. Jede weitere verbessert
+- **Daten-Export aktualisieren:** letzter Export 17.08. — vor jeder Auswertung
+  neu exportieren, sonst fehlen Registrierungen aus der Erstiwoche.
+- **Mehr Registrierungen:** 51 von 95 verifiziert (Stand 17.08.). Jede weitere verbessert
   das Matching mehr als jede Code-Änderung — wichtigster Hebel vor der
   Erstiwoche.
-- **Kategorien:** 62 von 93 Gruppen stehen in „Sonstiges" — jede Zuordnung
+- **Kategorien:** 55 von 95 Gruppen stehen in „Sonstiges" (11 davon verifiziert);
+  „Glaube & Spiritualität" hat noch keine Kategoriefarbe (Badge grau) — jede Zuordnung
   füllt eine SEO-Kategorieseite und macht den Browse-Filter nützlich.
-- **Logos:** nur ~11 vorhanden; Mitgliederzahlen: 27; „Nächstes Event": 0.
+- **Logos:** nur 13 vorhanden; Mitgliederzahlen: 38; „Nächstes Event": 0.
+  Ohne Kontaktweg: `christians-for-mission`; ohne Langbeschreibung:
+  Bits & Bäume, RCDS. `logos.json` zeigt noch auf den gelöschten Slug
+  `tu-dresden-robotik-ag-turag` (harmlos, kann raus).
   Beim Registrierungs-Kontakt gleich mit abfragen.
 - Nach der Erstiwoche: Gruppen fragen, ob FOMO-Zulauf ankam (ausgehende
   Links tragen `utm_source=fomo-dresden`, Mails den Betreff
@@ -147,6 +212,25 @@ GitHub-Secret (1.3) aktualisieren, alten Key löschen.
       (Quiz-Score) und „Selbsterkennung" erscheinen erst, wenn `pick`- bzw.
       `self-recognition`-Events eingehen (Tracking live seit 12.07. vormittags).
       Nach ein paar Tagen prüfen, ob die Zahlen plausibel sind.
+- [ ] **Kontraste (Audit 10/26, Barrierefreiheit):** `text-muted` (#7a9aaa)
+      auf Weiß = 2,99:1, `text-body` (#5a7a8a) auf Hellblau = 3,0:1,
+      `accent-muted` auf Weiß = 3,79:1 — WCAG AA verlangt 4,5:1 für
+      Fließtext. Betrifft Hinweise, Kategorie-Labels, „Profil öffnen →".
+      Design-Entscheidung (Farbschema in CLAUDE.md) — Vorschlag: Muted-Töne
+      um ~20 % abdunkeln.
+- [ ] **Tests/CI (Audit 10/26):** `static-site/` hat keine Tests und kein
+      CI-Gate außer dem Vercel-Build. Vorschlag: Vitest für `matching.ts`/
+      `results.ts` + GitHub-Action (build + validate) auf PRs. In der Root-App
+      sammelt `vitest` fälschlich die Playwright-Specs in `tests/` ein (6
+      „failed" Dateien, die eigentlichen 7 Unit-Tests sind grün) →
+      `include`/`exclude` in der Vitest-Config setzen.
+- [ ] **EN-Seitentitel (Audit 10/26, SEO, klein):** Gruppen-Detailseiten DE
+      und EN haben identische `<title>` („Name — FOMO"); EN-Titel um z. B.
+      „student group at TU Dresden" ergänzen.
+- [ ] **Rang-Definition vereinheitlichen (Audit 10/26, klein):**
+      `group-click`/`pick` nutzt den angezeigten Rang (punktgleiche teilen
+      sich einen Rang), `self-recognition` die Listenposition. Für die
+      Report-Analyse eine Definition wählen.
 - [ ] **Working-Set v3** (nach der Erstiwoche, wenn n groß genug): Die
       Item-Diagnose im `/report/` markiert aktuell 4 Streichkandidaten
       (einseitige Items, u. a. „Hands-on" 77 % Zustimmung, „Einsteiger" 73 %).
@@ -164,6 +248,13 @@ Die Root-App bleibt Datenerfassungs-Tool (Registrierung + Admin). Offen:
 - [ ] Gruppen-Invite-Links generieren + mailen → Ziel: möglichst viele
       `GroupSelfRating`-Registrierungen vor der Erstiwoche (siehe §1.6).
 - [ ] Duplikate deaktivieren (siehe §1.1) — passiert in dieser App.
+- [ ] Rest-Advisories (Audit 10/26): `prisma` 6 → zieht `effect`/
+      `deepmerge-ts` (nur Build-CLI, nicht zur Laufzeit) und Next bündelt ein
+      altes `postcss` (nur Build). Beim nächsten Prisma-/Next-Major mitnehmen.
+- [ ] Rate-Limit ist In-Memory (`src/lib/rate-limit.ts`) — auf Vercel pro
+      Serverless-Instanz, also nur ein schwacher Spam-Schutz für
+      `/api/groups/register`. Reicht bei aktuellem Traffic; bei Spam auf
+      Vercel-Firewall/Upstash umstellen.
 - [ ] Optional: EN-Übersetzungen für Quiz-Thesen im Admin nachtragen.
 
 ---

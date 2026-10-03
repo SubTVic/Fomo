@@ -45,9 +45,12 @@ auf `main`). Kernfakten für die Arbeit daran:
 
 - Matching v2 (21 WS2-Items + 8 Filter) läuft client-side gegen
   `selfRating.answers`; die alten 17 Binär-Attribute werden nicht mehr genutzt.
+  Formel = mittlere Distanz (`static-site/src/lib/matching.ts`), NICHT die
+  gewichtete Formel unten; gemeinsam ist die Mindestregel ≥ 5 nicht-neutrale
+  Antworten (`MIN_ACTIVE_ANSWERS`).
 - **Nur verifizierte Gruppen** sind im Quiz-Matching (`getMatchableGroups()`);
   gescrapte/unbestätigte nur im Verzeichnis hinter einem Toggle.
-  Datenstand 11.07.2026: 41 verifiziert / 52 unbestätigt / 93 gesamt.
+  Datenstand 17.08.2026: 51 verifiziert / 44 unbestätigt / 95 gesamt.
 - Studie 2 wurde verworfen; stattdessen anonyme Live-Daten via Umami
   (Events in `static-site/src/lib/analytics.ts`, Konzept in
   `static-site/docs/DATEN-SAMMELN-KONZEPT.md`). Auswertung:

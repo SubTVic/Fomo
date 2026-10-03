@@ -793,7 +793,7 @@ Nicht tun · 🧑 danach · Commit-Vorschlag**.
 
 #### WP-7.2 Impressum und Datenschutz auf den StuRa (Texte 🧑)
 - KI ersetzt die Privatperson in `static-site/src/app/impressum/page.tsx`,
-  `static-site/src/app/datenschutz/page.tsx` und den Seiten der Root-App durch die
+  `static-site/src/app/datenschutz/page.tsx` und der Root-App (`src/lib/legal.ts`) durch die
   verantwortliche Stelle laut 🧑; Footer/FAQ („betrieben von …") vereinheitlichen.
 
 #### WP-7.3 Abschluss
@@ -928,8 +928,8 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 5.2 | Altlasten entfernen | ✅ | #25 |
 | 5.3 | DB verschlanken | ✅ (Migration in Prod: 🧑) | #26 |
 | 5.4 | Rollen/Login | ✅ (Migration in Prod: 🧑) | #27 |
-| 5.5 | Löschkonzept | ⬜ | |
-| 5.6 | Impressum/Datenschutz Root-App | ⬜ | |
+| 5.5 | Löschkonzept | ✅ (Fristen: 🧑) | #28 |
+| 5.6 | Impressum/Datenschutz Root-App | ✅ (Texte juristisch prüfen: 🧑) | #29 |
 | 6.0 | 🧑 Klärung Referat Technik | ⬜ | – |
 | 6.1 | App-Container | ⬜ | |
 | 6.2 | Server-Stack | ⬜ | |

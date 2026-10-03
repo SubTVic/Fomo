@@ -8,7 +8,7 @@ import { getAllGroupsForAdmin } from "@/lib/queries/groups";
 import { VerifyButton } from "./VerifyButton";
 import { GenerateInvitesButton } from "./GenerateInvitesButton";
 import { InviteButton } from "./InviteButton";
-import { DeleteGroupButton } from "./DeleteGroupButton";
+import { DeleteButton } from "../DeleteButton";
 import { ToggleActiveButton } from "./[id]/ToggleActiveButton";
 import { requireAdminPage } from "@/lib/require-admin";
 
@@ -199,7 +199,10 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
                           contactEmail={group.contactEmail}
                         />
                         {isSuperAdmin && (
-                          <DeleteGroupButton groupId={group.id} groupName={group.name} />
+                          <DeleteButton
+                            url={`/api/admin/groups/${group.id}`}
+                            title={`${group.name} löschen`}
+                          />
                         )}
                       </div>
                     </td>

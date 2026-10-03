@@ -9,7 +9,9 @@ sofort bei Sicherheitswarnungen (GitHub „Dependabot alerts", `npm audit`).
 ## Ablauf (je App: Root und `static-site/`)
 
 1. Branch anlegen, z. B. `chore/updates-2027-03`.
-2. Node-Version prüfen: `.nvmrc` (aktuell 24 = LTS bis 04/2028).
+2. Node-Version prüfen: `.nvmrc` (aktuell 24 = LTS bis 04/2028). Ein Wechsel betrifft
+   `.nvmrc`, `engines` in beiden `package.json` (+ Lockfiles), `static-site/Dockerfile`,
+   `static-site/docker-compose.yml` und die Node-Einstellung beider Vercel-Projekte.
 3. `npm outdated` ansehen; **Patch-/Minor-Updates** zusammen: `npm update`.
    **Major-Updates** (Next.js, React, Prisma, next-auth) einzeln und mit eigenem PR.
 4. `npm audit` — nur `npm audit fix` **ohne** `--force`.

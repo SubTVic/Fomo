@@ -7,11 +7,10 @@ const eslintConfig = [
   ...nextTypescript,
   {
     rules: {
-      // New React Compiler rules in eslint-plugin-react-hooks 7 (Next 16).
-      // Kept as warnings so the upgrade does not change behaviour; the
-      // flagged spots are listed in TODO.md (DemoTour goes away in Phase 5).
+      // New React Compiler rule in eslint-plugin-react-hooks 7 (Next 16).
+      // Kept as a warning so the upgrade does not change behaviour; the
+      // flagged spot is listed in TODO.md.
       "react-hooks/set-state-in-effect": "warn",
-      "react-hooks/preserve-manual-memoization": "warn",
     },
   },
   {

@@ -68,9 +68,9 @@ eine Änderung ist per Klick „Website aktualisieren" in ~1 Minute live.
 
 | ID | Frage | Empfohlener Default | Blockiert |
 |---|---|---|---|
-| **E1** | Gehen Änderungen **bereits verifizierter** Gruppen ohne erneute Freigabe live? | **Ja**, mit Änderungsprotokoll + „Rückgängig" für Admins | WP-4.1 |
+| **E1** | Gehen Änderungen **bereits verifizierter** Gruppen ohne erneute Freigabe live? | **Ja**, mit Änderungsprotokoll + „Rückgängig" für Admins — **✅ entschieden 03.10.2026: Ja (Default)** | WP-4.1 |
 | **E2** | Git-History von `data/admin-export.json` (Pilot-Freitexte) bereinigen? | **Ja**, vor der Übergabe, durch den Repo-Owner (`git filter-repo`), danach alle Klone neu | WP-1.8 (nur Doku) |
-| **E3** | Woher kommt **SMTP** für Bearbeitungslinks (StuRa-Mailserver/Funktionspostfach)? | Funktionspostfach des StuRa, z. B. `fomo@…` | WP-4.3 |
+| **E3** | Woher kommt **SMTP** für Bearbeitungslinks (StuRa-Mailserver/Funktionspostfach)? | Funktionspostfach des StuRa, z. B. `fomo@…` — **offen (03.10.2026); WP-4.3 zurückgestellt** | WP-4.3 |
 | **E4** | Bleibt die Domain **fomo-dresden.app**? | **Ja** (SEO, Links); Admin-App unter `verwaltung.fomo-dresden.app` | WP-6.2 |
 | **E5** | **Reverse-Proxy:** bringen wir Caddy mit oder nutzt der StuRa einen eigenen? | Caddy mitbringen, abschaltbar per Compose-Profil | WP-6.2 |
 | **E6** | **Zusatzschutz Admin:** Basic-Auth am Proxy, IP-Beschränkung oder TU-Shibboleth? | Basic-Auth am Proxy jetzt, Shibboleth später prüfen | WP-6.2 |
@@ -793,7 +793,7 @@ Nicht tun · 🧑 danach · Commit-Vorschlag**.
 
 #### WP-7.2 Impressum und Datenschutz auf den StuRa (Texte 🧑)
 - KI ersetzt die Privatperson in `static-site/src/app/impressum/page.tsx`,
-  `static-site/src/app/datenschutz/page.tsx` und den Seiten der Root-App durch die
+  `static-site/src/app/datenschutz/page.tsx` und der Root-App (`src/lib/legal.ts`) durch die
   verantwortliche Stelle laut 🧑; Footer/FAQ („betrieben von …") vereinheitlichen.
 
 #### WP-7.3 Abschluss
@@ -916,20 +916,20 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 2.7 | 🧑 Branch-Schutz | ⬜ | – |
 | 3.1 | Next 16 statische Seite | ✅ | #16 |
 | 3.2 | Next 16 Root-App | ✅ | #17 |
-| 3.3 | Node 24 | ⬜ | |
-| 4.1 | Verifizierung bleibt + Protokoll | ⬜ | |
-| 4.2 | Dauerhafter Bearbeitungslink | ⬜ | |
-| 4.3 | Link anfordern per Mail | ⬜ | |
-| 4.4 | Formular/Admin entrümpeln | ⬜ | |
-| 4.5 | Sync automatisieren (Vercel) | ⬜ | |
-| 4.6 | Kategorien/Übersetzungen | ⬜ | |
-| 4.7 | Eine Item-Quelle | ⬜ | |
-| 5.1 | 🧑 Archiv | ⬜ | – |
-| 5.2 | Altlasten entfernen | ⬜ | |
-| 5.3 | DB verschlanken | ⬜ | |
-| 5.4 | Rollen/Login | ⬜ | |
-| 5.5 | Löschkonzept | ⬜ | |
-| 5.6 | Impressum/Datenschutz Root-App | ⬜ | |
+| 3.3 | Node 24 | ✅ | #18 |
+| 4.1 | Verifizierung bleibt + Protokoll | ✅ | #19 |
+| 4.2 | Dauerhafter Bearbeitungslink | ✅ | #20 |
+| 4.3 | Link anfordern per Mail | ⏸ wartet auf E3 | – |
+| 4.4 | Formular/Admin entrümpeln | ✅ | #21 |
+| 4.5 | Sync automatisieren (Vercel) | ✅ | #22 |
+| 4.6 | Kategorien/Übersetzungen | ✅ | #23 |
+| 4.7 | Eine Item-Quelle | ✅ | #24 |
+| 5.1 | 🧑 Archiv | 🟡 Backup liegt vor (03.10.2026); Ablage im StuRa-Speicher + Löschfrist offen | – |
+| 5.2 | Altlasten entfernen | ✅ | #25 |
+| 5.3 | DB verschlanken | ✅ (Migration in Prod: 🧑) | #26 |
+| 5.4 | Rollen/Login | ✅ (Migration in Prod: 🧑) | #27 |
+| 5.5 | Löschkonzept | ✅ (Fristen: 🧑) | #28 |
+| 5.6 | Impressum/Datenschutz Root-App | ✅ (Texte juristisch prüfen: 🧑) | #29 |
 | 6.0 | 🧑 Klärung Referat Technik | ⬜ | – |
 | 6.1 | App-Container | ⬜ | |
 | 6.2 | Server-Stack | ⬜ | |

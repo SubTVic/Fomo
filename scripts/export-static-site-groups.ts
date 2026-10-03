@@ -114,7 +114,10 @@ async function main() {
         selfRating = {
           raterCount: realRating.raterCount,
           derived: false,
-          filterSelections: realRating.filterSelections ?? [],
+          // Prisma Json column — narrow like src/lib/queries/quiz.ts does.
+          filterSelections: Array.isArray(realRating.filterSelections)
+            ? (realRating.filterSelections as string[])
+            : [],
           answers: realRating.answers.map((a) => ({ itemId: a.itemId, value: a.value })),
         };
       } else {

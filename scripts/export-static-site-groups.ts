@@ -114,7 +114,10 @@ async function main() {
         selfRating = {
           raterCount: realRating.raterCount,
           derived: false,
-          filterSelections: realRating.filterSelections ?? [],
+          // filterSelections is a Prisma JsonValue; only pass through string entries.
+          filterSelections: Array.isArray(realRating.filterSelections)
+            ? realRating.filterSelections.filter((x): x is string => typeof x === "string")
+            : [],
           answers: realRating.answers.map((a) => ({ itemId: a.itemId, value: a.value })),
         };
       } else {

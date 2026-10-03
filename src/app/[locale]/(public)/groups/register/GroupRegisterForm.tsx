@@ -868,9 +868,15 @@ function Step6({
         <p className="font-semibold text-foreground mb-2">Datenschutz & Nutzung</p>
         <p>
           Eure Daten werden ausschließlich für FOMO – das Hochschulgruppen-Matching der TU Dresden
-          – verwendet. Stammdaten (Name, Beschreibung, Kontakt) werden öffentlich angezeigt.
-          Antworten auf Quiz-Fragen fließen anonym in den Matching-Algorithmus ein. Ihr könnt eure
-          Registrierung jederzeit widerrufen.
+          – verwendet. Die Angaben zur Gruppe (Name, Beschreibung, Kontakt der Gruppe) und eure
+          Selbsteinschätzung werden auf der FOMO-Website öffentlich angezeigt bzw. fürs Matching
+          genutzt. Name, E-Mail und Rolle der verantwortlichen Person sind nicht öffentlich und
+          dienen nur Rückfragen. Ihr könnt eure Einwilligung jederzeit per E-Mail an
+          fomo@yeti-dresden.org widerrufen. Details:{" "}
+          <Link href="/datenschutz" target="_blank" className="underline text-foreground">
+            Datenschutzerklärung
+          </Link>
+          .
         </p>
       </div>
 
@@ -882,8 +888,8 @@ function Step6({
           className="mt-0.5 h-4 w-4 border-border accent-primary"
         />
         <span className="text-sm">
-          Ich stimme der Nutzung der Daten für FOMO zu und bestätige, dass ich berechtigt bin,
-          diese Gruppe zu registrieren.{" "}
+          Ich willige in die Verarbeitung der Daten wie in der Datenschutzerklärung beschrieben
+          ein und bestätige, dass ich berechtigt bin, diese Gruppe zu registrieren.{" "}
           <span className="text-muted-foreground">*</span>
         </span>
       </label>

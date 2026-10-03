@@ -13,7 +13,9 @@
     "a": "A",
     "project": "project",
     "poweredBy": "powered by",
-    "tagline": "100+ student groups. One city. One tool."
+    "tagline": "100+ student groups. One city. One tool.",
+    "imprint": "Imprint",
+    "privacy": "Privacy"
   },
   "landing": {
     "label": "For student groups",

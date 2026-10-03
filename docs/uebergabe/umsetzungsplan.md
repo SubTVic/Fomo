@@ -68,9 +68,9 @@ eine Änderung ist per Klick „Website aktualisieren" in ~1 Minute live.
 
 | ID | Frage | Empfohlener Default | Blockiert |
 |---|---|---|---|
-| **E1** | Gehen Änderungen **bereits verifizierter** Gruppen ohne erneute Freigabe live? | **Ja**, mit Änderungsprotokoll + „Rückgängig" für Admins | WP-4.1 |
+| **E1** | Gehen Änderungen **bereits verifizierter** Gruppen ohne erneute Freigabe live? | **Ja**, mit Änderungsprotokoll + „Rückgängig" für Admins — **✅ entschieden 03.10.2026: Ja (Default)** | WP-4.1 |
 | **E2** | Git-History von `data/admin-export.json` (Pilot-Freitexte) bereinigen? | **Ja**, vor der Übergabe, durch den Repo-Owner (`git filter-repo`), danach alle Klone neu | WP-1.8 (nur Doku) |
-| **E3** | Woher kommt **SMTP** für Bearbeitungslinks (StuRa-Mailserver/Funktionspostfach)? | Funktionspostfach des StuRa, z. B. `fomo@…` | WP-4.3 |
+| **E3** | Woher kommt **SMTP** für Bearbeitungslinks (StuRa-Mailserver/Funktionspostfach)? | Funktionspostfach des StuRa, z. B. `fomo@…` — **offen (03.10.2026); WP-4.3 zurückgestellt** | WP-4.3 |
 | **E4** | Bleibt die Domain **fomo-dresden.app**? | **Ja** (SEO, Links); Admin-App unter `verwaltung.fomo-dresden.app` | WP-6.2 |
 | **E5** | **Reverse-Proxy:** bringen wir Caddy mit oder nutzt der StuRa einen eigenen? | Caddy mitbringen, abschaltbar per Compose-Profil | WP-6.2 |
 | **E6** | **Zusatzschutz Admin:** Basic-Auth am Proxy, IP-Beschränkung oder TU-Shibboleth? | Basic-Auth am Proxy jetzt, Shibboleth später prüfen | WP-6.2 |
@@ -917,7 +917,7 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 3.1 | Next 16 statische Seite | ✅ | #16 |
 | 3.2 | Next 16 Root-App | ✅ | #17 |
 | 3.3 | Node 24 | ✅ | #18 |
-| 4.1 | Verifizierung bleibt + Protokoll | ⬜ | |
+| 4.1 | Verifizierung bleibt + Protokoll | ✅ | #19 |
 | 4.2 | Dauerhafter Bearbeitungslink | ⬜ | |
 | 4.3 | Link anfordern per Mail | ⬜ | |
 | 4.4 | Formular/Admin entrümpeln | ⬜ | |

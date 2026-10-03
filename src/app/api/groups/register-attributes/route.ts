@@ -6,6 +6,7 @@ import { RegistrationStatus } from "@prisma/client";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { isHttpUrl, normalizeInstagramUrl, normalizeWebsiteUrl } from "@/lib/normalize-url";
+import { recordChange, snapshotGroup } from "@/lib/change-log";
 
 const ATTRIBUTE_KEYS = [
   "career", "tech", "language", "social_impact", "party", "religion",
@@ -124,48 +125,63 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  await db.group.update({
-    where: { id: invite.groupId },
-    data: {
-      ...booleanUpdates,
-      ...(confirmedAttributes ? { confirmedAttributes: JSON.parse(JSON.stringify(confirmedAttributes)) } : {}),
-      registrationStatus: RegistrationStatus.SUBMITTED,
-      submittedAt: now,
-      isVerified: false,
-      ...(shortDescription ? { shortDescription } : {}),
-      ...(websiteUrl ? { websiteUrl } : {}),
-      ...(contactEmail ? { contactEmail } : {}),
-      ...(instagramUrl ? { instagramUrl } : {}),
-      ...(memberCount !== undefined ? { memberCount } : {}),
-      ...(foundedYear !== undefined ? { foundedYear } : {}),
-      ...(categoryId ? { categoryId } : {}),
-    },
-  });
+  // Decision E1 (Umsetzungsplan §2): corrections by an already verified group
+  // go live without a new review. The group stays verified; admins see the
+  // diff under "Änderungen" and can revert it. Unverified groups still need
+  // an admin to verify them.
+  const wasVerified = invite.group.isVerified;
+  const groupId = invite.groupId;
 
-  if (ws2Answers && ws2Answers.length > 0) {
-    await db.groupSelfRating.upsert({
-      where: { groupId: invite.groupId },
-      create: {
-        groupId: invite.groupId,
-        token,
-        raterCount: raterCount ?? 1,
-        filterSelections: ws2FilterSelections ?? [],
-        answers: {
-          create: ws2Answers.map(({ itemId, value }) => ({ itemId, value })),
-        },
-      },
-      update: {
-        token,
+  await db.$transaction(async (tx) => {
+    const before = await snapshotGroup(tx, groupId);
+
+    await tx.group.update({
+      where: { id: groupId },
+      data: {
+        ...booleanUpdates,
+        ...(confirmedAttributes ? { confirmedAttributes: JSON.parse(JSON.stringify(confirmedAttributes)) } : {}),
+        ...(wasVerified ? {} : { registrationStatus: RegistrationStatus.SUBMITTED, isVerified: false }),
         submittedAt: now,
-        raterCount: raterCount ?? 1,
-        filterSelections: ws2FilterSelections ?? [],
-        answers: {
-          deleteMany: {},
-          create: ws2Answers.map(({ itemId, value }) => ({ itemId, value })),
-        },
+        ...(shortDescription ? { shortDescription } : {}),
+        ...(websiteUrl ? { websiteUrl } : {}),
+        ...(contactEmail ? { contactEmail } : {}),
+        ...(instagramUrl ? { instagramUrl } : {}),
+        ...(memberCount !== undefined ? { memberCount } : {}),
+        ...(foundedYear !== undefined ? { foundedYear } : {}),
+        ...(categoryId ? { categoryId } : {}),
       },
     });
-  }
+
+    if (ws2Answers && ws2Answers.length > 0) {
+      await tx.groupSelfRating.upsert({
+        where: { groupId },
+        create: {
+          groupId,
+          token,
+          raterCount: raterCount ?? 1,
+          filterSelections: ws2FilterSelections ?? [],
+          answers: {
+            create: ws2Answers.map(({ itemId, value }) => ({ itemId, value })),
+          },
+        },
+        update: {
+          token,
+          submittedAt: now,
+          raterCount: raterCount ?? 1,
+          filterSelections: ws2FilterSelections ?? [],
+          answers: {
+            deleteMany: {},
+            create: ws2Answers.map(({ itemId, value }) => ({ itemId, value })),
+          },
+        },
+      });
+    }
+
+    const after = await snapshotGroup(tx, groupId);
+    if (before && after) {
+      await recordChange(tx, { groupId, source: "edit-link", before, after });
+    }
+  });
 
   return NextResponse.json({ success: true });
 }

@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 import { z } from "zod";
+import { recordChange, snapshotGroup } from "@/lib/change-log";
 
 const updateGroupSchema = z.object({
   name: z.string().min(1).max(200),
@@ -94,9 +95,14 @@ export async function PUT(
     }
   }
 
-  const updated = await db.group.update({
-    where: { id },
-    data: parsed.data,
+  const updated = await db.$transaction(async (tx) => {
+    const before = await snapshotGroup(tx, id);
+    const result = await tx.group.update({ where: { id }, data: parsed.data });
+    const after = await snapshotGroup(tx, id);
+    if (before && after) {
+      await recordChange(tx, { groupId: id, source: "admin", before, after, reviewedByEmail: guard.admin.email });
+    }
+    return result;
   });
 
   return NextResponse.json({ ok: true, group: updated });
@@ -138,9 +144,14 @@ export async function PATCH(
     return NextResponse.json({ error: "Group not found" }, { status: 404 });
   }
 
-  const updated = await db.group.update({
-    where: { id },
-    data: { isActive: !group.isActive },
+  const updated = await db.$transaction(async (tx) => {
+    const before = await snapshotGroup(tx, id);
+    const result = await tx.group.update({ where: { id }, data: { isActive: !group.isActive } });
+    const after = await snapshotGroup(tx, id);
+    if (before && after) {
+      await recordChange(tx, { groupId: id, source: "admin", before, after, reviewedByEmail: guard.admin.email });
+    }
+    return result;
   });
 
   return NextResponse.json({ ok: true, isActive: updated.isActive });

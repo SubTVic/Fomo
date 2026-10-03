@@ -161,7 +161,7 @@ Ordner `static-site/` (Details in der README, Abschnitt „Report generator").
 |---|---|---|
 | Seite ganz weg | Domain abgelaufen ODER Vercel-Konto-Problem | Registrar/Vercel-Status prüfen |
 | Änderung wird nicht sichtbar | Build fehlgeschlagen | Vercel → Deployments → Log ansehen; meist kaputtes JSON → Änderung auf GitHub reverten |
-| Gruppe fehlt im Quiz | Gruppe ist unbestätigt oder nach einer Korrektur nicht neu verifiziert | Admin-App → verifizieren → Daten live schalten (Runbook 01) |
+| Gruppe fehlt im Quiz | Gruppe ist noch unbestätigt (nach ihrer Einreichung nicht verifiziert) | Admin-App → verifizieren → Daten live schalten (Runbook 01) |
 | Build rot „Datenprüfung FEHLGESCHLAGEN" | Fehler in den Gruppendaten (Meldung nennt Gruppe + Feld) | In der Admin-App korrigieren, neu exportieren |
 | Logo erscheint nicht | Slug/Dateiname in logos.json falsch | Schreibweise + `%20` prüfen |
 | Statistik leer | `UMAMI_WEBSITE_ID` fehlt in Vercel | Vercel → Settings → Env Vars, dann Redeploy |

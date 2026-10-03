@@ -109,6 +109,7 @@ model Group {
   study2Sessions Study2Session[]
   selfRating     GroupSelfRating?
   contacts       GroupContact[]
+  changeLogs     GroupChangeLog[]
 
   @@index([categoryId])
   @@index([isActive])
@@ -165,6 +166,28 @@ model GroupContact {
   @@index([groupId])
   @@index([email])
   @@map("group_contacts")
+}
+
+// ─── Änderungsprotokoll ──────────────────────────────────────────
+// One entry per submission via edit link, admin edit or revert.
+// changes: { "<field>": { "from": <old>, "to": <new> } } — field keys are Group
+// columns or "selfRating", "selfRating.raterCount", "selfRating.filterSelections",
+// "selfRating.answers.WS2-01" … (see src/lib/change-log.ts).
+
+model GroupChangeLog {
+  id              String    @id @default(cuid())
+  groupId         String
+  source          String    // "edit-link" | "admin" | "revert"
+  changes         Json
+  createdAt       DateTime  @default(now())
+  reviewedAt      DateTime?
+  reviewedByEmail String?
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId])
+  @@index([reviewedAt])
+  @@map("group_change_logs")
 }
 
 // ─── Admin & Auth ────────────────────────────────────────────────

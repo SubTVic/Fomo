@@ -44,9 +44,11 @@ Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`. Automatisierung: Pla
   Der nächste Export überschreibt es. Korrekturen gehören in die **DB** (Admin-App).
 - **NIE `npm run import:groups` oder „CSV neu importieren"/„Scraper-JSON"** im Admin
   benutzen — überschreibt Verifizierung, Slugs, Texte und reaktiviert Duplikate.
-- **Eine Gruppen-Einreichung setzt `isVerified=false`.** Nur verifizierte Gruppen mit
-  echtem Self-Rating kommen ins Quiz (`getMatchableGroups`). Nach jeder Korrektur muss
-  ein Admin neu verifizieren (bis Plan WP-4.1).
+- **Nur verifizierte Gruppen mit echtem Self-Rating kommen ins Quiz**
+  (`getMatchableGroups`). Korrekturen einer **verifizierten** Gruppe lassen die
+  Verifizierung stehen (E1); jede Änderung landet im Protokoll `GroupChangeLog`
+  (`src/lib/change-log.ts`, Admin-Seite „Änderungen" mit „Rückgängig"). Einreichungen
+  **unbestätigter** Gruppen brauchen weiter eine Admin-Verifizierung.
 - **Logos und EN-Übersetzungen leben außerhalb der DB:** `static-site/public/group-logos/`
   + `static-site/data/logos.json` (nach Slug), EN-Texte in
   `static-site/src/lib/group-translations.ts`.

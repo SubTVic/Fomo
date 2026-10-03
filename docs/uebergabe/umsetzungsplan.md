@@ -902,8 +902,8 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 1.1 | Root-Build reparieren | ✅ | #3 |
 | 1.2 | Admin-Auth absichern | ✅ | #4 |
 | 1.3 | Next.js-Patch 15.5.x | ✅ | #5 |
-| 1.4 | Datenleck `/groups`, alte Endpunkte | ✅ | wp-1-4-public-groups |
-| 1.5 | Formular-Bugs | ⬜ | |
+| 1.4 | Datenleck `/groups`, alte Endpunkte | ✅ | #6 |
+| 1.5 | Formular-Bugs | ✅ | wp-1-5-edit-form |
 | 1.6 | Migration aus Build | ⬜ | |
 | 1.7 | Repo-Hygiene | ⬜ | |
 | 1.8 | 🧑 Checkliste Phase 1 | ⬜ | – |

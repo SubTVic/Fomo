@@ -15,6 +15,19 @@ type Step =
   | { type: "description" }
   | { type: "raterCount" };
 
+// Fields of the info step that the server validates individually.
+const INFO_FIELDS = [
+  "categoryId",
+  "shortDescription",
+  "contactEmail",
+  "websiteUrl",
+  "instagramUrl",
+  "memberCount",
+  "foundedYear",
+] as const;
+type InfoField = (typeof INFO_FIELDS)[number];
+type FieldErrors = Partial<Record<InfoField, true>>;
+
 interface Category {
   id: string;
   name: string;
@@ -104,6 +117,9 @@ export function GroupSelfRatingQuiz() {
   const [foundedYear, setFoundedYear] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
+  // True when the answers were pre-filled from an earlier submission.
+  const [hasPrefill, setHasPrefill] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const noTokenMsg = t("noToken");
   const unknownErrorMsg = t("unknownError");
@@ -147,6 +163,7 @@ export function GroupSelfRatingQuiz() {
             Array.isArray(g.selfRating.filterSelections) ? g.selfRating.filterSelections : []
           );
           setRaterCount((g.selfRating.raterCount as 1 | 2 | 3) ?? 1);
+          setHasPrefill(true);
         } else {
           // Initialize all items to 0 (neutral)
           const init: Record<string, Study2AnswerValue> = {};
@@ -183,9 +200,12 @@ export function GroupSelfRatingQuiz() {
     }
   }, []);
 
-  const handleSubmit = useCallback(async () => {
+  // Plain function (no useCallback): it must always read the current form state.
+  async function handleSubmit() {
     if (!token) return;
     setSubmitStatus("submitting");
+    setError("");
+    setFieldErrors({});
 
     const ws2Answers = STUDY2_ITEMS.map((item) => ({
       itemId: item.id,
@@ -213,15 +233,42 @@ export function GroupSelfRatingQuiz() {
       const data = await res.json();
       if (res.ok && data.success) {
         setSubmitStatus("done");
+        return;
+      }
+      setSubmitStatus("idle");
+      const invalid = INFO_FIELDS.filter((f) => data.details?.fieldErrors?.[f]);
+      if (res.status === 422 && invalid.length > 0) {
+        // Show the problems next to the affected inputs.
+        setFieldErrors(Object.fromEntries(invalid.map((f) => [f, true])) as FieldErrors);
+        setError(t("errors.validation"));
+        setStep({ type: "description" });
+      } else if (res.status === 422) {
+        setError(t("errors.validation"));
       } else {
-        setSubmitStatus("idle");
         setError(data.error ?? unknownErrorMsg);
       }
     } catch {
       setSubmitStatus("idle");
       setError(networkErrorMsg);
     }
-  }, [token, answers, filterSelections, raterCount, description, website, unknownErrorMsg, networkErrorMsg]);
+  }
+
+  function clearFieldError(field: InfoField) {
+    setFieldErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  }
+
+  function fieldError(field: InfoField) {
+    if (!fieldErrors[field]) return null;
+    return <p className="text-xs text-destructive">{t(`errors.${field}`)}</p>;
+  }
+
+  const inputClass = (field: InfoField) =>
+    `w-full border-2 ${fieldErrors[field] ? "border-destructive" : "border-foreground/30"} bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors`;
 
   // ── Error ──
   if (loadStatus === "error") {
@@ -407,7 +454,7 @@ export function GroupSelfRatingQuiz() {
                 }
                 className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
               >
-                {tCommon("skip")}
+                {hasPrefill ? t("item.keepAnswer") : tCommon("skip")}
               </button>
             </div>
           </div>
@@ -434,13 +481,14 @@ export function GroupSelfRatingQuiz() {
               <label className="text-sm font-medium">{t("description.category")}</label>
               <select
                 value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                onChange={(e) => { setCategoryId(e.target.value); clearFieldError("categoryId"); }}
+                className={inputClass("categoryId")}
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
+              {fieldError("categoryId")}
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">
@@ -450,11 +498,12 @@ export function GroupSelfRatingQuiz() {
               <textarea
                 rows={3}
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => { setDescription(e.target.value); clearFieldError("shortDescription"); }}
                 maxLength={200}
                 placeholder={t("description.shortDescPlaceholder")}
-                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors resize-none"
+                className={`${inputClass("shortDescription")} resize-none`}
               />
+              {fieldError("shortDescription")}
               <span className="text-xs text-muted-foreground">
                 {t("description.shortDescChars", { count: description.trim().length })}
               </span>
@@ -464,30 +513,33 @@ export function GroupSelfRatingQuiz() {
               <input
                 type="email"
                 value={contactEmail}
-                onChange={(e) => setContactEmail(e.target.value)}
+                onChange={(e) => { setContactEmail(e.target.value); clearFieldError("contactEmail"); }}
                 placeholder="kontakt@beispiel.de"
-                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                className={inputClass("contactEmail")}
               />
+              {fieldError("contactEmail")}
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">{t("description.website")}</label>
               <input
                 type="url"
                 value={website}
-                onChange={(e) => setWebsite(e.target.value)}
+                onChange={(e) => { setWebsite(e.target.value); clearFieldError("websiteUrl"); }}
                 placeholder="https://…"
-                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                className={inputClass("websiteUrl")}
               />
+              {fieldError("websiteUrl")}
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">{t("description.instagram")}</label>
               <input
                 type="url"
                 value={instagramUrl}
-                onChange={(e) => setInstagramUrl(e.target.value)}
+                onChange={(e) => { setInstagramUrl(e.target.value); clearFieldError("instagramUrl"); }}
                 placeholder="https://instagram.com/euregruppe"
-                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                className={inputClass("instagramUrl")}
               />
+              {fieldError("instagramUrl")}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
@@ -495,24 +547,26 @@ export function GroupSelfRatingQuiz() {
                 <input
                   type="number"
                   value={memberCount}
-                  onChange={(e) => setMemberCount(e.target.value)}
+                  onChange={(e) => { setMemberCount(e.target.value); clearFieldError("memberCount"); }}
                   placeholder="z.B. 25"
                   min={1}
                   max={10000}
-                  className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                  className={inputClass("memberCount")}
                 />
+                {fieldError("memberCount")}
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium">{t("description.foundedYear")}</label>
                 <input
                   type="number"
                   value={foundedYear}
-                  onChange={(e) => setFoundedYear(e.target.value)}
+                  onChange={(e) => { setFoundedYear(e.target.value); clearFieldError("foundedYear"); }}
                   placeholder="z.B. 2010"
                   min={1900}
                   max={new Date().getFullYear()}
-                  className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                  className={inputClass("foundedYear")}
                 />
+                {fieldError("foundedYear")}
               </div>
             </div>
             <button

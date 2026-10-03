@@ -205,7 +205,8 @@
       "memberWouldAgree": "Mitglieder unserer Gruppe würden zustimmen:",
       "agree": "Stimme zu",
       "neutral": "Neutral",
-      "disagree": "Stimme nicht zu"
+      "disagree": "Stimme nicht zu",
+      "keepAnswer": "Weiter (Antwort behalten) →"
     },
     "description": {
       "title": "Gruppeninfo",
@@ -230,6 +231,16 @@
       "threeOrMore": "3 oder mehr Personen",
       "submitButton": "Profil speichern",
       "submitting": "Wird gespeichert…"
+    },
+    "errors": {
+      "validation": "Bitte prüft die rot markierten Angaben.",
+      "categoryId": "Bitte wählt eine Kategorie aus.",
+      "shortDescription": "Die Kurzbeschreibung muss 10–200 Zeichen lang sein.",
+      "contactEmail": "Bitte gebt eine gültige E-Mail-Adresse an.",
+      "websiteUrl": "Bitte gebt eine gültige Web-Adresse an, z. B. eure-gruppe.de.",
+      "instagramUrl": "Bitte gebt euren Instagram-Namen (z. B. @eure.gruppe) oder einen Instagram-Link an.",
+      "memberCount": "Bitte gebt eine Mitgliederzahl zwischen 1 und 10.000 an.",
+      "foundedYear": "Bitte gebt ein Gründungsjahr zwischen 1900 und heute an."
     },
     "done": {
       "title": "Profil gespeichert!",

@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { RegistrationStatus } from "@prisma/client";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { isHttpUrl, normalizeInstagramUrl, normalizeWebsiteUrl } from "@/lib/normalize-url";
 
 const ATTRIBUTE_KEYS = [
   "career", "tech", "language", "social_impact", "party", "religion",
@@ -18,9 +19,9 @@ const SubmitSchema = z.object({
   // legacy (optional, beibehalten für Rückwärtskompatibilität)
   confirmedAttributes: z.record(z.enum(ATTRIBUTE_KEYS), z.union([z.literal(0), z.literal(1)])).optional(),
   shortDescription: z.string().min(10).max(200).optional(),
-  websiteUrl: z.string().url().optional().or(z.literal("")),
-  contactEmail: z.string().email().optional().or(z.literal("")),
-  instagramUrl: z.string().url().optional().or(z.literal("")),
+  websiteUrl: z.preprocess(normalizeWebsiteUrl, z.string().max(500).refine(isHttpUrl).optional().or(z.literal(""))),
+  contactEmail: z.string().trim().email().optional().or(z.literal("")),
+  instagramUrl: z.preprocess(normalizeInstagramUrl, z.string().max(200).refine(isHttpUrl).optional().or(z.literal(""))),
   memberCount: z.number().int().min(1).max(10000).optional(),
   foundedYear: z.number().int().min(1900).max(new Date().getFullYear()).optional(),
   categoryId: z.string().cuid().optional(),

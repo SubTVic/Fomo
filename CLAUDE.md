@@ -169,6 +169,8 @@ Akzent #5a8a9a. Fallback-Farben der Kategorien: `static-site/data/categories.jso
 - **Runbooks je Aufgabe:** [`docs/runbooks/`](docs/runbooks/README.md) (Index der 12
   typischen Wartungsaufgaben).
 - Betrieb ohne Programmierkenntnisse: `static-site/docs/BETRIEBSHANDBUCH.md`.
+- Löschfristen und Betroffenenanfragen: `docs/datenschutz-loeschkonzept.md`
+  (automatische Löschung: `scripts/cleanup.ts`).
 - Mit KI an der statischen Seite arbeiten: `static-site/docs/KI-MITARBEIT.md`.
 - Übergabe-Audit mit allen Befunden: `docs/uebergabe/audit.md`; Umbauplan:
   `docs/uebergabe/umsetzungsplan.md`; Hintergrund: `docs/uebergabe/recherche-umsetzung.md`.

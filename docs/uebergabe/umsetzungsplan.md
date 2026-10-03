@@ -928,7 +928,7 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 5.2 | Altlasten entfernen | ✅ | #25 |
 | 5.3 | DB verschlanken | ✅ (Migration in Prod: 🧑) | #26 |
 | 5.4 | Rollen/Login | ✅ (Migration in Prod: 🧑) | #27 |
-| 5.5 | Löschkonzept | ⬜ | |
+| 5.5 | Löschkonzept | ✅ (Fristen: 🧑) | #28 |
 | 5.6 | Impressum/Datenschutz Root-App | ⬜ | |
 | 6.0 | 🧑 Klärung Referat Technik | ⬜ | – |
 | 6.1 | App-Container | ⬜ | |

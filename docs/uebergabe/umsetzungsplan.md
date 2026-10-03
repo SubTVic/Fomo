@@ -908,8 +908,8 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 1.7 | Repo-Hygiene | ✅ | #9 |
 | 1.8 | 🧑 Checkliste Phase 1 | ⬜ | – |
 | 2.1 | Test-Setup Root | ✅ | #10 |
-| 2.2 | Matching-Tests | ✅ | wp-2-2-matching-tests |
-| 2.3 | Validierung im Build | ⬜ | |
+| 2.2 | Matching-Tests | ✅ | #11 |
+| 2.3 | Validierung im Build | ✅ | wp-2-3-validate-in-build |
 | 2.4 | CI | ⬜ | |
 | 2.5 | KI-Leitplanken | ⬜ | |
 | 2.6 | Doku-Abgleich | ⬜ | |

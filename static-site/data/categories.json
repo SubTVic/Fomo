@@ -1,0 +1,18 @@
+{
+  "_meta": {
+    "note": "The known group categories (names must match the admin DB and groups.json categoryName exactly). color is the fallback badge colour when the exported data has none (chosen for readable white badge text; mostly the admin DB colours). Used by src/lib/categories.ts and scripts/validate-data.mjs."
+  },
+  "categories": [
+    { "name": "Politik & Gesellschaft", "color": "#E63946" },
+    { "name": "Sport & Bewegung", "color": "#00BBF9" },
+    { "name": "Kunst & Kultur", "color": "#9B5DE5" },
+    { "name": "Musik", "color": "#C2408F" },
+    { "name": "Technik & Wissenschaft", "color": "#00F5D4" },
+    { "name": "Nachhaltigkeit", "color": "#06D6A0" },
+    { "name": "Internationales", "color": "#FFD166" },
+    { "name": "Soziales Engagement", "color": "#EF476F" },
+    { "name": "Glaube & Spiritualität", "color": "#7B5EA7" },
+    { "name": "Wirtschaft & Karriere", "color": "#F77F00" },
+    { "name": "Sonstiges", "color": "#5a8a9a" }
+  ]
+}

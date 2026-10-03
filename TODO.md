@@ -154,6 +154,10 @@ GitHub-Secret (1.3) aktualisieren, alten Key löschen.
 - [ ] **Gamification-Backlog** (siehe CLAUDE.md): Ergebnis-Reveal,
       Persönlichkeits-Profil, Badges, Share-Cards, Leaderboard — erst nach
       der Erstiwoche, wenn Daten da sind.
+- [ ] **Link-Prüfung scharf schalten:** `static-site/scripts/validate-data.mjs`
+      lässt 7 verifizierte Gruppen mit kaputten Links (`KNOWN_BAD_URLS`) vorerst
+      nur warnen. Nach dem nächsten Daten-Sync mit korrigierten URLs (WP-1.8)
+      die Liste leeren — dann bricht jeder kaputte Link den Build ab.
 
 ---
 

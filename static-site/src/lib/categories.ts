@@ -5,6 +5,25 @@
 // bucket and targets no search intent. As categories get curated in the admin
 // DB, these pages fill up automatically on the next data export.
 
+import categoriesJson from "../../data/categories.json";
+
+/** A known group category (data/categories.json — also checked by validate-data.mjs). */
+export interface Category {
+  /** Must match groups.json categoryName exactly. */
+  name: string;
+  /** Fallback badge colour when the exported data carries none. */
+  color: string;
+}
+
+export const CATEGORIES: Category[] = categoriesJson.categories;
+
+const categoryColorTable = new Map(CATEGORIES.map((c) => [c.name, c.color]));
+
+/** The fallback colour of a known category, or undefined for unknown names. */
+export function categoryFallbackColor(name: string): string | undefined {
+  return categoryColorTable.get(name);
+}
+
 export interface CategorySeo {
   /** URL slug under /groups/kategorie/ */
   slug: string;

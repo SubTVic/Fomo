@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// API: Submit confirmed attributes via invite token (no login needed)
+// API: Load and submit a group's profile via edit link (no login needed)
 
 import { NextRequest, NextResponse } from "next/server";
 import { RegistrationStatus } from "@prisma/client";
@@ -7,24 +7,18 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { isHttpUrl, normalizeInstagramUrl, normalizeWebsiteUrl } from "@/lib/normalize-url";
 import { recordChange, snapshotGroup } from "@/lib/change-log";
-
-const ATTRIBUTE_KEYS = [
-  "career", "tech", "language", "social_impact", "party", "religion",
-  "sports", "networking", "arts", "music", "time_low", "hands_on",
-  "outdoor", "international", "beginner_friendly", "competitive",
-  "event_frequency", "leadership_opportunities", "group_size",
-] as const;
+import { editLinkError, resolveEditLink } from "@/lib/edit-token";
 
 const SubmitSchema = z.object({
   token: z.string().min(1),
-  // legacy (optional, beibehalten für Rückwärtskompatibilität)
-  confirmedAttributes: z.record(z.enum(ATTRIBUTE_KEYS), z.union([z.literal(0), z.literal(1)])).optional(),
   shortDescription: z.string().min(10).max(200).optional(),
-  websiteUrl: z.preprocess(normalizeWebsiteUrl, z.string().max(500).refine(isHttpUrl).optional().or(z.literal(""))),
-  contactEmail: z.string().trim().email().optional().or(z.literal("")),
-  instagramUrl: z.preprocess(normalizeInstagramUrl, z.string().max(200).refine(isHttpUrl).optional().or(z.literal(""))),
-  memberCount: z.number().int().min(1).max(10000).optional(),
-  foundedYear: z.number().int().min(1900).max(new Date().getFullYear()).optional(),
+  // Optional fields: undefined = keep, null or "" = delete.
+  longDescription: z.string().trim().max(3000).nullable().optional(),
+  websiteUrl: z.preprocess(normalizeWebsiteUrl, z.string().max(500).refine(isHttpUrl).nullable().optional().or(z.literal(""))),
+  contactEmail: z.string().trim().email().nullable().optional().or(z.literal("")),
+  instagramUrl: z.preprocess(normalizeInstagramUrl, z.string().max(200).refine(isHttpUrl).nullable().optional().or(z.literal(""))),
+  memberCount: z.number().int().min(1).max(10000).nullable().optional(),
+  foundedYear: z.number().int().min(1900).max(new Date().getFullYear()).nullable().optional(),
   categoryId: z.string().cuid().optional(),
   // v2: WS2-Self-Rating
   ws2Answers: z.array(z.object({
@@ -51,103 +45,69 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { token, confirmedAttributes, shortDescription, websiteUrl, contactEmail, instagramUrl, memberCount, foundedYear, categoryId, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
+  const { token, shortDescription, longDescription, websiteUrl, contactEmail, instagramUrl, memberCount, foundedYear, categoryId, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
 
-  // Validate the token
-  const invite = await db.groupInvite.findUnique({
-    where: { token },
-    include: { group: true },
+  // undefined = field not sent (keep), null or "" = delete, otherwise set.
+  const optional = <T,>(key: string, value: T | null | undefined | "") =>
+    value === undefined ? {} : { [key]: value === "" ? null : value };
+
+  // Validate the token: reusable edit link, or legacy one-time invite.
+  const link = await resolveEditLink(db, token);
+  if (!link.ok) {
+    const { error, status } = editLinkError(link.problem);
+    return NextResponse.json({ error }, { status });
+  }
+  const group = await db.group.findUnique({
+    where: { id: link.groupId },
+    select: { isVerified: true },
   });
-
-  if (!invite) {
-    return NextResponse.json({ error: "Ungültiger Einladungslink." }, { status: 404 });
-  }
-
-  if (invite.expiresAt < new Date()) {
-    return NextResponse.json(
-      { error: "Dieser Einladungslink ist abgelaufen. Bitte kontaktiert das FOMO-Team." },
-      { status: 410 },
-    );
-  }
-
-  // Map confirmed attributes to the boolean columns on Group
-  const booleanUpdates: Record<string, boolean> = {};
-  const attrToPrismaField: Record<string, string> = {
-    career: "career",
-    tech: "tech",
-    language: "language",
-    social_impact: "socialImpact",
-    party: "party",
-    religion: "religion",
-    sports: "sports",
-    networking: "networking",
-    arts: "arts",
-    music: "music",
-    time_low: "timeLow",
-    hands_on: "handsOn",
-    outdoor: "outdoor",
-    international: "international",
-    beginner_friendly: "beginnerFriendly",
-    competitive: "competitive",
-    event_frequency: "eventFrequency",
-    leadership_opportunities: "leadershipOpportunities",
-    group_size: "groupSize",
-  };
-
-  const booleanAttrs = [
-    "career", "tech", "social_impact", "party", "religion", "sports",
-    "networking", "arts", "music", "time_low", "hands_on", "outdoor",
-    "international", "beginner_friendly", "competitive", "leadership_opportunities",
-  ];
-
-  if (confirmedAttributes) {
-    for (const attr of booleanAttrs) {
-      const prismaField = attrToPrismaField[attr];
-      if (prismaField && confirmedAttributes[attr as keyof typeof confirmedAttributes] !== undefined) {
-        booleanUpdates[prismaField] = confirmedAttributes[attr as keyof typeof confirmedAttributes] === 1;
-      }
-    }
+  if (!group) {
+    const { error, status } = editLinkError("invalid");
+    return NextResponse.json({ error }, { status });
   }
 
   const now = new Date();
 
-  // Atomically claim the token — updateMany with usedAt: null ensures
-  // only one concurrent request can succeed (second gets count=0 → 409).
-  const claimed = await db.groupInvite.updateMany({
-    where: { id: invite.id, usedAt: null },
-    data: { usedAt: now },
-  });
-
-  if (claimed.count === 0) {
-    return NextResponse.json(
-      { error: "Dieser Einladungslink wurde bereits verwendet." },
-      { status: 409 },
-    );
+  if (link.kind === "invite") {
+    // Legacy one-time invite: claim atomically — updateMany with usedAt: null
+    // ensures only one concurrent request can succeed (second gets count=0 → 409).
+    const claimed = await db.groupInvite.updateMany({
+      where: { id: link.invite.id, usedAt: null },
+      data: { usedAt: now },
+    });
+    if (claimed.count === 0) {
+      const { error, status } = editLinkError("used");
+      return NextResponse.json({ error }, { status });
+    }
   }
+  // Reusable edit links store no plaintext token anywhere, not even here.
+  const ratingToken = link.kind === "invite" ? token : `edit-token:${link.tokenId}`;
 
   // Decision E1 (Umsetzungsplan §2): corrections by an already verified group
   // go live without a new review. The group stays verified; admins see the
   // diff under "Änderungen" and can revert it. Unverified groups still need
   // an admin to verify them.
-  const wasVerified = invite.group.isVerified;
-  const groupId = invite.groupId;
+  const wasVerified = group.isVerified;
+  const groupId = link.groupId;
 
   await db.$transaction(async (tx) => {
+    if (link.kind === "edit-token") {
+      await tx.groupEditToken.update({ where: { id: link.tokenId }, data: { lastUsedAt: now } });
+    }
     const before = await snapshotGroup(tx, groupId);
 
     await tx.group.update({
       where: { id: groupId },
       data: {
-        ...booleanUpdates,
-        ...(confirmedAttributes ? { confirmedAttributes: JSON.parse(JSON.stringify(confirmedAttributes)) } : {}),
         ...(wasVerified ? {} : { registrationStatus: RegistrationStatus.SUBMITTED, isVerified: false }),
         submittedAt: now,
         ...(shortDescription ? { shortDescription } : {}),
-        ...(websiteUrl ? { websiteUrl } : {}),
-        ...(contactEmail ? { contactEmail } : {}),
-        ...(instagramUrl ? { instagramUrl } : {}),
-        ...(memberCount !== undefined ? { memberCount } : {}),
-        ...(foundedYear !== undefined ? { foundedYear } : {}),
+        ...optional("longDescription", longDescription),
+        ...optional("websiteUrl", websiteUrl),
+        ...optional("contactEmail", contactEmail),
+        ...optional("instagramUrl", instagramUrl),
+        ...optional("memberCount", memberCount),
+        ...optional("foundedYear", foundedYear),
         ...(categoryId ? { categoryId } : {}),
       },
     });
@@ -157,7 +117,7 @@ export async function POST(req: NextRequest) {
         where: { groupId },
         create: {
           groupId,
-          token,
+          token: ratingToken,
           raterCount: raterCount ?? 1,
           filterSelections: ws2FilterSelections ?? [],
           answers: {
@@ -165,7 +125,7 @@ export async function POST(req: NextRequest) {
           },
         },
         update: {
-          token,
+          token: ratingToken,
           submittedAt: now,
           raterCount: raterCount ?? 1,
           filterSelections: ws2FilterSelections ?? [],
@@ -183,7 +143,8 @@ export async function POST(req: NextRequest) {
     }
   });
 
-  return NextResponse.json({ success: true });
+  // live: the group stays verified, so the change needs no admin review.
+  return NextResponse.json({ success: true, live: wasVerified });
 }
 
 // GET: Validate token and return group data (for pre-filling the form)
@@ -193,64 +154,48 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Token required" }, { status: 400 });
   }
 
-  const invite = await db.groupInvite.findUnique({
-    where: { token },
-    include: {
-      group: {
+  const link = await resolveEditLink(db, token);
+  if (!link.ok) {
+    const { error, status } = editLinkError(link.problem);
+    return NextResponse.json({ error }, { status });
+  }
+
+  const group = await db.group.findUnique({
+    where: { id: link.groupId },
+    select: {
+      id: true,
+      name: true,
+      shortDescription: true,
+      longDescription: true,
+      websiteUrl: true,
+      contactEmail: true,
+      instagramUrl: true,
+      memberCount: true,
+      foundedYear: true,
+      categoryId: true,
+      category: { select: { id: true, name: true } },
+      registrationStatus: true,
+      // V2 self-rating for pre-filling
+      selfRating: {
         select: {
-          id: true,
-          name: true,
-          shortDescription: true,
-          websiteUrl: true,
-          contactEmail: true,
-          instagramUrl: true,
-          memberCount: true,
-          foundedYear: true,
-          categoryId: true,
-          category: { select: { id: true, name: true } },
-          scraperAttributes: true,
-          confirmedAttributes: true,
-          registrationStatus: true,
-          // All boolean attributes for current state
-          career: true, tech: true, socialImpact: true, party: true,
-          religion: true, sports: true, networking: true, arts: true,
-          music: true, timeLow: true, handsOn: true, outdoor: true,
-          international: true, beginnerFriendly: true, competitive: true,
-          leadershipOpportunities: true, financialCost: true,
-          language: true, eventFrequency: true, groupSize: true,
-          // V2 self-rating for pre-filling
-          selfRating: {
-            include: { answers: true },
-          },
+          raterCount: true,
+          filterSelections: true,
+          answers: { select: { itemId: true, value: true } },
         },
       },
     },
   });
-
-  if (!invite) {
-    return NextResponse.json({ error: "Ungültiger Einladungslink." }, { status: 404 });
-  }
-
-  if (invite.expiresAt < new Date()) {
-    return NextResponse.json(
-      { error: "Dieser Einladungslink ist abgelaufen." },
-      { status: 410 },
-    );
-  }
-
-  if (invite.usedAt) {
-    return NextResponse.json(
-      { error: "Dieser Einladungslink wurde bereits verwendet." },
-      { status: 409 },
-    );
+  if (!group) {
+    const { error, status } = editLinkError("invalid");
+    return NextResponse.json({ error }, { status });
   }
 
   const categories = await db.category.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } });
 
   return NextResponse.json({
-    group: invite.group,
+    group,
     categories,
-    email: invite.email,
-    expiresAt: invite.expiresAt.toISOString(),
+    email: link.kind === "invite" ? link.invite.email : null,
+    reusable: link.kind === "edit-token",
   });
 }

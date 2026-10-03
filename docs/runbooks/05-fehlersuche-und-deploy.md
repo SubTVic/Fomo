@@ -27,7 +27,8 @@
 | Build rot: „Datenprüfung FEHLGESCHLAGEN" | Fehler in `groups.json`/`quiz.json` (Meldung nennt Gruppe + Feld) | In der Admin-App korrigieren, neu exportieren (Runbook 01) |
 | CI rot im PR | Typfehler, Test oder Build bricht | Log des roten Jobs (`static-site` oder `root`) öffnen; Fehlerzeile beheben |
 | Gruppe fehlt im Quiz | Gruppe noch unbestätigt (nach Einreichung nicht verifiziert) | Admin → verifizieren → Export (Runbook 01) |
-| Daten veraltet, obwohl Gruppen etwas geändert haben | Daten-Sync (Backup → Export → PR) wurde nicht gemacht | Runbook 01, „Daten live schalten" |
+| Daten veraltet, obwohl Gruppen etwas geändert haben | Daten-Sync nicht gestartet oder PR nicht gemergt | Runbook 01, „Daten live schalten" |
+| Daten-Sync rot | `EXPORT_TOKEN` fehlt/passt nicht, oder Datenprüfung schlägt an, oder > 20 % Gruppen würden wegfallen | Log des Workflows lesen; Runbook 01 |
 | Logo fehlt | Slug/Dateiname in `logos.json` falsch | Schreibweise + `%20` prüfen |
 | Statistik/Report leer oder alt | `UMAMI_*`-Env fehlt in Vercel; Deploy-Hook-Secret fehlt | Env prüfen; Secret `VERCEL_DEPLOY_HOOK_URL` setzen (Runbook 09) |
 | Admin-Login klappt nicht / plötzlich abgemeldet | Konto deaktiviert, oder `AUTH_SECRET` wurde rotiert | Runbook 10 |

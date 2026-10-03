@@ -63,16 +63,13 @@ Der nächste Export überschreibt das wieder. Vor jedem Build prüft eine automa
 Datenprüfung die Datei (Antwortwerte, doppelte Gruppen, Filter, Kategorien, Links);
 bei Fehlern bricht der Build ab und die **alte Seite bleibt online**.
 
-**Neue Registrierungen einspielen** (aus der Registrierungs-App):
-Das ist der einzige Schritt, der einen Computer mit Node.js braucht (einmalige
-Einrichtung, dann 2 Kommandos):
-```
-node scripts/export-from-backup.mjs --backup <backup-datei.json>
-node scripts/validate-data.mjs
-```
-Dann die neue `data/groups.json` committen. ⚠️ Die Backup-Datei selbst enthält
-persönliche Daten (Kontakte!) und darf **niemals** auf GitHub hochgeladen
-werden — nur die erzeugte `groups.json` ist öffentlich unbedenklich.
+**Änderungen und neue Registrierungen live schalten:** im Admin-Dashboard
+„Daten-Sync öffnen (GitHub)" → **Run workflow**. Es entsteht ein Pull Request mit der
+Liste aller geänderten Gruppen; nach grüner Prüfung mergen, ~2 Minuten später live.
+Kein Terminal nötig. Einrichtung und Notfallweg (Backup + Skript):
+`docs/runbooks/01-gruppe-aendern.md`. ⚠️ Backup-Dateien enthalten persönliche Daten
+(Kontakte!) und dürfen **niemals** auf GitHub — nur die erzeugte `groups.json` ist
+öffentlich unbedenklich.
 
 **Wichtig zu wissen:** Nur **bestätigte** Gruppen (von der Gruppe selbst
 ausgefüllt) erscheinen in den Quiz-Ergebnissen. Gescrapte/unbestätigte Gruppen
@@ -97,7 +94,8 @@ Registrierung bewegen.**
 | Startseiten-Texte (DE+EN) | `static-site/src/components/HomePageContent.tsx` |
 | Quiz-Fragen + Filter (DE) | `static-site/data/quiz.json` |
 | Quiz-Fragen (EN) | `static-site/src/lib/quiz-translations.ts` |
-| Gruppen-Beschreibungen (EN) | `static-site/src/lib/group-translations.ts` |
+| Gruppen-Beschreibungen (EN) | `static-site/data/group-translations.json` (Text + `sourceHash`; die Datenprüfung meldet veraltete Übersetzungen mit dem neuen Hash) |
+| Kategorien (Name DE/EN, Farbe, SEO-Seite) | `static-site/data/categories.json` |
 | Impressum / Datenschutz | `static-site/src/app/impressum/page.tsx`, `…/datenschutz/page.tsx` |
 
 ⚠️ Quiz-Fragen ändern ist heikel: **Formulierung** ändern ist okay; Fragen

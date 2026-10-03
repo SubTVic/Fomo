@@ -18,15 +18,16 @@ exportieren".
 3. Die Gruppe landet als **inaktiv + unbestätigt** in der Admin-App.
 4. Admin-App → „Gruppen" → neue Gruppe öffnen → prüfen → **aktivieren** (Status) →
    **verifizieren**.
-5. Daten live schalten (Backup → Export → Commit, siehe Runbook 01, Abschnitt „Daten
-   live schalten").
+5. Daten live schalten (Daten-Sync, siehe Runbook 01, Abschnitt „Daten live
+   schalten").
 
 ## Weg 2: Admin legt an + lädt die Gruppe zum Gruppencheck ein
 
 1. Admin-App → „Gruppen" → **„+ Neue Gruppe"** → Name, Kurzbeschreibung, Kategorie,
    Mail. (Das legt nur Stammdaten an — **noch kein Quiz-Profil**.)
-2. Bei der Gruppe **„Einladen" → „Link erstellen"** → Link kopieren → **selbst per Mail**
-   schicken.
+2. Bei der Gruppe **„Bearbeitungslink" → „Link erzeugen"** → **„Mail an …"** (oder
+   kopieren und selbst schicken). Der Link gilt 12 Monate und mehrfach
+   ([Runbook 03](03-link-verloren.md)).
 3. Die Gruppe füllt über den Link die 21 Fragen + Filter aus.
 4. Admin-App → prüfen → **verifizieren**.
 5. Daten live schalten (siehe Runbook 01).
@@ -42,9 +43,9 @@ ist beabsichtigt. Ins Quiz kommt sie erst über Weg 1 oder 2.
 - **Keine Quiz-Antworten erfinden**, um eine Gruppe „schnell" ins Quiz zu bekommen —
   das verzerrt das Ranking aller Gruppen. Ohne echtes Self-Rating: Verzeichnis, ja;
   Quiz, nein.
-- **Nicht** über „CSV neu importieren" anlegen — das ist ein destruktiver Massen-Import
-  (überschreibt bestehende Gruppen).
+- Massen-Importe (CSV/Scraper) gibt es im Admin nicht mehr (WP-4.4) — sie haben
+  bestehende Gruppen überschrieben. Neue Gruppen immer einzeln anlegen.
 - Slug (URL-Name) nach dem Anlegen **nicht mehr ändern** — sonst brechen Logo-Zuordnung,
-  EN-Übersetzung und geteilte Links.
+  EN-Übersetzung und geteilte Links. Der Admin fragt vor dem Speichern nach.
 - Nach dem Anlegen prüfen, ob es die Gruppe nicht schon gibt (Duplikat) — die App warnt
   nur intern, blockt aber nicht.

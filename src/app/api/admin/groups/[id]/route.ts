@@ -50,6 +50,10 @@ const updateGroupSchema = z.object({
   language: z.enum(["german", "both", "english"]).nullable().optional(),
   eventFrequency: z.enum(["low", "medium", "high"]).nullable().optional(),
   groupSize: z.enum(["small", "medium", "large"]).nullable().optional(),
+
+  // A new slug breaks logo mapping, EN translation and shared links: only with
+  // explicit confirmation from the form.
+  confirmSlugChange: z.boolean().optional(),
 });
 
 // PUT: full update of editable fields
@@ -82,10 +86,19 @@ export async function PUT(
     );
   }
 
+  const { confirmSlugChange, ...data } = parsed.data;
+
+  if (data.slug !== group.slug && confirmSlugChange !== true) {
+    return NextResponse.json(
+      { error: "Slug-Änderung muss bestätigt werden (bricht Logo, Übersetzung und Links)." },
+      { status: 409 },
+    );
+  }
+
   // Check slug uniqueness (excluding the current group)
-  if (parsed.data.slug !== group.slug) {
+  if (data.slug !== group.slug) {
     const existing = await db.group.findUnique({
-      where: { slug: parsed.data.slug },
+      where: { slug: data.slug },
     });
     if (existing) {
       return NextResponse.json(
@@ -97,7 +110,7 @@ export async function PUT(
 
   const updated = await db.$transaction(async (tx) => {
     const before = await snapshotGroup(tx, id);
-    const result = await tx.group.update({ where: { id }, data: parsed.data });
+    const result = await tx.group.update({ where: { id }, data });
     const after = await snapshotGroup(tx, id);
     if (before && after) {
       await recordChange(tx, { groupId: id, source: "admin", before, after, reviewedByEmail: guard.admin.email });
@@ -108,12 +121,12 @@ export async function PUT(
   return NextResponse.json({ ok: true, group: updated });
 }
 
-// DELETE: remove a group
+// DELETE: remove a group (super admins only)
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const guard = await requireAdminApi();
+  const guard = await requireAdminApi({ role: "SUPER_ADMIN" });
   if (!guard.ok) return guard.response;
 
   const { id } = await params;

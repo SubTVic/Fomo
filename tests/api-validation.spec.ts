@@ -3,31 +3,6 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("API Validation", () => {
-  test("POST /api/pilot/submit with empty body returns 422", async ({
-    request,
-  }) => {
-    const res = await request.post("/api/pilot/submit", {
-      data: {},
-    });
-    expect(res.status()).toBe(422);
-  });
-
-  test("POST /api/pilot/submit with missing answers returns 422", async ({
-    request,
-  }) => {
-    const res = await request.post("/api/pilot/submit", {
-      data: {
-        demographic: {
-          semester: "1",
-          isMember: "no",
-          groupNames: null,
-        },
-        feedback: { confusing: "", missing: "" },
-      },
-    });
-    expect(res.status()).toBe(422);
-  });
-
   test("POST /api/groups/register with empty body returns 422", async ({
     request,
   }) => {
@@ -35,15 +10,6 @@ test.describe("API Validation", () => {
       data: {},
     });
     expect(res.status()).toBe(422);
-  });
-
-  test("GET /api/admin/pilot/statistics without auth returns 401", async ({
-    request,
-  }) => {
-    const res = await request.get(
-      "/api/admin/pilot/statistics"
-    );
-    expect(res.status()).toBe(401);
   });
 
   test("GET /api/admin/groups/pending without auth returns 401", async ({
@@ -60,19 +26,23 @@ test.describe("API Validation", () => {
     expect(res.status()).toBe(401);
   });
 
-  test("POST /api/admin/questions without auth returns 401", async ({
+  test("GET /api/admin/backup without auth returns 401", async ({
     request,
   }) => {
-    const res = await request.post("/api/admin/questions", {
-      data: { text: "Test question" },
-    });
+    const res = await request.get("/api/admin/backup");
     expect(res.status()).toBe(401);
   });
 
-  test("GET /api/pilot/export without API key returns 401", async ({
-    request,
-  }) => {
-    const res = await request.get("/api/pilot/export");
-    expect(res.status()).toBe(401);
-  });
+  // Pilot, study 2 and the legacy quiz were removed (Umsetzungsplan WP-5.2).
+  for (const path of [
+    "/api/pilot/export",
+    "/api/admin/pilot/statistics",
+    "/api/admin/study2/export",
+    "/api/admin/quiz/theses",
+  ]) {
+    test(`GET ${path} is gone (404)`, async ({ request }) => {
+      const res = await request.get(path);
+      expect(res.status()).toBe(404);
+    });
+  }
 });

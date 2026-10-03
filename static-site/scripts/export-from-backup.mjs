@@ -13,7 +13,6 @@
 // Only the sanitized groups.json output is public.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { normalizeWebUrl, normalizeInstagramUrl } from "./url-normalize.mjs";
 
 const args = process.argv.slice(2);
 const getArg = (n, d) => {
@@ -86,7 +85,10 @@ const groups = backup.groups
       selfRating = {
         raterCount: rating.raterCount ?? 0,
         derived: false,
-        filterSelections: rating.filterSelections ?? [],
+        // Only pass through string entries (the DB column is untyped JSON).
+        filterSelections: Array.isArray(rating.filterSelections)
+          ? rating.filterSelections.filter((x) => typeof x === "string")
+          : [],
         answers: realAnswers,
       };
     } else {
@@ -108,7 +110,7 @@ const groups = backup.groups
             date: g.nextEventDate,
             time: g.nextEventTime ?? null,
             location: g.nextEventLocation ?? null,
-            url: normalizeWebUrl(g.nextEventUrl),
+            url: g.nextEventUrl ?? null,
             isOpen: g.nextEventIsOpen ?? false,
           }
         : null;
@@ -122,8 +124,8 @@ const groups = backup.groups
       categoryName: cat?.name ?? "Sonstiges",
       categoryColor: cat?.color ?? "",
       categoryIcon: cat?.icon ?? "",
-      websiteUrl: normalizeWebUrl(g.websiteUrl),
-      instagramUrl: normalizeInstagramUrl(g.instagramUrl),
+      websiteUrl: g.websiteUrl ?? null,
+      instagramUrl: g.instagramUrl ?? null,
       contactEmail: g.contactEmail ?? null,
       memberCount: g.memberCount ?? null,
       language: g.language ?? null,

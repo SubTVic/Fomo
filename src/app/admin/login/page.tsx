@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { redirect } from "next/navigation";
-import { auth, signIn } from "@/lib/auth";
-import { AuthError } from "next-auth";
+import { signIn } from "@/lib/auth";
+import { getActiveAdmin } from "@/lib/require-admin";
+import { AuthError, CredentialsSignin } from "next-auth";
 
 export default async function LoginPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  const session = await auth();
-  if (session?.user) redirect("/admin");
+  // Same DB-backed check as the protected area, so a deactivated admin with a
+  // still-valid session token is not redirected back and forth.
+  if (await getActiveAdmin()) redirect("/admin");
 
   const { error } = await searchParams;
 
@@ -31,7 +33,8 @@ export default async function LoginPage({
               });
             } catch (err) {
               if (err instanceof AuthError) {
-                redirect("/admin/login?error=credentials");
+                const locked = err instanceof CredentialsSignin && err.code === "locked";
+                redirect(`/admin/login?error=${locked ? "locked" : "credentials"}`);
               }
               throw err;
             }
@@ -41,6 +44,11 @@ export default async function LoginPage({
           {error === "credentials" && (
             <p className="border-2 border-red-500 bg-red-50 px-3 py-2 text-sm text-red-700">
               E-Mail oder Passwort falsch.
+            </p>
+          )}
+          {error === "locked" && (
+            <p className="border-2 border-red-500 bg-red-50 px-3 py-2 text-sm text-red-700">
+              Zu viele Fehlversuche. Bitte in 15 Minuten erneut versuchen.
             </p>
           )}
           <div className="flex flex-col gap-1.5">

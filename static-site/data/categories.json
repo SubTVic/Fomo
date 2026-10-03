@@ -1,0 +1,124 @@
+{
+  "_meta": {
+    "note": "The ONE list of group categories. name must match the admin DB and groups.json categoryName exactly; en = English label; color = fallback badge colour (readable white text); slug + seo = SEO landing page /groups/kategorie/<slug> (null for \"Sonstiges\": no search intent). Used by src/lib/categories.ts and scripts/validate-data.mjs."
+  },
+  "categories": [
+    {
+      "name": "Politik & Gesellschaft",
+      "en": "Politics & society",
+      "color": "#E63946",
+      "slug": "politik-gesellschaft",
+      "seo": {
+        "title": "Politische Hochschulgruppen in Dresden",
+        "description": "Politik und Hochschulpolitik an der TU Dresden: Gruppen für Debatte, Mitbestimmung und gesellschaftliches Engagement im Studium.",
+        "intro": "Mitreden statt zuschauen: In den politischen und gesellschaftlichen Hochschulgruppen der TU Dresden debattieren, gestalten und engagieren sich Studierende — in der Hochschulpolitik, in politischen Jugendorganisationen und in Initiativen für gesellschaftliche Themen."
+      }
+    },
+    {
+      "name": "Sport & Bewegung",
+      "en": "Sports & movement",
+      "color": "#00BBF9",
+      "slug": "sport-bewegung",
+      "seo": {
+        "title": "Sport-Hochschulgruppen in Dresden",
+        "description": "Sportliche Hochschulgruppen an der TU Dresden: Teams, Training und Wettkämpfe für Studierende — vom Anfänger bis zum Wettkampf-Level.",
+        "intro": "Du willst neben dem Studium Sport machen — im Team, mit festem Training oder bei Wettkämpfen? Diese Hochschulgruppen an der TU Dresden bringen Studierende in Bewegung: von klassischen Sportarten bis zu ungewöhnlichen Disziplinen, für Einsteiger:innen genauso wie für Ambitionierte."
+      }
+    },
+    {
+      "name": "Kunst & Kultur",
+      "en": "Arts & culture",
+      "color": "#9B5DE5",
+      "slug": "kunst-kultur",
+      "seo": {
+        "title": "Kunst- und Kultur-Hochschulgruppen in Dresden",
+        "description": "Kreative Hochschulgruppen an der TU Dresden: Theater, Musik, Film, Fotografie und Schreiben — Kultur von Studierenden für Studierende.",
+        "intro": "Auf der Bühne stehen, musizieren, fotografieren, schreiben oder Filme drehen: Die Kunst- und Kultur-Hochschulgruppen der TU Dresden sind der Ort für kreative Studierende — ganz gleich, ob du Erfahrung mitbringst oder einfach etwas Neues ausprobieren willst."
+      }
+    },
+    {
+      "name": "Musik",
+      "en": "Music",
+      "color": "#C2408F",
+      "slug": "musik",
+      "seo": {
+        "title": "Musik-Hochschulgruppen in Dresden",
+        "description": "Musik machen an der TU Dresden: Chöre, Orchester, Bands und Ensembles von Studierenden — für alle, die singen oder ein Instrument spielen.",
+        "intro": "Singen im Chor, spielen im Orchester oder in der Band: In den Musik-Hochschulgruppen der TU Dresden machen Studierende gemeinsam Musik — mit regelmäßigen Proben und Auftritten. Viele Ensembles freuen sich über neue Stimmen und Instrumente, auch ohne Profi-Erfahrung."
+      }
+    },
+    {
+      "name": "Technik & Wissenschaft",
+      "en": "Technology & science",
+      "color": "#00F5D4",
+      "slug": "technik-wissenschaft",
+      "seo": {
+        "title": "Technik- und Wissenschafts-Hochschulgruppen in Dresden",
+        "description": "Tech-Hochschulgruppen an der TU Dresden: Robotik, Coding, Rennwagen, Forschung — hier bauen Studierende echte Projekte, keine Übungsaufgaben.",
+        "intro": "Programmieren, Löten, Konstruieren, Forschen: In den Technik-Hochschulgruppen der TU Dresden arbeiten Studierende an echten Projekten — vom Roboter über den Rennwagen bis zur Software. Vorkenntnisse sind oft keine Voraussetzung, Neugier schon."
+      }
+    },
+    {
+      "name": "Nachhaltigkeit",
+      "en": "Sustainability",
+      "color": "#06D6A0",
+      "slug": "nachhaltigkeit",
+      "seo": {
+        "title": "Nachhaltigkeits-Hochschulgruppen in Dresden",
+        "description": "Nachhaltigkeit an der TU Dresden: Hochschulgruppen für Umwelt- und Klimaschutz — praktisch, konkret und offen für alle Studierenden.",
+        "intro": "Klimaschutz, Umweltbildung, nachhaltiger Campus: Diese Hochschulgruppen der TU Dresden setzen sich praktisch für Nachhaltigkeit ein. Wer etwas bewegen will statt nur zu diskutieren, findet hier Mitstreiter:innen."
+      }
+    },
+    {
+      "name": "Internationales",
+      "en": "International",
+      "color": "#FFD166",
+      "slug": "internationales",
+      "seo": {
+        "title": "Internationale Hochschulgruppen in Dresden",
+        "description": "International students & interkultureller Austausch an der TU Dresden: Hochschulgruppen für Erasmus, Buddy-Programme und weltweite Kontakte.",
+        "intro": "Ob du selbst aus dem Ausland nach Dresden gekommen bist oder internationale Freundschaften suchst: Diese Hochschulgruppen der TU Dresden verbinden Studierende über Ländergrenzen hinweg — mit Buddy-Programmen, Events und interkulturellem Austausch (auch auf Englisch)."
+      }
+    },
+    {
+      "name": "Soziales Engagement",
+      "en": "Social engagement",
+      "color": "#EF476F",
+      "slug": "soziales-engagement",
+      "seo": {
+        "title": "Soziale und ehrenamtliche Hochschulgruppen in Dresden",
+        "description": "Ehrenamt neben dem Studium: soziale Hochschulgruppen an der TU Dresden — von Erster Hilfe über Nachhilfe bis zur Unterstützung Geflüchteter.",
+        "intro": "Du willst dich neben dem Studium ehrenamtlich engagieren und anderen Menschen direkt helfen? Diese Hochschulgruppen an der TU Dresden machen genau das — von Erster Hilfe über Bildungsprojekte bis zur Unterstützung von Menschen in schwierigen Lebenslagen."
+      }
+    },
+    {
+      "name": "Glaube & Spiritualität",
+      "en": "Faith & spirituality",
+      "color": "#7B5EA7",
+      "slug": "glaube-spiritualitaet",
+      "seo": {
+        "title": "Glaube & Spiritualität: Hochschulgruppen in Dresden",
+        "description": "Studierendengemeinden und Glaubensgruppen an der TU Dresden: Gemeinschaft, Gespräche und Angebote für Studierende verschiedener Religionen.",
+        "intro": "Gemeinschaft finden, über Glauben und Sinnfragen sprechen oder einfach gemeinsam essen und feiern: Die Studierendengemeinden und Glaubensgruppen an der TU Dresden sind offen für Studierende — ob du schon fest im Glauben stehst oder einfach neugierig bist."
+      }
+    },
+    {
+      "name": "Wirtschaft & Karriere",
+      "en": "Business & career",
+      "color": "#F77F00",
+      "slug": "wirtschaft-karriere",
+      "seo": {
+        "title": "Wirtschafts- und Karriere-Hochschulgruppen in Dresden",
+        "description": "Karriere neben dem Studium: Hochschulgruppen an der TU Dresden für Praxiserfahrung, Unternehmenskontakte, Consulting und Gründung.",
+        "intro": "Praxiserfahrung sammeln, Unternehmen kennenlernen, vielleicht sogar selbst gründen: Die Wirtschafts- und Karriere-Hochschulgruppen der TU Dresden sind das Sprungbrett für den Berufseinstieg — mit echten Projekten statt Karrieremessen-Smalltalk."
+      }
+    },
+    {
+      "name": "Sonstiges",
+      "en": "Other",
+      "color": "#5a8a9a",
+      "slug": null,
+      "seo": null
+    }
+  ]
+}

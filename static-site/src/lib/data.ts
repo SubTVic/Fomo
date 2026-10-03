@@ -8,6 +8,7 @@ import groupsJson from "../../data/groups.json";
 import quizJson from "../../data/quiz.json";
 import logosJson from "../../data/logos.json";
 import type { Group, QuizData, QuizItem, QuizFilters } from "./types";
+import { categoryFallbackColor } from "./categories";
 
 // Logo overlay (slug → /logos/file). Kept separate from groups.json so logos
 // can be added without touching the big data file; a group's own logoUrl wins.
@@ -66,15 +67,20 @@ for (const g of groups) {
   }
 }
 
+/** The badge colour of a category: data first, then the category table. */
+function colorOfCategory(name: string): string {
+  return categoryColors.get(name) || categoryFallbackColor(name) || CATEGORY_FALLBACK_COLOR;
+}
+
 /** The badge colour for a group, never empty (resolved per category). */
 export function categoryColorOf(group: Group): string {
-  return categoryColors.get(group.categoryName) || group.categoryColor || CATEGORY_FALLBACK_COLOR;
+  return colorOfCategory(group.categoryName);
 }
 
 /** Distinct categories with their poster colour, sorted by name. */
 export function getCategories(): Array<{ name: string; color: string }> {
   const names = new Set(groups.map((g) => g.categoryName));
   return [...names]
-    .map((name) => ({ name, color: categoryColors.get(name) || CATEGORY_FALLBACK_COLOR }))
+    .map((name) => ({ name, color: colorOfCategory(name) }))
     .sort((a, b) => a.name.localeCompare(b.name, "de"));
 }

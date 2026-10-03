@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Group, MatchResult, QuizFilters } from "@/lib/types";
 import { MIN_ACTIVE_ANSWERS, topWithTies } from "@/lib/matching";
-import { groupCategory, groupShortText } from "@/lib/group-copy";
+import { GERMAN_ONLY_NOTE, groupCategory, groupShortText, isGermanOnly } from "@/lib/group-copy";
 import { track, EVENTS } from "@/lib/analytics";
 import { withUtm, fomoMailto } from "@/lib/utm";
 import { ShareButton } from "./ShareButton";
@@ -485,9 +485,15 @@ function ResultRow({
       <div className="grid grid-rows-[0fr] transition-all duration-300 ease-out group-open/result:grid-rows-[1fr]">
         <div className="overflow-hidden">
           <div className="mt-4 pl-[52px]">
-            <p className="max-w-[680px] text-base leading-relaxed text-body">
+            <p
+              className="max-w-[680px] text-base leading-relaxed text-body"
+              lang={isGermanOnly(group, lang) ? "de" : undefined}
+            >
               {groupShortText(group, lang)}
             </p>
+            {isGermanOnly(group, lang) && (
+              <p className="mt-1 text-xs italic text-muted">{GERMAN_ONLY_NOTE}</p>
+            )}
             <div className="mt-4 flex flex-wrap gap-2">
               {links.map((link) => (
                 <a

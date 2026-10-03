@@ -3,10 +3,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { STUDY2_ITEMS, STUDY2_FILTER } from "@/lib/study2/items";
-import type { Study2AnswerValue } from "@/lib/study2/items";
+import { WS2_ITEMS, WS2_FILTER } from "@/lib/ws2-items";
+import { PUBLIC_SITE_URL } from "@/lib/public-site";
+import type { Ws2AnswerValue } from "@/lib/ws2-items";
 
 type Step =
   | { type: "intro" }
@@ -14,6 +15,20 @@ type Step =
   | { type: "item"; index: number }
   | { type: "description" }
   | { type: "raterCount" };
+
+// Fields of the info step that the server validates individually.
+const INFO_FIELDS = [
+  "categoryId",
+  "shortDescription",
+  "longDescription",
+  "contactEmail",
+  "websiteUrl",
+  "instagramUrl",
+  "memberCount",
+  "foundedYear",
+] as const;
+type InfoField = (typeof INFO_FIELDS)[number];
+type FieldErrors = Partial<Record<InfoField, true>>;
 
 interface Category {
   id: string;
@@ -24,6 +39,7 @@ interface GroupData {
   id: string;
   name: string;
   shortDescription: string;
+  longDescription: string | null;
   websiteUrl: string | null;
   contactEmail: string | null;
   instagramUrl: string | null;
@@ -60,9 +76,9 @@ function AnswerButton({
   onClick,
 }: {
   label: string;
-  value: Study2AnswerValue;
-  current: Study2AnswerValue;
-  onClick: (v: Study2AnswerValue) => void;
+  value: Ws2AnswerValue;
+  current: Ws2AnswerValue;
+  onClick: (v: Ws2AnswerValue) => void;
 }) {
   const isSelected = current === value;
   return (
@@ -93,10 +109,11 @@ export function GroupSelfRatingQuiz() {
   const [error, setError] = useState("");
   const [group, setGroup] = useState<GroupData | null>(null);
   const [step, setStep] = useState<Step>({ type: "intro" });
-  const [answers, setAnswers] = useState<Record<string, Study2AnswerValue>>({});
+  const [answers, setAnswers] = useState<Record<string, Ws2AnswerValue>>({});
   const [filterSelections, setFilterSelections] = useState<string[]>([]);
   const [raterCount, setRaterCount] = useState<1 | 2 | 3>(1);
   const [description, setDescription] = useState("");
+  const [longDescription, setLongDescription] = useState("");
   const [website, setWebsite] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
@@ -104,6 +121,11 @@ export function GroupSelfRatingQuiz() {
   const [foundedYear, setFoundedYear] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
+  // True when the group stays verified, i.e. the change goes live without review.
+  const [liveWithoutReview, setLiveWithoutReview] = useState(false);
+  // True when the answers were pre-filled from an earlier submission.
+  const [hasPrefill, setHasPrefill] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const noTokenMsg = t("noToken");
   const unknownErrorMsg = t("unknownError");
@@ -128,6 +150,7 @@ export function GroupSelfRatingQuiz() {
         const g = data.group as GroupData;
         setGroup(g);
         setDescription(g.shortDescription);
+        setLongDescription(g.longDescription ?? "");
         setWebsite(g.websiteUrl ?? "");
         setContactEmail(g.contactEmail ?? "");
         setInstagramUrl(g.instagramUrl ?? "");
@@ -138,19 +161,20 @@ export function GroupSelfRatingQuiz() {
 
         // Pre-fill from previous selfRating if it exists
         if (g.selfRating?.answers?.length) {
-          const prev: Record<string, Study2AnswerValue> = {};
+          const prev: Record<string, Ws2AnswerValue> = {};
           for (const a of g.selfRating.answers) {
-            prev[a.itemId] = a.value as Study2AnswerValue;
+            prev[a.itemId] = a.value as Ws2AnswerValue;
           }
           setAnswers(prev);
           setFilterSelections(
             Array.isArray(g.selfRating.filterSelections) ? g.selfRating.filterSelections : []
           );
           setRaterCount((g.selfRating.raterCount as 1 | 2 | 3) ?? 1);
+          setHasPrefill(true);
         } else {
           // Initialize all items to 0 (neutral)
-          const init: Record<string, Study2AnswerValue> = {};
-          for (const item of STUDY2_ITEMS) {
+          const init: Record<string, Ws2AnswerValue> = {};
+          for (const item of WS2_ITEMS) {
             init[item.id] = 0;
           }
           setAnswers(init);
@@ -172,22 +196,25 @@ export function GroupSelfRatingQuiz() {
     );
   }, []);
 
-  const setAnswer = useCallback((itemId: string, value: Study2AnswerValue) => {
+  const setAnswer = useCallback((itemId: string, value: Ws2AnswerValue) => {
     setAnswers((prev) => ({ ...prev, [itemId]: value }));
     // Auto-advance to next item
-    const idx = STUDY2_ITEMS.findIndex((i) => i.id === itemId);
-    if (idx < STUDY2_ITEMS.length - 1) {
+    const idx = WS2_ITEMS.findIndex((i) => i.id === itemId);
+    if (idx < WS2_ITEMS.length - 1) {
       setTimeout(() => setStep({ type: "item", index: idx + 1 }), 180);
     } else {
       setTimeout(() => setStep({ type: "description" }), 180);
     }
   }, []);
 
-  const handleSubmit = useCallback(async () => {
+  // Plain function (no useCallback): it must always read the current form state.
+  async function handleSubmit() {
     if (!token) return;
     setSubmitStatus("submitting");
+    setError("");
+    setFieldErrors({});
 
-    const ws2Answers = STUDY2_ITEMS.map((item) => ({
+    const ws2Answers = WS2_ITEMS.map((item) => ({
       itemId: item.id,
       value: answers[item.id] ?? 0,
     }));
@@ -202,26 +229,56 @@ export function GroupSelfRatingQuiz() {
           ws2FilterSelections: filterSelections,
           raterCount,
           shortDescription: description.trim(),
-          websiteUrl: website.trim() || undefined,
-          contactEmail: contactEmail.trim() || undefined,
-          instagramUrl: instagramUrl.trim() || undefined,
-          memberCount: memberCount ? parseInt(memberCount, 10) : undefined,
-          foundedYear: foundedYear ? parseInt(foundedYear, 10) : undefined,
+          // Empty optional fields are sent as null: the group may delete them.
+          longDescription: longDescription.trim() || null,
+          websiteUrl: website.trim() || null,
+          contactEmail: contactEmail.trim() || null,
+          instagramUrl: instagramUrl.trim() || null,
+          memberCount: memberCount ? parseInt(memberCount, 10) : null,
+          foundedYear: foundedYear ? parseInt(foundedYear, 10) : null,
           categoryId: categoryId || undefined,
         }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        setLiveWithoutReview(data.live === true);
         setSubmitStatus("done");
+        return;
+      }
+      setSubmitStatus("idle");
+      const invalid = INFO_FIELDS.filter((f) => data.details?.fieldErrors?.[f]);
+      if (res.status === 422 && invalid.length > 0) {
+        // Show the problems next to the affected inputs.
+        setFieldErrors(Object.fromEntries(invalid.map((f) => [f, true])) as FieldErrors);
+        setError(t("errors.validation"));
+        setStep({ type: "description" });
+      } else if (res.status === 422) {
+        setError(t("errors.validation"));
       } else {
-        setSubmitStatus("idle");
         setError(data.error ?? unknownErrorMsg);
       }
     } catch {
       setSubmitStatus("idle");
       setError(networkErrorMsg);
     }
-  }, [token, answers, filterSelections, raterCount, description, website, unknownErrorMsg, networkErrorMsg]);
+  }
+
+  function clearFieldError(field: InfoField) {
+    setFieldErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  }
+
+  function fieldError(field: InfoField) {
+    if (!fieldErrors[field]) return null;
+    return <p className="text-xs text-destructive">{t(`errors.${field}`)}</p>;
+  }
+
+  const inputClass = (field: InfoField) =>
+    `w-full border-2 ${fieldErrors[field] ? "border-destructive" : "border-foreground/30"} bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors`;
 
   // ── Error ──
   if (loadStatus === "error") {
@@ -257,26 +314,26 @@ export function GroupSelfRatingQuiz() {
         <div className="w-full max-w-[520px] border-4 border-foreground bg-card px-6 py-10 sm:px-8">
           <h1 className="font-heading text-xl uppercase mb-4">{t("done.title")}</h1>
           <p className="text-muted-foreground text-sm">
-            {t("done.text")}
+            {liveWithoutReview ? t("done.textLive") : t("done.textReview")}
           </p>
-          <Link
-            href="/groups"
+          <a
+            href={PUBLIC_SITE_URL}
             className="mt-6 inline-block bg-foreground px-6 py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
           >
-            {t("done.allGroupsButton")}
-          </Link>
+            {t("done.siteButton")}
+          </a>
         </div>
       </div>
     );
   }
 
-  const totalSteps = 2 + STUDY2_ITEMS.length + 2; // filter + items + description + raterCount (intro not counted)
+  const totalSteps = 2 + WS2_ITEMS.length + 2; // filter + items + description + raterCount (intro not counted)
 
   function currentStepIndex(): number {
     if (step.type === "filter") return 1;
     if (step.type === "item") return 2 + step.index;
-    if (step.type === "description") return 2 + STUDY2_ITEMS.length;
-    if (step.type === "raterCount") return 2 + STUDY2_ITEMS.length + 1;
+    if (step.type === "description") return 2 + WS2_ITEMS.length;
+    if (step.type === "raterCount") return 2 + WS2_ITEMS.length + 1;
     return 0;
   }
 
@@ -305,6 +362,14 @@ export function GroupSelfRatingQuiz() {
             >
               {t("intro.startButton")}
             </button>
+            {hasPrefill && (
+              <button
+                onClick={() => setStep({ type: "description" })}
+                className="w-full border-2 border-foreground py-3 font-heading text-sm uppercase tracking-wider hover:bg-foreground/5 transition-colors"
+              >
+                {t("intro.infoOnlyButton")}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -327,7 +392,7 @@ export function GroupSelfRatingQuiz() {
             <p className="mt-1 text-xs text-primary-foreground/50">{t("filter.multi")}</p>
           </div>
           <div className="px-6 py-6 sm:px-8 flex flex-col gap-2">
-            {STUDY2_FILTER.options.map((opt) => {
+            {WS2_FILTER.options.map((opt) => {
               const isOn = filterSelections.includes(opt.attribute);
               return (
                 <button
@@ -367,7 +432,7 @@ export function GroupSelfRatingQuiz() {
 
   // ── Item ──
   if (step.type === "item") {
-    const item = STUDY2_ITEMS[step.index];
+    const item = WS2_ITEMS[step.index];
     const current = answers[item.id] ?? 0;
     const itemNum = step.index + 1;
 
@@ -377,7 +442,7 @@ export function GroupSelfRatingQuiz() {
           <ProgressBar current={currentStepIndex()} total={totalSteps} />
           <div className="bg-foreground text-primary-foreground px-6 py-5 sm:px-8">
             <p className="text-xs uppercase tracking-wider text-primary-foreground/50 mb-1">
-              {t("item.questionOf", { current: itemNum, total: STUDY2_ITEMS.length })}
+              {t("item.questionOf", { current: itemNum, total: WS2_ITEMS.length })}
             </p>
             <p className="text-xs text-primary-foreground/60 mb-2 italic">
               {t("item.memberWouldAgree")}
@@ -401,13 +466,13 @@ export function GroupSelfRatingQuiz() {
               </button>
               <button
                 onClick={() =>
-                  step.index < STUDY2_ITEMS.length - 1
+                  step.index < WS2_ITEMS.length - 1
                     ? setStep({ type: "item", index: step.index + 1 })
                     : setStep({ type: "description" })
                 }
                 className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
               >
-                {tCommon("skip")}
+                {hasPrefill ? t("item.keepAnswer") : tCommon("skip")}
               </button>
             </div>
           </div>
@@ -434,13 +499,14 @@ export function GroupSelfRatingQuiz() {
               <label className="text-sm font-medium">{t("description.category")}</label>
               <select
                 value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                onChange={(e) => { setCategoryId(e.target.value); clearFieldError("categoryId"); }}
+                className={inputClass("categoryId")}
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
+              {fieldError("categoryId")}
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">
@@ -450,44 +516,64 @@ export function GroupSelfRatingQuiz() {
               <textarea
                 rows={3}
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => { setDescription(e.target.value); clearFieldError("shortDescription"); }}
                 maxLength={200}
                 placeholder={t("description.shortDescPlaceholder")}
-                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors resize-none"
+                className={`${inputClass("shortDescription")} resize-none`}
               />
+              {fieldError("shortDescription")}
               <span className="text-xs text-muted-foreground">
                 {t("description.shortDescChars", { count: description.trim().length })}
               </span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium" htmlFor="long-description">
+                {t("description.longDesc")}
+              </label>
+              <textarea
+                id="long-description"
+                rows={6}
+                value={longDescription}
+                onChange={(e) => { setLongDescription(e.target.value); clearFieldError("longDescription"); }}
+                maxLength={3000}
+                placeholder={t("description.longDescPlaceholder")}
+                className={`${inputClass("longDescription")} resize-y`}
+              />
+              {fieldError("longDescription")}
+              <span className="text-xs text-muted-foreground">{t("description.longDescHint")}</span>
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">{t("description.contactEmail")}</label>
               <input
                 type="email"
                 value={contactEmail}
-                onChange={(e) => setContactEmail(e.target.value)}
+                onChange={(e) => { setContactEmail(e.target.value); clearFieldError("contactEmail"); }}
                 placeholder="kontakt@beispiel.de"
-                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                className={inputClass("contactEmail")}
               />
+              {fieldError("contactEmail")}
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">{t("description.website")}</label>
               <input
                 type="url"
                 value={website}
-                onChange={(e) => setWebsite(e.target.value)}
+                onChange={(e) => { setWebsite(e.target.value); clearFieldError("websiteUrl"); }}
                 placeholder="https://…"
-                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                className={inputClass("websiteUrl")}
               />
+              {fieldError("websiteUrl")}
             </div>
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium">{t("description.instagram")}</label>
               <input
                 type="url"
                 value={instagramUrl}
-                onChange={(e) => setInstagramUrl(e.target.value)}
+                onChange={(e) => { setInstagramUrl(e.target.value); clearFieldError("instagramUrl"); }}
                 placeholder="https://instagram.com/euregruppe"
-                className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                className={inputClass("instagramUrl")}
               />
+              {fieldError("instagramUrl")}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
@@ -495,24 +581,26 @@ export function GroupSelfRatingQuiz() {
                 <input
                   type="number"
                   value={memberCount}
-                  onChange={(e) => setMemberCount(e.target.value)}
+                  onChange={(e) => { setMemberCount(e.target.value); clearFieldError("memberCount"); }}
                   placeholder="z.B. 25"
                   min={1}
                   max={10000}
-                  className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                  className={inputClass("memberCount")}
                 />
+                {fieldError("memberCount")}
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium">{t("description.foundedYear")}</label>
                 <input
                   type="number"
                   value={foundedYear}
-                  onChange={(e) => setFoundedYear(e.target.value)}
+                  onChange={(e) => { setFoundedYear(e.target.value); clearFieldError("foundedYear"); }}
                   placeholder="z.B. 2010"
                   min={1900}
                   max={new Date().getFullYear()}
-                  className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+                  className={inputClass("foundedYear")}
                 />
+                {fieldError("foundedYear")}
               </div>
             </div>
             <button
@@ -522,7 +610,7 @@ export function GroupSelfRatingQuiz() {
               {t("description.continueButton")}
             </button>
             <button
-              onClick={() => setStep({ type: "item", index: STUDY2_ITEMS.length - 1 })}
+              onClick={() => setStep({ type: "item", index: WS2_ITEMS.length - 1 })}
               className="text-xs text-center text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
             >
               {t("description.backButton")}

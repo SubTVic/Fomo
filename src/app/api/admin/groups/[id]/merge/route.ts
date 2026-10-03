@@ -21,7 +21,8 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const guard = await requireAdminApi();
+  // Merging deletes data of the source group: super admins only.
+  const guard = await requireAdminApi({ role: "SUPER_ADMIN" });
   if (!guard.ok) return guard.response;
 
   const { id: sourceId } = await params;

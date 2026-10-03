@@ -6,9 +6,10 @@
 
 ## Rollen
 
-- **SUPER_ADMIN:** alles, inklusive Admins verwalten.
-- **EDITOR:** Gruppen bearbeiten, verifizieren, Links erzeugen. (Strengere Trennung,
-  z. B. Backup/Löschen nur für SUPER_ADMIN, folgt mit Umsetzungsplan WP-5.4.)
+- **SUPER_ADMIN:** alles. **Nur** SUPER_ADMINs dürfen: Backup herunterladen, Gruppen
+  löschen, Gruppen zusammenführen, Admins verwalten.
+- **EDITOR:** Gruppen bearbeiten, verifizieren, aktivieren/deaktivieren, Bearbeitungslinks
+  erzeugen, Änderungen ansehen/rückgängig machen, Kontakte ansehen.
 
 Es sollte immer **mindestens zwei** aktive SUPER_ADMINs geben (Urlaub, Weggang).
 
@@ -20,6 +21,11 @@ Es sollte immer **mindestens zwei** aktive SUPER_ADMINs geben (Urlaub, Weggang).
 3. **Entfernen:** Bei Weggang zuerst über „Admin bearbeiten" **deaktivieren** (wirkt
    sofort, auch bei offener Sitzung), später „Admin löschen".
 4. **Passwort vergessen:** „Passwort zurücksetzen" bei der Person.
+
+**Login-Sperre:** Nach 5 falschen Passwörtern innerhalb von 15 Minuten ist die
+E-Mail-Adresse für 15 Minuten gesperrt (Meldung „Zu viele Fehlversuche"). Einfach
+abwarten; danach zählt es neu. Groß-/Kleinschreibung der E-Mail spielt beim Login
+keine Rolle.
 
 Der **letzte aktive SUPER_ADMIN** kann nicht gelöscht, deaktiviert oder herabgestuft
 werden — die App verweigert das mit einer Meldung.

@@ -194,20 +194,20 @@ Die Root-App bleibt Datenerfassungs-Tool (Registrierung + Admin). Offen:
       aktuellen Stand entfernt, steht aber noch in der History des öffentlichen
       Repos. Falls E2 = ja: Owner bereinigt mit `git filter-repo`, danach müssen
       alle Klone neu geklont werden. Siehe Umsetzungsplan §2/WP-1.8.
-- [ ] E2E-Specs sind veraltet und testen stillgelegte Seiten/Endpunkte
-      (`tests/pilot-survey.spec.ts`, `tests/variant-switch.spec.ts`,
-      `tests/study2-integration.spec.ts`, Pfade `/pilot`/`/quiz` in
-      `tests/responsive.spec.ts`, `/api/pilot/submit` und `/api/admin/questions`
-      in `tests/api-validation.spec.ts`) → aufräumen mit Umsetzungsplan WP-5.2.
-- [ ] **Lint-Warnungen seit Next 16 (WP-3.2):** `react-hooks/set-state-in-effect`
-      in `AttributeChecklist.tsx` und `GroupSelfRatingQuiz.tsx` (Vorbelegung aus
-      geladenen Daten → besser beim Laden statt im Effect setzen) und
-      `react-hooks/preserve-manual-memoization` in `DemoTour.tsx` (fällt mit der
-      Demo in Phase 5 weg). Danach beide Regeln in `eslint.config.mjs` wieder
-      auf `error`.
-- [ ] Startseite der Root-App (`src/app/[locale]/(public)/page.tsx`) ist auch unter
-      `/en` deutsch (fest eingebaute Texte) — klären, ob sie mit Phase 5 überhaupt
-      bleibt; sonst Texte nach `messages/*.json`.
+- [ ] **Lint-Warnung seit Next 16 (WP-3.2):** `react-hooks/set-state-in-effect`
+      in `GroupSelfRatingQuiz.tsx` (Vorbelegung aus geladenen Daten → besser beim
+      Laden statt im Effect setzen). Danach die Regel in `eslint.config.mjs`
+      wieder auf `error`.
+- [ ] 🧑 **Löschkonzept abstimmen** (`docs/datenschutz-loeschkonzept.md`): Fristen mit dem
+      StuRa klären (Kontakte, Änderungsprotokoll, Backups, inaktive Gruppen) und bis zum
+      Server-Umzug `scripts/cleanup.ts --apply` regelmäßig von Hand ausführen lassen.
+- [ ] Altdaten in `data/` prüfen (seit WP-5.2 von keinem Code mehr gelesen):
+      `hg_MERGED.csv`, `study2-plan.md`, `group-verification-deploy-checklist.md`,
+      `Pictures/`; dazu `scripts/generate-invites.ts` (einmaliger Einladungs-Export
+      von 2026, erzeugt Alt-Einmallinks). Archivieren oder löschen.
+- [ ] `shadcn` und `tw-animate-css` werden nur noch über `src/app/globals.css`
+      importiert (keine shadcn-Komponenten mehr) — prüfen, ob die CSS-Importe
+      und `components.json` wegkönnen, ohne das Aussehen zu ändern.
 
 ---
 

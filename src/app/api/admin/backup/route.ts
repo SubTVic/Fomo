@@ -8,13 +8,13 @@ import { requireAdminApi } from "@/lib/require-admin";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const guard = await requireAdminApi();
+  // Contains all contact data: super admins only.
+  const guard = await requireAdminApi({ role: "SUPER_ADMIN" });
   if (!guard.ok) return guard.response;
 
   const [
     categories,
     groups,
-    groupPilotAnswers,
     groupInvites,
     groupContacts,
     groupSelfRatings,
@@ -22,20 +22,9 @@ export async function GET() {
     groupChangeLogs,
     groupEditTokens,
     admins,
-    siteConfig,
-    quizSessions,
-    quizTheses,
-    quizThesisAttributes,
-    pilotDimensions,
-    pilotSurveyQuestions,
-    pilotSessions,
-    pilotAnswers,
-    study2Sessions,
-    study2Answers,
   ] = await Promise.all([
     db.category.findMany(),
     db.group.findMany(),
-    db.groupPilotAnswer.findMany(),
     db.groupInvite.findMany(),
     db.groupContact.findMany(),
     db.groupSelfRating.findMany(),
@@ -56,27 +45,17 @@ export async function GET() {
         updatedAt: true,
       },
     }),
-    db.siteConfig.findMany(),
-    db.quizSession.findMany(),
-    db.quizThesis.findMany(),
-    db.quizThesisAttribute.findMany(),
-    db.pilotDimension.findMany(),
-    db.pilotSurveyQuestion.findMany(),
-    db.pilotSession.findMany(),
-    db.pilotAnswer.findMany(),
-    db.study2Session.findMany(),
-    db.study2Answer.findMany(),
   ]);
 
   const snapshot = {
     meta: {
       exportedAt: new Date().toISOString(),
-      version: 1,
+      // 2: pilot, study 2, prototype-quiz and CMS tables dropped (WP-5.3).
+      version: 2,
       note: "Admin password hashes are intentionally omitted.",
     },
     categories,
     groups,
-    groupPilotAnswers,
     groupInvites,
     groupContacts,
     groupSelfRatings,
@@ -84,16 +63,6 @@ export async function GET() {
     groupChangeLogs,
     groupEditTokens,
     admins,
-    siteConfig,
-    quizSessions,
-    quizTheses,
-    quizThesisAttributes,
-    pilotDimensions,
-    pilotSurveyQuestions,
-    pilotSessions,
-    pilotAnswers,
-    study2Sessions,
-    study2Answers,
   };
 
   const filename = `fomo-backup-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.json`;

@@ -60,6 +60,21 @@ auf `main`). Kernfakten für die Arbeit daran:
 - Die dynamische Root-App bleibt internes Datenerfassungs-Tool
   (Registrierung/Admin) — bei Arbeiten an der öffentlichen Seite NICHT anfassen.
 
+## Leitplanken (technisch erzwungen)
+
+`.claude/settings.json` (gilt für jede Claude-Code-Sitzung in diesem Repo):
+
+- **Gesperrt per `permissions.deny`:** `.env*` lesen/schreiben (außer
+  `.env.example`), Backup-/Dump-Dateien lesen, `prisma migrate deploy|reset`,
+  `prisma db push`, `npm run db:migrate`, `npm run import:groups`,
+  Force-Push, Push auf `main`.
+- **Hooks** (`.claude/hooks/`, Logik in `guards.mjs`): blockieren
+  Handänderungen an `static-site/data/groups.json` (wird aus der DB erzeugt →
+  Admin-App, `docs/runbooks/01-gruppe-aendern.md`), DB-URLs auf nicht-lokale
+  Hosts und `git push` auf `main`/ohne Branch auf `main`.
+- Selbsttest: `sh .claude/hooks/test-guards.sh` (im Terminal ausführen).
+- Persönliche Ausnahmen gehören in `.claude/settings.local.json` (nicht im Repo).
+
 ## Tech-Stack
 
 - **Framework:** Next.js 15 (App Router, TypeScript)

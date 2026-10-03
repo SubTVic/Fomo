@@ -7,6 +7,8 @@ on:
   pull_request:
   push:
     branches: [main]
+  # Started by the "Daten-Sync" workflow for its pull request (see sync-groups.yml).
+  workflow_dispatch:
 
 permissions:
   contents: read

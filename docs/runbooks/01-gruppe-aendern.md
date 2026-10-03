@@ -2,7 +2,7 @@
 
 # Runbook: Eine Gruppe ändert ihre Daten (Attribute, Beschreibung, Kontakt, Logo)
 
-**Stand: Oktober 2026** (nach Umsetzungsplan Phase 1–3, WP-4.1, 4.2 und 4.4). Was sich mit Phase 4
+**Stand: Oktober 2026** (nach Umsetzungsplan Phase 1–3, WP-4.1, 4.2, 4.4 und 4.5). Was sich mit Phase 4
 ändert, steht unter „Nach dem Umbau".
 
 ## Wichtig vorab (sonst geht die Änderung schief oder verloren)
@@ -59,7 +59,37 @@ Logos laufen **nicht** über die DB, sondern direkt über die Website-Dateien:
    `/groups/<slug>/`; Leerzeichen als `%20`).
 3. PR → Merge (siehe unten).
 
-## Daten live schalten (nach Fall A oder B)
+## Daten live schalten (nach Fall A oder B) — „Daten-Sync"
+
+Kein Terminal, kein Backup nötig. Am besten **gesammelt** (z. B. einmal pro Woche oder
+nach einer Bestätigungsrunde):
+1. Admin-App → Dashboard → **„Daten-Sync öffnen (GitHub)"** (oder GitHub → Actions →
+   „Daten-Sync") → **„Run workflow"** → grüner Knopf „Run workflow".
+2. Nach ~1 Minute entsteht ein **Pull Request „Daten-Sync <Datum>"**. Er listet, welche
+   Gruppen neu sind, entfernt wurden oder sich geändert haben (welche Felder).
+   Gibt es nichts Neues, entsteht kein PR.
+3. Prüfungen (CI) abwarten → grün → kurz in die Vorschau schauen → **Merge**.
+   Vercel baut, ~2 Minuten später ist es live.
+4. Gegencheck auf www.fomo-dresden.app: Gruppe korrekt, nicht als „unbestätigt"
+   markiert, im Quiz auffindbar.
+
+Logos und EN-Texte stehen nicht in der Datenbank — die bei Bedarf separat nachziehen
+(Fall C, `group-translations.ts`).
+
+**Der Sync bricht ab**, wenn mehr als 20 % der veröffentlichten Gruppen wegfallen würden
+(Schutz vor einer falschen/leeren Datenbank). Ist das gewollt (z. B. große
+Aufräumaktion), beim Starten den Haken „Auch syncen, wenn mehr als 20 % … wegfallen"
+setzen.
+
+**Einrichtung (einmalig, durch eine Person mit Zugriff):** ein langes Zufalls-Token
+erzeugen (`openssl rand -base64 48`) und **gleich** eintragen als
+(a) Umgebungsvariable `EXPORT_TOKEN` im Vercel-Projekt der Admin-App und
+(b) GitHub → Settings → Secrets and variables → Actions → Secret `EXPORT_TOKEN`.
+Außerdem GitHub → Settings → Actions → General → „Allow GitHub Actions to create and
+approve pull requests" einschalten. Läuft die Admin-App woanders, die Actions-Variable
+`EXPORT_URL` auf `<App-URL>/api/admin/export/static-groups` setzen.
+
+### Notfallweg (wenn GitHub Actions oder der Export-Endpunkt nicht gehen)
 
 Braucht einen Rechner mit Node.js + das Repo:
 1. Admin-App → Dashboard → **„Backup herunterladen"** (JSON). ⚠️ **Enthält
@@ -70,18 +100,17 @@ Braucht einen Rechner mit Node.js + das Repo:
    node scripts/export-from-backup.mjs --backup <pfad/zum/backup.json>
    node scripts/validate-data.mjs
    ```
-   `validate-data.mjs` muss ohne Fehler durchlaufen (Warnungen sind ok). Dieselbe
-   Prüfung läuft auch automatisch vor jedem Build — kaputte Daten gehen nicht live.
-3. Logos/EN-Texte, die nur in den Website-Dateien stehen, bei Bedarf nachziehen.
-4. `static-site/data/groups.json` **auf einem Branch** committen → Pull Request →
-   CI muss grün sein → Review → Merge nach `main`. Vercel baut, nach ~2 Min live.
-5. Gegencheck auf www.fomo-dresden.app: Gruppe korrekt, nicht als „unbestätigt"
-   markiert, im Quiz auffindbar.
+3. `static-site/data/groups.json` **auf einem Branch** committen → Pull Request →
+   CI grün → Merge. Backup-Datei danach löschen.
 
 ## Was schiefgehen kann
 
-- „Profil gespeichert", aber live nichts geändert → Export/Commit vergessen, oder
-  Hand-Edit in `groups.json` wurde vom Export überschrieben.
+- „Profil gespeichert", aber live nichts geändert → Daten-Sync nicht gestartet oder
+  dessen PR nicht gemergt, oder ein Hand-Edit in `groups.json` wurde vom Export
+  überschrieben.
+- Daten-Sync rot im Schritt „Export holen" → Secret `EXPORT_TOKEN` fehlt oder passt
+  nicht zur Vercel-Variable; im Schritt „Daten prüfen" → die Meldung nennt Gruppe und
+  Feld.
 - Gruppe nicht im Quiz → sie war noch unbestätigt und wurde nach der Einreichung
   nicht „verifiziert".
 - Build/CI rot mit „Datenprüfung FEHLGESCHLAGEN" → die Meldung nennt Gruppe und Feld.
@@ -91,4 +120,3 @@ Braucht einen Rechner mit Node.js + das Repo:
 ## Nach dem Umbau (Umsetzungsplan Phase 4)
 
 - WP-4.3: Gruppen fordern ihren Link selbst per Mail an (wartet auf E3).
-- WP-4.5: Daten-Sync per GitHub Action statt Backup → Terminal → Commit.

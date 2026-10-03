@@ -18,8 +18,8 @@ exportieren".
 3. Die Gruppe landet als **inaktiv + unbestätigt** in der Admin-App.
 4. Admin-App → „Gruppen" → neue Gruppe öffnen → prüfen → **aktivieren** (Status) →
    **verifizieren**.
-5. Daten live schalten (Backup → Export → Commit, siehe Runbook 01, Abschnitt „Daten
-   live schalten").
+5. Daten live schalten (Daten-Sync, siehe Runbook 01, Abschnitt „Daten live
+   schalten").
 
 ## Weg 2: Admin legt an + lädt die Gruppe zum Gruppencheck ein
 

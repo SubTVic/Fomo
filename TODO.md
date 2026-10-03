@@ -35,8 +35,8 @@ Kontext zum Projekt: `CLAUDE.md` (Root). Anleitungen je Aufgabe:
 Im Live-Report taucht **Rotaract Club Dresden zweimal** in „Meistgeklickte
 Gruppen" auf — die Duplikate klauen sich gegenseitig Klicks und Rankings.
 In der **Admin-App** (dynamische Root-App) je **eine** Kopie deaktivieren,
-dann neu exportieren (`node scripts/export-from-backup.mjs --backup …` in
-`static-site/`, `groups.json` committen).
+dann **Daten-Sync** starten (Admin-Dashboard → „Daten-Sync öffnen", Runbook 01) und
+den entstehenden PR mergen.
 
 | Behalten ✅ | Deaktivieren ❌ | Warum |
 |---|---|---|

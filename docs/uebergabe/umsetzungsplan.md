@@ -921,7 +921,7 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 | 4.2 | Dauerhafter Bearbeitungslink | ✅ | #20 |
 | 4.3 | Link anfordern per Mail | ⬜ | |
 | 4.4 | Formular/Admin entrümpeln | ✅ | #21 |
-| 4.5 | Sync automatisieren (Vercel) | ⬜ | |
+| 4.5 | Sync automatisieren (Vercel) | ✅ | #22 |
 | 4.6 | Kategorien/Übersetzungen | ⬜ | |
 | 4.7 | Eine Item-Quelle | ⬜ | |
 | 5.1 | 🧑 Archiv | ⬜ | – |

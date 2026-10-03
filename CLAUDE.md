@@ -31,12 +31,14 @@ funktionieren. Spaß und Wissenschaftlichkeit sind kein Widerspruch.
 
 ```
 Admin-App (Gruppe bearbeitet per Link / Admin pflegt)
-  → Admin: „Backup herunterladen" (JSON, enthält PII — nie ins Repo!)
-  → cd static-site && node scripts/export-from-backup.mjs --backup <datei>
-  → node scripts/validate-data.mjs
-  → groups.json auf einem Branch committen → PR → CI grün → Merge → ~2 Min live
+  → GitHub Actions „Daten-Sync" (.github/workflows/sync-groups.yml, per Hand gestartet)
+      holt /api/admin/export/static-groups (Bearer EXPORT_TOKEN, nur öffentliches Format)
+      → validate-data.mjs → PR „Daten-Sync <Datum>" mit Änderungsliste
+  → CI grün → Merge → ~2 Min live
 ```
-Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`. Automatisierung: Plan WP-4.5.
+Export-Logik: `src/lib/export/static-groups.ts` (gleiches Format wie der Notfallweg
+`static-site/scripts/export-from-backup.mjs`, ein Test hält beide gleich).
+Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`.
 
 ### Do's & Don'ts der Datenpflege
 
@@ -153,7 +155,8 @@ Akzent #5a8a9a. Fallback-Farben der Kategorien: `static-site/data/categories.jso
 - Route `/pilot` = Studie 2 (verworfen, leitet um); `/api/pilot/*` = Pilot 1 (abgeschlossen).
 - Filter-Attribut `party` = **„Hochschulpolitik & Mitbestimmung"**, nicht „Feiern".
 - `scripts/export-static-data.ts` ist veraltet — die richtigen Exporter sind
-  `static-site/scripts/export-from-backup.mjs` bzw. `scripts/export-static-site-groups.ts`.
+  `src/lib/export/static-groups.ts` (Daten-Sync, `scripts/export-static-site-groups.ts`)
+  und der Notfallweg `static-site/scripts/export-from-backup.mjs`.
 - `APP_MODE` gibt es nicht (nur `APP_LIVE` für die Landingpage der Root-App).
 
 ## Wo was steht

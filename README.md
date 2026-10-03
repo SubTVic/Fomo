@@ -128,7 +128,9 @@ npm run build            # Production build
 npm run lint             # Linting
 npm run test             # Run unit tests (Vitest)
 npx prisma studio        # Database GUI
-npx prisma migrate dev   # Create new migration
+npx prisma migrate dev   # Create new migration (local DB only)
+npm run db:status        # Show pending migrations
+npm run db:migrate       # Apply migrations (deliberately, after a backup — see Deployment)
 npm run import:groups    # Import groups from CSV
 
 # Validation scripts (require exported pilot data in data/archives/)
@@ -236,7 +238,16 @@ The schema covers the **production quiz** (QuizThesis, QuizThesisAttribute, Grou
 2. Create a Postgres database under **Storage**
 3. Set environment variables under **Settings → Environment Variables**
 4. Push to `main` to trigger automatic deployment
-5. Run `npx prisma migrate deploy` locally against the production DB (one-time)
+
+**Database migrations never run during the build.** `npm run build` only runs
+`next build`; a deploy never changes the database. Migrations are applied by a
+person, deliberately and only after a fresh backup:
+
+1. Download a backup (admin area → backup) and store it outside the repository.
+2. Check what is pending: `npm run db:status` (with the production `DATABASE_URL`/`DIRECT_URL`).
+3. Apply: `npm run db:migrate`.
+
+Deploy code that needs a new migration only after the migration has been applied.
 
 ### Docker
 

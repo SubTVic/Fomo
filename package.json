@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma migrate resolve --rolled-back 20260507075628_add_study2_models || true && prisma migrate deploy && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest",
     "import:groups": "npx tsx scripts/import-groups.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:status": "prisma migrate status"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"

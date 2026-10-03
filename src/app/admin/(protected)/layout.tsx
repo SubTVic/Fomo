@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { signOut } from "@/lib/auth";
 import { requireAdminPage } from "@/lib/require-admin";
+import { db } from "@/lib/db";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  await requireAdminPage();
+  const admin = await requireAdminPage();
+  const openChanges = await db.groupChangeLog.count({ where: { reviewedAt: null } });
 
   return (
     <div className="flex min-h-screen flex-col bg-card">
@@ -15,11 +17,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <nav className="flex gap-4 text-sm">
             <Link href="/admin" className="hover:underline">Dashboard</Link>
             <Link href="/admin/groups" className="hover:underline">Gruppen</Link>
+            <Link href="/admin/aenderungen" className="hover:underline">
+              Änderungen{openChanges > 0 ? ` (${openChanges})` : ""}
+            </Link>
             <Link href="/admin/contacts" className="hover:underline">Kontakte</Link>
-            <Link href="/admin/quiz" className="hover:underline">Quiz</Link>
-            <Link href="/admin/pilot" className="hover:underline">Pilot</Link>
-            <Link href="/admin/study2" className="hover:underline">Studie 2</Link>
-            <Link href="/admin/users" className="hover:underline">Admins</Link>
+            {admin.role === "SUPER_ADMIN" && (
+              <Link href="/admin/users" className="hover:underline">Admins</Link>
+            )}
           </nav>
           <form
             action={async () => {

@@ -23,9 +23,10 @@ const nextConfig: NextConfig = {
   // Serve under a subpath if configured (otherwise root). assetPrefix keeps
   // /_next/* assets resolving correctly behind the prefix.
   ...(basePath ? { basePath, assetPrefix: basePath } : {}),
-  // This package intentionally ships no ESLint setup (the root app owns linting).
-  // Skip lint-during-build so the static export stays self-contained.
-  eslint: { ignoreDuringBuilds: true },
+  // This folder is its own project. Without a fixed root, Turbopack picks the
+  // repo root (it has a lockfile too) and pulls in the root app's middleware.
+  turbopack: { root: __dirname },
+  // Linting is a separate step since Next.js 16 (`npm run lint`, eslint.config.mjs).
 };
 
 export default nextConfig;

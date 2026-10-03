@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(!.env.example)",
+      "Edit(.env)",
+      "Edit(.env.*)",
+      "Edit(!.env.example)",
+      "Read(fomo-backup-*.json)",
+      "Read(*.dump)",
+      "Read(*.sql.gz)",
+      "Bash(npx prisma migrate deploy *)",
+      "Bash(npx prisma migrate reset *)",
+      "Bash(npx prisma db push *)",
+      "Bash(prisma migrate deploy *)",
+      "Bash(prisma migrate reset *)",
+      "Bash(prisma db push *)",
+      "Bash(npm run db:migrate *)",
+      "Bash(npm run import:groups *)",
+      "Bash(git push *--force*)",
+      "Bash(git push -f *)",
+      "Bash(git push * -f)",
+      "Bash(git push * -f *)",
+      "Bash(git push origin main *)",
+      "Bash(git push origin HEAD:main *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [{ "type": "command", "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-files.sh" }]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [{ "type": "command", "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-bash.sh" }]
+      }
+    ]
+  }
+}

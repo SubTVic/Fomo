@@ -42,7 +42,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     session({ session, token }) {
-      if (session.user) (session.user as { role?: unknown }).role = token.role;
+      if (session.user) {
+        (session.user as { role?: unknown }).role = token.role;
+        if (token.sub) session.user.id = token.sub;
+      }
       return session;
     },
   },

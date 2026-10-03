@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { db } from "@/lib/db";
+import { requireAdminPage } from "@/lib/require-admin";
 
 export default async function AdminDashboard() {
+  await requireAdminPage();
   const [groupCount, pilotCount] = await Promise.all([
     db.group.count({ where: { isActive: true } }),
     db.pilotSession.count({ where: { completedAt: { not: null } } }),

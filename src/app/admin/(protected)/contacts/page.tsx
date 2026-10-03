@@ -4,8 +4,10 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { requireAdminPage } from "@/lib/require-admin";
 
 export default async function ContactsPage() {
+  await requireAdminPage();
   const contacts = await db.groupContact.findMany({
     include: {
       group: { select: { id: true, name: true, slug: true } },

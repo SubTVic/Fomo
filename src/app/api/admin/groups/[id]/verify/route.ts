@@ -3,17 +3,15 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { RegistrationStatus } from "@prisma/client";
-import { auth } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 
 export async function PATCH(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const guard = await requireAdminApi();
+  if (!guard.ok) return guard.response;
 
   const { id } = await params;
 

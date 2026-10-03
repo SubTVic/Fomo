@@ -2,7 +2,7 @@
 // Admin API: update and delete a quiz thesis
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 import { z } from "zod";
 
@@ -24,8 +24,8 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdminApi();
+  if (!guard.ok) return guard.response;
 
   const { id } = await params;
   const existing = await db.quizThesis.findUnique({ where: { id } });
@@ -69,8 +69,8 @@ export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdminApi();
+  if (!guard.ok) return guard.response;
 
   const { id } = await params;
   const existing = await db.quizThesis.findUnique({ where: { id } });

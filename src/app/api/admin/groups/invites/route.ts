@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Prisma, RegistrationStatus } from "@prisma/client";
 import { db } from "@/lib/db";
-import { auth } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/require-admin";
 import crypto from "crypto";
 
 const InviteSchema = z.object({
@@ -19,10 +19,8 @@ const BulkInviteSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const guard = await requireAdminApi();
+  if (!guard.ok) return guard.response;
 
   let body: unknown;
   try {
@@ -92,10 +90,8 @@ export async function POST(req: NextRequest) {
 
 // GET: List all invites (admin overview)
 export async function GET() {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const guard = await requireAdminApi();
+  if (!guard.ok) return guard.response;
 
   const invites = await db.groupInvite.findMany({
     include: {

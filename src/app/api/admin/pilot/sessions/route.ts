@@ -3,7 +3,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 
 const schema = z.object({
@@ -11,10 +11,8 @@ const schema = z.object({
 });
 
 export async function DELETE(req: NextRequest) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const guard = await requireAdminApi();
+  if (!guard.ok) return guard.response;
 
   const body = await req.json().catch(() => null);
   if (!body) {

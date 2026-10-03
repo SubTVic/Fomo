@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { getPilotDimensionsWithQuestions, getStandaloneQuestions } from "@/lib/queries/pilot";
 import { DeleteSessionButton } from "./DeleteSessionButton";
+import { requireAdminPage } from "@/lib/require-admin";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -45,14 +46,15 @@ const ANSWER_BADGES: Record<
 // ── Page ─────────────────────────────────────────────────────────────
 
 export default async function PilotSessionDetailPage({ params }: Props) {
+  await requireAdminPage();
   const { id } = await params;
 
-  const session = await db.pilotSession.findUnique({
+  const pilotSession = await db.pilotSession.findUnique({
     where: { id },
     include: { answers: true },
   });
 
-  if (!session) notFound();
+  if (!pilotSession) notFound();
 
   const [allDimensions, standaloneQuestions] = await Promise.all([
     getPilotDimensionsWithQuestions(),
@@ -60,27 +62,27 @@ export default async function PilotSessionDetailPage({ params }: Props) {
   ]);
 
   const answerMap = new Map(
-    session.answers.map((a) => [a.questionId, a.value]),
+    pilotSession.answers.map((a) => [a.questionId, a.value]),
   );
 
-  const isCompleted = session.completedAt !== null;
+  const isCompleted = pilotSession.completedAt !== null;
 
   // Parse variant order
   let variantOrder = "–";
-  if (session.variantOrder) {
+  if (pilotSession.variantOrder) {
     try {
-      const parsed = JSON.parse(session.variantOrder) as string[];
+      const parsed = JSON.parse(pilotSession.variantOrder) as string[];
       variantOrder = parsed.join(", ");
     } catch {
-      variantOrder = session.variantOrder;
+      variantOrder = pilotSession.variantOrder;
     }
   }
 
   // Compute duration
   let duration = "–";
-  if (session.completedAt) {
+  if (pilotSession.completedAt) {
     const ms =
-      session.completedAt.getTime() - session.startedAt.getTime();
+      pilotSession.completedAt.getTime() - pilotSession.startedAt.getTime();
     duration = formatDuration(ms);
   }
 
@@ -98,7 +100,7 @@ export default async function PilotSessionDetailPage({ params }: Props) {
       <div className="mb-6 mt-1 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h1 className="font-heading text-2xl uppercase">
-            {session.startedAt.toLocaleDateString("de-DE")}
+            {pilotSession.startedAt.toLocaleDateString("de-DE")}
           </h1>
           <span
             className={`rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -110,49 +112,49 @@ export default async function PilotSessionDetailPage({ params }: Props) {
             {isCompleted ? "Abgeschlossen" : "Abgebrochen"}
           </span>
         </div>
-        <DeleteSessionButton sessionId={session.id} />
+        <DeleteSessionButton sessionId={pilotSession.id} />
       </div>
 
       {/* ── Metadata Card ─────────────────────────────────────────── */}
       <section className="mb-8">
         <div className="border-2 border-foreground bg-card p-6">
           <div className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
-            <MetaField label="Variante" value={session.variant} />
+            <MetaField label="Variante" value={pilotSession.variant} />
             <MetaField label="Varianten-Reihenfolge" value={variantOrder} />
             <MetaField
               label="Präferenz"
-              value={session.preferredVariant || "–"}
+              value={pilotSession.preferredVariant || "–"}
             />
             <MetaField
               label="Begründung"
-              value={session.preferenceReason || "–"}
+              value={pilotSession.preferenceReason || "–"}
             />
-            <MetaField label="Semester" value={session.semester || "–"} />
-            <MetaField label="Mitglied" value={session.isMember || "–"} />
+            <MetaField label="Semester" value={pilotSession.semester || "–"} />
+            <MetaField label="Mitglied" value={pilotSession.isMember || "–"} />
             <MetaField
               label="Gruppen"
-              value={session.groupNames || "–"}
+              value={pilotSession.groupNames || "–"}
             />
             <MetaField
               label="Gestartet"
-              value={formatDateTime(session.startedAt)}
+              value={formatDateTime(pilotSession.startedAt)}
             />
             <MetaField
               label="Abgeschlossen"
               value={
-                session.completedAt
-                  ? formatDateTime(session.completedAt)
+                pilotSession.completedAt
+                  ? formatDateTime(pilotSession.completedAt)
                   : "–"
               }
             />
             <MetaField label="Dauer" value={duration} />
             <MetaField
               label="Was war verwirrend"
-              value={session.feedbackConfusing || "–"}
+              value={pilotSession.feedbackConfusing || "–"}
             />
             <MetaField
               label="Was hat gefehlt"
-              value={session.feedbackMissing || "–"}
+              value={pilotSession.feedbackMissing || "–"}
             />
           </div>
         </div>

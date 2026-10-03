@@ -2,10 +2,12 @@
 
 import { getAllQuizThesesForAdmin } from "@/lib/queries/quiz";
 import { QuizThesisManager } from "./QuizThesisManager";
+import { requireAdminPage } from "@/lib/require-admin";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminQuizPage() {
+  await requireAdminPage();
   const theses = await getAllQuizThesesForAdmin();
 
   const serialized = theses.map((t) => ({

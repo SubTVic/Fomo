@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Admin API: trigger CSV import of Hochschulgruppen
 
-import { auth } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import fs from "fs";
@@ -84,10 +84,8 @@ function toNullable(val: string): string | null {
 }
 
 export async function POST() {
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 });
-  }
+  const guard = await requireAdminApi();
+  if (!guard.ok) return guard.response;
 
   const csvPath = path.resolve(process.cwd(), "data/hg_MERGED.csv");
   if (!fs.existsSync(csvPath)) {

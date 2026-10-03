@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 
 const updateSchema = z.object({
@@ -12,19 +12,25 @@ const updateSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
+const LAST_SUPER_ADMIN_ERROR =
+  "Der letzte aktive Super-Admin kann nicht gelöscht, deaktiviert oder herabgestuft werden.";
+
+/** True if this admin is the only remaining active SUPER_ADMIN. */
+async function isLastActiveSuperAdmin(admin: { role: string; isActive: boolean }) {
+  if (admin.role !== "SUPER_ADMIN" || !admin.isActive) return false;
+  const activeSuperAdmins = await db.admin.count({
+    where: { role: "SUPER_ADMIN", isActive: true },
+  });
+  return activeSuperAdmins <= 1;
+}
+
 // PUT /api/admin/users/[id] — update admin
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const currentRole = (session.user as { role?: string }).role;
-  if (currentRole !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const guard = await requireAdminApi({ role: "SUPER_ADMIN" });
+  if (!guard.ok) return guard.response;
 
   const { id } = await params;
 
@@ -40,6 +46,13 @@ export async function PUT(
   const existing = await db.admin.findUnique({ where: { id } });
   if (!existing) {
     return NextResponse.json({ error: "Admin not found" }, { status: 404 });
+  }
+
+  const losesSuperAdmin =
+    parsed.data.isActive === false ||
+    (parsed.data.role !== undefined && parsed.data.role !== "SUPER_ADMIN");
+  if (losesSuperAdmin && (await isLastActiveSuperAdmin(existing))) {
+    return NextResponse.json({ error: LAST_SUPER_ADMIN_ERROR }, { status: 409 });
   }
 
   // Check email uniqueness if changing email
@@ -77,19 +90,13 @@ export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const currentRole = (session.user as { role?: string }).role;
-  if (currentRole !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const guard = await requireAdminApi({ role: "SUPER_ADMIN" });
+  if (!guard.ok) return guard.response;
 
   const { id } = await params;
 
   // Prevent self-deletion
-  if (session.user.id === id) {
+  if (guard.admin.id === id) {
     return NextResponse.json(
       { error: "You cannot delete your own account" },
       { status: 400 },
@@ -99,6 +106,10 @@ export async function DELETE(
   const existing = await db.admin.findUnique({ where: { id } });
   if (!existing) {
     return NextResponse.json({ error: "Admin not found" }, { status: 404 });
+  }
+
+  if (await isLastActiveSuperAdmin(existing)) {
+    return NextResponse.json({ error: LAST_SUPER_ADMIN_ERROR }, { status: 409 });
   }
 
   await db.admin.delete({ where: { id } });

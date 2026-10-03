@@ -14,7 +14,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { RegistrationStatus } from "@prisma/client";
-import { auth } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 import { z } from "zod";
 
@@ -89,8 +89,8 @@ function strVal(attr: { value: string }, allowed: string[], fallback: string): s
 // ── Route ────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdminApi();
+  if (!guard.ok) return guard.response;
 
   let raw: unknown;
   try { raw = await req.json(); } catch {

@@ -5,8 +5,10 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { getPilotDimensionsWithQuestions, getStandaloneQuestions } from "@/lib/queries/pilot";
 import { DimensionManager } from "./DimensionManager";
+import { requireAdminPage } from "@/lib/require-admin";
 
 export default async function PilotDimensionsPage() {
+  await requireAdminPage();
   const [dimensions, standalone] = await Promise.all([
     getPilotDimensionsWithQuestions(),
     getStandaloneQuestions(),

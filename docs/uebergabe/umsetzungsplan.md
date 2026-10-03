@@ -899,8 +899,8 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 
 | WP | Titel | Status | PR |
 |---|---|---|---|
-| 1.1 | Root-Build reparieren | ✅ | wp-1-1-fix-root-build |
-| 1.2 | Admin-Auth absichern | ⬜ | |
+| 1.1 | Root-Build reparieren | ✅ | #3 |
+| 1.2 | Admin-Auth absichern | ✅ | wp-1-2-require-admin |
 | 1.3 | Next.js-Patch 15.5.x | ⬜ | |
 | 1.4 | Datenleck `/groups`, alte Endpunkte | ⬜ | |
 | 1.5 | Formular-Bugs | ⬜ | |

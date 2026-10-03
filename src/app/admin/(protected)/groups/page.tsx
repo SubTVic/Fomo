@@ -12,6 +12,7 @@ import { GenerateInvitesButton } from "./GenerateInvitesButton";
 import { InviteButton } from "./InviteButton";
 import { DeleteGroupButton } from "./DeleteGroupButton";
 import { ToggleActiveButton } from "./[id]/ToggleActiveButton";
+import { requireAdminPage } from "@/lib/require-admin";
 
 const MATCHING_ATTRS = [
   "career",
@@ -55,6 +56,7 @@ interface AdminGroupsPageProps {
 }
 
 export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageProps) {
+  await requireAdminPage();
   const { filter } = await searchParams;
   const allGroups = await getAllGroupsForAdmin();
 

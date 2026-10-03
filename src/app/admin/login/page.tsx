@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { redirect } from "next/navigation";
-import { auth, signIn } from "@/lib/auth";
+import { signIn } from "@/lib/auth";
+import { getActiveAdmin } from "@/lib/require-admin";
 import { AuthError } from "next-auth";
 
 export default async function LoginPage({
@@ -9,8 +10,9 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  const session = await auth();
-  if (session?.user) redirect("/admin");
+  // Same DB-backed check as the protected area, so a deactivated admin with a
+  // still-valid session token is not redirected back and forth.
+  if (await getActiveAdmin()) redirect("/admin");
 
   const { error } = await searchParams;
 

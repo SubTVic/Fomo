@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { computePilotStatistics } from "@/app/api/admin/pilot/statistics/route";
+import { computePilotStatistics } from "@/lib/queries/pilot-statistics";
 import { PilotDashboardClient } from "./PilotDashboardClient";
 import ExportButton from "./ExportButton";
+import { requireAdminPage } from "@/lib/require-admin";
 
 export const dynamic = "force-dynamic";
 
 export default async function PilotDashboard() {
+  await requireAdminPage();
   const [stats, recentSessions, feedback] = await Promise.all([
     computePilotStatistics(),
     db.pilotSession.findMany({

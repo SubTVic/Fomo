@@ -9,6 +9,7 @@ import { STUDY2_ITEMS, STUDY2_FILTER } from "@/lib/study2/items";
 import { GroupEditForm } from "./GroupEditForm";
 import { ToggleActiveButton } from "./ToggleActiveButton";
 import { MergeButton } from "./MergeButton";
+import { requireAdminPage } from "@/lib/require-admin";
 
 interface AdminGroupDetailPageProps {
   params: Promise<{ id: string }>;
@@ -17,6 +18,7 @@ interface AdminGroupDetailPageProps {
 export default async function AdminGroupDetailPage({
   params,
 }: AdminGroupDetailPageProps) {
+  await requireAdminPage();
   const { id } = await params;
 
   const [group, categories] = await Promise.all([

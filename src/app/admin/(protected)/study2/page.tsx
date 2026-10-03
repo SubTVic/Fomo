@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { requireAdminPage } from "@/lib/require-admin";
 
 export const dynamic = "force-dynamic";
 
 export default async function Study2Dashboard() {
+  await requireAdminPage();
   const [total, withGroup, recent] = await Promise.all([
     db.study2Session.count(),
     db.study2Session.count({ where: { groupId: { not: null } } }),

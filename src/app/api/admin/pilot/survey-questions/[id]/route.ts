@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 import { z } from "zod";
 
@@ -17,10 +17,8 @@ interface RouteContext {
 }
 
 export async function PUT(req: NextRequest, ctx: RouteContext) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const guard = await requireAdminApi();
+  if (!guard.ok) return guard.response;
 
   const { id } = await ctx.params;
   const body = await req.json();
@@ -39,10 +37,8 @@ export async function PUT(req: NextRequest, ctx: RouteContext) {
 }
 
 export async function DELETE(_req: NextRequest, ctx: RouteContext) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const guard = await requireAdminApi();
+  if (!guard.ok) return guard.response;
 
   const { id } = await ctx.params;
   const existing = await db.pilotSurveyQuestion.findUnique({ where: { id } });

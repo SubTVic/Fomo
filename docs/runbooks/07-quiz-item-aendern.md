@@ -22,6 +22,7 @@ Begleitung (Entwickler:in oder KI mit Review). Nur den **Wortlaut** einer Frage 
    („v3") statt Einzeländerung.
 2. Items in **beiden** Quellen ändern: `data/working-set-v2.json` (Registrierung) und
    `static-site/data/quiz.json` (Website) + EN in `static-site/src/lib/quiz-translations.ts`.
+   `node scripts/check-items-sync.mjs` (läuft auch in der CI) muss grün sein.
 3. Share-Links versionieren (z. B. Präfix im `?r=`-Wert), damit alte Links erkannt werden.
 4. Bestehende Gruppen-Antworten migrieren oder Gruppen um Nachbewertung bitten
    ([Runbook 08](08-jaehrliche-bestaetigungsrunde.md)).

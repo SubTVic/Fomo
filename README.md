@@ -48,7 +48,7 @@ Offene Aufgaben: siehe [TODO.md](TODO.md) · Anleitungen für Betrieb und Wartun
 - **95 TU Dresden student groups** in the public directory (data export 17.08.2026: 51 verified, 44 unverified)
 - **Self-rating:** each group answers the same 21 items + 8 filters as the students; only these verified profiles enter the matching
 - **Unverified groups** (not yet registered) get a profile derived from scraped data — shown in the directory only, never in the quiz
-- **Token-based edit links** — groups review and update their profile via a secure link (created by an admin, single use, 30 days)
+- **Reusable edit links** — groups review and update their profile via a personal link (created by an admin, valid 12 months, revocable)
 - **Self-registration flow** — 6-step form for groups not yet in the system, including a responsible-person confirmation with contact list storage
 - **Admin contact list** — all responsible contacts saved with consent confirmation, exportable as CSV
 
@@ -65,6 +65,8 @@ FOMO ran a **pilot study** to validate the question set and test 4 different UI 
 
 **Result:** Classic won with 45% preference. 104 sessions completed, Working Set v1.1 frozen.
 
+The pilot, study 2, the demo tour and the prototype quiz have since been removed from the app (plan WP-5.2); their data was archived outside the repository before removal.
+
 ### Security
 
 - Input validation with Zod schemas on all API routes
@@ -77,7 +79,7 @@ FOMO ran a **pilot study** to validate the question set and test 4 different UI 
 
 | Layer | Technology |
 | --- | --- |
-| Framework | [Next.js 15](https://nextjs.org/) (App Router, TypeScript) |
+| Framework | [Next.js 16](https://nextjs.org/) (App Router, TypeScript) |
 | Styling | [Tailwind CSS 4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) |
 | i18n | [next-intl](https://next-intl-docs.vercel.app/) (DE/EN, `localePrefix: "as-needed"`) |
 | Database | [PostgreSQL 16](https://www.postgresql.org/) via [Prisma ORM](https://www.prisma.io/) |
@@ -134,11 +136,7 @@ npx prisma studio        # Database GUI
 npx prisma migrate dev   # Create new migration (local DB only)
 npm run db:status        # Show pending migrations
 npm run db:migrate       # Apply migrations (deliberately, after a backup — see Deployment)
-# npm run import:groups  # Legacy CSV import — DESTRUCTIVE, overwrites groups. Do not use.
-
-# Validation scripts (require exported pilot data in data/archives/)
-npx tsx scripts/validation/self-recognition-test.ts --verbose
-npx tsx scripts/validation/item-discrimination-analysis.ts --output data/item-empirical-validity-report.md
+node scripts/check-items-sync.mjs   # Registration items = website items
 ```
 
 ## Project Structure
@@ -147,44 +145,44 @@ npx tsx scripts/validation/item-discrimination-analysis.ts --output data/item-em
 src/
 ├── app/
 │   ├── [locale]/           # i18n routes (DE/EN)
-│   │   └── (public)/       # Public pages (landing, group register)
-│   │       └── groups/register/    # Token-based & self-registration (6-step form)
+│   │   └── (public)/       # Public pages (landing, group register, edit link)
+│   │       ├── groups/register/    # Token-based & self-registration (6-step form)
+│   │       └── gruppe/bearbeiten/  # Reusable edit link
 │   ├── admin/              # Admin dashboard (protected)
 │   │   └── (protected)/
+│   │       ├── aenderungen/ # Change log with undo
 │   │       ├── contacts/   # Contact list (responsible persons, CSV export)
-│   │       └── groups/     # Group management, invite links, verify
+│   │       ├── groups/     # Group management, edit links, verify, merge
+│   │       └── users/      # Admin accounts
 │   └── api/
 │       ├── auth/           # Auth.js handler
 │       ├── groups/         # Group registration & attribute submission
-│       └── admin/          # Admin: groups, invites, scraper import, verify, backup
-├── components/
-│   ├── quiz/               # Legacy prototype quiz (page redirects to the live site; removal: plan WP-5.2)
-│   ├── variants/           # Pilot study UI variants (legacy)
-│   ├── ui/                 # shadcn/ui components
-│   └── shared/             # Shared layout components
+│       └── admin/          # Admin: groups, edit links, verify, changes, export, backup
+├── components/shared/      # Shared layout components
 ├── lib/
-│   ├── study2/items.ts             # The 21 WS2 items used by the registration form
+│   ├── ws2-items.ts                # The 21 WS2 items used by the registration form
+│   ├── change-log.ts               # Change log (snapshot, diff, undo)
+│   ├── edit-token.ts               # Reusable edit links
+│   ├── export/static-groups.ts     # Export for the public site (Daten-Sync)
 │   ├── require-admin.ts            # Admin guard (session + DB active/role check)
 │   ├── normalize-url.ts            # Website/Instagram normalization for group input
-│   ├── quiz/                       # Legacy v1 matching (prototype quiz only)
 │   ├── rate-limit.ts               # In-memory rate limiter
 │   ├── db.ts                       # Prisma singleton
 │   └── auth.ts                     # Auth.js configuration
-└── types/                  # Shared TypeScript types
+└── proxy.ts                # Locale routing (next-intl)
 
 data/
 ├── working-set-v1.json             # 17-item quiz question set (v1.1)
 ├── hsg-profiles-scraped.json       # 83 group profiles (AI-scraped attributes)
 ├── group-attributes-schema.json    # Attribute definitions + scraper prompts
-├── item-empirical-validity-report.md
-└── archives/                       # Pilot data exports
+├── working-set-v2.json             # The 21 items + 8 filters (registration; = static-site/data/quiz.json)
+└── item-empirical-validity-report.md
 
 scripts/
-├── scraper/                # AI scraper (Anthropic API + web search)
-├── validation/
-│   ├── self-recognition-test.ts    # Tests if members' answers rank their group top
-│   └── item-discrimination-analysis.ts
-└── import-*.ts             # Data import utilities
+├── scraper/                        # AI scraper (Anthropic API + web search)
+├── export-static-site-groups.ts    # Export groups.json from a local DB
+├── check-items-sync.mjs            # Registration items = website items
+└── generate-invites.ts             # One-off invite generator from 2026 (legacy one-time links)
 
 prisma/
 ├── schema.prisma           # Data model
@@ -208,7 +206,7 @@ No user data reaches a server. (The older weighted v1 formula in `src/lib/quiz/`
 
 ### Data Model
 
-Core tables: **Group**, **Category**, **GroupSelfRating** + answers (the group's 21-item profile and filters), **GroupInvite** (edit-link tokens), **GroupContact**, **Admin**. Pilot, study 2 and prototype-quiz tables (PilotSession, Study2Session, QuizThesis, …) are kept for archival until plan WP-5.3. The 17 boolean attributes on Group are legacy; they only derive profiles for unverified groups.
+Core tables: **Group**, **Category**, **GroupSelfRating** + answers (the group's 21-item profile and filters), **GroupInvite** (edit-link tokens), **GroupContact**, **Admin**. Pilot, study 2, prototype-quiz and CMS tables were dropped in plan WP-5.3 (data archived outside the repository beforehand). The 17 boolean attributes on Group are legacy; they only derive profiles for unverified groups.
 
 **GroupContact** stores responsible persons who self-registered a group (`isResponsible: true`, `source: "self-registration"`). The admin dashboard exposes a contact list view with CSV export and a one-click JSON backup of the entire database.
 
@@ -219,7 +217,6 @@ Core tables: **Group**, **Category**, **GroupSelfRating** + answers (the group's
 | `DATABASE_URL` | Yes | PostgreSQL connection string |
 | `NEXTAUTH_SECRET` | Yes | Random string (`openssl rand -base64 32`) |
 | `NEXTAUTH_URL` | Yes | App URL (e.g., `http://localhost:3000`) |
-| `APP_LIVE` | No | `true` shows the "start quiz" CTA (links to the live site) on the root landing page; default `false` shows the registration CTAs. (There is no `APP_MODE`.) |
 | `ANTHROPIC_API_KEY` | Scraper only | API key for AI-based group profile scraping |
 | `DIRECT_URL` | Vercel only | Direct (non-pooled) DB connection for migrations |
 

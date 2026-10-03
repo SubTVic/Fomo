@@ -9,7 +9,9 @@ sofort bei Sicherheitswarnungen (GitHub „Dependabot alerts", `npm audit`).
 ## Ablauf (je App: Root und `static-site/`)
 
 1. Branch anlegen, z. B. `chore/updates-2027-03`.
-2. Node-Version prüfen: `.nvmrc` (aktuell 24 = LTS bis 04/2028).
+2. Node-Version prüfen: `.nvmrc` (aktuell 24 = LTS bis 04/2028). Ein Wechsel betrifft
+   `.nvmrc`, `engines` in beiden `package.json` (+ Lockfiles), `static-site/Dockerfile`,
+   `static-site/docker-compose.yml` und die Node-Einstellung beider Vercel-Projekte.
 3. `npm outdated` ansehen; **Patch-/Minor-Updates** zusammen: `npm update`.
    **Major-Updates** (Next.js, React, Prisma, next-auth) einzeln und mit eigenem PR.
 4. `npm audit` — nur `npm audit fix` **ohne** `--force`.
@@ -21,6 +23,6 @@ sofort bei Sicherheitswarnungen (GitHub „Dependabot alerts", `npm audit`).
 
 ## Termine im Blick behalten
 
-- **Next.js 15: Support-Ende 21.10.2026** → statische Seite ist auf Next.js 16 (WP-3.1),
-  Root-App folgt (Umsetzungsplan WP-3.2).
+- **Next.js 16:** beide Apps seit Oktober 2026 (WP-3.1/3.2). Nächstes Major-Upgrade wieder
+  mit Codemod (`npx @next/codemod@latest upgrade`) und Browser-Stichprobe.
 - **Prisma 7** bringt Breaking Changes — eigenes Paket, nicht mit anderen Umbauten mischen.

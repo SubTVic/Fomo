@@ -10,7 +10,7 @@
 #   docker run -p 8080:80 fomo-static
 
 # ---- build stage ----
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 
 # NEXT_PUBLIC_* are inlined at build time → must be build args, not runtime env.

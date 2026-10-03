@@ -92,7 +92,7 @@ Admin-UI (Backup-JSON herunterladen, enthält PII!)
 
 - **Root-App-Build kaputt** seit 30.06.: `scripts/export-static-site-groups.ts:117`
   (TypeScript-Fehler). Bis zum Fix ist die dynamische App nicht deploybar.
-- **Auth-Lücke** in der Root-App (next-auth-Beta „fail-open" per Cookie) — vor
+- **Auth-Lücke** in der Root-App (next-auth-Beta „fail-open") — vor
   produktivem Einsatz schließen (`requireAdmin()`-Helper + `npm update next next-auth`).
 - **`/groups` der Root-App leakt** interne Kontaktfelder — auf `select` umstellen.
 - **Datenstand 17.08.2026:** 95 Gruppen / 51 verifiziert / 44 unbestätigt. Offene

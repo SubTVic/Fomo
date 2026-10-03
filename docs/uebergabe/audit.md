@@ -7,6 +7,9 @@
 lokal im Browser durchgespielt, 5 „frische KI-Instanzen" (Persona B) auf typische
 Aufgaben losgelassen, GitHub-Deployments/Workflows per API geprüft.
 
+**Ergänzend:** `recherche-umsetzung.md` (Web-Recherche, Zielbild StuRa-Server) und
+`umsetzungsplan.md` (Arbeitspakete für die KI-gestützte Umsetzung).
+
 Kennzeichnung: **[V]** selbst verifiziert (ausprobiert / im Code gesehen) ·
 **[?]** Vermutung, nicht verifizierbar (Vercel-/Account-Interna) → sammelt sich
 in „Offene Fragen". Verweise als `Datei:Zeile`, relativ zum Repo-Root bzw. zu
@@ -27,8 +30,8 @@ Größte Hürden für den StuRa:
    scheitert an einem TypeScript-Fehler (`scripts/export-static-site-groups.ts:117`).
    fomo-pi.vercel.app läuft auf dem Stand von Ende Juni; jede Änderung (Env, Secret,
    Sicherheitsupdate) bliebe hängen.
-2. **Kritische Auth-Lücke** [V]: Admin-APIs lassen sich mit einem selbst gesetzten
-   Cookie ohne Passwort ansprechen (next-auth-Beta „fail-open").
+2. **Kritische Auth-Lücke** [V]: Admin-APIs sind unter bestimmten, von außen
+   auslösbaren Bedingungen ohne Passwort erreichbar (next-auth-Beta „fail-open").
 3. **Daten gehen nur von Hand live** [V]: Backup → Skript → Commit. Letzter Sync
    17.08.; seitdem ist nichts Neues online, auch nicht kurz vor der Erstiwoche.
 4. **Jede Gruppen-Korrektur wirft die Gruppe aus dem Quiz**, bis ein Admin sie neu
@@ -144,13 +147,13 @@ läuft stabil, solange `groups.json` gepflegt wird.
   „nach Launch nötig?" in `docs/uebergabe/` (Rohdaten der Subagenten); Kern bleibt:
   Registrierung + Token-Self-Rating + Admin-Gruppen; **Pilot, Studie 2, Demo-Tour,
   altes Root-Quiz, SiteConfig-CMS sind Altlasten** (~61 % des Codes in `src/`).
-- **Auth (kritisch) [V]:** 20 Admin-API-Routen prüfen nur `if (!session)`. Mit
-  next-auth `5.0.0-beta.30` liefert `auth()` bei einem Konfigurationsfehler ein
-  Objekt statt `null`. Diesen Fehler löst jede:r selbst aus, indem ein Cookie
-  `authjs.callback-url=x` mitgeschickt wird. **Lokal reproduziert:** ohne Cookie
-  `401`, mit Cookie `200` + echte Gruppendaten auf `/api/admin/groups/pending`.
-  Nicht betroffen: Routen mit `session?.user` (`backup`, `users/*`, `import-groups`)
-  [V]. Upstream: GHSA-8fpg-xm3f-6cx3; Fix = `requireAdmin()`-Helper + next-auth-Update.
+- **Auth (kritisch) [V]:** Viele Admin-API-Routen prüfen die Anmeldung zu schwach;
+  zusammen mit einer bekannten Lücke der eingesetzten next-auth-Beta sind sie ohne
+  Passwort erreichbar. **Lokal reproduziert** (nur gegen eine lokale Test-Instanz).
+  Reproduktionsdetails bewusst **nicht** in diesem öffentlichen Repo; sie liegen dem
+  Projektteam vor. Fix: zentraler `requireAdmin()`-Helper (prüft `session?.user`,
+  Rolle und Aktiv-Status in der DB) + Update auf `next-auth@5.0.0-beta.32`
+  (siehe `umsetzungsplan.md` WP-1.2).
 - **Rollen:** faktisch keine Trennung — EDITOR darf fast alles (Backup mit allen PII,
   Löschen, destruktiver CSV-Import). Rollencheck nur bei `/admin/users*`
   (`api/admin/users/route.ts:15`) [V]. Schutz des letzten SUPER_ADMIN greift nicht
@@ -435,7 +438,7 @@ Hobby-ToS klären · entscheiden behalten vs. Formular (Option 2→3/6) · Altla
 
 **Was ist verifiziert, was vermutet?**
 - **Selbst nachgeprüft [V]:** Root-Build-Fehler (lokal reproduziert, Zeile bestätigt);
-  Auth-Lücke (lokaler PoC: ohne Cookie 401, mit Cookie 200 + echte Daten); `/groups`-
+  Auth-Lücke (lokaler Nachweis gegen Test-Instanz); `/groups`-
   PII-Leak (Testwerte im HTML); Gruppen-Edit-Flow inkl. „Re-Submit → unverifiziert"
   (lokal im Browser + DB); `isVerified`-Logik der Exporter; ESG-Link-Regression (Git);
   Deploy-Hook-Secret fehlt (GitHub-Job-Log); Root-App-Deployments seit 30.06. alle

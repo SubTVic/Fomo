@@ -2,8 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { requireAdminPage } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 import { CreateAdminForm } from "./CreateAdminForm";
 import { EditAdminButton } from "./EditAdminButton";
@@ -11,11 +10,7 @@ import { ResetPasswordButton } from "./ResetPasswordButton";
 import { DeleteAdminButton } from "./DeleteAdminButton";
 
 export default async function AdminUsersPage() {
-  const session = await auth();
-  if (!session?.user) redirect("/admin/login");
-
-  const role = (session.user as { role?: string }).role;
-  if (role !== "SUPER_ADMIN") redirect("/admin");
+  const currentAdmin = await requireAdminPage({ role: "SUPER_ADMIN" });
 
   const admins = await db.admin.findMany({
     select: {
@@ -30,7 +25,7 @@ export default async function AdminUsersPage() {
     orderBy: { createdAt: "asc" },
   });
 
-  const currentUserId = session.user.id as string;
+  const currentUserId = currentAdmin.id;
 
   return (
     <div className="mx-auto max-w-5xl">

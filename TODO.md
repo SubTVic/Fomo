@@ -1,10 +1,14 @@
 # FOMO – Offene Aufgaben
 
-**Stand: 12. Juli 2026** — die **eine zentrale To-do-Datei** des Projekts.
+**Stand: Oktober 2026** (Status-Tabelle; einzelne Abschnitte unten älter) — die
+**eine zentrale To-do-Datei** des Projekts. Der laufende Umbau (Sicherheit, Tests,
+Datenpflege, Umzug auf den StuRa-Server) ist in Arbeitspakete gegliedert:
+`docs/uebergabe/umsetzungsplan.md` (§9 = Fortschritt).
 (Hier ist `static-site/docs/AUFGABEN-NACH-AUDIT.md` aufgegangen; die alte
 Phasen-To-do von Mai 2026 ist unten unter „Erledigt/Verworfen" archiviert.)
 
-Kontext zum Projekt: `CLAUDE.md` (Root). Betrieb ohne Programmierkenntnisse:
+Kontext zum Projekt: `CLAUDE.md` (Root). Anleitungen je Aufgabe:
+`docs/runbooks/`. Betrieb ohne Programmierkenntnisse:
 `static-site/docs/BETRIEBSHANDBUCH.md`.
 
 ---
@@ -15,11 +19,12 @@ Kontext zum Projekt: `CLAUDE.md` (Root). Betrieb ohne Programmierkenntnisse:
 | --- | --- |
 | **Öffentliche Seite** `static-site/` | ✅ **Live auf www.fomo-dresden.app** (Vercel, deployt bei jedem Push auf `main`) |
 | Matching v2 (21 Items + 8 Filter, client-side) | ✅ Live — nur verifizierte Gruppen im Quiz |
-| Datenstand | 41 verifiziert / 52 unbestätigt / 93 gesamt (Export vom 11.07.) |
+| Datenstand | 51 verifiziert / 44 unbestätigt / 95 gesamt (Export vom 17.08.) |
 | Umami-Tracking + Live-Report `/report/` | ✅ Läuft mit echten Daten (Env-Vars in Vercel gesetzt, 11.07.) |
-| Dynamische Root-App (Registrierung/Admin) | 🔄 Internes Datenerfassungs-Tool, läuft weiter |
+| Dynamische Root-App (Registrierung/Admin) | 🔄 Internes Tool; Build, Admin-Schutz, Formular repariert (Plan Phase 1), Altlasten-Entfernung folgt (Phase 5) |
+| Qualitäts-Netz | ✅ CI auf jedem PR, Datenprüfung vor jedem Build, Tests, KI-Leitplanken (Plan Phase 2) |
 | Studie 2 (Mitglieder-Validierung) | ❌ Verworfen — ersetzt durch anonyme Live-Daten (Umami) |
-| Nächster Meilenstein | **Erstiwoche September 2026** = Haupt-Traffic |
+| Nächster Meilenstein | Datenpflege reparieren (Plan Phase 4); Next.js 16 + Node 24 erledigt (Phase 3) |
 
 ---
 
@@ -30,12 +35,12 @@ Kontext zum Projekt: `CLAUDE.md` (Root). Betrieb ohne Programmierkenntnisse:
 Im Live-Report taucht **Rotaract Club Dresden zweimal** in „Meistgeklickte
 Gruppen" auf — die Duplikate klauen sich gegenseitig Klicks und Rankings.
 In der **Admin-App** (dynamische Root-App) je **eine** Kopie deaktivieren,
-dann neu exportieren (`node scripts/export-from-backup.mjs --backup …` in
-`static-site/`, `groups.json` committen).
+dann **Daten-Sync** starten (Admin-Dashboard → „Daten-Sync öffnen", Runbook 01) und
+den entstehenden PR mergen.
 
 | Behalten ✅ | Deaktivieren ❌ | Warum |
 |---|---|---|
-| `rotaract-club-dresden` (dresden-vorstand@rotaract.de) | `rotaract-club-dresden-2` (felix.a.mack@…) | **Wichtigster Fall: beide verifiziert, konkurrieren im Quiz.** Offizielle Vorstands-Mail behalten. Im Zweifel Rotaract fragen, welche Anmeldung die „echte" ist. |
+| `rotaract-club-dresden` (dresden-vorstand@rotaract.de) | `rotaract-club-dresden-2` (private Adresse eines Mitglieds) | **Wichtigster Fall: beide verifiziert, konkurrieren im Quiz.** Offizielle Vorstands-Mail behalten. Im Zweifel Rotaract fragen, welche Anmeldung die „echte" ist. |
 | `technische-universitaet-dresden-robotik-arbeitsgruppe` (verifiziert, 3 Bewertungen) | `tu-dresden-robotik-ag-turag` (unbestätigt) | Verifizierte Kopie ist besser. Logo ist auf beide Slugs verankert, bleibt sichtbar. |
 | `kritmed` | `kritmed-dresden` | Beide unbestätigt — nimm die, unter der die Gruppe erreichbar ist. |
 
@@ -151,9 +156,29 @@ GitHub-Secret (1.3) aktualisieren, alten Key löschen.
       Item-Diagnose im `/report/` markiert aktuell 4 Streichkandidaten
       (einseitige Items, u. a. „Hands-on" 77 % Zustimmung, „Einsteiger" 73 %).
       Bei n=26 noch nicht entscheidungsreif — mit Erstiwochen-Daten neu bewerten.
-- [ ] **Gamification-Backlog** (siehe CLAUDE.md): Ergebnis-Reveal,
+- [ ] **Gamification-Backlog:** Ergebnis-Reveal,
       Persönlichkeits-Profil, Badges, Share-Cards, Leaderboard — erst nach
       der Erstiwoche, wenn Daten da sind.
+- [ ] **Link-Prüfung scharf schalten:** `static-site/scripts/validate-data.mjs`
+      lässt 7 verifizierte Gruppen mit kaputten Links (`KNOWN_BAD_URLS`) vorerst
+      nur warnen. Nach dem nächsten Daten-Sync mit korrigierten URLs (WP-1.8)
+      die Liste leeren — dann bricht jeder kaputte Link den Build ab.
+- [ ] **Lint-Warnungen `react-hooks/set-state-in-effect` abbauen** (seit Next 16,
+      WP-3.1): `BackLink`, `Navbar`, `QuizFlow` lesen `window.location` erst nach
+      dem Laden (z. B. auf `useSyncExternalStore` umstellen); `ItemScreen` und
+      `ResultsScreen` setzen Animations-State im Effect zurück (besser per `key`
+      bzw. im Klick-Handler). Danach die Regel in `eslint.config.mjs` wieder auf
+      `error` stellen. Verhalten mit dem Quiz-Durchlauf (375 px) gegenprüfen.
+- [ ] **Kategorieseiten: Überschrift bricht mitten im Wort** (375 px): „HOCHSCHULGRUPPEN“
+      ist in Archivo Black `text-3xl` breiter als die Spalte und bricht ohne
+      Trennstrich („HOCHSCHULGRUPP / EN“). Betrifft alle `/groups/kategorie/*`.
+      Lösung z. B. `text-2xl sm:text-4xl` oder `&shy;` in den SEO-Titeln
+      (`data/categories.json`). Gefunden bei WP-4.6.
+- [ ] **Self-Hosting: echte 404 statt Startseite** (`static-site/nginx.conf`):
+      `try_files … /index.html` liefert unbekannte Pfade als Startseite mit
+      Status 200 aus (Soft-404, schlecht für Suchmaschinen). Beim Server-Stack
+      (Plan WP-6.2) auf `try_files $uri $uri/ $uri.html =404;` umstellen und testen.
+      Betrifft nur Docker/nginx, nicht Vercel.
 
 ---
 
@@ -164,7 +189,25 @@ Die Root-App bleibt Datenerfassungs-Tool (Registrierung + Admin). Offen:
 - [ ] Gruppen-Invite-Links generieren + mailen → Ziel: möglichst viele
       `GroupSelfRating`-Registrierungen vor der Erstiwoche (siehe §1.6).
 - [ ] Duplikate deaktivieren (siehe §1.1) — passiert in dieser App.
-- [ ] Optional: EN-Übersetzungen für Quiz-Thesen im Admin nachtragen.
+- [ ] **Git-History bereinigen (Entscheidung E2, nur Repo-Owner):** Die Datei
+      `data/admin-export.json` (Pilot-Sessions mit Freitexten) ist aus dem
+      aktuellen Stand entfernt, steht aber noch in der History des öffentlichen
+      Repos. Falls E2 = ja: Owner bereinigt mit `git filter-repo`, danach müssen
+      alle Klone neu geklont werden. Siehe Umsetzungsplan §2/WP-1.8.
+- [ ] **Lint-Warnung seit Next 16 (WP-3.2):** `react-hooks/set-state-in-effect`
+      in `GroupSelfRatingQuiz.tsx` (Vorbelegung aus geladenen Daten → besser beim
+      Laden statt im Effect setzen). Danach die Regel in `eslint.config.mjs`
+      wieder auf `error`.
+- [ ] 🧑 **Löschkonzept abstimmen** (`docs/datenschutz-loeschkonzept.md`): Fristen mit dem
+      StuRa klären (Kontakte, Änderungsprotokoll, Backups, inaktive Gruppen) und bis zum
+      Server-Umzug `scripts/cleanup.ts --apply` regelmäßig von Hand ausführen lassen.
+- [ ] Altdaten in `data/` prüfen (seit WP-5.2 von keinem Code mehr gelesen):
+      `hg_MERGED.csv`, `study2-plan.md`, `group-verification-deploy-checklist.md`,
+      `Pictures/`; dazu `scripts/generate-invites.ts` (einmaliger Einladungs-Export
+      von 2026, erzeugt Alt-Einmallinks). Archivieren oder löschen.
+- [ ] `shadcn` und `tw-animate-css` werden nur noch über `src/app/globals.css`
+      importiert (keine shadcn-Komponenten mehr) — prüfen, ob die CSS-Importe
+      und `components.json` wegkönnen, ohne das Aussehen zu ändern.
 
 ---
 

@@ -19,7 +19,7 @@
 
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -54,7 +54,7 @@ const filterLabel = new Map(quiz.filters.options.map((o) => [o.attribute, o.labe
 // Matching replica — KEEP IN SYNC with src/lib/matching.ts (scoreGroup).
 // Small on purpose so drift is easy to spot in review.
 // ---------------------------------------------------------------------------
-function scoreGroup(userAnswers, userFilters, group) {
+export function scoreGroup(userAnswers, userFilters, group) {
   const groupFilters = group.selfRating.filterSelections ?? [];
   const explicitFilterMatch =
     userFilters.length > 0 &&
@@ -81,7 +81,7 @@ function fnv1a(str) {
 }
 /** Full positive-score ranking, same order as the site (fair tie-breaking:
  *  raw fit → explicit filter match → per-user hash → name). */
-function rankAll(userAnswers, userFilters) {
+export function rankAll(userAnswers, userFilters, pool = groups) {
   const userKey =
     Object.entries(userAnswers)
       .map(([id, v]) => id + v)
@@ -89,7 +89,7 @@ function rankAll(userAnswers, userFilters) {
       .join("") +
     "|" +
     [...userFilters].sort().join(",");
-  return groups
+  return pool
     .map((g) => ({ g, d: scoreGroup(userAnswers, userFilters, g), h: fnv1a(`${g.slug}|${userKey}`) }))
     .filter((m) => m.d.score > 0)
     .sort(
@@ -102,11 +102,11 @@ function rankAll(userAnswers, userFilters) {
     .map(({ g, d }) => ({ g, score: d.score }));
 }
 
-function topFive(userAnswers, userFilters) {
+export function topFive(userAnswers, userFilters, pool = groups) {
   // KEEP IN SYNC with topWithTies in src/lib/matching.ts: the first 5 plus all
   // boundary ties (cap 10) — the same set the results screen shows and the
   // quiz-result-group event records.
-  const positive = rankAll(userAnswers, userFilters);
+  const positive = rankAll(userAnswers, userFilters, pool);
   if (positive.length <= 5) return positive;
   let end = 5;
   while (end < positive.length && end < 10 && positive[end].score === positive[4].score) end++;
@@ -114,7 +114,7 @@ function topFive(userAnswers, userFilters) {
 }
 
 /** Decode the compact ?r= result string (see src/lib/results.ts). */
-function decodeR(r) {
+export function decodeR(r) {
   const [a, f = ""] = String(r).split("-");
   if (!a || a.length !== quiz.items.length || !/^[012]+$/.test(a)) return null;
   const answers = {};
@@ -927,29 +927,32 @@ tip.style.left=x+'px';tip.style.top=(e.clientY+16)+'px';});
 </body></html>`;
 }
 
-// ---------------------------------------------------------------------------
-// Fail-soft by design: this also runs inside the Vercel build (prebuild), and
-// a flaky Umami API must never block a site deploy — degrade to the
-// simulation-only report instead of exiting non-zero.
-let data;
-try {
-  data = await fetchAll();
-} catch (e) {
-  console.error(`⚠️  Umami-Abruf fehlgeschlagen (${e.message}) — Bericht ohne Live-Daten.`);
-  data = { live: false, error: e.message };
+// Run only when executed directly — tests import the matching replica above.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  // ---------------------------------------------------------------------------
+  // Fail-soft by design: this also runs inside the Vercel build (prebuild), and
+  // a flaky Umami API must never block a site deploy — degrade to the
+  // simulation-only report instead of exiting non-zero.
+  let data;
+  try {
+    data = await fetchAll();
+  } catch (e) {
+    console.error(`⚠️  Umami-Abruf fehlgeschlagen (${e.message}) — Bericht ohne Live-Daten.`);
+    data = { live: false, error: e.message };
+  }
+  console.error(`→ Simulation mit ${SIM_N.toLocaleString("de-DE")} Profilen …`);
+  const sim = simulate();
+  mkdirSync(dirname(OUT) || ".", { recursive: true });
+  try {
+    writeFileSync(OUT, buildHtml(data, sim));
+  } catch (e) {
+    // Even a template bug must not break the deploy — write a stub instead.
+    console.error(`⚠️  Report-Rendering fehlgeschlagen (${e.message}) — schreibe Platzhalter.`);
+    writeFileSync(
+      OUT,
+      `<!doctype html><html lang="de"><meta charset="utf-8"><meta name="robots" content="noindex"><title>FOMO Report</title><p>Report konnte nicht erzeugt werden: ${esc(e.message)}</p>`,
+    );
+  }
+  console.error(`✅ Bericht geschrieben → ${OUT}`);
+  if (!data.live) console.error("   (nur Bias-Simulation — für alle Sektionen Umami-Zugang setzen)");
 }
-console.error(`→ Simulation mit ${SIM_N.toLocaleString("de-DE")} Profilen …`);
-const sim = simulate();
-mkdirSync(dirname(OUT) || ".", { recursive: true });
-try {
-  writeFileSync(OUT, buildHtml(data, sim));
-} catch (e) {
-  // Even a template bug must not break the deploy — write a stub instead.
-  console.error(`⚠️  Report-Rendering fehlgeschlagen (${e.message}) — schreibe Platzhalter.`);
-  writeFileSync(
-    OUT,
-    `<!doctype html><html lang="de"><meta charset="utf-8"><meta name="robots" content="noindex"><title>FOMO Report</title><p>Report konnte nicht erzeugt werden: ${esc(e.message)}</p>`,
-  );
-}
-console.error(`✅ Bericht geschrieben → ${OUT}`);
-if (!data.live) console.error("   (nur Bias-Simulation — für alle Sektionen Umami-Zugang setzen)");

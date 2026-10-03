@@ -15,3 +15,9 @@ next-env.d.ts
 .vercel
 fomo-report.html
 public/report/
+
+# Backups / DB dumps — may contain personal data, never commit
+fomo-backup-*.json
+*backup*.json
+*.dump
+*.sql.gz

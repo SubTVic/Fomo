@@ -3,19 +3,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 
 // GET /api/admin/users — list all admins
 export async function GET() {
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const role = (session.user as { role?: string }).role;
-  if (role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const guard = await requireAdminApi({ role: "SUPER_ADMIN" });
+  if (!guard.ok) return guard.response;
 
   const admins = await db.admin.findMany({
     select: {
@@ -34,7 +28,8 @@ export async function GET() {
 }
 
 const createSchema = z.object({
-  email: z.string().email(),
+  // Stored lower-case: login normalizes the address the same way.
+  email: z.string().trim().toLowerCase().email(),
   name: z.string().min(1).optional(),
   password: z.string().min(8),
   role: z.enum(["SUPER_ADMIN", "EDITOR"]),
@@ -42,14 +37,8 @@ const createSchema = z.object({
 
 // POST /api/admin/users — create new admin
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  const role = (session.user as { role?: string }).role;
-  if (role !== "SUPER_ADMIN") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const guard = await requireAdminApi({ role: "SUPER_ADMIN" });
+  if (!guard.ok) return guard.response;
 
   const body = await req.json();
   const parsed = createSchema.safeParse(body);

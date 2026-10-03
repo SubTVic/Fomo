@@ -175,7 +175,7 @@ git pull
 
 | Symptom | Ursache / Lösung |
 |---|---|
-| `update-data.sh` bricht bei „Validation FAILED" ab | `groups.json`/`quiz.json` fehlerhaft – Meldung lesen, Datei korrigieren. Live-Seite bleibt unberührt. |
+| `update-data.sh` bricht bei „Datenprüfung FEHLGESCHLAGEN" ab | `groups.json`/`quiz.json` fehlerhaft – Meldung lesen, Datei korrigieren. Live-Seite bleibt unberührt. |
 | Seite zeigt 404 / leer | Läuft FOMO unter einem Subpfad? `NEXT_PUBLIC_BASE_PATH` setzen und neu bauen. |
 | Assets laden nicht hinter Reverse-Proxy | `proxy_pass` ohne Pfad-Rewrite nutzen; bei Subpfad `NEXT_PUBLIC_BASE_PATH` korrekt setzen. |
 | Analytics zählt nicht | `UMAMI_WEBSITE_ID` gesetzt **und neu gebaut**? Script-URL erreichbar? |

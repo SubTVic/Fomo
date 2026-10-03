@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 // Pflichtangaben nach § 5 DDG (ehem. TMG) und § 18 Abs. 2 MStV.
+// Same operator details as the registration app (src/lib/legal.ts) — change both.
 // Betrieben als Privatperson.
 export default function ImpressumPage() {
   return (

@@ -128,8 +128,18 @@ export function GroupEditForm({
     setBoolAttrs((prev) => ({ ...prev, [key]: !prev[key] }));
   }
 
+  const slugChanged = slug !== group.slug;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (
+      slugChanged &&
+      !window.confirm(
+        `Slug wirklich von „${group.slug}“ auf „${slug}“ ändern?\n\nDas bricht die Logo-Zuordnung, die englische Übersetzung und alle geteilten Links auf diese Gruppe, bis sie nachgezogen sind.`,
+      )
+    ) {
+      return;
+    }
     setSaving(true);
     setFeedback(null);
 
@@ -150,6 +160,7 @@ export function GroupEditForm({
       language: language || null,
       eventFrequency: eventFrequency || null,
       groupSize: groupSize || null,
+      ...(slugChanged ? { confirmSlugChange: true } : {}),
     };
 
     try {
@@ -220,6 +231,16 @@ export function GroupEditForm({
             pattern="^[a-z0-9-]+$"
             className={inputClass}
           />
+          {slugChanged ? (
+            <p className="mt-1 text-xs font-medium text-red-700">
+              Achtung: Ein neuer Slug bricht Logo-Zuordnung (logos.json), englische Übersetzung
+              und geteilte Links auf diese Gruppe. Nur ändern, wenn es sein muss.
+            </p>
+          ) : (
+            <p className="mt-1 text-xs text-muted-foreground">
+              Teil der Profil-URL. Nicht ändern (bricht Logo, Übersetzung und Links).
+            </p>
+          )}
         </div>
       </div>
 

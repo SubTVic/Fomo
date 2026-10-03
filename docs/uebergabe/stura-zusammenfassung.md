@@ -66,7 +66,7 @@ seitdem sind Änderungen der Gruppen **nicht online**.
   Domain-Verwaltung, Kontakt-Postfach. Am besten auf StuRa-/YETI-Konten, nicht privat.
 - **Wer ist im Notfall ansprechbar?** (Altteam, YETI, technische Hilfe)
 - Die beiliegenden Unterlagen: ausführlicher Bericht (`audit.md`), Anleitungen
-  (`runbooks/`), Projekt-Doku (`CLAUDE.md.entwurf`), Betriebshandbuch.
+  (`docs/runbooks/`), Projekt-Doku (`CLAUDE.md`), Betriebshandbuch.
 
 ## Wen fragt man?
 

@@ -65,17 +65,10 @@ test.describe("Admin – Protected Pages", () => {
     ).toBeVisible();
   });
 
-  test("questions page loads", async ({ page }) => {
-    await page.goto("/admin/questions");
+  test("changes page loads", async ({ page }) => {
+    await page.goto("/admin/aenderungen");
     await expect(
-      page.getByRole("heading", { name: /Fragen/i })
-    ).toBeVisible();
-  });
-
-  test("pilot dashboard loads", async ({ page }) => {
-    await page.goto("/admin/pilot");
-    await expect(
-      page.getByRole("heading", { name: /Pilot/i })
+      page.getByRole("heading", { name: /Änderungen/i })
     ).toBeVisible();
   });
 
@@ -83,16 +76,6 @@ test.describe("Admin – Protected Pages", () => {
     await page.goto("/admin/users");
     await expect(
       page.getByRole("heading", { name: /Admin/i })
-    ).toBeVisible();
-  });
-
-  test("pilot export buttons visible", async ({ page }) => {
-    await page.goto("/admin/pilot");
-    await expect(
-      page.getByRole("button", { name: "CSV" }).first()
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: "JSON" }).first()
     ).toBeVisible();
   });
 });

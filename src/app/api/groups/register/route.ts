@@ -6,6 +6,7 @@ import { RegistrationStatus } from "@prisma/client";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { isRateLimited, getClientKey } from "@/lib/rate-limit";
+import { isHttpUrl, normalizeInstagramUrl, normalizeWebsiteUrl } from "@/lib/normalize-url";
 
 function normalizeName(name: string): string {
   return name
@@ -61,8 +62,8 @@ const RegisterSchema = z.object({
   contactEmail: z.string().email(),
   contactPerson: z.string().max(100).optional(),
   contactPersonRole: z.string().max(100).optional(),
-  websiteUrl: z.string().max(500).optional(),
-  instagramUrl: z.string().max(200).optional(),
+  websiteUrl: z.preprocess(normalizeWebsiteUrl, z.string().max(500).refine(isHttpUrl).optional().or(z.literal(""))),
+  instagramUrl: z.preprocess(normalizeInstagramUrl, z.string().max(200).refine(isHttpUrl).optional().or(z.literal(""))),
 
   // Struktur
   memberCount: z.string().optional(),

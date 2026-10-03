@@ -7,4 +7,9 @@ export default defineConfig({
     // Mirror the "@/*" path alias from tsconfig.json.
     alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
   },
+  test: {
+    // Unit tests only; Playwright specs in tests/ run via `npm run test:e2e`.
+    include: ["src/**/*.test.ts"],
+    exclude: ["tests/**", "static-site/**", ".claude/**", "node_modules/**"],
+  },
 });

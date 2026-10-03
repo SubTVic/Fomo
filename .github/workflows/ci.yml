@@ -1,0 +1,75 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# Build, typecheck, lint and test both apps on every pull request and on main.
+# Needs no secrets: the root app builds against a dummy database URL.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  # Started by the "Daten-Sync" workflow for its pull request (see sync-groups.yml).
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-site:
+    name: static-site
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: static-site
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: static-site/package-lock.json
+      - run: npm ci
+      - name: Validate data
+        run: node scripts/validate-data.mjs
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Lint
+        run: npm run lint
+      - name: Unit tests
+        run: npm test
+      - name: Build
+        run: npm run build
+
+  root:
+    name: root
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Dummy values: the build must never need (or touch) a real database.
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      DIRECT_URL: postgresql://ci:ci@localhost:5432/ci
+      AUTH_SECRET: ci-dummy-secret
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npx prisma generate
+      - name: Quiz items in sync (registration = website)
+        run: node scripts/check-items-sync.mjs
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Lint
+        run: npx eslint src scripts prisma tests
+      - name: Unit tests
+        run: npm test
+      - name: Build
+        run: npx next build

@@ -10,9 +10,10 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-// PLACEHOLDER: An die echten Anbieter-Angaben anpassen ([ … ]). Der Text ist
-// auf die statische FOMO-Seite zugeschnitten (kein Login, kein Tracking per
-// Default, clientseitiges Matching). Vor dem Launch juristisch prüfen lassen.
+// Tailored to the static site (no login, client-side matching, optional Umami).
+// The registration/admin app has its own privacy page (src/app/[locale]/(public)/
+// datenschutz/page.tsx); the operator details must match there and in the imprint.
+// Scope of the statistics: decision E7 (Umsetzungsplan §2) — unchanged until then.
 export default function DatenschutzPage() {
   return (
     <div className="mx-auto w-full max-w-[760px] px-4 py-10 sm:px-6">
@@ -28,7 +29,7 @@ export default function DatenschutzPage() {
             <strong className="text-navy"> keiner Person zugeordnet</strong>. Sofern die
             Reichweitenmessung aktiviert ist, werden deine Quiz-Antworten zusätzlich in
             <strong className="text-navy"> anonymer, aggregierter Form</strong> zur Verbesserung des
-            Angebots erfasst (ohne Identifikationsmerkmal) – Details unten unter „Reichweitenmessung".
+            Angebots erfasst (ohne Identifikationsmerkmal) – Details unten unter „Reichweitenmessung“.
           </p>
         </section>
 
@@ -81,12 +82,13 @@ E-Mail: fomo@yeti-dresden.org`}
           <h2 className="font-heading text-lg text-navy">Reichweitenmessung (optional)</h2>
           <p className="mt-2">
             Sofern aktiviert, nutzt FOMO <strong className="text-navy">Umami</strong> – eine
-            cookielose Statistik ohne personenbezogene Profile und ohne Einwilligungsbanner. Erfasst
+            cookielose Statistik ohne personenbezogene Profile und ohne Einwilligungsbanner. Betrieben
+            wird sie derzeit als Dienst „Umami Cloud“ (Umami Software, Inc., USA). Erfasst
             werden anonyme Ereignisse ohne personenbeziehbare Kennung: dass ein Quiz gestartet,
             Frage für Frage durchlaufen und abgeschlossen wurde, welche Gruppen dabei als
             Ergebnis vorgeschlagen wurden, welche Gruppen-Links angeklickt
             werden (aus dem Browsen, den Ergebnissen oder von Profilseiten), Bedienelemente wie die
-            Vergleichs-Ansicht, Sprachumschaltung, der Klick auf „Gruppe registrieren" oder das
+            Vergleichs-Ansicht, Sprachumschaltung, der Klick auf „Gruppe registrieren“ oder das
             optionale 👍/👎-Feedback, die freiwillige
             Angabe, ob du bereits Mitglied einer Hochschulgruppe bist (und welcher), und – zur
             Verbesserung des Frage- und Matching-Konzepts – die{" "}
@@ -122,7 +124,7 @@ E-Mail: fomo@yeti-dresden.org`}
           </p>
         </section>
 
-        <p className="text-xs text-muted">Stand: Juli 2026</p>
+        <p className="text-xs text-muted">Stand: Oktober 2026</p>
       </div>
     </div>
   );

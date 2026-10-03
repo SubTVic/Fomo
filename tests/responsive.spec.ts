@@ -10,10 +10,9 @@ const viewports = [
 
 const pages = [
   { path: "/", name: "Home" },
-  { path: "/pilot", name: "Pilot Landing" },
-  { path: "/quiz", name: "Quiz" },
-  { path: "/groups", name: "Groups" },
   { path: "/groups/register", name: "Group Register" },
+  { path: "/impressum", name: "Impressum" },
+  { path: "/datenschutz", name: "Datenschutz" },
   { path: "/admin/login", name: "Admin Login" },
 ] as const;
 

@@ -21,7 +21,7 @@ export const TRACKED_GROUP_FIELDS = [
   "name", "slug", "shortDescription", "longDescription", "categoryId",
   "contactEmail", "websiteUrl", "instagramUrl", "memberCount", "meetingSchedule",
   "motto", "foundedYear", "isActive", "isVerified", "registrationStatus",
-  "language", "eventFrequency", "groupSize", "confirmedAttributes",
+  "language", "eventFrequency", "groupSize",
   "career", "tech", "socialImpact", "party", "religion", "sports", "networking",
   "arts", "music", "timeLow", "handsOn", "outdoor", "international",
   "beginnerFriendly", "competitive", "financialCost", "leadershipOpportunities",
@@ -124,7 +124,7 @@ export async function applySnapshotValues(db: Db, groupId: string, values: Snaps
   const groupData: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(values)) {
     if (!isTrackedField(key)) continue;
-    groupData[key] = key === "confirmedAttributes" && value === null ? Prisma.DbNull : value;
+    groupData[key] = value;
   }
   if (Object.keys(groupData).length > 0) {
     await db.group.update({ where: { id: groupId }, data: groupData });
@@ -221,6 +221,7 @@ const FIELD_LABELS: Record<string, string> = {
   language: "Sprache",
   eventFrequency: "Event-Häufigkeit",
   groupSize: "Gruppengröße",
+  // Column dropped in WP-5.3; label kept for older log entries.
   confirmedAttributes: "Bestätigte Attribute (alt)",
   [RATING]: "Selbsteinschätzung vorhanden",
   [RATER_COUNT]: "Anzahl Ausfüllende",

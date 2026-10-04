@@ -21,20 +21,6 @@ const quizPath = getArg("--quiz", "data/quiz.json");
 const categoriesPath = getArg("--categories", "data/categories.json");
 const translationsPath = getArg("--translations", "data/group-translations.json");
 
-// Verified groups whose links were already broken when URL checking was
-// introduced (Oct 2026). They only warn until the next data sync fixes them
-// (see TODO.md) — every OTHER broken link of a verified group fails the build.
-// Remove entries as soon as the export contains the corrected URLs.
-const KNOWN_BAD_URLS = new Set([
-  "aias-dresden-e-v",
-  "dresdner-interessenverband-fuer-aussen-und-sicherheitspolitik-dias",
-  "effektiver-altruismus",
-  "evangelische-studierendengemeinde-dresden-esg",
-  "folkloretanzensemble-thea-maass-der-tu-dresden",
-  "progressiv-am-campus",
-  "studentische-wasserwacht-dresden",
-]);
-
 const errors = [];
 const warnings = [];
 const err = (m) => errors.push(m);
@@ -89,7 +75,7 @@ for (const g of groups) {
     const url = g[field];
     if (!url || isHttpUrl(url)) continue;
     const msg = `${where}: ${field} "${url}" ist kein gültiger Link (muss mit https:// beginnen)`;
-    if (verified && !KNOWN_BAD_URLS.has(g.slug)) err(msg);
+    if (verified) err(msg);
     else warn(msg);
   }
 

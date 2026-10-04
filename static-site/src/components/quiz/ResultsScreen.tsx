@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Group, MatchResult, QuizFilters } from "@/lib/types";
-import { topWithTies } from "@/lib/matching";
+import { MIN_ACTIVE_ANSWERS, topWithTies } from "@/lib/matching";
 import { GERMAN_ONLY_NOTE, groupCategory, groupShortText, isGermanOnly } from "@/lib/group-copy";
 import { track, EVENTS } from "@/lib/analytics";
 import { withUtm, fomoMailto } from "@/lib/utm";
@@ -27,6 +27,7 @@ const INITIAL_RESULTS = 5;
 
 export function ResultsScreen({
   matches,
+  answeredCount,
   itemCount,
   filters,
   resultsParam,
@@ -60,12 +61,16 @@ export function ResultsScreen({
     return () => clearTimeout(t);
   }, [revealed, ranked.length, tab]);
 
+  const tooFewAnswers = answeredCount < MIN_ACTIVE_ANSWERS;
+
   // Zero-hit rate: too-strict filters or unclear answers produce no result at
-  // all — the single most actionable signal for tuning filters/items.
+  // all — the single most actionable signal for tuning filters/items. The
+  // answer-minimum gate is counted separately so the two causes stay apart.
   useEffect(() => {
-    if (allMatches.length === 0) track(EVENTS.resultsZeroHits);
+    if (tooFewAnswers) track(EVENTS.resultsTooFewAnswers, { answered: answeredCount });
+    else if (allMatches.length === 0) track(EVENTS.resultsZeroHits);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allMatches.length === 0]);
+  }, [tooFewAnswers, allMatches.length === 0]);
 
   function selectTab(next: "groups" | "compare") {
     track(EVENTS.resultsTab, { tab: next });
@@ -93,6 +98,9 @@ export function ResultsScreen({
           again: "Start over",
           edit: "Change answers",
           allGroups: "All groups",
+          tooFewTitle: "Not enough clear answers yet",
+          tooFew: (n: number, min: number) =>
+            `You agreed or disagreed with ${n} of the statements. We need at least ${min} for a meaningful match — with mostly "neutral", every group looks equally good.`,
         }
       : {
           title: "Dein Ergebnis",
@@ -107,8 +115,41 @@ export function ResultsScreen({
           again: "Von vorne beginnen",
           edit: "Antworten ändern",
           allGroups: "Alle Gruppen",
+          tooFewTitle: "Noch zu wenige klare Antworten",
+          tooFew: (n: number, min: number) =>
+            `Du hast bei ${n} Aussagen zugestimmt oder abgelehnt. Für ein aussagekräftiges Ergebnis brauchen wir mindestens ${min} — bei fast nur „Neutral" passt jede Gruppe gleich gut.`,
         };
   const prefix = lang === "en" ? "/en" : "";
+
+  // Below the minimum the score is noise (all-neutral = every group 50 %,
+  // 1–2 answers = "100 %" matches) — ask for more signal instead of ranking.
+  if (tooFewAnswers) {
+    return (
+      <div className="animate-fade-up">
+        <h1 className="text-3xl text-navy sm:text-4xl">{copy.title}</h1>
+        <div className="mt-5 border-poster bg-card p-6">
+          <h2 className="font-heading text-lg text-navy">{copy.tooFewTitle}</h2>
+          <p className="mt-2 text-body">{copy.tooFew(answeredCount, MIN_ACTIVE_ANSWERS)}</p>
+        </div>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={onEdit}
+            className="border-poster bg-navy px-6 py-3 text-center font-heading text-sky transition-colors hover:bg-navy-hover"
+          >
+            {copy.edit}
+          </button>
+          <button
+            type="button"
+            onClick={onRestart}
+            className="border-poster bg-surface px-6 py-3 text-center font-heading text-navy transition-colors hover:bg-card"
+          >
+            {copy.again}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-up">

@@ -76,8 +76,10 @@ Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`.
   (`score = round((1 − Σ|user − group| / (n · 2)) · 100)`), Filter als **harte**
   Bedingung, ohne aktive Antworten 50. Sortierung nach ungerundetem Fit, dann
   expliziter Filtertreffer, dann Hash (fair, aber deterministisch pro Antworten).
-  Angezeigt: Top 5 + Gleichstände, max. 10. Es gibt **keine** Gewichtsformel und
-  **keine** „≥ 5 Antworten"-Schwelle (beides Altbestand aus v1).
+  Angezeigt: Top 5 + Gleichstände, max. 10. **Mindestregel:** unter 5 nicht-neutralen
+  Antworten (`MIN_ACTIVE_ANSWERS`) zeigt die Ergebnisseite einen Hinweis statt eines
+  Rankings (Event `results-too-few-answers`). Es gibt **keine** Gewichtsformel
+  (Altbestand aus v1).
 - `static-site/scripts/report.mjs` hat eine Kopie des Matchings; ein Paritätstest
   (`static-site/src/lib/__tests__/report-parity.test.ts`) hält sie synchron.
 - **Item-Reihenfolge, IDs und Filternamen NICHT ändern** ohne Migration: `?r=`-Links

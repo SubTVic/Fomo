@@ -29,11 +29,12 @@ brauchen.
 | `quiz-complete` | Ergebnisse erreicht | #beantwortete (nicht-neutrale) Items, #Filter |
 | `quiz-response` | Ergebnisse erreicht | **alle 21 Antworten (−1/0/1) + gewählte Filter** — siehe Hinweis unten |
 | `quiz-result-group` | Ergebnisse erreicht | je ein Event pro initial angezeigter Gruppe (Top 5 inkl. punktgleicher an der Grenze): Slug, Rang, Score → „welche Gruppen kommen raus, wie oft?" (feuert nur bei echtem Abschluss, nicht beim Öffnen geteilter Links) |
-| `quiz-edit` | „Antworten ändern" auf der Ergebnisseite | – |
+| `quiz-edit` | „Antworten ändern" auf der Ergebnisseite | – (der erneute Durchlauf feuert **kein** zweites `quiz-item-view`/`quiz-complete`/`quiz-response` — seit Okt. 2026, vorher zählte jede Korrektur als weiterer Abschluss) |
 | `quiz-restart` | „Von vorne beginnen" | – |
 | `results-tab` | Wechsel Gruppen/Vergleichen | gewählter Tab |
 | `results-show-more` | „Weitere anzeigen"/„Weniger anzeigen" | neuer Zustand |
 | `results-zero-hits` | 0 Treffer angezeigt | – |
+| `results-too-few-answers` | Ergebnis zurückgehalten: < 5 nicht-neutrale Antworten (Mindestregel aus CLAUDE.md, seit Okt. 2026) | #nicht-neutrale Antworten |
 | `results-feedback` | 👍/👎 auf der Ergebnisseite | `up`/`down` |
 | `results-share-copy` | „Teilen"-Link kopiert | – |
 | `self-recognition` | freiwillige Frage auf der Ergebnisseite | „Schon Mitglied? In welcher Gruppe?" + der Rang, den UNSER Ranking dieser Gruppe gab → passiver Selbsterkennungs-Test (Ersatz für Studie 2) |

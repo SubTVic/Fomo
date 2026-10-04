@@ -28,12 +28,24 @@
     },
     "edit": {
       "title": "Edit your profile",
-      "text": "Open your edit link – you can use it to update your profile at any time. Lost your link or never got one? Write to <mail>{email}</mail>."
+      "text": "To change your description, contact, quiz answers or activities, open your personal edit link from the FOMO team's email. You can use it as often as you like."
     },
-    "site": {
-      "title": "To the FOMO website",
-      "text": "Quiz and directory of all student groups.",
-      "button": "Open website →"
+    "request": {
+      "title": "Request a link or a change",
+      "text": "No edit link (any more)? Or something needs changing that you can't edit yourself, like the group name or logo? Write to us and we'll take care of it.",
+      "button": "Email the FOMO team",
+      "mailSubject": "FOMO: edit link / change for our student group",
+      "mailBody": "Hello FOMO team,\n\nplease send us a (new) edit link / please change the following:\n\n\nGroup name:\nMy role in the group:\n\nBest regards"
+    },
+    "directory": {
+      "title": "See all groups",
+      "text": "This is how students see you: the directory of all student groups and the quiz on the FOMO website.",
+      "button": "To the directory →",
+      "quiz": "Try the quiz →"
+    },
+    "admin": {
+      "text": "For the FOMO team:",
+      "button": "Admin login"
     }
   },
   "selfrating": {

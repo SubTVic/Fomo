@@ -3,6 +3,7 @@
 // The public FOMO website (static export in static-site/). Quiz and directory
 // live there; old URLs of this app redirect to it (next.config.ts).
 export const PUBLIC_SITE_URL = "https://www.fomo-dresden.app";
+export const PUBLIC_QUIZ_URL = `${PUBLIC_SITE_URL}/quiz/`;
 
 // Where admins start the "Daten-Sync" workflow (WP-4.5) that brings DB changes
 // to the public site. Update when the repository moves (Umsetzungsplan WP-7.1).

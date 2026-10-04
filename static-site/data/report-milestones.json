@@ -4,6 +4,10 @@
     {
       "date": "2026-07-19",
       "label": "Faire Gleichstands-Sortierung im Matching"
+    },
+    {
+      "date": "2026-10-03",
+      "label": "Mindestregel (≥ 5 Antworten) + keine Doppelzählung nach „Antworten ändern“"
     }
   ]
 }

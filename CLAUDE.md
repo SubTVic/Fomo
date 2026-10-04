@@ -1,6 +1,8 @@
 # FOMO – Projektkontext für Claude Code
 
-**Stand: Oktober 2026.** Diese Datei beschreibt den **tatsächlichen** Stand. Offene
+**Stand: Oktober 2026** (Umbau Phase 1–5 + Oktober-Audit seit 04.10. in `main`;
+Prod-Migrationen und Go-live-Schritte: `TODO.md` §1.0). Diese Datei beschreibt den
+**tatsächlichen** Stand. Offene
 Aufgaben: **`TODO.md`**. Laufender Umbau (Arbeitspakete, Regeln, Fortschritt):
 **`docs/uebergabe/umsetzungsplan.md`** — vor jedem Arbeitspaket dessen §1 lesen.
 
@@ -168,8 +170,10 @@ Akzent #5a8a9a. Fallback-Farben der Kategorien: `static-site/data/categories.jso
 
 ## Wo was steht
 
-- **Runbooks je Aufgabe:** [`docs/runbooks/`](docs/runbooks/README.md) (Index der 12
-  typischen Wartungsaufgaben).
+- **Runbooks je Aufgabe:** [`docs/runbooks/`](docs/runbooks/README.md) (Index der 13
+  typischen Wartungsaufgaben; Backup/Migration/Wiederherstellung: Runbook 11).
+- Setup, alle Env-Variablen und GitHub-Secrets, Deployment beider Vercel-Projekte:
+  `README.md` (Root).
 - Betrieb ohne Programmierkenntnisse: `static-site/docs/BETRIEBSHANDBUCH.md`.
 - Löschfristen und Betroffenenanfragen: `docs/datenschutz-loeschkonzept.md`
   (automatische Löschung: `scripts/cleanup.ts`).

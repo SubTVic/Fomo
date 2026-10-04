@@ -1,6 +1,6 @@
 # FOMO – Offene Aufgaben
 
-**Stand: 3. Oktober 2026** (Status-Tabelle + Audit Okt. 2026 in §0; einzelne Abschnitte unten älter) — die
+**Stand: 4. Oktober 2026** (Status-Tabelle + Audit Okt. 2026 in §0; einzelne Abschnitte unten älter) — die
 **eine zentrale To-do-Datei** des Projekts. Der laufende Umbau (Sicherheit, Tests,
 Datenpflege, Umzug auf den StuRa-Server) ist in Arbeitspakete gegliedert:
 `docs/uebergabe/umsetzungsplan.md` (§9 = Fortschritt).
@@ -21,11 +21,11 @@ Kontext zum Projekt: `CLAUDE.md` (Root). Anleitungen je Aufgabe:
 | Matching v2 (21 Items + 8 Filter, client-side) | ✅ Live — nur verifizierte Gruppen im Quiz |
 | Datenstand | 51 verifiziert / 44 unbestätigt / 95 gesamt (Export vom 17.08. — **seit 7 Wochen nicht aktualisiert**) |
 | Umami-Tracking + Live-Report `/report/` | ✅ Läuft mit echten Daten (Env-Vars in Vercel gesetzt, 11.07.) |
-| Dynamische Root-App (Registrierung/Admin) | 🔄 Internes Tool; Build, Admin-Schutz, Formular repariert (Plan Phase 1), Altlasten-Entfernung folgt (Phase 5) |
+| Dynamische Root-App (Registrierung/Admin) | 🔄 Internes Tool; Umbau Phase 1–5 seit 04.10. in `main` (PR #3) — **Migrationen in Prod einspielen: §1.0** |
 | Qualitäts-Netz | ✅ CI auf jedem PR, Datenprüfung vor jedem Build, Tests, KI-Leitplanken (Plan Phase 2) |
 | Studie 2 (Mitglieder-Validierung) | ❌ Verworfen — ersetzt durch anonyme Live-Daten (Umami) |
 | Erstiwoche September 2026 | ✅ vorbei — jetzt: Erstiwochen-Daten auswerten (§2) |
-| Nächster Meilenstein | Datenpflege reparieren (Plan Phase 4); Next.js 16 + Node 24 erledigt (Phase 3) |
+| Nächster Meilenstein | Go-live-Schritte §1.0, dann Umzug auf den StuRa-Server (Plan Phase 6, wartet auf WP-6.0) |
 
 ---
 
@@ -64,14 +64,40 @@ Quiz-Durchläufe DE/EN mit Analytics-Mock, SEO, Sicherheit, Root-App, Doku).
 
 ## §1 Admin-Aufgaben (kein Code) — Reihenfolge = Wirkung pro Aufwand
 
-### 1.0 Vercel prüfen: Registrierungs-App deployt wieder? (5 Min) — Audit 10/26
+### 1.0 Nach dem Merge von PR #3 + #30 (04.10.2026) — sofort, in dieser Reihenfolge
 
-Der Root-Build war auf `main` kaputt (s. §0). Nach dem Merge im Vercel-
-Dashboard des **Root-Projekts** (fomo-pi.vercel.app) prüfen, dass der neue
-Deploy grün ist, und nachsehen, seit wann Deploys fehlgeschlagen sind. Dabei
-gleich prüfen: Ist in der Produktions-DB noch der Seed-Admin
-`admin@fomo.dev` mit dem Dev-Passwort aus `prisma/seed.ts` aktiv? Falls ja:
-löschen oder Passwort ändern (das Passwort steht öffentlich im Repo).
+Ablauf und Hintergründe: `docs/runbooks/11-backup-und-migration.md`.
+
+- [x] Backup der Produktions-DB gezogen (vor dem Merge, bestätigt 03./04.10.)
+- [x] Node 24 in den Vercel-Projekten `fomo` und `fomo-static` eingestellt
+- [ ] **Production-Deploy prüfen:** Vercel → `fomo` und `fomo-static` → neuester
+      Production-Deploy ist „Ready“ und zeigt Commit `92d5a33` (oder neuer). Am 03.10.
+      war Vercel „rate limited“; ein verpasster Deploy muss ggf. von Hand gestartet
+      werden (Deployments → ⋯ → „Redeploy“).
+- [ ] **Direkt danach:** `npm run db:status`, dann `npm run db:migrate` (4 Migrationen,
+      darunter das **Löschen** der Pilot-/Studie-2-/Alt-Quiz-Tabellen). Bis dahin gehen
+      Admin-Login und Gruppenbearbeitung nicht.
+- [ ] **Kurztest:** Admin-Login, Gruppe per Bearbeitungslink ändern, „Änderungen“,
+      Impressum + Datenschutz der Admin-App; Website: Quiz (auch: nur „Neutral“ →
+      Hinweis statt Ranking) und `/groups`.
+- [ ] **Daten-Sync einrichten:** `EXPORT_TOKEN` (`openssl rand -base64 48`) in Vercel
+      (`fomo`) **und** als GitHub-Secret; GitHub → Settings → Actions → General →
+      „Allow GitHub Actions to create and approve pull requests“.
+- [ ] **ESG Dresden** in der Admin-App auf „Glaube & Spiritualität“ stellen (sonst setzt
+      der erste Sync die Kategorie zurück).
+- [ ] **Die 7 im Audit reparierten Links** auch in der DB prüfen (AIAS, DIAS, Effektiver
+      Altruismus, ESG, Thea Maaß, Progressiv am Campus, Wasserwacht). Der Sync ergänzt
+      fehlendes `https://` selbst; bleibt ein Link unvollständig, bricht die Datenprüfung
+      jetzt ab (die Ausnahmeliste `KNOWN_BAD_URLS` ist entfernt).
+- [ ] Ersten **Daten-Sync** starten (Runbook 01) — die Website-Daten sind vom 17.08.
+- [ ] **Seed-Admin prüfen:** Gibt es in der Prod-DB `admin@fomo.dev`? Falls ja:
+      löschen (das Passwort steht öffentlich in `prisma/seed.ts`).
+- [ ] **Vercel-Projekt `fomo-utsx`:** baut bei jedem PR mit, Zweck nirgends
+      dokumentiert. Prüfen, ob es gebraucht wird; sonst löschen (spart Build-Kontingent,
+      das am 03.10. erschöpft war).
+- [ ] **Branch-Schutz für `main`** (Plan WP-2.7): PR Pflicht, Checks `static-site` +
+      `root` Pflicht, kein Force-Push.
+- [ ] **Checkliste Phase 1** (Plan WP-1.8, nur Mensch) abarbeiten.
 
 ### 1.1 Drei doppelte Gruppen bereinigen (15 Min) — sichtbar im Live-Report!
 
@@ -322,6 +348,12 @@ Die Root-App bleibt Datenerfassungs-Tool (Registrierung + Admin). Offen:
 | Thema | Datei |
 |---|---|
 | Projektkontext, Architektur-Regeln, Design | `CLAUDE.md` (Root) |
+| Setup, Env-Variablen, GitHub-Secrets, Deployment | `README.md` (Root) |
+| Anleitungen je Wartungsaufgabe (13 Runbooks) | `docs/runbooks/README.md` |
+| Backup, Migration, Wiederherstellung | `docs/runbooks/11-backup-und-migration.md` |
+| Löschfristen, Betroffenenanfragen | `docs/datenschutz-loeschkonzept.md` |
+| Umbauplan (Arbeitspakete, Fortschritt §9, Entscheidungen §2) | `docs/uebergabe/umsetzungsplan.md` |
+| Audit-Bericht (Übergabe) / StuRa-Kurzfassung | `docs/uebergabe/audit.md` / `docs/uebergabe/stura-zusammenfassung.md` |
 | Statische Seite: Build, Daten-Pipeline, SEO, Analytics | `static-site/README.md` |
 | Betrieb ohne Programmierkenntnisse (Übergabe) | `static-site/docs/BETRIEBSHANDBUCH.md` |
 | Welche Daten wir sammeln + warum (Umami) | `static-site/docs/DATEN-SAMMELN-KONZEPT.md` |

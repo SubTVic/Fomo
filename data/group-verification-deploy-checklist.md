@@ -1,4 +1,8 @@
 # Group Verification Deploy Checklist
+
+> ⚠️ **Historisch (Stand Mai 2026), nicht mehr gültig.** `APP_MODE`, Pilot und Studie 2 gibt es seit
+> Umsetzungsplan WP-5.2/5.3 nicht mehr. Aktueller Stand: `CLAUDE.md`, offene Aufgaben: `TODO.md`.
+
 Stand: 2026-05-05
 
 ## Status der Implementierung

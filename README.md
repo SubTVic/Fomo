@@ -42,6 +42,7 @@ Offene Aufgaben: siehe [TODO.md](TODO.md) · Anleitungen für Betrieb und Wartun
 - **Client-side matching algorithm** — no user data leaves the browser (DSGVO-friendly)
 - **Only verified groups** (self-rated by the group itself) enter the matching; scraped profiles are browse-only
 - **Top 5 results** (including boundary ties) normalized to 0–100% match score
+- **Minimum of 5 non-neutral answers** — below that the results page shows a hint instead of a meaningless ranking
 
 ### Group Profiles & Registration
 
@@ -71,7 +72,10 @@ The pilot, study 2, the demo tour and the prototype quiz have since been removed
 
 - Input validation with Zod schemas on all API routes
 - Central admin guard (`src/lib/require-admin.ts`): every admin route/page checks the session, active status and role against the database
-- Rate limiting on self-registration (in-memory, per IP)
+- Roles: `SUPER_ADMIN` (backup, delete, merge, admin accounts) and `EDITOR` (everything else); the last active super admin cannot be removed
+- Login lockout after 5 failed attempts within 15 minutes (`src/lib/login-guard.ts`, stores only a hash of the e-mail); admin e-mails are case-insensitive
+- Group edit links are stored as hashes only and can be revoked
+- Rate limiting on self-registration (in-memory, per serverless instance — a weak spam brake, see TODO.md)
 - Security headers (X-Frame-Options, X-Content-Type-Options, Referrer-Policy)
 - No localStorage/sessionStorage (avoids SecurityError in sandboxed environments)
 
@@ -122,7 +126,12 @@ npx prisma db seed
 npm run dev
 ```
 
-The app runs at [http://localhost:3000](http://localhost:3000).
+The app runs at [http://localhost:3000](http://localhost:3000). The seed creates the
+development admin `admin@fomo.dev` (password printed by the seed, defined in
+`prisma/seed.ts`) — for local use only.
+
+The public site has its own setup: `cd static-site && npm install && npm run dev`
+(no database needed).
 
 ### Useful Commands
 
@@ -166,6 +175,10 @@ src/
 │   ├── export/static-groups.ts     # Export for the public site (Daten-Sync)
 │   ├── require-admin.ts            # Admin guard (session + DB active/role check)
 │   ├── normalize-url.ts            # Website/Instagram normalization for group input
+│   ├── login-guard.ts              # Login lockout after failed attempts
+│   ├── cleanup.ts                  # Retention rules (used by scripts/cleanup.ts)
+│   ├── legal.ts                    # Imprint/privacy data of the admin app
+│   ├── public-site.ts              # Links to the public site
 │   ├── rate-limit.ts               # In-memory rate limiter
 │   ├── db.ts                       # Prisma singleton
 │   └── auth.ts                     # Auth.js configuration
@@ -182,7 +195,21 @@ scripts/
 ├── scraper/                        # AI scraper (Anthropic API + web search)
 ├── export-static-site-groups.ts    # Export groups.json from a local DB
 ├── check-items-sync.mjs            # Registration items = website items
-└── generate-invites.ts             # One-off invite generator from 2026 (legacy one-time links)
+├── cleanup.ts                      # Deletes expired tokens/login attempts (dry run by default, --apply)
+└── generate-invites.ts             # One-off invite generator from 2026 (legacy one-time links — do not use)
+
+.github/workflows/
+├── ci.yml                          # Checks both apps on every PR (jobs `static-site` and `root`)
+├── sync-groups.yml                 # "Daten-Sync": admin app → PR updating static-site/data/groups.json
+├── weekly-report-redeploy.yml      # Mondays: redeploys the public site so /report/ refreshes
+└── report-on-demand.yml            # Builds the analytics report as a downloadable artifact
+
+docs/
+├── runbooks/                       # Step-by-step guides per maintenance task (German)
+├── datenschutz-loeschkonzept.md    # Retention periods, data-subject requests
+└── uebergabe/                      # Handover: audit, rework plan, StuRa summary
+
+.claude/                            # Guard rails for AI agents (denied commands, hooks)
 
 prisma/
 ├── schema.prisma           # Data model
@@ -200,9 +227,10 @@ The live matching runs in the browser in [`static-site/src/lib/matching.ts`](sta
 - **Filters are a hard constraint:** if both the user and the group picked activity filters and they don't overlap, the group scores 0.
 - Over the user's **non-neutral** answers: `score = round((1 − Σ|user − group| / (n · 2)) · 100)`; with no active answers the score is 50.
 - Sorting: unrounded fit, then an explicit filter match, then a deterministic per-user hash (fair tie-breaking that keeps shared `?r=` links stable). The results show the top 5 plus boundary ties (max. 10).
+- **Minimum rule:** with fewer than 5 non-neutral answers (`MIN_ACTIVE_ANSWERS`) no ranking is shown; the page asks the user to answer more questions (analytics event `results-too-few-answers`).
 - Only **verified** groups (`getMatchableGroups()`) are ranked.
 
-No user data reaches a server. (The older weighted v1 formula in `src/lib/quiz/` belongs to the retired prototype quiz.)
+No user data reaches a server. The older weighted v1 formula belonged to the retired prototype quiz and was removed in plan WP-5.2.
 
 ### Data Model
 
@@ -212,22 +240,60 @@ Core tables: **Group**, **Category**, **GroupSelfRating** + answers (the group's
 
 ## Environment Variables
 
+Root app (Vercel project `fomo`; locally in `.env`, template: `.env.example`):
+
 | Variable | Required | Description |
 | --- | --- | --- |
-| `DATABASE_URL` | Yes | PostgreSQL connection string |
-| `NEXTAUTH_SECRET` | Yes | Random string (`openssl rand -base64 32`) |
+| `DATABASE_URL` | Yes | PostgreSQL connection string (on Vercel: the pooled URL) |
+| `DIRECT_URL` | Yes | Direct (non-pooled) connection, used by migrations; locally the same as `DATABASE_URL` |
+| `NEXTAUTH_SECRET` (or `AUTH_SECRET`) | Yes | Random string (`openssl rand -base64 32`). Changing it logs everyone out |
 | `NEXTAUTH_URL` | Yes | App URL (e.g., `http://localhost:3000`) |
+| `EXPORT_TOKEN` | For the Daten-Sync | Bearer token for `/api/admin/export/static-groups`, ≥ 32 chars (`openssl rand -base64 48`). Same value as the GitHub secret. Empty = export only for logged-in admins |
 | `ANTHROPIC_API_KEY` | Scraper only | API key for AI-based group profile scraping |
-| `DIRECT_URL` | Vercel only | Direct (non-pooled) DB connection for migrations |
+
+Public site (Vercel project `fomo-static`) — all build-time only, see
+[`static-site/README.md`](static-site/README.md):
+
+| Variable | Description |
+| --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin, e.g. `https://www.fomo-dresden.app` (sitemap, canonical, OG) |
+| `UMAMI_WEBSITE_ID` | Enables Umami tracking and fills `/report/` (legacy name `NEXT_PUBLIC_UMAMI_WEBSITE_ID` still works) |
+| `UMAMI_SRC` | Optional Umami script URL (default: Umami Cloud) |
+| `UMAMI_API_KEY` | Lets the build pull live numbers into `/report/` (or `UMAMI_URL` + `UMAMI_USER` + `UMAMI_PASSWORD` when self-hosted) |
+| `NEXT_PUBLIC_REGISTER_URL` | Optional: where "Gruppe registrieren" points (default: the admin app) |
+
+GitHub → Settings → Secrets and variables → Actions:
+
+| Name | Kind | Used by |
+| --- | --- | --- |
+| `EXPORT_TOKEN` | Secret | `sync-groups.yml` (same value as in Vercel `fomo`) |
+| `EXPORT_URL` | Variable (optional) | `sync-groups.yml`, default `https://fomo-pi.vercel.app/api/admin/export/static-groups` |
+| `VERCEL_DEPLOY_HOOK_URL` | Secret | `weekly-report-redeploy.yml` |
+| `UMAMI_API_KEY`, `UMAMI_WEBSITE_ID` | Secrets | `report-on-demand.yml` |
+
+The Daten-Sync also needs Settings → Actions → General → "Allow GitHub Actions to
+create and approve pull requests".
 
 ## Deployment
 
 ### Vercel
 
-1. Connect the GitHub repository in the Vercel dashboard
-2. Create a Postgres database under **Storage**
-3. Set environment variables under **Settings → Environment Variables**
-4. Push to `main` to trigger automatic deployment
+There are two Vercel projects on the same repository:
+
+| Project | Root directory | URL | Deploys |
+| --- | --- | --- | --- |
+| `fomo-static` | `static-site` | www.fomo-dresden.app | every push to `main` |
+| `fomo` | repo root | fomo-pi.vercel.app | every push to `main`, except commits that only touch `static-site/` (`ignoreCommand` in `vercel.json`) |
+
+A third project, `fomo-utsx`, also builds every PR; its purpose is undocumented (see TODO.md §1.0).
+
+Both use **Node.js 24** (Settings → General → Node.js Version). Every change goes
+through a pull request; Vercel builds a preview per PR. The free tier limits builds
+per day — "Deployment rate limited" on a PR is not a code failure; the GitHub checks
+`static-site` and `root` are what counts.
+
+Setting up from scratch: connect the repository, create a Postgres database under
+**Storage**, set the environment variables above, merge to `main`.
 
 **Database migrations never run during the build.** `npm run build` only runs
 `next build`; a deploy never changes the database. Migrations are applied by a
@@ -237,7 +303,15 @@ person, deliberately and only after a fresh backup:
 2. Check what is pending: `npm run db:status` (with the production `DATABASE_URL`/`DIRECT_URL`).
 3. Apply: `npm run db:migrate`.
 
-Deploy code that needs a new migration only after the migration has been applied.
+Whether a migration is additive or destructive decides the order: additive migrations
+(new tables/columns) can go first; when new code needs the new schema (the usual case
+in this repo), apply the migration **right after** the deploy is live. Full procedure,
+restore and the list of pending migrations:
+[`docs/runbooks/11-backup-und-migration.md`](docs/runbooks/11-backup-und-migration.md).
+
+`prisma/seed.ts` creates a development admin (`admin@fomo.dev`) with a password that
+is public in this repository. **Never seed a production database**; if that account
+exists in production, delete it or change its password.
 
 ### Docker
 

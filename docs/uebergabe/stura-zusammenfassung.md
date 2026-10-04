@@ -4,6 +4,28 @@
 
 *Stand: 03.10.2026. Eine Seite zum Verstehen, Entscheiden und Weitergeben.*
 
+## Nachtrag 04.10.2026: Was seit dieser Zusammenfassung erledigt ist
+
+Der Umbau (Phase 1–5 des Umsetzungsplans) und die Funde aus dem Oktober-Audit sind
+seit dem 04.10.2026 im Hauptstand. Die Liste „Die wichtigsten Baustellen“ weiter unten
+ist der Zustand **vorher**; heute gilt:
+
+| Baustelle (unten) | Stand jetzt |
+|---|---|
+| 1. Internes Werkzeug lässt sich nicht aktualisieren | ✅ Behoben, auf aktuelle Software (Next.js 16, Node 24) gebracht. Jede Änderung wird jetzt vor dem Merge automatisch geprüft. |
+| 2. Sicherheitslücke im internen Werkzeug | ✅ Geschlossen. Dazu: Rollen (Super-Admin/Editor), Login-Sperre nach Fehlversuchen. |
+| Daten müssen von Hand übertragen werden | ✅ Ein Knopf („Daten-Sync“) erzeugt den Vorschlag, ein Klick schaltet ihn live. Einmalig einzurichten (Zugangsschlüssel `EXPORT_TOKEN`, siehe `TODO.md` §1.0). |
+| 3. Alles hängt an privaten Konten | ⬜ Offen — Phase 7 (Übergabe der Konten). |
+| 4. Keine Sicherungskopien, keine Überwachung | 🟡 Anleitung für Backups und Wiederherstellung liegt vor (`docs/runbooks/11-backup-und-migration.md`), läuft aber noch von Hand. Automatische Backups und Überwachung kommen mit dem Server-Umzug (Phase 6). |
+| 5. Datenschutz | 🟡 Das interne Werkzeug hat jetzt Impressum und Datenschutzerklärung; ein Löschkonzept liegt als Entwurf vor (`docs/datenschutz-loeschkonzept.md`). **Offen:** juristische Prüfung der Texte, Fristen festlegen, Statistik-Anbieter in der Datenschutzerklärung der Website nennen. |
+
+Die Quiz-Ergebnisse wurden außerdem robuster: Wer weniger als 5 Fragen mit Ja/Nein
+beantwortet, bekommt einen Hinweis statt eines zufälligen Rankings.
+
+**Nächste Entscheidungen für den StuRa:** Umzug auf den StuRa-Server (Phase 6, braucht
+ein Gespräch mit dem Referat Technik) und Übergabe der Konten (Phase 7). Offene
+Entscheidungen E2–E9 stehen in `docs/uebergabe/umsetzungsplan.md` §2.
+
 ## Was ist FOMO technisch?
 
 FOMO besteht aus **zwei Teilen**:

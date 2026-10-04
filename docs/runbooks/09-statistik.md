@@ -15,5 +15,14 @@
 - **Bericht leer/„ohne Live-Daten"**: im Vercel-Projekt `fomo-static` fehlen
   `UMAMI_API_KEY` und/oder `UMAMI_WEBSITE_ID`.
 
+- **Achtung bei Vergleichen über die Zeit:** Daten **vor dem 03.10.2026** enthalten
+  Doppelzählungen: Wer auf der Ergebnisseite „Antworten ändern“ nutzte, wurde erneut als
+  `quiz-complete`/`quiz-response` gezählt (deshalb teils mehr Abschlüsse als Starts).
+  Seitdem zählt jeder Durchlauf einmal. Der Eintrag in
+  `static-site/data/report-milestones.json` markiert die Grenze.
+- **Neues Event seit Oktober 2026:** `results-too-few-answers` — die Person hat weniger
+  als 5 Fragen mit Ja/Nein beantwortet und bekam deshalb kein Ranking. Ein hoher Anteil
+  heißt: viele klicken nur „Neutral“.
+
 Ausführlich (welche Zahlen was bedeuten, zwei Report-Knöpfe):
 [Betriebshandbuch §7](../../static-site/docs/BETRIEBSHANDBUCH.md#7-statistik-lesen-umami).

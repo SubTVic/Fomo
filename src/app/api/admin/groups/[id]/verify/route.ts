@@ -3,17 +3,16 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { RegistrationStatus } from "@prisma/client";
-import { auth } from "@/lib/auth";
+import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
+import { recordChange, snapshotGroup } from "@/lib/change-log";
 
 export async function PATCH(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const guard = await requireAdminApi();
+  if (!guard.ok) return guard.response;
 
   const { id } = await params;
 
@@ -23,13 +22,21 @@ export async function PATCH(
   }
 
   const nowVerified = !group.isVerified;
-  const updated = await db.group.update({
-    where: { id },
-    data: {
-      isVerified: nowVerified,
-      registrationStatus: nowVerified ? RegistrationStatus.VERIFIED : group.registrationStatus,
-      verifiedAt: nowVerified ? new Date() : null,
-    },
+  const updated = await db.$transaction(async (tx) => {
+    const before = await snapshotGroup(tx, id);
+    const result = await tx.group.update({
+      where: { id },
+      data: {
+        isVerified: nowVerified,
+        registrationStatus: nowVerified ? RegistrationStatus.VERIFIED : group.registrationStatus,
+        verifiedAt: nowVerified ? new Date() : null,
+      },
+    });
+    const after = await snapshotGroup(tx, id);
+    if (before && after) {
+      await recordChange(tx, { groupId: id, source: "admin", before, after, reviewedByEmail: guard.admin.email });
+    }
+    return result;
   });
 
   return NextResponse.json({ ok: true, isVerified: updated.isVerified });

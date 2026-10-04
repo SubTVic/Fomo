@@ -4,8 +4,10 @@ export const dynamic = "force-dynamic";
 
 import { db } from "@/lib/db";
 import { CreateGroupForm } from "./CreateGroupForm";
+import { requireAdminPage } from "@/lib/require-admin";
 
 export default async function NewGroupPage() {
+  await requireAdminPage();
   const categories = await db.category.findMany({ orderBy: { name: "asc" } });
 
   return (

@@ -85,7 +85,10 @@ const groups = backup.groups
       selfRating = {
         raterCount: rating.raterCount ?? 0,
         derived: false,
-        filterSelections: rating.filterSelections ?? [],
+        // Only pass through string entries (the DB column is untyped JSON).
+        filterSelections: Array.isArray(rating.filterSelections)
+          ? rating.filterSelections.filter((x) => typeof x === "string")
+          : [],
         answers: realAnswers,
       };
     } else {

@@ -4,8 +4,12 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { requireAdminPage } from "@/lib/require-admin";
+import { DeleteButton } from "../DeleteButton";
 
 export default async function ContactsPage() {
+  const admin = await requireAdminPage();
+  const isSuperAdmin = admin.role === "SUPER_ADMIN";
   const contacts = await db.groupContact.findMany({
     include: {
       group: { select: { id: true, name: true, slug: true } },
@@ -50,7 +54,8 @@ export default async function ContactsPage() {
 
       <p className="text-sm text-muted-foreground mb-4">
         Verantwortliche Ansprechpersonen, die bei der Gruppen-Registrierung bestätigt haben,
-        die Gruppe nach außen zu repräsentieren.
+        die Gruppe nach außen zu repräsentieren. Auf Wunsch der Person oder wenn sie die
+        Gruppe verlassen hat, wird der Kontakt gelöscht (Löschkonzept).
       </p>
 
       {contacts.length === 0 ? (
@@ -69,6 +74,7 @@ export default async function ContactsPage() {
                 <th className="px-3 py-2 font-medium">Verantwortlich</th>
                 <th className="px-3 py-2 font-medium">Quelle</th>
                 <th className="px-3 py-2 font-medium">Erstellt</th>
+                {isSuperAdmin && <th className="px-3 py-2 font-medium" />}
               </tr>
             </thead>
             <tbody>
@@ -109,6 +115,14 @@ export default async function ContactsPage() {
                   <td className="px-3 py-2 text-xs text-muted-foreground whitespace-nowrap">
                     {c.createdAt.toLocaleDateString("de-DE")}
                   </td>
+                  {isSuperAdmin && (
+                    <td className="px-3 py-2">
+                      <DeleteButton
+                        url={`/api/admin/contacts/${c.id}`}
+                        title={`Kontakt ${c.name} löschen`}
+                      />
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

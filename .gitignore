@@ -61,6 +61,10 @@ fomo-backup-*.json
 *.dump
 *.sql.gz
 
+# curl cookie jars from local smoke tests (contain session cookies)
+*.jar
+cookies*.txt
+
 # Claude Code: personal settings and worktrees stay local
 .claude/settings.local.json
 .claude/worktrees/

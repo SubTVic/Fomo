@@ -897,6 +897,11 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 
 ## 9. Fortschritt (von der KI im jeweiligen PR aktualisieren)
 
+**Stand 04.10.2026:** Phasen 1–5 (außer WP-4.3, wartet auf E3) sind über den Sammel-PR
+#3 nach `main` gemergt und live; die Einzel-PRs #4–#29 wurden vorher in #3 gemergt.
+Die vier neuen Migrationen (aus #19, #20, #26, #27) spielt ein Mensch nach dem Deploy
+ein: `docs/runbooks/05-fehlersuche-und-deploy.md`, „Migration in Produktion einspielen".
+
 | WP | Titel | Status | PR |
 |---|---|---|---|
 | 1.1 | Root-Build reparieren | ✅ | #3 |

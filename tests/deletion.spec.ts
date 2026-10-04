@@ -46,14 +46,14 @@ test("super admin deletes a single contact; editors cannot", async ({ page, brow
   await login(editor, EDITOR_EMAIL, PASSWORD);
   await editor.goto("/admin/contacts");
   await expect(editor.getByText(`Weg ${suffix}`)).toBeVisible();
-  await expect(editor.getByTitle(`Kontakt Weg ${suffix} löschen`)).toHaveCount(0);
+  await expect(editor.getByRole("button", { name: `Kontakt Weg ${suffix} löschen` })).toHaveCount(0);
   expect((await editor.request.delete(`/api/admin/contacts/${remove.id}`)).status()).toBe(403);
   await editorContext.close();
 
   // Super admin: delete via the list.
   await login(page, "admin@fomo.dev", "fomo-dev-2026!");
   await page.goto("/admin/contacts");
-  await page.getByTitle(`Kontakt Weg ${suffix} löschen`).click();
+  await page.getByRole("button", { name: `Kontakt Weg ${suffix} löschen` }).click();
   await page.getByRole("button", { name: "Ja" }).click();
   await expect(page.getByText(`Weg ${suffix}`)).toHaveCount(0);
   expect(await db.groupContact.count({ where: { id: remove.id } })).toBe(0);

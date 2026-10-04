@@ -18,7 +18,7 @@ Link erzeugen.
    *Der Sammelknopf „Einladungen generieren" erfasst nur Gruppen, die noch nichts
    eingereicht haben.*
 2. Rücklauf in der Admin-App: unter **„Änderungen"** prüfen (verifizierte Gruppen
-   bleiben verifiziert); noch unbestätigte Gruppen: Filter „Eingereicht" →
+   bleiben verifiziert); noch unbestätigte Gruppen: Filter „Zu prüfen" →
    **verifizieren**.
 3. Nach Fristende **einmal** Daten live schalten ([Runbook 01](01-gruppe-aendern.md#daten-live-schalten-nach-fall-a-oder-b)).
 4. Gruppen ohne Rückmeldung: Website/Instagram prüfen; aufgelöst → [Runbook 06](06-gruppe-ausblenden.md).

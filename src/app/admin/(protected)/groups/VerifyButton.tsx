@@ -25,13 +25,13 @@ export function VerifyButton({
     <button
       onClick={toggle}
       disabled={loading}
-      className={`rounded-full px-3 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
+      className={`rounded border px-2 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
         isVerified
-          ? "bg-green-100 text-green-800 hover:bg-red-100 hover:text-red-800"
-          : "bg-muted text-muted-foreground hover:bg-green-100 hover:text-green-800"
+          ? "border-red-300 text-red-700 hover:bg-red-50"
+          : "border-green-600 bg-green-50 text-green-800 hover:bg-green-100"
       }`}
     >
-      {loading ? "…" : isVerified ? "Verifiziert ✓" : "Verifizieren"}
+      {loading ? "…" : isVerified ? "Verifizierung aufheben" : "Verifizieren"}
     </button>
   );
 }

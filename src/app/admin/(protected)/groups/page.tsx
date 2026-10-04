@@ -3,36 +3,39 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { RegistrationStatus } from "@prisma/client";
 import { getAllGroupsForAdmin } from "@/lib/queries/groups";
+import { groupStatus, type GroupStatusKey } from "@/lib/group-status";
+import { Hint } from "@/components/shared/Hint";
 import { VerifyButton } from "./VerifyButton";
 import { GenerateInvitesButton } from "./GenerateInvitesButton";
 import { InviteButton } from "./InviteButton";
 import { DeleteButton } from "../DeleteButton";
-import { ToggleActiveButton } from "./[id]/ToggleActiveButton";
 import { requireAdminPage } from "@/lib/require-admin";
 
-/** Same rule as the export: only verified groups with a real self-rating are matched. */
-function profileLabel(group: { isVerified: boolean; selfRating: { _count: { answers: number } } | null }) {
-  const real = (group.selfRating?._count.answers ?? 0) > 0;
-  return {
-    real,
-    inQuiz: real && group.isVerified,
-  };
-}
-
-function regStatusLabel(status: RegistrationStatus | null): { text: string; className: string } {
-  switch (status) {
-    case RegistrationStatus.INVITED:
-      return { text: "Eingeladen", className: "bg-blue-100 text-blue-800" };
-    case RegistrationStatus.SUBMITTED:
-      return { text: "Eingereicht", className: "bg-orange-100 text-orange-800" };
-    case RegistrationStatus.VERIFIED:
-      return { text: "Verifiziert", className: "bg-green-100 text-green-800" };
-    default:
-      return { text: "—", className: "bg-muted text-muted-foreground" };
-  }
-}
+// Filter tabs: one per status the admin acts on. "Nicht im Quiz" bundles the
+// three statuses that are only listed in the directory.
+const FILTERS: Array<{ key: string; label: string; statuses: GroupStatusKey[] | null; hint: string }> = [
+  { key: "", label: "Alle", statuses: null, hint: "Alle Gruppen, auch ausgeblendete." },
+  {
+    key: "review",
+    label: "Zu prüfen",
+    statuses: ["review"],
+    hint: "Neu registriert oder eingereicht – wartet auf deine Prüfung.",
+  },
+  {
+    key: "quiz",
+    label: "Im Quiz",
+    statuses: ["quiz"],
+    hint: "Bestätigt und mit eigenem Profil: wird im Quiz empfohlen.",
+  },
+  {
+    key: "not-quiz",
+    label: "Nicht im Quiz",
+    statuses: ["directory", "invited", "unconfirmed"],
+    hint: "Steht nur im Verzeichnis: unbestätigt, eingeladen oder ohne eigenes Profil.",
+  },
+  { key: "hidden", label: "Ausgeblendet", statuses: ["hidden"], hint: "Nicht auf der Website sichtbar." },
+];
 
 interface AdminGroupsPageProps {
   searchParams: Promise<{ filter?: string }>;
@@ -41,29 +44,30 @@ interface AdminGroupsPageProps {
 export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageProps) {
   const admin = await requireAdminPage();
   const isSuperAdmin = admin.role === "SUPER_ADMIN";
-  const { filter } = await searchParams;
-  const allGroups = await getAllGroupsForAdmin();
+  const { filter = "" } = await searchParams;
+  const groups = (await getAllGroupsForAdmin()).map((g) => ({
+    ...g,
+    status: groupStatus({
+      isActive: g.isActive,
+      isVerified: g.isVerified,
+      registrationStatus: g.registrationStatus,
+      selfRatingAnswers: g.selfRating?._count.answers ?? 0,
+    }),
+  }));
 
-  const filtered = (() => {
-    if (filter === "csv") return allGroups.filter((g) => g.registeredVia === "import");
-    if (filter === "survey") return allGroups.filter((g) => g.registeredVia === "survey");
-    if (filter === "unverified") return allGroups.filter((g) => !g.isVerified);
-    if (filter === "invited") return allGroups.filter((g) => g.registrationStatus === RegistrationStatus.INVITED);
-    if (filter === "submitted") return allGroups.filter((g) => g.registrationStatus === RegistrationStatus.SUBMITTED);
-    if (filter === "verified") return allGroups.filter((g) => g.registrationStatus === RegistrationStatus.VERIFIED);
-    return allGroups;
-  })();
-
-  const submittedCount = allGroups.filter((g) => g.registrationStatus === RegistrationStatus.SUBMITTED).length;
-  const invitedCount = allGroups.filter((g) => g.registrationStatus === RegistrationStatus.INVITED).length;
-  const selfRegisteredCount = allGroups.filter((g) => g.registeredVia === "survey").length;
+  const active = FILTERS.find((f) => f.key === filter) ?? FILTERS[0];
+  const inFilter = (f: (typeof FILTERS)[number]) =>
+    f.statuses ? groups.filter((g) => f.statuses!.includes(g.status.key)) : groups;
+  const shown = inFilter(active);
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div className="mx-auto max-w-5xl">
       <div className="mb-6 flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="font-heading text-2xl uppercase">Hochschulgruppen</h1>
-          <p className="text-sm text-muted-foreground mt-1">{allGroups.length} gesamt</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            {groups.length} gesamt · Gruppe bearbeiten: auf den Namen oder „Bearbeiten“ klicken.
+          </p>
         </div>
         <div className="flex gap-2 flex-wrap">
           <Link
@@ -76,142 +80,117 @@ export default async function AdminGroupsPage({ searchParams }: AdminGroupsPageP
         </div>
       </div>
 
-      {/* Filter tabs */}
       <div className="mb-4 flex gap-2 flex-wrap">
-        <TabLink href="/admin/groups" active={!filter}>Alle ({allGroups.length})</TabLink>
-        <TabLink href="/admin/groups?filter=csv" active={filter === "csv"}>
-          CSV-Import ({allGroups.filter((g) => g.registeredVia === "import").length})
-        </TabLink>
-        <TabLink href="/admin/groups?filter=survey" active={filter === "survey"}>
-          Selbstregistriert
-          {selfRegisteredCount > 0 && (
-            <span className="ml-1.5 rounded-full bg-purple-500 text-white px-1.5 py-0.5 text-[10px] font-bold">
-              {selfRegisteredCount}
-            </span>
-          )}
-        </TabLink>
-        <TabLink href="/admin/groups?filter=invited" active={filter === "invited"}>
-          Eingeladen ({invitedCount})
-        </TabLink>
-        <TabLink href="/admin/groups?filter=submitted" active={filter === "submitted"}>
-          Eingereicht
-          {submittedCount > 0 && (
-            <span className="ml-1.5 rounded-full bg-orange-500 text-white px-1.5 py-0.5 text-[10px] font-bold">
-              {submittedCount}
-            </span>
-          )}
-        </TabLink>
-        <TabLink href="/admin/groups?filter=verified" active={filter === "verified"}>
-          Verifiziert ({allGroups.filter((g) => g.registrationStatus === RegistrationStatus.VERIFIED).length})
-        </TabLink>
-        <TabLink href="/admin/groups?filter=unverified" active={filter === "unverified"}>
-          Unverifiziert ({allGroups.filter((g) => !g.isVerified).length})
-        </TabLink>
+        {FILTERS.map((f) => {
+          const count = inFilter(f).length;
+          return (
+            <Hint key={f.key} text={f.hint} align="start">
+              <TabLink href={f.key ? `/admin/groups?filter=${f.key}` : "/admin/groups"} active={f === active}>
+                {f.label}
+                {f.key === "review" && count > 0 ? (
+                  <span className="ml-1.5 rounded-full bg-orange-500 text-white px-1.5 py-0.5 text-[10px] font-bold">
+                    {count}
+                  </span>
+                ) : (
+                  <span className="ml-1">({count})</span>
+                )}
+              </TabLink>
+            </Hint>
+          );
+        })}
       </div>
 
-      <div className="border-2 border-foreground bg-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="border-b bg-muted/40">
-              <tr>
-                <th className="px-4 py-3 text-left font-medium">Name</th>
-                <th className="px-4 py-3 text-left font-medium">Kategorie</th>
-                <th className="px-4 py-3 text-left font-medium">Beschreibung</th>
-                <th className="px-4 py-3 text-center font-medium">Profil</th>
-                <th className="px-4 py-3 text-center font-medium">Registrierung</th>
-                <th className="px-4 py-3 text-center font-medium">Status</th>
-                <th className="px-4 py-3 text-center font-medium">Verifizierung</th>
-                <th className="px-4 py-3 text-center font-medium">Aktionen</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {filtered.map((group) => {
-                const profile = profileLabel(group);
-                const regStatus = regStatusLabel(group.registrationStatus);
-                return (
-                  <tr key={group.id} className="hover:bg-muted/20 transition-colors">
-                    <td className="px-4 py-3 font-medium max-w-[200px]">
+      <div className="border-2 border-foreground bg-card">
+        <table className="w-full text-sm">
+          <thead className="border-b bg-muted/40">
+            <tr>
+              <th className="px-4 py-3 text-left font-medium">Name</th>
+              <th className="hidden px-4 py-3 text-left font-medium md:table-cell">Kategorie</th>
+              <th className="px-4 py-3 text-left font-medium">Status</th>
+              <th className="px-4 py-3 text-right font-medium">Aktionen</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y">
+            {shown.map((group) => (
+              <tr key={group.id} className="hover:bg-muted/20 transition-colors">
+                <td className="px-4 py-3 font-medium">
+                  <Link href={`/admin/groups/${group.id}`} className="hover:underline">
+                    {group.name}
+                  </Link>
+                  {group.duplicateOf && (
+                    <span className="block text-[11px] text-purple-600 font-normal">
+                      mögliches Duplikat von {group.duplicateOf.name}
+                    </span>
+                  )}
+                </td>
+                <td className="hidden px-4 py-3 text-muted-foreground whitespace-nowrap md:table-cell">
+                  {group.category.name}
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <Hint text={group.status.hint} align="start">
+                    <span
+                      tabIndex={0}
+                      className={`cursor-help rounded-full px-2.5 py-0.5 text-xs font-medium ${group.status.className}`}
+                    >
+                      {group.status.label}
+                    </span>
+                  </Hint>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center justify-end gap-2 flex-wrap">
+                    <Hint
+                      text="Alle Angaben, Quiz-Antworten und Filter der Gruppe selbst ändern, verifizieren oder ausblenden. Jede Änderung landet unter „Änderungen“."
+                      align="end"
+                    >
                       <Link
                         href={`/admin/groups/${group.id}`}
-                        className="block truncate hover:underline"
-                        title={group.name}
+                        className="rounded border border-foreground px-2 py-1 text-xs font-medium hover:bg-muted/40 transition-colors"
                       >
-                        {group.name}
+                        Bearbeiten
                       </Link>
-                      {group.duplicateOf && (
-                        <span className="text-[10px] text-purple-600 font-normal">
-                          ≈ {group.duplicateOf.name}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                      {group.category.name}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground max-w-[260px]">
-                      <span className="block truncate" title={group.shortDescription}>
-                        {group.shortDescription}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center whitespace-nowrap">
-                      <span
-                        className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-                          profile.real ? "bg-blue-100 text-blue-800" : "bg-muted text-muted-foreground"
-                        }`}
-                        title={
-                          profile.real
-                            ? "Die Gruppe hat die 21 Fragen selbst beantwortet."
-                            : "Kein eigenes Profil – wird aus alten Attributen abgeleitet (nur Verzeichnis)."
-                        }
+                    </Hint>
+                    <Hint
+                      text="Persönlichen Link für die Gruppe erzeugen (12 Monate gültig). Damit pflegt die Gruppe ihr Profil selbst – ohne Login."
+                      align="end"
+                    >
+                      <InviteButton
+                        groupId={group.id}
+                        groupName={group.name}
+                        contactEmail={group.contactEmail}
+                      />
+                    </Hint>
+                    {group.status.key === "review" && (
+                      <Hint
+                        text="Angaben geprüft? Dann bestätigen. Verifizierte Gruppen mit eigenem Profil kommen ins Quiz."
+                        align="end"
                       >
-                        {profile.real ? "echt" : "abgeleitet"}
-                      </span>
-                      <span className="block text-[10px] text-muted-foreground mt-0.5">
-                        {profile.inQuiz ? "im Quiz" : "nicht im Quiz"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${regStatus.className}`}>
-                        {regStatus.text}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                          group.isActive
-                            ? "bg-green-100 text-green-800"
-                            : "bg-muted text-muted-foreground"
-                        }`}
+                        <VerifyButton groupId={group.id} isVerified={false} />
+                      </Hint>
+                    )}
+                    {isSuperAdmin && (
+                      <Hint
+                        text="Gruppe endgültig löschen. Im Zweifel lieber in der Gruppe „Deaktivieren“ – das lässt sich rückgängig machen."
+                        align="end"
                       >
-                        {group.isActive ? "Aktiv" : "Inaktiv"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <VerifyButton groupId={group.id} isVerified={group.isVerified} />
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2 justify-center flex-wrap">
-                        {!group.isActive && (
-                          <ToggleActiveButton groupId={group.id} isActive={false} />
-                        )}
-                        <InviteButton
-                          groupId={group.id}
-                          groupName={group.name}
-                          contactEmail={group.contactEmail}
+                        <DeleteButton
+                          url={`/api/admin/groups/${group.id}`}
+                          title={`${group.name} löschen`}
                         />
-                        {isSuperAdmin && (
-                          <DeleteButton
-                            url={`/api/admin/groups/${group.id}`}
-                            title={`${group.name} löschen`}
-                          />
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                      </Hint>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {shown.length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-4 py-10 text-center text-muted-foreground">
+                  Keine Gruppen in dieser Ansicht.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

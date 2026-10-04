@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import Link from "next/link";
 import { FAQ_DE, FAQ_EN } from "@/lib/faq";
+import { GROUPS_AREA_URL } from "@/lib/site";
 
 type Lang = "de" | "en";
 
@@ -14,6 +15,10 @@ const copy = {
     groups: "Alle Hochschulgruppen",
     contactTitle: "Fragen oder Anmerkungen?",
     contactText: "Bitte wende dich direkt an uns.",
+    groupsAreaTitle: "Für Hochschulgruppen",
+    groupsAreaText:
+      "Ihr seid eine Hochschulgruppe? Registriert euch, ändert euer Profil oder fordert einen Bearbeitungslink an.",
+    groupsAreaButton: "Zum Gruppenbereich →",
   },
   en: {
     eyebrow: "TU DRESDEN",
@@ -24,8 +29,12 @@ const copy = {
     groups: "All student groups",
     contactTitle: "Questions or feedback?",
     contactText: "Please contact us directly.",
+    groupsAreaTitle: "For student groups",
+    groupsAreaText:
+      "Are you a student group? Register, update your profile or request an edit link.",
+    groupsAreaButton: "To the group area →",
   },
-} satisfies Record<Lang, { eyebrow: string; title: string; intro: (groupCount: number) => string; quiz: string; groups: string; contactTitle: string; contactText: string }>;
+} satisfies Record<Lang, { eyebrow: string; title: string; intro: (groupCount: number) => string; quiz: string; groups: string; contactTitle: string; contactText: string; groupsAreaTitle: string; groupsAreaText: string; groupsAreaButton: string }>;
 
 export function HomePageContent({ lang, groupCount }: { lang: Lang; groupCount: number }) {
   const t = copy[lang];
@@ -56,6 +65,19 @@ export function HomePageContent({ lang, groupCount }: { lang: Lang; groupCount: 
             {t.groups}
           </Link>
         </div>
+      </section>
+
+      <section className="mt-6 flex flex-col gap-4 border-poster bg-card p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+        <div>
+          <h2 className="text-2xl text-navy sm:text-3xl">{t.groupsAreaTitle}</h2>
+          <p className="mt-2 max-w-prose text-sm text-body sm:text-base">{t.groupsAreaText}</p>
+        </div>
+        <a
+          href={lang === "en" ? `${GROUPS_AREA_URL.replace(/\/$/, "")}/en` : GROUPS_AREA_URL}
+          className="shrink-0 border-4 border-navy px-6 py-3 text-center font-heading text-base text-navy transition-colors hover:bg-sky focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-navy"
+        >
+          {t.groupsAreaButton}
+        </a>
       </section>
 
       {/* Visible FAQ — must stay in sync with the FAQPage JSON-LD (same source). */}

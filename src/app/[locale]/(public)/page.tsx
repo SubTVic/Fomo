@@ -1,16 +1,20 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import NextLink from "next/link";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { YetiBadge } from "@/components/shared/YetiBadge";
-import { PUBLIC_SITE_URL } from "@/lib/public-site";
+import { PUBLIC_QUIZ_URL, PUBLIC_SITE_URL } from "@/lib/public-site";
 
 const CONTACT_EMAIL = "fomo@yeti-dresden.org";
 
-// Entry page of the registration app: register, edit, or go to the public site
-// (quiz and directory live there).
+// Entry page for student groups ("Gruppenbereich"): everything a group may
+// want to do, plus the way in for admins. The public site links here.
 export default async function LandingPage() {
   const t = await getTranslations("landing");
+  const mailto = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+    t("request.mailSubject"),
+  )}&body=${encodeURIComponent(t("request.mailBody"))}`;
 
   return (
     <div className="flex flex-col items-center px-4 py-6 sm:px-6">
@@ -25,67 +29,79 @@ export default async function LandingPage() {
           <p className="text-sm text-primary-foreground/70 max-w-lg">{t("text")}</p>
         </div>
 
-        <Section title={t("register.title")} text={t("register.text")}>
-          <Link
-            href="/groups/register"
-            className="shrink-0 bg-foreground text-primary-foreground px-8 py-3 font-heading text-sm uppercase tracking-wider hover:bg-[#2a3a45] transition-colors text-center"
-          >
-            {t("register.button")}
-          </Link>
-        </Section>
+        <div className="grid border-t-4 border-foreground sm:grid-cols-2">
+          <Card title={t("register.title")} text={t("register.text")}>
+            <Link href="/groups/register" className={primaryButton}>
+              {t("register.button")}
+            </Link>
+          </Card>
 
-        <Section
-          title={t("edit.title")}
-          text={t.rich("edit.text", {
-            email: CONTACT_EMAIL,
-            mail: (chunks) => (
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className="font-semibold text-foreground underline underline-offset-2"
-              >
-                {chunks}
-              </a>
-            ),
-          })}
-        />
+          <Card title={t("edit.title")} text={t("edit.text")} />
 
-        <Section title={t("site.title")} text={t("site.text")}>
-          <a
-            href={PUBLIC_SITE_URL}
-            className="shrink-0 border-2 border-foreground px-8 py-3 font-heading text-sm uppercase tracking-wider hover:bg-foreground hover:text-primary-foreground transition-colors text-center"
-          >
-            {t("site.button")}
-          </a>
-        </Section>
+          <Card title={t("request.title")} text={t("request.text")}>
+            <a href={mailto} className={secondaryButton}>
+              {t("request.button")}
+            </a>
+            <span className="text-xs text-muted-foreground">{CONTACT_EMAIL}</span>
+          </Card>
 
-        {/* YETI × StuRa branding — only on mobile (navbar shows it on desktop) */}
-        <div className="sm:hidden border-t-4 border-foreground px-6 py-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          <YetiBadge />
-          <span>YETI</span>
-          <span className="mx-1">&times;</span>
-          <span>StuRa</span>
+          <Card title={t("directory.title")} text={t("directory.text")}>
+            <a href={`${PUBLIC_SITE_URL}/groups/`} className={secondaryButton}>
+              {t("directory.button")}
+            </a>
+            <a
+              href={PUBLIC_QUIZ_URL}
+              className="text-sm font-semibold text-foreground underline underline-offset-2"
+            >
+              {t("directory.quiz")}
+            </a>
+          </Card>
+        </div>
+
+        <div className="border-t-4 border-foreground px-6 py-4 sm:px-8 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
+          <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider">
+            <YetiBadge />
+            <span>YETI</span>
+            <span className="mx-1">&times;</span>
+            <span>StuRa</span>
+          </span>
+          <span className="flex items-center gap-3">
+            {t("admin.text")}
+            {/* Admin pages are not localized (outside the locale proxy), so the
+                plain Next link is right here; no prefetch needed. */}
+            <NextLink
+              href="/admin/login"
+              prefetch={false}
+              className="whitespace-nowrap border-2 border-foreground px-4 py-1.5 font-heading text-xs uppercase tracking-wider text-foreground hover:bg-foreground hover:text-primary-foreground transition-colors"
+            >
+              {t("admin.button")}
+            </NextLink>
+          </span>
         </div>
       </div>
     </div>
   );
 }
 
-function Section({
+const primaryButton =
+  "inline-block bg-foreground text-primary-foreground px-6 py-3 font-heading text-sm uppercase tracking-wider hover:bg-[#2a3a45] transition-colors text-center";
+const secondaryButton =
+  "inline-block border-2 border-foreground px-6 py-3 font-heading text-sm uppercase tracking-wider hover:bg-foreground hover:text-primary-foreground transition-colors text-center";
+
+function Card({
   title,
   text,
   children,
 }: {
   title: string;
-  text: React.ReactNode;
+  text: string;
   children?: React.ReactNode;
 }) {
   return (
-    <div className="border-t-4 border-foreground px-6 py-6 sm:px-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h2 className="font-heading text-lg uppercase mb-1">{title}</h2>
-        <p className="text-sm leading-relaxed text-muted-foreground max-w-[520px]">{text}</p>
-      </div>
-      {children}
-    </div>
+    <section className="flex flex-col gap-3 border-b-4 border-foreground px-6 py-6 sm:px-8 sm:odd:border-r-4 [&:nth-last-child(-n+2)]:sm:border-b-0 last:border-b-0">
+      <h2 className="font-heading text-lg uppercase">{title}</h2>
+      <p className="text-sm leading-relaxed text-muted-foreground">{text}</p>
+      {children && <div className="mt-auto flex flex-wrap items-center gap-3 pt-2">{children}</div>}
+    </section>
   );
 }

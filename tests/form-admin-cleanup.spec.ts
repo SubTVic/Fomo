@@ -166,7 +166,7 @@ test("merge moves contacts and edit links to the target", async ({ page }) => {
   expect(await db.groupEditToken.count({ where: { groupId: target.id } })).toBeGreaterThan(0);
 });
 
-test("destructive import endpoints are gone; list shows the profile column", async ({ page }) => {
+test("destructive import endpoints are gone; list shows the status column", async ({ page }) => {
   await loginAsAdmin(page);
   expect((await page.request.post("/api/admin/import-groups")).status()).toBe(404);
   // Now falls through to /api/admin/groups/[id], which has no POST handler.
@@ -175,6 +175,6 @@ test("destructive import endpoints are gone; list shows the profile column", asy
 
   await page.goto("/admin/groups");
   await expect(page.getByRole("button", { name: /CSV neu importieren/ })).toHaveCount(0);
-  await expect(page.getByRole("columnheader", { name: "Profil" })).toBeVisible();
-  await expect(page.getByText("echt").first()).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Status" })).toBeVisible();
+  await expect(page.getByText("Im Quiz", { exact: true }).first()).toBeVisible();
 });

@@ -93,7 +93,6 @@ export function InviteButton({ groupId, groupName, contactEmail }: InviteButtonP
       <button
         onClick={() => setOpen(true)}
         className="rounded border px-2 py-1 text-xs hover:bg-muted/40 transition-colors"
-        title={`Bearbeitungslink für ${groupName}`}
       >
         Bearbeitungslink
       </button>

@@ -10,7 +10,10 @@ import { GroupEditForm } from "./GroupEditForm";
 import { ToggleActiveButton } from "./ToggleActiveButton";
 import { MergeButton } from "./MergeButton";
 import { SelfRatingEditor } from "./SelfRatingEditor";
+import { VerifyButton } from "../VerifyButton";
 import { requireAdminPage } from "@/lib/require-admin";
+import { groupStatus } from "@/lib/group-status";
+import { Hint } from "@/components/shared/Hint";
 
 interface AdminGroupDetailPageProps {
   params: Promise<{ id: string }>;
@@ -39,6 +42,12 @@ export default async function AdminGroupDetailPage({
   if (!group) {
     notFound();
   }
+  const status = groupStatus({
+    isActive: group.isActive,
+    isVerified: group.isVerified,
+    registrationStatus: group.registrationStatus,
+    selfRatingAnswers: group.selfRating?.answers.length ?? 0,
+  });
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -55,28 +64,46 @@ export default async function AdminGroupDetailPage({
             {group.name}
           </h1>
           <div className="flex items-center gap-2 mt-1">
-            <span
-              className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                group.isActive
-                  ? "bg-green-100 text-green-800"
-                  : "bg-muted text-muted-foreground"
-              }`}
-            >
-              {group.isActive ? "Aktiv" : "Inaktiv"}
-            </span>
-            <span
-              className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                group.isVerified
-                  ? "bg-green-100 text-green-800"
-                  : "bg-orange-100 text-orange-800"
-              }`}
-            >
-              {group.isVerified ? "Verifiziert" : "Nicht verifiziert"}
-            </span>
+            <Hint text={status.hint} align="start">
+              <span
+                tabIndex={0}
+                className={`cursor-help rounded-full px-2.5 py-0.5 text-xs font-medium ${status.className}`}
+              >
+                {status.label}
+              </span>
+            </Hint>
           </div>
         </div>
-        <ToggleActiveButton groupId={group.id} isActive={group.isActive} />
+        <div className="flex items-start gap-2 flex-wrap">
+          <Hint
+            text={
+              group.isVerified
+                ? "Bestätigung zurücknehmen: Die Gruppe fliegt aus dem Quiz und steht nur noch als „unbestätigt“ im Verzeichnis."
+                : "Angaben geprüft? Dann bestätigen. Mit eigenem Profil (21 Fragen) kommt die Gruppe ins Quiz."
+            }
+            align="end"
+          >
+            <VerifyButton groupId={group.id} isVerified={group.isVerified} />
+          </Hint>
+          <Hint
+            text={
+              group.isActive
+                ? "Gruppe von der Website nehmen (Verzeichnis und Quiz). Lässt sich jederzeit rückgängig machen."
+                : "Gruppe wieder auf der Website zeigen."
+            }
+            align="end"
+          >
+            <ToggleActiveButton groupId={group.id} isActive={group.isActive} />
+          </Hint>
+        </div>
       </div>
+
+      <p className="mb-4 text-sm text-muted-foreground">
+        So bearbeitest du die Gruppe: <strong>Angaben</strong> (Name, Texte, Kontakt) im ersten
+        Kasten, <strong>Quiz-Antworten und Filter</strong> im Kasten „Quiz-Profil“ darunter –
+        jeweils mit eigenem Speichern-Knopf. Jede Änderung steht danach unter „Änderungen“ und lässt sich dort
+        rückgängig machen. Auf der Website erscheint sie mit dem nächsten Daten-Sync.
+      </p>
 
       {/* Unverified: data is likely AI-generated from the scraper */}
       {!group.isVerified && (

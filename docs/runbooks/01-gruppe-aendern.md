@@ -43,7 +43,7 @@
    Der Link gilt **12 Monate** und funktioniert **mehrfach**.
 4. **Danach in der Admin-App:** unter **„Änderungen"** prüfen, was die Gruppe geändert
    hat → „Gesehen" (oder „Rückgängig", falls etwas nicht stimmt). War die Gruppe noch
-   **unbestätigt**: Filter „Eingereicht" → Gruppe öffnen → **„Verifizieren"**.
+   **unbestätigt**: Filter „Zu prüfen" → Gruppe öffnen → **„Verifizieren"**.
 
 Website und Instagram dürfen die Gruppen auch ohne `https://` eingeben
 (`verein.de`, `@verein`) — die App ergänzt das beim Speichern. Ungültige Angaben

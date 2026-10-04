@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 interface DeleteButtonProps {
   /** API endpoint that handles DELETE. */
   url: string;
-  /** Tooltip, e.g. "Gruppe X löschen". */
+  /** Accessible name, e.g. "Gruppe X löschen". */
   title: string;
 }
 
@@ -46,7 +46,7 @@ export function DeleteButton({ url, title }: DeleteButtonProps) {
       <button
         onClick={() => setConfirming(true)}
         className="rounded border border-destructive/30 px-2 py-1 text-xs text-destructive hover:bg-destructive/10 transition-colors"
-        title={title}
+        aria-label={title}
       >
         Löschen
       </button>

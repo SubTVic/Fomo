@@ -2,7 +2,7 @@
 
 # Runbook: „Etwas ist kaputt" + Deployment verstehen
 
-**Stand: Oktober 2026** (nach Umsetzungsplan Phase 1+2).
+**Stand: Oktober 2026** (nach Umsetzungsplan Phase 1–5).
 
 ## So deployt FOMO
 
@@ -16,7 +16,40 @@
 - **Interne App (Registrierung/Admin):** eigenes Vercel-Projekt `fomo`
   (fomo-pi.vercel.app). Der Build verändert die **Datenbank nicht**. Neue
   Datenbank-Migrationen spielt ein Mensch bewusst nach einem Backup ein
-  (`npm run db:status`, dann `npm run db:migrate`; siehe README → Deployment).
+  (siehe „Migration in Produktion einspielen" unten).
+
+## Migration in Produktion einspielen
+
+Nötig, wenn ein gemergter PR einen neuen Ordner unter `prisma/migrations/` mitbringt.
+**Reihenfolge:** erst mergen und deployen lassen, dann **sofort** migrieren. Bis dahin
+wirft die Admin-App Fehler wie „The table `public.…` does not exist" (die Website ist
+nicht betroffen). Migrieren *vor* dem Deploy kann dagegen die noch laufende alte
+Version brechen.
+
+1. **Backup:** Admin-Dashboard → „Backup herunterladen" (nur SUPER_ADMIN) oder bei Neon
+   einen Wiederherstellungspunkt/Branch anlegen. Backup nie ins Repo legen.
+2. **Zugangsdaten holen:** Vercel → Projekt `fomo` → Settings → Environment Variables →
+   `DIRECT_URL` (Adresse ohne `-pooler`) und `DATABASE_URL` (Production). Nur lokal
+   verwenden, nirgends speichern oder weitergeben.
+3. **Auf dem eigenen Rechner im Repo** (aktueller `main`):
+   ```bash
+   git checkout main && git pull && npm ci
+   export DIRECT_URL='…'          # die ganze Adresse aus Vercel, in EINER Zeile, ohne < >
+   export DATABASE_URL='…'
+   npx prisma migrate status      # listet die offenen Migrationen
+   npx prisma migrate deploy      # = npm run db:migrate
+   npx prisma migrate status      # → „Database schema is up to date!"
+   ```
+   **Nie `prisma migrate dev` oder `migrate reset` gegen die echte Datenbank**, auch
+   wenn Prisma es in seiner Ausgabe vorschlägt – das ist nur für lokale Test-Datenbanken.
+4. Admin-App neu laden (kein Redeploy nötig) und kurz durchklicken: Login, „Änderungen",
+   eine Gruppe per Bearbeitungslink ändern.
+
+**Typische Fehler:** `P1013 … scheme is not recognized` → Adresse falsch eingefügt
+(spitze Klammern, Zeilenumbruch). Schlägt eine Migration fehl: nicht blind wiederholen,
+Meldung sichern, `npx prisma migrate status` ansehen.
+**Notbremse:** Vercel → `fomo` → Deployments → letzter Stand vor dem Merge →
+„Instant Rollback". Solange noch nicht migriert wurde, läuft die alte Version sofort wieder.
 
 ## Schnelldiagnose nach Symptom
 

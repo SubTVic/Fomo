@@ -115,6 +115,9 @@ Login auf Umami → Website „fomo-dresden.app". Die wichtigsten Zahlen:
 - Event `group-click` — welche Gruppen bekommen echte Kontakte? (gut als
   Argument gegenüber Gruppen und StuRa)
 - Event `results-feedback` — 👍/👎 auf der Ergebnisseite
+- Die Kachel „Feedback 👍“ im Bericht zählt ab dem Datum `feedbackSince` in
+  `static-site/data/report-milestones.json` (zum Zurücksetzen, z. B. für eine
+  Werbekampagne; alte Daten bleiben in Umami)
 - Event `results-too-few-answers` — jemand hat weniger als 5 Fragen mit Ja/Nein
   beantwortet und deshalb kein Ergebnis bekommen (seit Oktober 2026)
 

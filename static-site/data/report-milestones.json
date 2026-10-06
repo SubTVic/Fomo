@@ -1,5 +1,7 @@
 {
   "_comment": "Änderungen an Matching-Algorithmus oder Gruppendaten hier eintragen (Datum aufsteigend, Format YYYY-MM-DD). Der /report/ zeigt für den jüngsten Eintrag automatisch eine 'Seit dieser Änderung'-Ansicht der Top-Gruppen.",
+  "_feedbackSince": "Optional: Ab diesem Datum (YYYY-MM-DD) zählt die Kachel „Feedback“ im /report/. Ältere 👍/👎 bleiben in Umami, werden aber nicht mitgezählt — z. B. um eine Werbekampagne getrennt zu messen. Leer lassen = ganzer Report-Zeitraum.",
+  "feedbackSince": "2026-10-06",
   "milestones": [
     {
       "date": "2026-07-19",

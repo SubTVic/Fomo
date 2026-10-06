@@ -35,14 +35,19 @@ const OFFLINE = args.includes("--offline");
 const quiz = JSON.parse(readFileSync(join(ROOT, "data/quiz.json"), "utf8"));
 // Algorithm/data change log (data/report-milestones.json) — the newest entry
 // drives the "seit der letzten Änderung" view of the result distribution.
-const MILESTONES = (() => {
+const MILESTONES_FILE = (() => {
   try {
-    return (
-      JSON.parse(readFileSync(join(ROOT, "data/report-milestones.json"), "utf8")).milestones ?? []
-    );
+    return JSON.parse(readFileSync(join(ROOT, "data/report-milestones.json"), "utf8"));
   } catch {
-    return [];
+    return {};
   }
+})();
+const MILESTONES = MILESTONES_FILE.milestones ?? [];
+// Optional reset date for the 👍/👎 tile: feedback before it stays in Umami but
+// is not counted (e.g. to measure a campaign on its own).
+const FEEDBACK_SINCE = (() => {
+  const ts = Date.parse(MILESTONES_FILE.feedbackSince ?? "");
+  return Number.isFinite(ts) ? { date: MILESTONES_FILE.feedbackSince, ts } : null;
 })();
 const groupsAll = JSON.parse(readFileSync(join(ROOT, "data/groups.json"), "utf8")).groups;
 // Matching runs against verified groups only — mirror src/lib/data.ts.
@@ -222,7 +227,11 @@ async function fetchAll() {
   data.itemViews = await values("quiz-item-view", "index");
   data.resultGroups = await values("quiz-result-group", "group");
   data.resultRanks = await values("quiz-result-group", "rank");
-  data.feedback = await values("results-feedback", "value");
+  data.feedback = await values(
+    "results-feedback",
+    "value",
+    FEEDBACK_SINCE ? { startAt: Math.max(startAt, FEEDBACK_SINCE.ts), endAt } : null,
+  );
   data.clicksByGroup = await values("group-click", "group");
   data.clickContexts = await values("group-click", "context");
   data.clickDests = await values("group-click", "dest");
@@ -499,7 +508,12 @@ function buildHtml(data, sim) {
       ["Quiz-Starts", starts],
       ["Quiz-Abschlüsse", completions],
       ["Abschlussquote", starts ? pct(completions / starts) : "–"],
-      ["Feedback 👍", up + down ? pct(up / (up + down)) : "–"],
+      [
+        FEEDBACK_SINCE
+          ? `Feedback 👍 seit ${new Date(FEEDBACK_SINCE.ts).toLocaleDateString("de-DE")} (${up} 👍 / ${down} 👎)`
+          : `Feedback 👍 (${up} 👍 / ${down} 👎)`,
+        up + down ? pct(up / (up + down)) : "–",
+      ],
     ];
     // Diagnostic line: which events actually arrived in the window. Makes
     // "section is empty because the event only ships since <date>" vs.

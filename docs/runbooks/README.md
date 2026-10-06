@@ -21,6 +21,9 @@ Texte nur über **Branch + Pull Request**.
 | 10 | Admin hinzufügen/entfernen | [10 Admins verwalten](10-admins-verwalten.md) | ja (SUPER_ADMIN) |
 | 11 | „Etwas ist kaputt" / Deployment | [05 Fehlersuche und Deploy](05-fehlersuche-und-deploy.md) | Diagnose ja, Behebung teils nein |
 | 12 | Software-Updates | [12 Updates](12-updates.md) | nein |
+| 13 | Backup ziehen, DB-Migration einspielen, Notfall-Wiederherstellung | [11 Backup und Migration](11-backup-und-migration.md) | nein (Person mit DB-Zugang) |
+
+Datenschutz-Fristen und Löschanfragen: [`docs/datenschutz-loeschkonzept.md`](../datenschutz-loeschkonzept.md).
 
 Weitere Doku: Betrieb ohne Programmierkenntnisse →
 [`static-site/docs/BETRIEBSHANDBUCH.md`](../../static-site/docs/BETRIEBSHANDBUCH.md);

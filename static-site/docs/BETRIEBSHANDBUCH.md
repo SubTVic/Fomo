@@ -17,7 +17,9 @@ Browser der Nutzer:innen. **Dahinter** steht aber die **Registrierungs-/Admin-Ap
 (fomo-pi.vercel.app) mit einer **Datenbank**: Dort registrieren sich Gruppen und
 pflegen Admins die Daten. Diese App **braucht Pflege** — Software-Updates (2× im
 Jahr, `docs/runbooks/12-updates.md`), Admin-Zugänge, Backups. Laufende Kosten heute:
-Vercel- und Datenbank-Gratistarif plus Domain (~15 €/Jahr).
+Vercel- und Datenbank-Gratistarif plus Domain (~15 €/Jahr). Der Gratistarif
+begrenzt die Zahl der Builds pro Tag; an Tagen mit vielen Änderungen kann Vercel
+für 24 Stunden pausieren (siehe §8).
 
 ## 2. Die Konten (Zugänge, die man braucht)
 
@@ -27,6 +29,7 @@ Vercel- und Datenbank-Gratistarif plus Domain (~15 €/Jahr).
 | **Vercel** | Hosting beider Apps (`fomo-static` = Website, `fomo` = Admin-App) | ⭐ Ja |
 | **Datenbank** (PostgreSQL, über Vercel/Neon) | Gruppendaten, Kontakte, Admins der Admin-App | ⭐ Ja |
 | **Admin-App-Login** (fomo-pi.vercel.app/admin) | Gruppen pflegen, verifizieren, Links erzeugen | ⭐ Ja — mind. 2 SUPER_ADMINs |
+| **GitHub-Secrets** (Repo → Settings → Secrets and variables → Actions) | `EXPORT_TOKEN` (Daten-Sync), `VERCEL_DEPLOY_HOOK_URL`, `UMAMI_API_KEY`, `UMAMI_WEBSITE_ID` — Liste in der Root-`README.md`, Abschnitt „Environment Variables“ | Ja — ohne sie laufen Daten-Sync und Report-Automatik nicht |
 | **Domain-Registrar** (fomo-dresden.app) | Die Internetadresse; jährliche Verlängerung! | ⭐ Ja — Ablauf = Seite weg |
 | **Umami** | Anonyme Statistik (Besucher, Quiz-Antworten) | Nein — Seite läuft auch ohne |
 | **E-Mail** fomo@yeti-dresden.org | Kontaktadresse aus Impressum/Landing | Ja (rechtlich: Impressum) |
@@ -112,6 +115,16 @@ Login auf Umami → Website „fomo-dresden.app". Die wichtigsten Zahlen:
 - Event `group-click` — welche Gruppen bekommen echte Kontakte? (gut als
   Argument gegenüber Gruppen und StuRa)
 - Event `results-feedback` — 👍/👎 auf der Ergebnisseite
+- Die Kachel „Feedback 👍“ im Bericht zählt ab dem Datum `feedbackSince` in
+  `static-site/data/report-milestones.json` (zum Zurücksetzen, z. B. für eine
+  Werbekampagne; alte Daten bleiben in Umami)
+- Event `results-too-few-answers` — jemand hat weniger als 5 Fragen mit Ja/Nein
+  beantwortet und deshalb kein Ergebnis bekommen (seit Oktober 2026)
+
+⚠️ **Zahlen vor dem 03.10.2026 sind teils zu hoch:** Wer damals auf der
+Ergebnisseite „Antworten ändern“ benutzte, wurde doppelt als Abschluss gezählt.
+Für Vergleiche über diesen Tag hinweg die Report-Ansicht „Seit der letzten
+Änderung“ nutzen.
 
 Alles ist anonym; es gibt nichts DSGVO-Kritisches zu verwalten, kein
 Cookie-Banner, keine Löschanfragen-Prozesse.
@@ -163,6 +176,10 @@ Ordner `static-site/` (Details in der README, Abschnitt „Report generator").
 | Build rot „Datenprüfung FEHLGESCHLAGEN" | Fehler in den Gruppendaten (Meldung nennt Gruppe + Feld) | In der Admin-App korrigieren, neu exportieren |
 | Logo erscheint nicht | Slug/Dateiname in logos.json falsch | Schreibweise + `%20` prüfen |
 | Statistik leer | `UMAMI_WEBSITE_ID` fehlt in Vercel | Vercel → Settings → Env Vars, dann Redeploy |
+| Im Pull Request rote Vercel-Einträge „Deployment rate limited“ | Tageslimit des Gratis-Tarifs erreicht | Kein Fehler im Inhalt. Am nächsten Tag geht es wieder; einen verpassten Live-Deploy in Vercel von Hand starten („Redeploy“) |
+| Admin-App: Login oder Gruppen bearbeiten geht nach einem Update nicht | Datenbank-Änderung (Migration) noch nicht eingespielt | Person mit Datenbank-Zugang: `docs/runbooks/11-backup-und-migration.md` |
+| „Zu viele Fehlversuche“ beim Admin-Login | Login-Sperre nach 5 falschen Passwörtern | 15 Minuten warten; Passwort zurücksetzen lassen (Runbook 10) |
+| Ergebnisseite zeigt keine Gruppen, sondern „zu wenige Antworten“ | Gewollt: unter 5 Ja/Nein-Antworten gibt es kein Ranking | Nichts tun |
 
 **Eskalation:** Wenn es nicht in dieser Tabelle steht, braucht es jemanden mit
 Next.js-Grundkenntnissen (jede:r Informatik-Studi im 3. Semester). Das gesamte
@@ -180,4 +197,7 @@ jede:r Webentwickler:in übernehmen.
 | **Montags (automatisch)** | Der /report/ aktualisiert sich per GitHub-Automatik von selbst (§7) |
 | **Juli/August** | Bestätigungsrunde mit den Gruppen (`docs/runbooks/08-jaehrliche-bestaetigungsrunde.md`) |
 | **2× jährlich** | Software-Updates der Admin-App und der Website (`docs/runbooks/12-updates.md`) |
+| **Monatlich** | Backup ziehen (`docs/runbooks/11-backup-und-migration.md`); alte Backups nach Frist löschen; automatische Löschung `scripts/cleanup.ts --apply` laufen lassen (`docs/datenschutz-loeschkonzept.md`) — bis zum Server-Umzug von Hand, durch eine Person mit Datenbank-Zugang |
+| **Nach jedem Merge mit neuer Migration** | Sofort nach dem Deploy die Migration einspielen (Runbook 11) — die PR-Beschreibung sagt, ob eine dabei ist |
+| **Bei Löschanfragen** | Innerhalb eines Monats beantworten (`docs/datenschutz-loeschkonzept.md`) |
 | **Sonst** | Nichts. Alle Einzelaufgaben: `docs/runbooks/README.md`. |

@@ -2,8 +2,8 @@
 
 # Runbook: Eine Gruppe ändert ihre Daten (Attribute, Beschreibung, Kontakt, Logo)
 
-**Stand: Oktober 2026** (nach Umsetzungsplan Phase 1–3, WP-4.1, 4.2, 4.4 und 4.5). Was sich mit Phase 4
-ändert, steht unter „Nach dem Umbau".
+**Stand: Oktober 2026** (nach Umsetzungsplan Phase 1–5). Was noch kommt, steht unter
+„Noch offen".
 
 ## Wichtig vorab (sonst geht die Änderung schief oder verloren)
 
@@ -47,7 +47,9 @@
 
 Website und Instagram dürfen die Gruppen auch ohne `https://` eingeben
 (`verein.de`, `@verein`) — die App ergänzt das beim Speichern. Ungültige Angaben
-werden rot am jeweiligen Feld angezeigt; der Link bleibt dabei gültig.
+werden rot am jeweiligen Feld angezeigt; der Link bleibt dabei gültig. Auch der
+Daten-Sync ergänzt fehlendes `https://`. Bleibt trotzdem ein unvollständiger Link bei
+einer **verifizierten** Gruppe übrig, bricht die Datenprüfung ab (siehe unten).
 
 ## Fall C: Logo ändern/hinzufügen
 
@@ -117,6 +119,9 @@ Braucht einen Rechner mit Node.js + das Repo:
   In der Admin-App korrigieren und neu exportieren — **nicht** `groups.json` von Hand
   ändern.
 
-## Nach dem Umbau (Umsetzungsplan Phase 4)
+## Noch offen
 
-- WP-4.3: Gruppen fordern ihren Link selbst per Mail an (wartet auf E3).
+- WP-4.3: Gruppen fordern ihren Link selbst per Mail an (wartet auf Entscheidung E3,
+  Mailserver).
+- Phase 6 (Umzug auf den StuRa-Server): Der Daten-Sync wird dort ein Knopf
+  „Website aktualisieren“ in der Admin-App (WP-6.4).

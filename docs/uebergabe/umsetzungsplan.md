@@ -897,6 +897,10 @@ Finde die Ursache nur lesend und schlage einen Fix als eigenes kleines WP vor.
 
 ## 9. Fortschritt (von der KI im jeweiligen PR aktualisieren)
 
+**04.10.2026:** Phase 1–5 als Sammel-PR #3 nach `main` gemergt, danach der Oktober-Audit
+(#30). Offen vor Phase 6: Prod-Migrationen und Go-live-Schritte (`TODO.md` §1.0),
+WP-1.8, WP-2.7.
+
 | WP | Titel | Status | PR |
 |---|---|---|---|
 | 1.1 | Root-Build reparieren | ✅ | #3 |

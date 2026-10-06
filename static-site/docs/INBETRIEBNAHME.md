@@ -2,10 +2,13 @@
 
 # FOMO – Inbetriebnahme auf einem StuRa-Server
 
-> **Stand Juli 2026:** Die Seite läuft produktiv auf **Vercel**
+> **Stand Oktober 2026:** Die Seite läuft produktiv auf **Vercel**
 > (www.fomo-dresden.app, Auto-Deploy bei jedem Push auf `main`) — dafür ist
-> keiner dieser Schritte nötig. Diese Anleitung bleibt als Plan B für einen
-> Umzug auf einen eigenen Server (StuRa / Rechenzentrum) gültig.
+> keiner dieser Schritte nötig. Diese Anleitung bleibt als Plan B für die
+> **statische Seite allein** gültig. Der geplante Gesamtumzug auf den StuRa-Server
+> (Admin-App, Datenbank, Umami, Backups, Monitoring) ist in
+> `docs/uebergabe/umsetzungsplan.md`, Phase 6, beschrieben und ersetzt diese
+> Anleitung, sobald er umgesetzt ist (WP-6.11).
 
 Diese Anleitung beschreibt, wie die **statische FOMO-Seite** auf einem eigenen
 Server (StuRa / Rechenzentrum) installiert, betrieben und mit neuen Daten
@@ -24,7 +27,7 @@ weiterhin in der separaten dynamischen App – an ihr ändert sich nichts.
 - ~1 GB freier Speicher, 1 CPU genügt (statische Auslieferung)
 - Optional: ein vorgelagerter Reverse-Proxy (nginx/Traefik) für Domain + HTTPS
 
-**Alternativer Weg (ohne Docker):** Node.js ≥ 20 zum Bauen + ein beliebiger
+**Alternativer Weg (ohne Docker):** Node.js 24 zum Bauen (wie `.nvmrc`) + ein beliebiger
 Webserver (nginx/Apache), der ein Verzeichnis ausliefert (siehe Abschnitt 7).
 
 ---

@@ -178,7 +178,7 @@ GitHub → Repo → Settings → Secrets and variables → Actions:
 |---|---|---|
 | `UMAMI_API_KEY` | Button „Report erstellen (ohne Deploy)" → Download-Artifact | derselbe wie in Vercel |
 | `UMAMI_WEBSITE_ID` | dito | `56708403-b68d-4f0a-957b-55d9b68b9ff0` |
-| `VERCEL_DEPLOY_HOOK_URL` | Montags-Auto-Refresh von `/report/` + Button „Weekly report redeploy" | Vercel → Settings → Git → Deploy Hook erstellen |
+| `VERCEL_DEPLOY_HOOK_URL` | Täglicher Auto-Refresh von `/report/` + Button „Daily report redeploy" | Vercel → Settings → Git → Deploy Hook erstellen |
 
 (Was die zwei Buttons tun / nicht tun: Betriebshandbuch §7.)
 

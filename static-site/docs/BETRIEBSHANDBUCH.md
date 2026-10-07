@@ -139,17 +139,17 @@ enthält aber nur anonyme Sammelwerte; Google indexiert ihn nicht.)
 Damit er echte Zahlen zeigt, müssen im Vercel-Projekt zwei Variablen gesetzt
 sein: `UMAMI_API_KEY` und `UMAMI_WEBSITE_ID` (ohne `NEXT_PUBLIC_`-Präfix).
 **Aktualität:** Der Bericht erneuert sich bei jedem Deployment; zusätzlich
-stößt eine GitHub-Automatik jeden Montag früh ein Deployment an — dafür
+stößt eine GitHub-Automatik jeden Morgen (ca. 6 Uhr) ein Deployment an — dafür
 einmalig in Vercel einen „Deploy Hook" (Settings → Git) erstellen und die
 URL als GitHub-Secret `VERCEL_DEPLOY_HOOK_URL` hinterlegen. Sofort
-aktualisieren: GitHub → Actions → „Weekly report redeploy" → „Run workflow".
+aktualisieren: GitHub → Actions → „Daily report redeploy" → „Run workflow".
 
 **Zwei Knöpfe, zwei Zwecke — nicht verwechseln:**
 
 | GitHub-Action | Was sie tut | Was sie NICHT tut |
 |---|---|---|
 | „**Report erstellen (ohne Deploy)**" | Erzeugt eine **Download-Datei**: fertigen Lauf öffnen → unten „Artifacts" → `fomo-report` (ZIP mit HTML) | Ändert die Website **nicht** — `/report/` bleibt wie er ist |
-| „**Weekly report redeploy**" (läuft montags automatisch, geht auch manuell) | Baut die **Website** neu → `/report/` auf fomo-dresden.app wird aktuell | Erzeugt keine Download-Datei |
+| „**Daily report redeploy**" (läuft täglich automatisch, geht auch manuell) | Baut die **Website** neu → `/report/` auf fomo-dresden.app wird aktuell | Erzeugt keine Download-Datei |
 
 Einmalige Einrichtung für den Download-Knopf: GitHub → Repo → Settings →
 Secrets and variables → Actions → zwei Secrets: `UMAMI_API_KEY` und
@@ -194,7 +194,7 @@ jede:r Webentwickler:in übernehmen.
 | **Vor Erstiwoche (Sept.)** | Daten aktualisieren (§4), tote Links stichprobenartig prüfen, Umami checken |
 | **Nach Erstiwoche** | Bericht sichern: www.fomo-dresden.app/report/ aufrufen und als PDF/HTML speichern → an StuRa |
 | **Bei Personenwechsel** | Impressum/Datenschutz aktualisieren (§2), Zugänge übergeben |
-| **Montags (automatisch)** | Der /report/ aktualisiert sich per GitHub-Automatik von selbst (§7) |
+| **Täglich (automatisch)** | Der /report/ aktualisiert sich per GitHub-Automatik von selbst (§7) |
 | **Juli/August** | Bestätigungsrunde mit den Gruppen (`docs/runbooks/08-jaehrliche-bestaetigungsrunde.md`) |
 | **2× jährlich** | Software-Updates der Admin-App und der Website (`docs/runbooks/12-updates.md`) |
 | **Monatlich** | Backup ziehen (`docs/runbooks/11-backup-und-migration.md`); alte Backups nach Frist löschen; automatische Löschung `scripts/cleanup.ts --apply` laufen lassen (`docs/datenschutz-loeschkonzept.md`) — bis zum Server-Umzug von Hand, durch eine Person mit Datenbank-Zugang |

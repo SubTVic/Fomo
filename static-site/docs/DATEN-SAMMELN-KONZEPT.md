@@ -100,7 +100,7 @@ per Umami-API, verheiratet sie mit `quiz.json` (Fragetexte) und `groups.json`
 Frage, Filterwahl, Abbruch-Funnel, Top-Gruppen in den Ergebnissen und eine
 **Bias-Analyse** (u. a. Simulation tausender Profile gegen den echten
 Matcher). Der Report wird außerdem bei jedem Vercel-Build erzeugt und liegt
-live unter `/report/` (noindex; wöchentlicher Auto-Refresh per GitHub Action).
+live unter `/report/` (noindex; täglicher Auto-Refresh per GitHub Action).
 
 **Historie:** Eine zwischenzeitliche Google-Sheets-Anbindung (Client-Beacon an
 einen offenen Apps-Script-Endpoint) wurde im Juli 2026 revertiert — sie lief

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 #
-# Refreshes the analytics report on the live site once a week without a code
+# Refreshes the analytics report on the live site once a day without a code
 # change: the static site regenerates /report/ only at build time, so this
 # simply asks Vercel to rebuild via a Deploy Hook.
 #
@@ -11,11 +11,11 @@
 #      new secret VERCEL_DEPLOY_HOOK_URL with that URL.
 # Without the secret the job exits quietly (no failure noise).
 
-name: Weekly report redeploy
+name: Daily report redeploy
 
 on:
   schedule:
-    - cron: "0 4 * * 1" # Mondays 04:00 UTC (06:00 Dresden in summer)
+    - cron: "0 4 * * *" # daily 04:00 UTC (06:00 Dresden in summer, 05:00 in winter)
   workflow_dispatch: {} # manual "refresh now" button in the Actions tab
 
 jobs:

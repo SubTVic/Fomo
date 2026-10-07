@@ -8,10 +8,10 @@
   Abbruch-Kurve, Top-Gruppen, Bias-Analyse. Anonyme Sammelwerte; kann an den StuRa
   weitergegeben werden.
 - **Rohdaten:** Umami-Login → Website „fomo-dresden.app".
-- **Aktualität:** Der Bericht wird bei jedem Deploy neu erzeugt; montags stößt eine
+- **Aktualität:** Der Bericht wird bei jedem Deploy neu erzeugt; jeden Morgen stößt eine
   GitHub-Automatik einen Deploy an. Das funktioniert nur, wenn das GitHub-Secret
   `VERCEL_DEPLOY_HOOK_URL` gesetzt ist. Sofort aktualisieren: GitHub → Actions →
-  „Weekly report redeploy" → „Run workflow".
+  „Daily report redeploy" → „Run workflow".
 - **Bericht leer/„ohne Live-Daten"**: im Vercel-Projekt `fomo-static` fehlen
   `UMAMI_API_KEY` und/oder `UMAMI_WEBSITE_ID`.
 

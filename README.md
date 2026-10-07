@@ -201,7 +201,7 @@ scripts/
 .github/workflows/
 ├── ci.yml                          # Checks both apps on every PR (jobs `static-site` and `root`)
 ├── sync-groups.yml                 # "Daten-Sync": admin app → PR updating static-site/data/groups.json
-├── weekly-report-redeploy.yml      # Mondays: redeploys the public site so /report/ refreshes
+├── weekly-report-redeploy.yml      # Daily: redeploys the public site so /report/ refreshes
 └── report-on-demand.yml            # Builds the analytics report as a downloadable artifact
 
 docs/

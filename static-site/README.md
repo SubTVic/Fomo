@@ -174,7 +174,7 @@ generator first (prebuild) and ships the result at **`/report/`** (public,
 `noindex` + robots-disallowed; contains anonymous aggregates only). It never
 blocks a deploy — API failures degrade to the simulation-only report. Set
 `UMAMI_API_KEY` + `UMAMI_WEBSITE_ID` (no `NEXT_PUBLIC_` prefix — build-time
-only) in the Vercel project to fill it with live data. A weekly GitHub Action
+only) in the Vercel project to fill it with live data. A daily GitHub Action
 (`.github/workflows/weekly-report-redeploy.yml`, also manually triggerable)
 POSTs a Vercel Deploy Hook so the numbers refresh without a code push — it
 needs the `VERCEL_DEPLOY_HOOK_URL` repo secret once.

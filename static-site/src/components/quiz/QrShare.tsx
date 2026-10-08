@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { track, EVENTS } from "@/lib/analytics";
 import { QR_MARGIN, qrMatrix } from "@/lib/qr";
+import { drawQrCard } from "@/lib/qr-card";
 
 /**
  * "Show as QR code" on the results page: the current URL (which carries the
@@ -37,28 +38,26 @@ export function QrShare() {
     setUrl(window.location.href);
   }
 
-  function download() {
-    if (!matrix) return;
+  const [saving, setSaving] = useState(false);
+
+  async function download() {
+    if (!matrix || saving) return;
     track(EVENTS.resultsShareQr, { action: "download" });
-    // PNG rather than SVG: phones save it straight to the photo gallery.
-    const scale = 12;
-    const side = (matrix.size + QR_MARGIN * 2) * scale;
-    const canvas = document.createElement("canvas");
-    canvas.width = side;
-    canvas.height = side;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, side, side);
-    ctx.scale(scale, scale);
-    ctx.fillStyle = "#1a2a35";
-    ctx.fill(new Path2D(matrix.path));
-    const a = document.createElement("a");
-    a.href = canvas.toDataURL("image/png");
-    a.download = isEnglish ? "fomo-results-qr.png" : "fomo-ergebnis-qr.png";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    setSaving(true);
+    try {
+      // PNG rather than SVG: phones save it straight to the photo gallery.
+      const canvas = await drawQrCard(matrix, isEnglish ? "en" : "de");
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = isEnglish ? "fomo-results-qr.png" : "fomo-ergebnis-qr.png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch {
+      // canvas unavailable — the on-screen code still works
+    } finally {
+      setSaving(false);
+    }
   }
 
   const total = matrix ? matrix.size + QR_MARGIN * 2 : 0;
@@ -103,6 +102,7 @@ export function QrShare() {
               <button
                 type="button"
                 onClick={download}
+                disabled={saving}
                 className="mt-4 border-poster bg-navy px-5 py-2 font-heading text-sky transition-colors hover:bg-navy-hover"
               >
                 {isEnglish ? "Save image" : "Bild speichern"}

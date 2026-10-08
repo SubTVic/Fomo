@@ -23,6 +23,10 @@ export const SITE_URL = raw.replace(/\/$/, "");
 export const REGISTER_URL =
   process.env.NEXT_PUBLIC_REGISTER_URL?.trim() || "https://fomo-pi.vercel.app/groups/register";
 
+// Landing page of the dynamic app for groups (register, edit profile).
+export const GROUPS_APP_URL =
+  process.env.NEXT_PUBLIC_GROUPS_APP_URL?.trim() || "https://fomo-pi.vercel.app/";
+
 // Optional subpath (mirrors next.config.ts), e.g. when hosted under /fomo.
 const rawBase = process.env.NEXT_PUBLIC_BASE_PATH?.trim();
 export const BASE_PATH = rawBase && rawBase !== "/" ? rawBase.replace(/\/$/, "") : "";

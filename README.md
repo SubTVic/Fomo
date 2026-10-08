@@ -261,6 +261,7 @@ Public site (Vercel project `fomo-static`) — all build-time only, see
 | `UMAMI_SRC` | Optional Umami script URL (default: Umami Cloud) |
 | `UMAMI_API_KEY` | Lets the build pull live numbers into `/report/` (or `UMAMI_URL` + `UMAMI_USER` + `UMAMI_PASSWORD` when self-hosted) |
 | `NEXT_PUBLIC_REGISTER_URL` | Optional: where "Gruppe registrieren" points (default: the admin app) |
+| `NEXT_PUBLIC_GROUPS_APP_URL` | Optional: where "Zum Gruppenbereich" on the home page points (default: https://fomo-pi.vercel.app/) |
 
 GitHub → Settings → Secrets and variables → Actions:
 

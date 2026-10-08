@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import Link from "next/link";
 import { FAQ_DE, FAQ_EN } from "@/lib/faq";
+import { GroupsPortalLink } from "./GroupsPortalLink";
 
 type Lang = "de" | "en";
 
@@ -57,6 +58,8 @@ export function HomePageContent({ lang, groupCount }: { lang: Lang; groupCount: 
           </Link>
         </div>
       </section>
+
+      <GroupsPortalLink lang={lang} />
 
       {/* Visible FAQ — must stay in sync with the FAQPage JSON-LD (same source). */}
       <section className="mt-6 border-poster bg-card p-6 sm:p-10">

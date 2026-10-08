@@ -62,14 +62,14 @@ const backup = {
   groups: [
     group({
       id: "g1", name: "Ökologie AG", slug: "oekologie-ag", isVerified: true,
-      websiteUrl: "https://oeko.example.org", outdoor: true, language: "german",
+      websiteUrl: "https:/oeko.example.org", instagramUrl: "@oeko.ag", outdoor: true, language: "german",
     }),
     group({
       id: "g2", name: "Akaflieg", slug: "akaflieg", isVerified: false, categoryId: "cat-kultur",
       tech: true, handsOn: true, groupSize: "small", eventFrequency: "high",
       nextEventTitle: "Schnupperflug", nextEventDate: "2026-10-10", nextEventIsOpen: true,
     }),
-    group({ id: "g3", name: "Zeta", slug: "zeta", isVerified: true }),
+    group({ id: "g3", name: "Zeta", slug: "zeta", isVerified: true, websiteUrl: "kein link" }),
     group({ id: "g4", name: "Inaktiv", slug: "inaktiv", isActive: false, isVerified: true }),
     group({ id: "g5", name: "Ohne Kategorie", slug: "ohne-kategorie", categoryId: "missing", music: true }),
   ],
@@ -78,7 +78,8 @@ const backup = {
     { id: "r4", groupId: "g4", raterCount: 1, filterSelections: [] },
   ],
   groupSelfRatingAnswers: [
-    ...ITEM_IDS.map((itemId, i) => ({ id: `a1-${i}`, ratingId: "r1", itemId, value: (i % 3) - 1 })),
+    // Reversed, so both exporters have to sort answers into quiz order.
+    ...ITEM_IDS.map((itemId, i) => ({ id: `a1-${i}`, ratingId: "r1", itemId, value: (i % 3) - 1 })).reverse(),
     ...ITEM_IDS.map((itemId, i) => ({ id: `a4-${i}`, ratingId: "r4", itemId, value: 1 })),
   ],
 };
@@ -125,6 +126,11 @@ describe("buildStaticGroups", () => {
         "akaflieg", "ohne-kategorie", "oekologie-ag", "zeta",
       ]);
       expect(fromLib.groups.find((g) => g.slug === "oekologie-ag")?.selfRating.derived).toBe(false);
+      // Both repair typed links the same way.
+      expect(fromScript.groups.find((g: { slug: string }) => g.slug === "oekologie-ag")).toMatchObject({
+        websiteUrl: "https://oeko.example.org",
+        instagramUrl: "https://www.instagram.com/oeko.ag/",
+      });
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

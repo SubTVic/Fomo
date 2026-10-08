@@ -29,6 +29,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...pair("/", "/en", 1, "monthly"),
     ...pair("/quiz", "/en/quiz", 0.9, "monthly"),
     ...pair("/groups", "/en/groups", 0.8, "weekly"),
+    ...pair("/transparenz", "/en/transparenz", 0.5, "monthly"),
   ];
 
   const legalPages: MetadataRoute.Sitemap = [

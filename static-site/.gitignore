@@ -15,6 +15,8 @@ next-env.d.ts
 .vercel
 fomo-report.html
 public/report/
+# AI plausibility check output (scripts/plausibility-check.mjs)
+plausibility-report/
 
 # Backups / DB dumps — may contain personal data, never commit
 fomo-backup-*.json

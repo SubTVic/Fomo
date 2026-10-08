@@ -37,12 +37,18 @@
         "empty": "No group found.",
         "notListed": "Your group isn't listed? <register>Register it instead.</register>",
         "hint": "We send the link to the contact address stored for your group. If it has changed, briefly tell us who you are.",
-        "submit": "Prepare email",
+        "submit": "Open in mail app",
         "fallback": "The group list could not be loaded. Just write to <mail>{email}</mail>.",
         "mail": {
           "subject": "Edit link for {group}",
-          "body": "Hello FOMO team,\n\nwe would like to edit the profile of our student group \"{group}\" ({url}). Please send us a new edit link.\n\nMy role in the group: \n\nBest regards\n"
-        }
+          "body": "Hello FOMO team,\n\nwe would like to edit the profile of our student group \"{group}\" ({url}). Please send us a new edit link.\n\nMy role in the group: \n\nBest regards\n",
+          "toLabel": "To",
+          "subjectLabel": "Subject"
+        },
+        "or": "or",
+        "copy": "Copy email",
+        "copied": "Copied – now paste it into your mail program",
+        "copyFailed": "Copying didn't work – select the text below and copy it yourself."
       }
     },
     "site": {

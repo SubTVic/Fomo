@@ -19,7 +19,8 @@
     "scrape:llm": "node scripts/scrape-llm.mjs",
     "scrape:eval": "node scripts/scrape-eval.mjs",
     "derive": "node scripts/derive-selfrating.mjs",
-    "derive:train": "node scripts/train-derive-model.mjs"
+    "derive:train": "node scripts/train-derive-model.mjs",
+    "plausibility": "node scripts/plausibility-check.mjs"
   },
   "dependencies": {
     "@fontsource/archivo-black": "^5.2.8",

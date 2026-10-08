@@ -49,6 +49,8 @@ export const EVENTS = {
   resultsTooFewAnswers: "results-too-few-answers",
   resultsFeedback: "results-feedback",
   resultsShareCopy: "results-share-copy",
+  // QR code of the result link: shown / saved as image (`action`).
+  resultsShareQr: "results-share-qr",
   // Voluntary, anonymous: "already a member of a group? which one?" plus the
   // rank OUR ranking gave that group — the self-recognition metric (does the
   // algorithm find your own group?) collected passively instead of a study.

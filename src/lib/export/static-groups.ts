@@ -42,6 +42,8 @@ export type ExportGroupInput = {
   isVerified: boolean;
   websiteUrl: string | null;
   instagramUrl: string | null;
+  communityLinkUrl?: string | null;
+  communityLinkLabel?: string | null;
   contactEmail: string | null;
   memberCount: number | null;
   language: string | null;
@@ -87,6 +89,16 @@ function naiveItemValue(shape: Shape, item: QuizShape["items"][number]): -1 | 0 
     sum += m.isInverse ? -raw : raw;
   }
   return sum > 0 ? 1 : sum < 0 ? -1 : 0;
+}
+
+/**
+ * Community link for the site. The APIs only store normalized http(s) links,
+ * so anything else is dropped rather than repaired; no link = null.
+ * Same rule in static-site/scripts/export-from-backup.mjs.
+ */
+function communityLink(url: string | null | undefined, label: string | null | undefined) {
+  if (!url || !isHttpUrl(url)) return null;
+  return { label: label?.trim() || null, url };
 }
 
 /** Repair "verein.de" / "@handle" style links; keep the raw value if that fails. */
@@ -172,6 +184,7 @@ export function buildStaticGroups(
         categoryIcon: g.category?.icon ?? "",
         websiteUrl: cleanUrl(g.websiteUrl ?? null, normalizeWebsiteUrl),
         instagramUrl: cleanUrl(g.instagramUrl ?? null, normalizeInstagramUrl),
+        communityLink: communityLink(g.communityLinkUrl, g.communityLinkLabel),
         contactEmail: g.contactEmail ?? null,
         memberCount: g.memberCount ?? null,
         language: g.language ?? null,

@@ -4,7 +4,7 @@
 import { usePathname } from "next/navigation";
 import type { Group } from "@/lib/types";
 import { track, EVENTS } from "@/lib/analytics";
-import { withUtm, fomoMailto } from "@/lib/utm";
+import { withUtm, fomoMailto, communityLinkLabel } from "@/lib/utm";
 import { readResultsParam } from "@/lib/results";
 
 export function GroupLinks({ group }: { group: Group }) {
@@ -15,6 +15,13 @@ export function GroupLinks({ group }: { group: Group }) {
     links.push({ href: withUtm(group.websiteUrl), label: "Website", dest: "website" });
   if (group.instagramUrl)
     links.push({ href: withUtm(group.instagramUrl), label: "Instagram", dest: "instagram" });
+  // Chat invite links (WhatsApp, Discord …) get no UTM tags: they are not websites.
+  if (group.communityLink)
+    links.push({
+      href: group.communityLink.url,
+      label: communityLinkLabel(group.communityLink),
+      dest: "community",
+    });
   if (group.contactEmail)
     links.push({
       href: fomoMailto(group.contactEmail, isEnglish ? "en" : "de"),

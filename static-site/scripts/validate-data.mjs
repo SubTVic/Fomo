@@ -79,6 +79,17 @@ for (const g of groups) {
     else warn(msg);
   }
 
+  if (g.communityLink != null) {
+    const { url, label } = g.communityLink;
+    const msg = `${where}: communityLink "${url}" ist kein gültiger Link (muss mit https:// beginnen)`;
+    if (!url || !isHttpUrl(url)) {
+      if (verified) err(msg);
+      else warn(msg);
+    }
+    if (label != null && (typeof label !== "string" || label.length > 40))
+      err(`${where}: communityLink.label ist länger als 40 Zeichen`);
+  }
+
   const sr = g.selfRating;
   if (!sr || !Array.isArray(sr.answers)) {
     err(`${where}: selfRating.answers fehlt (keine Matching-Daten!)`);

@@ -19,7 +19,7 @@ type Db = PrismaClient | Prisma.TransactionClient;
 
 export const TRACKED_GROUP_FIELDS = [
   "name", "slug", "shortDescription", "longDescription", "categoryId",
-  "contactEmail", "websiteUrl", "instagramUrl", "memberCount", "meetingSchedule",
+  "contactEmail", "websiteUrl", "instagramUrl", "communityLinkUrl", "communityLinkLabel", "memberCount", "meetingSchedule",
   "motto", "foundedYear", "isActive", "isVerified", "registrationStatus",
   "language", "eventFrequency", "groupSize",
   "career", "tech", "socialImpact", "party", "religion", "sports", "networking",
@@ -211,6 +211,8 @@ const FIELD_LABELS: Record<string, string> = {
   contactEmail: "Kontakt-E-Mail",
   websiteUrl: "Website",
   instagramUrl: "Instagram",
+  communityLinkUrl: "Community-Link",
+  communityLinkLabel: "Name des Community-Links",
   memberCount: "Mitgliederzahl",
   meetingSchedule: "Treffen",
   motto: "Motto",

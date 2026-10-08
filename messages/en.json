@@ -97,6 +97,10 @@
       "contactEmail": "Contact email",
       "website": "Website",
       "instagram": "Instagram",
+      "communityLink": "Community link",
+      "communityLinkHint": "Optional: one more link, e.g. your WhatsApp, Discord or Telegram group. It is public – only add links anyone may see.",
+      "communityLinkLabel": "Link name",
+      "communityLinkLabelPlaceholder": "e.g. WhatsApp group",
       "memberCount": "Number of members",
       "foundedYear": "Founded year",
       "continueButton": "Continue →",
@@ -119,7 +123,9 @@
       "websiteUrl": "Please enter a valid web address, e.g. your-group.org.",
       "instagramUrl": "Please enter your Instagram name (e.g. @your.group) or an Instagram link.",
       "memberCount": "Please enter a member count between 1 and 10,000.",
-      "foundedYear": "Please enter a founding year between 1900 and today."
+      "foundedYear": "Please enter a founding year between 1900 and today.",
+      "communityLinkUrl": "Please enter a valid link, e.g. chat.whatsapp.com/….",
+      "communityLinkLabel": "The name can be at most 40 characters long."
     },
     "done": {
       "title": "Profile saved!",

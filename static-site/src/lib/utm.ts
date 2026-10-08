@@ -18,6 +18,11 @@ export function withUtm(url: string): string {
   }
 }
 
+/** Button text for a group's community link: the group's own name, else "Community". */
+export function communityLinkLabel(link: { label: string | null }): string {
+  return link.label?.trim() || "Community";
+}
+
 /** mailto: link with a prefilled subject so groups can count FOMO enquiries. */
 export function fomoMailto(email: string, lang: "de" | "en" = "de"): string {
   const subject = lang === "en" ? "Enquiry via FOMO" : "Anfrage über FOMO";

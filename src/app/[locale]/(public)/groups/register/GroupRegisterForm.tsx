@@ -23,6 +23,8 @@ interface FormData {
   contactPersonRole: string;
   websiteUrl: string;
   instagramUrl: string;
+  communityLinkUrl: string;
+  communityLinkLabel: string;
 
   // Step 3: Struktur
   memberCount: string;
@@ -57,6 +59,8 @@ const INITIAL: FormData = {
   contactPersonRole: "",
   websiteUrl: "",
   instagramUrl: "",
+  communityLinkUrl: "",
+  communityLinkLabel: "",
   memberCount: "",
   meetingSchedule: "",
   language: "",
@@ -152,6 +156,8 @@ export function GroupRegisterForm() {
         contactPersonRole: form.contactPersonRole.trim() || undefined,
         websiteUrl: form.websiteUrl.trim() || undefined,
         instagramUrl: form.instagramUrl.trim() || undefined,
+        communityLinkUrl: form.communityLinkUrl.trim() || undefined,
+        communityLinkLabel: form.communityLinkLabel.trim() || undefined,
         memberCount: form.memberCount || undefined,
         meetingSchedule: form.meetingSchedule.trim() || undefined,
         language: form.language || undefined,
@@ -469,6 +475,30 @@ function Step2({
           value={form.instagramUrl}
           onChange={(e) => set("instagramUrl", e.target.value)}
           placeholder="https://instagram.com/…"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+        />
+      </Field>
+
+      <Field
+        label="Community-Link"
+        hint="Optional: ein weiterer Link, z. B. eure WhatsApp-, Discord- oder Telegram-Gruppe. Er ist öffentlich sichtbar – tragt nur Links ein, die jede:r sehen darf."
+      >
+        <input
+          type="url"
+          value={form.communityLinkUrl}
+          onChange={(e) => set("communityLinkUrl", e.target.value)}
+          placeholder="https://chat.whatsapp.com/…"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+        />
+      </Field>
+
+      <Field label="Name des Links">
+        <input
+          type="text"
+          value={form.communityLinkLabel}
+          onChange={(e) => set("communityLinkLabel", e.target.value)}
+          maxLength={40}
+          placeholder="z. B. WhatsApp-Gruppe"
           className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
         />
       </Field>

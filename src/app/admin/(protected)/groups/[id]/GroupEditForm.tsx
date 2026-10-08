@@ -20,6 +20,8 @@ interface GroupData {
   contactEmail: string | null;
   websiteUrl: string | null;
   instagramUrl: string | null;
+  communityLinkUrl: string | null;
+  communityLinkLabel: string | null;
   memberCount: number | null;
   meetingSchedule: string | null;
   motto: string | null;
@@ -95,6 +97,8 @@ export function GroupEditForm({
   const [contactEmail, setContactEmail] = useState(group.contactEmail ?? "");
   const [websiteUrl, setWebsiteUrl] = useState(group.websiteUrl ?? "");
   const [instagramUrl, setInstagramUrl] = useState(group.instagramUrl ?? "");
+  const [communityLinkUrl, setCommunityLinkUrl] = useState(group.communityLinkUrl ?? "");
+  const [communityLinkLabel, setCommunityLinkLabel] = useState(group.communityLinkLabel ?? "");
 
   // Details
   const [memberCount, setMemberCount] = useState(
@@ -152,6 +156,8 @@ export function GroupEditForm({
       contactEmail: contactEmail || null,
       websiteUrl: websiteUrl || null,
       instagramUrl: instagramUrl || null,
+      communityLinkUrl: communityLinkUrl.trim() || null,
+      communityLinkLabel: communityLinkLabel.trim() || null,
       memberCount: memberCount ? parseInt(memberCount, 10) : null,
       meetingSchedule: meetingSchedule || null,
       motto: motto || null,
@@ -308,6 +314,29 @@ export function GroupEditForm({
             type="url"
             value={instagramUrl}
             onChange={(e) => setInstagramUrl(e.target.value)}
+            className={inputClass}
+          />
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label className={labelClass}>Community-Link (z. B. WhatsApp, Discord)</label>
+          <input
+            type="url"
+            value={communityLinkUrl}
+            onChange={(e) => setCommunityLinkUrl(e.target.value)}
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label className={labelClass}>Name des Community-Links</label>
+          <input
+            type="text"
+            value={communityLinkLabel}
+            onChange={(e) => setCommunityLinkLabel(e.target.value)}
+            maxLength={40}
+            placeholder="leer = „Community“"
             className={inputClass}
           />
         </div>

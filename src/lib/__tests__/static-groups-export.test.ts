@@ -35,6 +35,8 @@ function group(overrides: Partial<Record<string, unknown>>) {
     isVerified: false,
     websiteUrl: null,
     instagramUrl: null,
+    communityLinkUrl: null,
+    communityLinkLabel: null,
     contactEmail: null,
     memberCount: null,
     language: null,
@@ -63,13 +65,15 @@ const backup = {
     group({
       id: "g1", name: "Ökologie AG", slug: "oekologie-ag", isVerified: true,
       websiteUrl: "https://oeko.example.org", outdoor: true, language: "german",
+      communityLinkUrl: "https://chat.whatsapp.com/abc", communityLinkLabel: " WhatsApp-Gruppe ",
     }),
     group({
       id: "g2", name: "Akaflieg", slug: "akaflieg", isVerified: false, categoryId: "cat-kultur",
       tech: true, handsOn: true, groupSize: "small", eventFrequency: "high",
       nextEventTitle: "Schnupperflug", nextEventDate: "2026-10-10", nextEventIsOpen: true,
+      communityLinkUrl: "javascript:alert(1)", communityLinkLabel: "Kaputt",
     }),
-    group({ id: "g3", name: "Zeta", slug: "zeta", isVerified: true }),
+    group({ id: "g3", name: "Zeta", slug: "zeta", isVerified: true, communityLinkUrl: "https://discord.gg/zeta" }),
     group({ id: "g4", name: "Inaktiv", slug: "inaktiv", isActive: false, isVerified: true }),
     group({ id: "g5", name: "Ohne Kategorie", slug: "ohne-kategorie", categoryId: "missing", music: true }),
   ],
@@ -125,6 +129,11 @@ describe("buildStaticGroups", () => {
         "akaflieg", "ohne-kategorie", "oekologie-ag", "zeta",
       ]);
       expect(fromLib.groups.find((g) => g.slug === "oekologie-ag")?.selfRating.derived).toBe(false);
+      // Community link: name trimmed, invalid link dropped, missing name allowed.
+      const link = (slug: string) => fromLib.groups.find((g) => g.slug === slug)?.communityLink;
+      expect(link("oekologie-ag")).toEqual({ label: "WhatsApp-Gruppe", url: "https://chat.whatsapp.com/abc" });
+      expect(link("akaflieg")).toBeNull();
+      expect(link("zeta")).toEqual({ label: null, url: "https://discord.gg/zeta" });
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -132,7 +141,8 @@ describe("buildStaticGroups", () => {
 
   it("only emits fields of the static site's Group format", () => {
     const published = JSON.parse(readFileSync(path.join(ROOT, "static-site/data/groups.json"), "utf8"));
-    const allowed = new Set(Object.keys(published.groups[0]));
+    // communityLink is new (Oct. 2026) and appears in groups.json with the next Daten-Sync.
+    const allowed = new Set([...Object.keys(published.groups[0]), "communityLink"]);
     for (const g of buildStaticGroups(asDbRows(), quiz, { source: "test" }).groups) {
       for (const key of Object.keys(g)) expect(allowed).toContain(key);
     }

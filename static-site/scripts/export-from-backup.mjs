@@ -35,6 +35,17 @@ const BINARY_ATTRS = [
 const VALUE_MAP_FIELD = { groupSize: "groupSize", eventFrequency: "eventFrequency", language: "language" };
 
 /** Hand-coded mapping: derive an item's -1|0|1 from quiz.json item.attributes. */
+/** Same rule as src/lib/export/static-groups.ts: only valid http(s) links. */
+function communityLink(url, label) {
+  try {
+    const u = new URL(url ?? "");
+    if ((u.protocol !== "https:" && u.protocol !== "http:") || !u.hostname.includes(".")) return null;
+  } catch {
+    return null;
+  }
+  return { label: label?.trim() || null, url };
+}
+
 function naiveItemValue(shape, item) {
   const contributions = [];
   for (const m of item.attributes) {
@@ -126,6 +137,7 @@ const groups = backup.groups
       categoryIcon: cat?.icon ?? "",
       websiteUrl: g.websiteUrl ?? null,
       instagramUrl: g.instagramUrl ?? null,
+      communityLink: communityLink(g.communityLinkUrl, g.communityLinkLabel),
       contactEmail: g.contactEmail ?? null,
       memberCount: g.memberCount ?? null,
       language: g.language ?? null,

@@ -153,7 +153,7 @@ the full list and `docs/DATEN-SAMMELN-KONZEPT.md` for the rationale):
   `results-share-qr` (`action`: show/download),
   `self-recognition` (voluntary "already a member? which group?" + the rank
   our ranking gave that group — the passive self-recognition study)
-- **Group engagement:** `group-click` (`dest`: website/instagram/email,
+- **Group engagement:** `group-click` (`dest`: website/instagram/community/email,
   `context`: browse/results/detail, `rank` where applicable),
   `group-detail-open`
 - **Browsing:** `groups-category-filter`, `groups-show-unverified`

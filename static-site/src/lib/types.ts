@@ -50,6 +50,8 @@ export interface Group {
   categoryIcon: string;
   websiteUrl: string | null;
   instagramUrl: string | null;
+  /** Free link the group names itself (WhatsApp, Discord …); label null = default name. */
+  communityLink?: { label: string | null; url: string } | null;
   contactEmail: string | null;
   memberCount: number | null;
   language: string | null;

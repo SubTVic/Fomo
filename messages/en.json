@@ -28,7 +28,22 @@
     },
     "edit": {
       "title": "Edit your profile",
-      "text": "Open your edit link – you can use it to update your profile at any time. Lost your link or never got one? Write to <mail>{email}</mail>."
+      "text": "Open your edit link – you can use it to update your profile at any time. Lost your link or never got one? Request a new one here.",
+      "request": {
+        "button": "Request link",
+        "close": "Close",
+        "search": "Search group …",
+        "listLabel": "Your group",
+        "empty": "No group found.",
+        "notListed": "Your group isn't listed? <register>Register it instead.</register>",
+        "hint": "We send the link to the contact address stored for your group. If it has changed, briefly tell us who you are.",
+        "submit": "Prepare email",
+        "fallback": "The group list could not be loaded. Just write to <mail>{email}</mail>.",
+        "mail": {
+          "subject": "Edit link for {group}",
+          "body": "Hello FOMO team,\n\nwe would like to edit the profile of our student group \"{group}\" ({url}). Please send us a new edit link.\n\nMy role in the group: \n\nBest regards\n"
+        }
+      }
     },
     "site": {
       "title": "To the FOMO website",

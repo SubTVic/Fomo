@@ -4,13 +4,28 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { YetiBadge } from "@/components/shared/YetiBadge";
 import { PUBLIC_SITE_URL } from "@/lib/public-site";
+import { db } from "@/lib/db";
+import { RequestEditLink, type PickableGroup } from "@/components/landing/RequestEditLink";
 
-const CONTACT_EMAIL = "fomo@yeti-dresden.org";
+/** Active groups for the "Link beantragen" picker — public data only. */
+async function getPickableGroups(): Promise<PickableGroup[] | null> {
+  try {
+    const groups = await db.group.findMany({
+      where: { isActive: true },
+      select: { name: true, slug: true },
+    });
+    return groups.sort((a, b) => a.name.localeCompare(b.name, "de"));
+  } catch {
+    // DB unreachable — the landing page must still work (fallback: mail address).
+    return null;
+  }
+}
 
 // Entry page of the registration app: register, edit, or go to the public site
 // (quiz and directory live there).
 export default async function LandingPage() {
   const t = await getTranslations("landing");
+  const groups = await getPickableGroups();
 
   return (
     <div className="flex flex-col items-center px-4 py-6 sm:px-6">
@@ -34,20 +49,9 @@ export default async function LandingPage() {
           </Link>
         </Section>
 
-        <Section
-          title={t("edit.title")}
-          text={t.rich("edit.text", {
-            email: CONTACT_EMAIL,
-            mail: (chunks) => (
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className="font-semibold text-foreground underline underline-offset-2"
-              >
-                {chunks}
-              </a>
-            ),
-          })}
-        />
+        <Section title={t("edit.title")} text={t("edit.text")}>
+          <RequestEditLink groups={groups} />
+        </Section>
 
         <Section title={t("site.title")} text={t("site.text")}>
           <a
@@ -80,8 +84,8 @@ function Section({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="border-t-4 border-foreground px-6 py-6 sm:px-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
+    <div className="border-t-4 border-foreground px-6 py-6 sm:px-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+      <div className="sm:min-w-0 sm:flex-1">
         <h2 className="font-heading text-lg uppercase mb-1">{title}</h2>
         <p className="text-sm leading-relaxed text-muted-foreground max-w-[520px]">{text}</p>
       </div>

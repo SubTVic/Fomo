@@ -28,7 +28,22 @@
     },
     "edit": {
       "title": "Profil bearbeiten",
-      "text": "Öffnet euren Bearbeitungslink – damit könnt ihr euer Profil jederzeit ändern. Link verloren oder noch keinen bekommen? Schreibt uns an <mail>{email}</mail>."
+      "text": "Öffnet euren Bearbeitungslink – damit könnt ihr euer Profil jederzeit ändern. Link verloren oder noch keinen bekommen? Beantragt hier einen neuen.",
+      "request": {
+        "button": "Link beantragen",
+        "close": "Schließen",
+        "search": "Gruppe suchen …",
+        "listLabel": "Eure Gruppe",
+        "empty": "Keine Gruppe gefunden.",
+        "notListed": "Eure Gruppe ist nicht dabei? <register>Dann registriert sie neu.</register>",
+        "hint": "Den Link schicken wir an die Kontaktadresse, die für eure Gruppe hinterlegt ist. Hat sie sich geändert, schreibt kurz dazu, wer ihr seid.",
+        "submit": "Mail vorbereiten",
+        "fallback": "Die Gruppenliste konnte nicht geladen werden. Schreibt uns einfach an <mail>{email}</mail>.",
+        "mail": {
+          "subject": "Bearbeitungslink für {group}",
+          "body": "Hallo FOMO-Team,\n\nwir möchten das Profil unserer Hochschulgruppe „{group}“ bearbeiten ({url}). Bitte schickt uns einen neuen Bearbeitungslink.\n\nMeine Rolle in der Gruppe: \n\nViele Grüße\n"
+        }
+      }
     },
     "site": {
       "title": "Zur FOMO-Website",

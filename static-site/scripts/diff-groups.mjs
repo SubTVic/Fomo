@@ -21,6 +21,7 @@ const FIELD_LABELS = {
   categoryName: "Kategorie",
   websiteUrl: "Website",
   instagramUrl: "Instagram",
+  communityLink: "Community-Link",
   contactEmail: "Kontakt",
   memberCount: "Mitglieder",
   motto: "Motto",

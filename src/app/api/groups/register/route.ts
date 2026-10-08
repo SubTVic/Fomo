@@ -7,6 +7,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { isRateLimited, getClientKey } from "@/lib/rate-limit";
 import { isHttpUrl, normalizeInstagramUrl, normalizeWebsiteUrl } from "@/lib/normalize-url";
+import { communityLinkData, communityLinkLabelSchema, communityLinkUrlSchema } from "@/lib/community-link";
 
 function normalizeName(name: string): string {
   return name
@@ -64,6 +65,8 @@ const RegisterSchema = z.object({
   contactPersonRole: z.string().max(100).optional(),
   websiteUrl: z.preprocess(normalizeWebsiteUrl, z.string().max(500).refine(isHttpUrl).optional().or(z.literal(""))),
   instagramUrl: z.preprocess(normalizeInstagramUrl, z.string().max(200).refine(isHttpUrl).optional().or(z.literal(""))),
+  communityLinkUrl: communityLinkUrlSchema,
+  communityLinkLabel: communityLinkLabelSchema,
 
   // Struktur
   memberCount: z.string().optional(),
@@ -146,6 +149,8 @@ export async function POST(req: NextRequest) {
     contactPersonRole,
     websiteUrl,
     instagramUrl,
+    communityLinkUrl,
+    communityLinkLabel,
     memberCount,
     meetingSchedule,
     language,
@@ -183,6 +188,7 @@ export async function POST(req: NextRequest) {
         contactPersonRole: contactPersonRole || null,
         websiteUrl: websiteUrl || null,
         instagramUrl: instagramUrl || null,
+        ...communityLinkData(communityLinkUrl ?? null, communityLinkLabel),
         memberCount: memberCount ? parseInt(memberCount.split("-")[0]) : null,
         meetingSchedule: meetingSchedule || null,
         language: language || null,

@@ -24,6 +24,8 @@ const INFO_FIELDS = [
   "contactEmail",
   "websiteUrl",
   "instagramUrl",
+  "communityLinkUrl",
+  "communityLinkLabel",
   "memberCount",
   "foundedYear",
 ] as const;
@@ -43,6 +45,8 @@ interface GroupData {
   websiteUrl: string | null;
   contactEmail: string | null;
   instagramUrl: string | null;
+  communityLinkUrl: string | null;
+  communityLinkLabel: string | null;
   memberCount: number | null;
   foundedYear: number | null;
   categoryId: string;
@@ -117,6 +121,8 @@ export function GroupSelfRatingQuiz() {
   const [website, setWebsite] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
+  const [communityLinkUrl, setCommunityLinkUrl] = useState("");
+  const [communityLinkLabel, setCommunityLinkLabel] = useState("");
   const [memberCount, setMemberCount] = useState("");
   const [foundedYear, setFoundedYear] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -154,6 +160,8 @@ export function GroupSelfRatingQuiz() {
         setWebsite(g.websiteUrl ?? "");
         setContactEmail(g.contactEmail ?? "");
         setInstagramUrl(g.instagramUrl ?? "");
+        setCommunityLinkUrl(g.communityLinkUrl ?? "");
+        setCommunityLinkLabel(g.communityLinkLabel ?? "");
         setMemberCount(g.memberCount ? String(g.memberCount) : "");
         setFoundedYear(g.foundedYear ? String(g.foundedYear) : "");
         setCategoryId(g.categoryId);
@@ -234,6 +242,8 @@ export function GroupSelfRatingQuiz() {
           websiteUrl: website.trim() || null,
           contactEmail: contactEmail.trim() || null,
           instagramUrl: instagramUrl.trim() || null,
+          communityLinkUrl: communityLinkUrl.trim() || null,
+          communityLinkLabel: communityLinkLabel.trim() || null,
           memberCount: memberCount ? parseInt(memberCount, 10) : null,
           foundedYear: foundedYear ? parseInt(foundedYear, 10) : null,
           categoryId: categoryId || undefined,
@@ -575,6 +585,34 @@ export function GroupSelfRatingQuiz() {
               />
               {fieldError("instagramUrl")}
             </div>
+            <fieldset className="flex flex-col gap-3 border-2 border-foreground/15 p-3">
+              <legend className="px-1 text-sm font-medium">{t("description.communityLink")}</legend>
+              <p className="text-xs text-muted-foreground">{t("description.communityLinkHint")}</p>
+              <input
+                type="url"
+                aria-label={t("description.communityLink")}
+                value={communityLinkUrl}
+                onChange={(e) => { setCommunityLinkUrl(e.target.value); clearFieldError("communityLinkUrl"); }}
+                placeholder="https://chat.whatsapp.com/…"
+                className={inputClass("communityLinkUrl")}
+              />
+              {fieldError("communityLinkUrl")}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium" htmlFor="community-link-label">
+                  {t("description.communityLinkLabel")}
+                </label>
+                <input
+                  id="community-link-label"
+                  type="text"
+                  value={communityLinkLabel}
+                  onChange={(e) => { setCommunityLinkLabel(e.target.value); clearFieldError("communityLinkLabel"); }}
+                  maxLength={40}
+                  placeholder={t("description.communityLinkLabelPlaceholder")}
+                  className={inputClass("communityLinkLabel")}
+                />
+                {fieldError("communityLinkLabel")}
+              </div>
+            </fieldset>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium">{t("description.memberCount")}</label>

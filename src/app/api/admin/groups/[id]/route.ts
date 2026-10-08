@@ -6,6 +6,7 @@ import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 import { z } from "zod";
 import { recordChange, snapshotGroup } from "@/lib/change-log";
+import { communityLinkData, communityLinkLabelSchema, communityLinkUrlSchema } from "@/lib/community-link";
 
 const updateGroupSchema = z.object({
   name: z.string().min(1).max(200),
@@ -20,6 +21,8 @@ const updateGroupSchema = z.object({
   contactEmail: z.string().email().nullable().optional(),
   websiteUrl: z.string().url().nullable().optional(),
   instagramUrl: z.string().url().nullable().optional(),
+  communityLinkUrl: communityLinkUrlSchema,
+  communityLinkLabel: communityLinkLabelSchema,
 
   // Details
   memberCount: z.number().int().positive().nullable().optional(),
@@ -86,7 +89,8 @@ export async function PUT(
     );
   }
 
-  const { confirmSlugChange, ...data } = parsed.data;
+  const { confirmSlugChange, communityLinkUrl, communityLinkLabel, ...fields } = parsed.data;
+  const data = { ...fields, ...communityLinkData(communityLinkUrl, communityLinkLabel) };
 
   if (data.slug !== group.slug && confirmSlugChange !== true) {
     return NextResponse.json(

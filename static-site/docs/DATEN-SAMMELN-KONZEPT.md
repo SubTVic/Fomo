@@ -39,7 +39,7 @@ brauchen.
 | `results-share-copy` | „Teilen"-Link kopiert | – |
 | `results-share-qr` | „Als QR-Code teilen" geöffnet bzw. „Bild speichern" | `action` (show/download) |
 | `self-recognition` | freiwillige Frage auf der Ergebnisseite | „Schon Mitglied? In welcher Gruppe?" + der Rang, den UNSER Ranking dieser Gruppe gab → passiver Selbsterkennungs-Test (Ersatz für Studie 2) |
-| `group-click` | Klick auf Website/Instagram/Mail | Gruppen-Slug, Ziel, `context` (browse/results/detail), `rank`; aus Ergebnissen/Detail zusätzlich `pick` = Slug\|Rang\|kodierte Antworten → Basis der „Geklickt vs. gerankt"-Analyse |
+| `group-click` | Klick auf Website/Instagram/Community-Link/Mail | Gruppen-Slug, Ziel, `context` (browse/results/detail), `rank`; aus Ergebnissen/Detail zusätzlich `pick` = Slug\|Rang\|kodierte Antworten → Basis der „Geklickt vs. gerankt"-Analyse |
 | `group-detail-open` | Klick auf „Profil öffnen" | Gruppen-Slug, `context`, `rank`, `pick` (s. o.) |
 | `groups-category-filter` | Kategorie-Chip beim Browsen | Kategorie-Name |
 | `groups-show-unverified` | Toggle „Auch unbestätigte…" | neuer Zustand |

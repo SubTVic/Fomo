@@ -7,7 +7,7 @@ import type { Group, MatchResult, QuizFilters } from "@/lib/types";
 import { MIN_ACTIVE_ANSWERS, topWithTies } from "@/lib/matching";
 import { GERMAN_ONLY_NOTE, groupCategory, groupShortText, isGermanOnly } from "@/lib/group-copy";
 import { track, EVENTS } from "@/lib/analytics";
-import { withUtm, fomoMailto } from "@/lib/utm";
+import { withUtm, fomoMailto, communityLinkLabel } from "@/lib/utm";
 import { ShareButton } from "./ShareButton";
 import { QrShare } from "./QrShare";
 import { CompareGroups } from "./CompareGroups";
@@ -586,5 +586,12 @@ function buildLinks(group: Group, lang: "de" | "en") {
     links.push({ href: withUtm(group.websiteUrl), label: "Website", external: true, dest: "website" });
   if (group.instagramUrl)
     links.push({ href: withUtm(group.instagramUrl), label: "Instagram", external: true, dest: "instagram" });
+  if (group.communityLink)
+    links.push({
+      href: group.communityLink.url,
+      label: communityLinkLabel(group.communityLink),
+      external: true,
+      dest: "community",
+    });
   return links;
 }

@@ -116,6 +116,9 @@ export async function POST(
   transfer("contactPersonRole");
   transfer("websiteUrl");
   transfer("instagramUrl");
+  // Link and its name belong together: move the name only with the link.
+  transfer("communityLinkUrl");
+  if ("communityLinkUrl" in contentUpdate) contentUpdate.communityLinkLabel = src.communityLinkLabel ?? null;
   transfer("logoUrl");
   transfer("memberCount");
   transfer("meetingSchedule");

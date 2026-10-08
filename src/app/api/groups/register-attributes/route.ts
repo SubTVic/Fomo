@@ -7,6 +7,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { isHttpUrl, normalizeInstagramUrl, normalizeWebsiteUrl } from "@/lib/normalize-url";
 import { recordChange, snapshotGroup } from "@/lib/change-log";
+import { communityLinkData, communityLinkLabelSchema, communityLinkUrlSchema } from "@/lib/community-link";
 import { editLinkError, resolveEditLink } from "@/lib/edit-token";
 
 const SubmitSchema = z.object({
@@ -17,6 +18,8 @@ const SubmitSchema = z.object({
   websiteUrl: z.preprocess(normalizeWebsiteUrl, z.string().max(500).refine(isHttpUrl).nullable().optional().or(z.literal(""))),
   contactEmail: z.string().trim().email().nullable().optional().or(z.literal("")),
   instagramUrl: z.preprocess(normalizeInstagramUrl, z.string().max(200).refine(isHttpUrl).nullable().optional().or(z.literal(""))),
+  communityLinkUrl: communityLinkUrlSchema,
+  communityLinkLabel: communityLinkLabelSchema,
   memberCount: z.number().int().min(1).max(10000).nullable().optional(),
   foundedYear: z.number().int().min(1900).max(new Date().getFullYear()).nullable().optional(),
   categoryId: z.string().cuid().optional(),
@@ -45,7 +48,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { token, shortDescription, longDescription, websiteUrl, contactEmail, instagramUrl, memberCount, foundedYear, categoryId, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
+  const { token, shortDescription, longDescription, websiteUrl, contactEmail, instagramUrl, communityLinkUrl, communityLinkLabel, memberCount, foundedYear, categoryId, ws2Answers, ws2FilterSelections, raterCount } = parsed.data;
 
   // undefined = field not sent (keep), null or "" = delete, otherwise set.
   const optional = <T,>(key: string, value: T | null | undefined | "") =>
@@ -106,6 +109,7 @@ export async function POST(req: NextRequest) {
         ...optional("websiteUrl", websiteUrl),
         ...optional("contactEmail", contactEmail),
         ...optional("instagramUrl", instagramUrl),
+        ...communityLinkData(communityLinkUrl, communityLinkLabel),
         ...optional("memberCount", memberCount),
         ...optional("foundedYear", foundedYear),
         ...(categoryId ? { categoryId } : {}),
@@ -170,6 +174,8 @@ export async function GET(req: NextRequest) {
       websiteUrl: true,
       contactEmail: true,
       instagramUrl: true,
+      communityLinkUrl: true,
+      communityLinkLabel: true,
       memberCount: true,
       foundedYear: true,
       categoryId: true,

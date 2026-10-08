@@ -40,6 +40,9 @@ model Group {
   contactEmail     String?
   websiteUrl       String?
   instagramUrl     String?
+  // One free link the group names itself, e.g. "WhatsApp-Gruppe" or "Discord".
+  communityLinkUrl   String?
+  communityLinkLabel String?  @db.VarChar(40)
   logoUrl          String?
   memberCount      Int?
   meetingSchedule  String?  // e.g. "Jeden Dienstag 19:00"

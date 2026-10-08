@@ -60,6 +60,7 @@ Refreshing `data/groups.json` without prod DB access — full concept in
 | --- | --- | --- |
 | `scrape-groups.mjs` | `scrape` | Keyword scraper → `selfRating` directly (offline, no key). |
 | `scrape-llm.mjs` | `scrape:llm` | LLM scraper (Claude reads the "Über uns" text). Needs `ANTHROPIC_API_KEY`; falls back to the keyword scraper per group on any error or with `--offline`. |
+| `plausibility-check.mjs` | `plausibility` | KI-Plausibilitätsprüfung der **verifizierten** Gruppen: passen Kategorie, Filter und die 21 Antworten zur Beschreibung? Schreibt nur einen Bericht (`plausibility-report/report.html`), ändert nichts. Needs `ANTHROPIC_API_KEY`; `--dry-run` zeigt den Prompt, `--direct --limit 5` für einen Testlauf, ohne Flags per Batch-API. |
 | `derive-selfrating.mjs` | `derive` | Merge: real registrations (`--overrides`) always win over scraped data. |
 | `export-from-backup.mjs` | — | Emergency path: rebuild `groups.json` from an admin backup JSON. Output is identical to the Daten-Sync exporter `src/lib/export/static-groups.ts` (a root test enforces it). |
 | `diff-groups.mjs` | — | Human-readable change list between two `groups.json` (used in the Daten-Sync PR). |

@@ -53,9 +53,41 @@ function naiveItemValue(shape, item) {
   return sum > 0 ? 1 : sum < 0 ? -1 : 0;
 }
 
+// Link repair, same rules as src/lib/normalize-url.ts (a test keeps both exporters equal).
+const INSTAGRAM_HANDLE = /^@?([A-Za-z0-9._]{1,30})$/;
+
+function normalizeWebsiteUrl(value) {
+  const repaired = value.replace(/^(https?):\/*/i, (_m, scheme) => `${scheme.toLowerCase()}://`);
+  if (/^https?:\/\//i.test(repaired)) return repaired;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(repaired) && !/^[^:]+:\d/.test(repaired)) return repaired;
+  return `https://${repaired.replace(/^\/+/, "")}`;
+}
+
+function normalizeInstagramUrl(value) {
+  const handle = INSTAGRAM_HANDLE.exec(value);
+  return handle ? `https://www.instagram.com/${handle[1]}/` : normalizeWebsiteUrl(value);
+}
+
+function isHttpUrl(value) {
+  try {
+    const url = new URL(value);
+    return (url.protocol === "https:" || url.protocol === "http:") && url.hostname.includes(".");
+  } catch {
+    return false;
+  }
+}
+
+/** Repair "verein.de" / "@handle" style links; keep the raw value if that fails. */
+function cleanUrl(raw, normalize) {
+  if (raw == null || raw.trim() === "") return raw ?? null;
+  const normalized = normalize(raw.trim());
+  return isHttpUrl(normalized) ? normalized : raw;
+}
+
 const backup = JSON.parse(readFileSync(backupPath, "utf8"));
 const quiz = JSON.parse(readFileSync(quizPath, "utf8"));
 
+const itemOrder = new Map(quiz.items.map((item, i) => [item.id, i]));
 const catById = new Map(backup.categories.map((c) => [c.id, c]));
 const ratingByGroup = new Map(backup.groupSelfRatings.map((r) => [r.groupId, r]));
 const answersByRating = new Map();
@@ -89,7 +121,10 @@ const groups = backup.groups
         filterSelections: Array.isArray(rating.filterSelections)
           ? rating.filterSelections.filter((x) => typeof x === "string")
           : [],
-        answers: realAnswers,
+        // Quiz order, so repeated exports produce identical files.
+        answers: [...realAnswers].sort(
+          (a, b) => (itemOrder.get(a.itemId) ?? 999) - (itemOrder.get(b.itemId) ?? 999),
+        ),
       };
     } else {
       derivedCount++;
@@ -124,8 +159,8 @@ const groups = backup.groups
       categoryName: cat?.name ?? "Sonstiges",
       categoryColor: cat?.color ?? "",
       categoryIcon: cat?.icon ?? "",
-      websiteUrl: g.websiteUrl ?? null,
-      instagramUrl: g.instagramUrl ?? null,
+      websiteUrl: cleanUrl(g.websiteUrl ?? null, normalizeWebsiteUrl),
+      instagramUrl: cleanUrl(g.instagramUrl ?? null, normalizeInstagramUrl),
       contactEmail: g.contactEmail ?? null,
       memberCount: g.memberCount ?? null,
       language: g.language ?? null,

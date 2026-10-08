@@ -9,6 +9,7 @@ import { GERMAN_ONLY_NOTE, groupCategory, groupShortText, isGermanOnly } from "@
 import { track, EVENTS } from "@/lib/analytics";
 import { withUtm, fomoMailto } from "@/lib/utm";
 import { ShareButton } from "./ShareButton";
+import { QrShare } from "./QrShare";
 import { CompareGroups } from "./CompareGroups";
 
 interface ResultsScreenProps {
@@ -258,6 +259,7 @@ export function ResultsScreen({
         >
           {copy.allGroups}
         </Link>
+        <QrShare />
       </div>
 
       <ResultsFeedback lang={lang} r={resultsParam} />

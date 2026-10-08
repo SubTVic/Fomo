@@ -149,6 +149,7 @@ the full list and `docs/DATEN-SAMMELN-KONZEPT.md` for the rationale):
 - **Results interaction:** `results-tab`, `results-show-more`,
   `results-zero-hits`, `results-too-few-answers` (results withheld below
   5 non-neutral answers), `results-feedback` (👍/👎), `results-share-copy`,
+  `results-share-qr` (`action`: show/download),
   `self-recognition` (voluntary "already a member? which group?" + the rank
   our ranking gave that group — the passive self-recognition study)
 - **Group engagement:** `group-click` (`dest`: website/instagram/email,

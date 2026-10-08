@@ -37,12 +37,18 @@
         "empty": "Keine Gruppe gefunden.",
         "notListed": "Eure Gruppe ist nicht dabei? <register>Dann registriert sie neu.</register>",
         "hint": "Den Link schicken wir an die Kontaktadresse, die für eure Gruppe hinterlegt ist. Hat sie sich geändert, schreibt kurz dazu, wer ihr seid.",
-        "submit": "Mail vorbereiten",
+        "submit": "Im Mailprogramm öffnen",
         "fallback": "Die Gruppenliste konnte nicht geladen werden. Schreibt uns einfach an <mail>{email}</mail>.",
         "mail": {
           "subject": "Bearbeitungslink für {group}",
-          "body": "Hallo FOMO-Team,\n\nwir möchten das Profil unserer Hochschulgruppe „{group}“ bearbeiten ({url}). Bitte schickt uns einen neuen Bearbeitungslink.\n\nMeine Rolle in der Gruppe: \n\nViele Grüße\n"
-        }
+          "body": "Hallo FOMO-Team,\n\nwir möchten das Profil unserer Hochschulgruppe „{group}“ bearbeiten ({url}). Bitte schickt uns einen neuen Bearbeitungslink.\n\nMeine Rolle in der Gruppe: \n\nViele Grüße\n",
+          "toLabel": "An",
+          "subjectLabel": "Betreff"
+        },
+        "or": "oder",
+        "copy": "Mail kopieren",
+        "copied": "Kopiert – jetzt in euer Mailprogramm einfügen",
+        "copyFailed": "Kopieren hat nicht geklappt – markiert den Text unten und kopiert ihn selbst."
       }
     },
     "site": {

@@ -4,7 +4,13 @@
 import { useId, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { CONTACT_EMAIL, editLinkRequestMailto, type EditLinkRequestCopy } from "@/lib/edit-link-request";
+import {
+  CONTACT_EMAIL,
+  editLinkRequestMail,
+  editLinkRequestMailto,
+  editLinkRequestText,
+  type EditLinkRequestCopy,
+} from "@/lib/edit-link-request";
 import { PUBLIC_SITE_URL } from "@/lib/public-site";
 
 export interface PickableGroup {
@@ -23,6 +29,7 @@ export function RequestEditLink({ groups }: { groups: PickableGroup[] | null }) 
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
   const panelId = useId();
   const listId = useId();
 
@@ -33,7 +40,25 @@ export function RequestEditLink({ groups }: { groups: PickableGroup[] | null }) 
   }, [groups, query]);
 
   const group = groups?.find((g) => g.slug === selected) ?? null;
-  const mail = t.raw("mail") as EditLinkRequestCopy;
+  const mailCopy = t.raw("mail") as EditLinkRequestCopy;
+  const mail = group ? editLinkRequestMail(mailCopy, group, PUBLIC_SITE_URL) : null;
+  const mailText = mail ? editLinkRequestText(mail, mailCopy) : "";
+
+  function select(slug: string) {
+    setSelected(slug);
+    setCopyState("idle");
+  }
+
+  // For webmail users (no mail program behind mailto:): copy recipient,
+  // subject and text in one go. Clipboard can be blocked → show the text.
+  async function copyMail() {
+    try {
+      await navigator.clipboard.writeText(mailText);
+      setCopyState("copied");
+    } catch {
+      setCopyState("failed");
+    }
+  }
 
   const mailLink = (chunks: React.ReactNode) => (
     <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-foreground underline underline-offset-2">
@@ -91,7 +116,7 @@ export function RequestEditLink({ groups }: { groups: PickableGroup[] | null }) 
                         type="button"
                         role="option"
                         aria-selected={isSelected}
-                        onClick={() => setSelected(g.slug)}
+                        onClick={() => select(g.slug)}
                         className={`block w-full border-b border-foreground/15 px-3 py-2 text-left text-sm last:border-b-0 ${
                           isSelected ? "bg-foreground font-semibold text-white" : "hover:bg-muted"
                         }`}
@@ -112,13 +137,35 @@ export function RequestEditLink({ groups }: { groups: PickableGroup[] | null }) 
                 })}
               </p>
               <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{t("hint")}</p>
-              {group ? (
-                <a
-                  href={editLinkRequestMailto(mail, group, PUBLIC_SITE_URL)}
-                  className="mt-3 block bg-foreground px-6 py-3 text-center font-heading text-sm uppercase tracking-wider text-primary-foreground transition-colors hover:bg-[#2a3a45]"
-                >
-                  {t("submit")}
-                </a>
+              {mail ? (
+                <div className="mt-3">
+                  <a
+                    href={editLinkRequestMailto(mail)}
+                    className="block bg-foreground px-6 py-3 text-center font-heading text-sm uppercase tracking-wider text-primary-foreground transition-colors hover:bg-[#2a3a45]"
+                  >
+                    {t("submit")}
+                  </a>
+                  <p className="my-2 text-center text-xs uppercase tracking-wider text-muted-foreground">{t("or")}</p>
+                  <button
+                    type="button"
+                    onClick={copyMail}
+                    className="block w-full border-2 border-foreground px-6 py-3 text-center font-heading text-sm uppercase tracking-wider transition-colors hover:bg-foreground hover:text-primary-foreground"
+                  >
+                    {t("copy")}
+                  </button>
+                  <p role="status" className="mt-2 text-xs text-muted-foreground">
+                    {copyState === "copied" ? t("copied") : copyState === "failed" ? t("copyFailed") : null}
+                  </p>
+                  {copyState === "failed" && (
+                    <textarea
+                      readOnly
+                      value={mailText}
+                      rows={9}
+                      onFocus={(e) => e.currentTarget.select()}
+                      className="mt-1 w-full border-2 border-foreground bg-card p-2 text-xs"
+                    />
+                  )}
+                </div>
               ) : (
                 <span
                   aria-disabled="true"

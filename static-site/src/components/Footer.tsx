@@ -35,6 +35,9 @@ export function Footer() {
           >
             {isEnglish ? "Register your group" : "Gruppe registrieren"}
           </a>
+          <Link href={`${prefix}/transparenz`} className="hover:text-navy">
+            {isEnglish ? "How it works" : "So funktioniert's"}
+          </Link>
           <Link href="/impressum" className="hover:text-navy">
             {isEnglish ? "Imprint" : "Impressum"}
           </Link>

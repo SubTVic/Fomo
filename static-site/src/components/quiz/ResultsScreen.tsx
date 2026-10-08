@@ -262,6 +262,15 @@ export function ResultsScreen({
         <QrShare />
       </div>
 
+      <p className="mt-6 text-center text-sm">
+        <Link
+          href={`${prefix}/transparenz`}
+          className="font-semibold text-navy underline underline-offset-4 hover:text-accent-muted"
+        >
+          {lang === "en" ? "How is this ranking calculated? →" : "Wie entsteht dieses Ranking? →"}
+        </Link>
+      </p>
+
       <ResultsFeedback lang={lang} r={resultsParam} />
       <SelfRecognition matches={matches} lang={lang} r={resultsParam} />
     </div>

@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CATEGORY_SEO } from "@/lib/categories";
-import { REGISTER_URL } from "@/lib/site";
+import { INSTAGRAM_URL, REGISTER_URL } from "@/lib/site";
 import { track, EVENTS } from "@/lib/analytics";
 
 export function Footer() {
@@ -34,6 +34,15 @@ export function Footer() {
             className="hover:text-navy"
           >
             {isEnglish ? "Register your group" : "Gruppe registrieren"}
+          </a>
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track(EVENTS.instagramClick, { context: "footer" })}
+            className="hover:text-navy"
+          >
+            Instagram
           </a>
           <Link href={`${prefix}/transparenz`} className="hover:text-navy">
             {isEnglish ? "How it works" : "So funktioniert's"}

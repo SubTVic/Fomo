@@ -20,6 +20,9 @@ export const SITE_URL = raw.replace(/\/$/, "");
 
 // Group self-registration lives in the dynamic app (separate Vercel project,
 // deploys the repo root from `main`). Overridable per environment.
+/** FOMO's own Instagram account (footer link + JSON-LD sameAs). */
+export const INSTAGRAM_URL = "https://www.instagram.com/fomo_dresden/";
+
 export const REGISTER_URL =
   process.env.NEXT_PUBLIC_REGISTER_URL?.trim() || "https://fomo-pi.vercel.app/groups/register";
 

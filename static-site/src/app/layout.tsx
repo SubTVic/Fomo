@@ -13,7 +13,7 @@ import { Footer } from "@/components/Footer";
 import { UmamiScript } from "@/components/UmamiScript";
 import { CampaignTracker } from "@/components/CampaignTracker";
 import { HtmlLangSync } from "@/components/HtmlLangSync";
-import { SITE_URL, absUrl } from "@/lib/site";
+import { INSTAGRAM_URL, SITE_URL, absUrl } from "@/lib/site";
 
 const DESCRIPTION =
   "Beantworte ein kurzes Quiz und finde aus über 80 Hochschulgruppen der TU Dresden die, die zu dir passen. Komplett anonym, Matching läuft in deinem Browser.";
@@ -100,7 +100,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   areaServed: "TU Dresden",
                   // Offizielle Profile derselben Entität → hilft Google, FOMO
                   // eindeutig einzuordnen und von gleichnamigen Diensten zu trennen.
-                  sameAs: ["https://yeti-dresden.org", "https://www.stura.tu-dresden.de"],
+                  sameAs: [
+                    INSTAGRAM_URL,
+                    "https://yeti-dresden.org",
+                    "https://www.stura.tu-dresden.de",
+                  ],
                 },
               ],
             }),

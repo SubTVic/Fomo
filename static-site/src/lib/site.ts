@@ -27,6 +27,9 @@ export const REGISTER_URL =
 export const GROUPS_APP_URL =
   process.env.NEXT_PUBLIC_GROUPS_APP_URL?.trim() || "https://fomo-pi.vercel.app/";
 
+// FOMO's own Instagram profile (footer link, Organization JSON-LD sameAs).
+export const INSTAGRAM_URL = "https://www.instagram.com/fomo_dresden/";
+
 // Optional subpath (mirrors next.config.ts), e.g. when hosted under /fomo.
 const rawBase = process.env.NEXT_PUBLIC_BASE_PATH?.trim();
 export const BASE_PATH = rawBase && rawBase !== "/" ? rawBase.replace(/\/$/, "") : "";

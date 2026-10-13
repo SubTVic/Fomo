@@ -6,8 +6,11 @@
 // question, filter choices, drop-off funnel, which groups the quiz recommends,
 // and a bias analysis (empirical + simulated against the real matching code).
 //
-//   node scripts/report.mjs [--out fomo-report.html] [--days 90] [--sim 20000]
-//                           [--offline]
+//   node scripts/report.mjs [--out fomo-report.html] [--since 2026-07-01 | --days 90]
+//                           [--sim 20000] [--offline]
+//
+// Default window: from "reportSince" in data/report-milestones.json (the launch)
+// until now, so totals only ever grow. --since or --days override it.
 //
 // Auth (either one):
 //   Umami Cloud:  UMAMI_API_KEY=...            (base https://api.umami.is/v1)
@@ -28,7 +31,8 @@ const getArg = (n, d) => {
   return i >= 0 ? args[i + 1] : d;
 };
 const OUT = getArg("--out", "fomo-report.html");
-const DAYS = parseInt(getArg("--days", "90"), 10);
+const DAYS_ARG = getArg("--days", "");
+const SINCE_ARG = getArg("--since", "");
 const SIM_N = parseInt(getArg("--sim", "20000"), 10);
 const OFFLINE = args.includes("--offline");
 
@@ -45,6 +49,21 @@ const MILESTONES_FILE = (() => {
 const MILESTONES = MILESTONES_FILE.milestones ?? [];
 // Optional reset date for the 👍/👎 tile: feedback before it stays in Umami but
 // is not counted (e.g. to measure a campaign on its own).
+// Report window start: --days N, else --since / reportSince (launch date).
+const WINDOW = (() => {
+  const days = parseInt(DAYS_ARG, 10);
+  if (DAYS_ARG && Number.isFinite(days) && days > 0) {
+    return { startAt: Date.now() - days * 86400_000, label: `letzte ${days} Tage` };
+  }
+  const since = SINCE_ARG || MILESTONES_FILE.reportSince || "";
+  const ts = Date.parse(since);
+  if (Number.isFinite(ts)) {
+    const [y, m, d] = since.split("-");
+    const label = `seit ${d}.${m}.${y}${SINCE_ARG ? "" : " (Launch)"}`;
+    return { startAt: ts, label };
+  }
+  return { startAt: Date.now() - 90 * 86400_000, label: "letzte 90 Tage" };
+})();
 const FEEDBACK_SINCE = (() => {
   const ts = Date.parse(MILESTONES_FILE.feedbackSince ?? "");
   return Number.isFinite(ts) ? { date: MILESTONES_FILE.feedbackSince, ts } : null;
@@ -135,7 +154,7 @@ const WEBSITE = process.env.UMAMI_WEBSITE_ID;
 const CLOUD_KEY = process.env.UMAMI_API_KEY;
 const SELF_URL = process.env.UMAMI_URL?.replace(/\/$/, "");
 const endAt = Date.now();
-const startAt = endAt - DAYS * 86400_000;
+const startAt = WINDOW.startAt;
 let apiBase = null;
 let authHeader = null;
 
@@ -208,7 +227,7 @@ async function fetchAll() {
     );
     return data;
   }
-  console.error(`→ Umami-API: ${apiBase} (letzte ${DAYS} Tage)`);
+  console.error(`→ Umami-API: ${apiBase} (${WINDOW.label})`);
   data.live = true;
   data.stats = await api("/stats");
   const metrics = await api("/metrics", { type: "event", limit: "500" });
@@ -923,7 +942,7 @@ function buildHtml(data, sim) {
 </style></head><body>
 <main>
 <header class="hero"><h1>FOMO — Quiz-Auswertung</h1>
-<p>Stand ${esc(now)} · Zeitraum: letzte ${DAYS} Tage · ${
+<p>Stand ${esc(now)} · Zeitraum: ${esc(WINDOW.label)} · ${
     data.live ? "Datenquelle: Umami" : "ohne Live-Daten (nur Simulation)"
   } · anonym, keine Personenbezüge</p></header>
 ${sections.join("\n")}

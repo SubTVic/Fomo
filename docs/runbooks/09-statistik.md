@@ -8,6 +8,14 @@
   Abbruch-Kurve, Top-Gruppen, Bias-Analyse. Anonyme Sammelwerte; kann an den StuRa
   weitergegeben werden.
 - **Rohdaten:** Umami-Login → Website „fomo-dresden.app".
+- **Zeitraum des Berichts:** seit Launch (`reportSince` in
+  `static-site/data/report-milestones.json`, 01.07.2026) bis heute — die Gesamtzahlen
+  wachsen nur. Bis Oktober 2026 war es ein gleitendes 90-Tage-Fenster; da fielen alte
+  Tage heraus und die Zahlen sanken scheinbar. Anderer Zeitraum: Action „Report
+  erstellen (ohne Deploy)“ mit „Zeitraum in Tagen“.
+- **Werbekampagnen:** Event `campaign-visit` (Quelle/Kampagne), siehe
+  [Runbook 13](13-kampagnen-links-und-qr.md). Klicks auf den FOMO-Instagram-Link im
+  Footer: `instagram-click`.
 - **Aktualität:** Der Bericht wird bei jedem Deploy neu erzeugt; jeden Morgen stößt eine
   GitHub-Automatik einen Deploy an. Das funktioniert nur, wenn das GitHub-Secret
   `VERCEL_DEPLOY_HOOK_URL` gesetzt ist. Sofort aktualisieren: GitHub → Actions →

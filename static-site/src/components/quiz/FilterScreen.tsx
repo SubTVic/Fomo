@@ -11,7 +11,13 @@ interface FilterScreenProps {
   lang?: "de" | "en";
 }
 
-export function FilterScreen({ filters, selected, onToggle, onStart, lang = "de" }: FilterScreenProps) {
+export function FilterScreen({
+  filters,
+  selected,
+  onToggle,
+  onStart,
+  lang = "de",
+}: FilterScreenProps) {
   const title =
     lang === "en" ? "What would you mainly like to do in your student group?" : filters.question;
 
@@ -20,8 +26,8 @@ export function FilterScreen({ filters, selected, onToggle, onStart, lang = "de"
       <h1 className="text-2xl text-navy sm:text-3xl">{title}</h1>
       <p className="mt-2 text-sm text-body">
         {lang === "en"
-          ? "Optional. If you pick something, we only show groups that offer it — leave everything unselected to keep all options open."
-          : "Optional. Wenn du etwas auswählst, zeigen wir dir nur Gruppen, die das anbieten — ohne Auswahl bleibt alles offen."}
+          ? "Optional — you can start right away. If you pick something, we only show groups that offer it — leave everything unselected to keep all options open."
+          : "Optional – du kannst auch direkt starten. Wenn du etwas auswählst, zeigen wir dir nur Gruppen, die das anbieten — ohne Auswahl bleibt alles offen."}
       </p>
 
       <div className="mt-5 grid gap-3">
@@ -51,19 +57,24 @@ export function FilterScreen({ filters, selected, onToggle, onStart, lang = "de"
         })}
       </div>
 
-      <button
-        type="button"
-        onClick={onStart}
-        className="mt-6 w-full border-poster bg-navy px-6 py-4 font-heading text-lg text-sky transition-colors hover:bg-navy-hover"
-      >
-        {lang === "en"
-          ? selected.length > 0
-            ? `Start (${selected.length} selected)`
-            : "Start"
-          : selected.length > 0
-            ? `Los geht's (${selected.length} gewählt)`
-            : "Los geht's"}
-      </button>
+      {/* Sticky at the bottom: on phones (esp. the Instagram in-app browser)
+          the 8 options push the button ~2 screens below the fold, and most
+          visitors never scrolled to it. */}
+      <div className="sticky bottom-0 z-10 -mx-4 mt-6 bg-sky px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:-mx-6 sm:px-6">
+        <button
+          type="button"
+          onClick={onStart}
+          className="w-full border-poster bg-navy px-6 py-4 font-heading text-lg text-sky transition-colors hover:bg-navy-hover"
+        >
+          {lang === "en"
+            ? selected.length > 0
+              ? `Start (${selected.length} selected)`
+              : "Start"
+            : selected.length > 0
+              ? `Los geht's (${selected.length} gewählt)`
+              : "Los geht's"}
+        </button>
+      </div>
     </div>
   );
 }

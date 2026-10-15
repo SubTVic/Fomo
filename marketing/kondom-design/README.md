@@ -55,8 +55,11 @@ abgeschnitten; **die Ringlinie selbst ist das Kabel** und läuft direkt ins Geh�
 `icons/*.json` enthält dafür die Kabel-Mittellinie (`cable`) und -breite
 (`cableWidthPx`), auf dem Originalbild gemessen; `generate.mjs` schneidet am
 Übergang Kabel→Gehäuse ab und dreht die Zeichnung in Ringrichtung.
-Größe: `ICONS` (`scale`), Position am Ring: `PHI` (91° = knapp über dem unteren
-Text, damit der Ring geschlossen wirkt; ab ~94° berühren die Stecker den Text).
+Größe: `ICONS` (`scale`), Position am Ring: `PHI` (88° = knapp über dem unteren
+Text, damit der Ring geschlossen wirkt; tiefer berühren die Stecker den Text).
+
+Unterer Text: weiße Buchstaben mit dicker navy Kontur (`BOTTOM_OUTLINE`), damit
+er auf der Folie lesbar bleibt.
 
 Andere Zeichnung (schwarz auf weiß, Kabel läuft am Bildrand heraus): Bild ersetzen,
 mit potrace umwandeln (`npm i potrace@2.1.8`, `threshold: 128, turdSize: 40` →

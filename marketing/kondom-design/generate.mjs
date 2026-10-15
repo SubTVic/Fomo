@@ -105,7 +105,9 @@ const finder = (r, c) => {
 // --- ring, icons, text -----------------------------------------------------
 const R = 196;
 const top = arcText("FOMO-DRESDEN.APP", HEAD, 27, R - 9, 0, { spacing: 1.2 });
-const bottom = arcText("CONNECT WITH THE RIGHT PEOPLE", BODY, 21, R - 6, 180, { inside: true, spacing: 0.6 });
+// white letters with a thick navy outline (BOTTOM_OUTLINE) so they stay legible on the foil
+const BOTTOM_OUTLINE = 4.5; // total stroke width; half of it shows outside the letters (≈ 0.2 mm)
+const bottom = arcText("CONNECT WITH THE RIGHT PEOPLE", BODY, 21, R - 6, 180, { inside: true, spacing: 1.1 });
 const gap = 4; // degrees of air between text and ring line
 const arc = (from, to) => {
   const p = (deg) => [C + R * Math.sin((deg * Math.PI) / 180), C - R * Math.cos((deg * Math.PI) / 180)];
@@ -115,7 +117,7 @@ const arc = (from, to) => {
 };
 const tEnd = top.span / 2 + gap;
 // right side: top text end → plug (90°) ; left side: socket (270°) → top text start
-const PHI = 91; // where the plugs join the ring (right side; left mirrored) — just above the bottom text
+const PHI = 88; // where the plugs join the ring (right side; left mirrored) — just above the bottom text
 const ringRight = arc(tEnd, PHI);
 const ringLeft = arc(360 - PHI, 360 - top.span / 2 - gap);
 // plug + socket: hand-drawn icons (icons/*-vorlage.jpg), traced to vector
@@ -170,7 +172,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="50mm" height="50mm" 
 ${attachIcon("stecker", PHI, +1)}
 ${attachIcon("dose", 360 - PHI, -1)}
 <path d="${top.d}" fill="${NAVY}"/>
-<path d="${bottom.d}" fill="${WHITE}" stroke="${NAVY}" stroke-width="0.8" paint-order="stroke"/>
+<path d="${bottom.d}" fill="${WHITE}" stroke="${NAVY}" stroke-width="${BOTTOM_OUTLINE}" stroke-linejoin="round" paint-order="stroke"/>
 <rect x="${C - PLATE / 2}" y="${C - PLATE / 2}" width="${PLATE}" height="${PLATE}" rx="${2 * m}" fill="${WHITE}"/>
 <g fill="${NAVY}"><path d="${mods}"/>${finder(0, 0)}${finder(0, n - 7)}${finder(n - 7, 0)}</g>
 <rect x="${pillX}" y="${pillY}" width="${pill.w}" height="${pill.h}" rx="${m}" fill="${labelColor.toLowerCase() === "#ffffff" ? NAVY : WHITE}"/>

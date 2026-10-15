@@ -7,7 +7,8 @@
 //
 // Icons: icons/stecker.json, icons/dose.json (traced from the *-vorlage.jpg).
 //   npm i opentype.js@1.3.4 @fontsource/archivo-black@5.0.19 @fontsource/lexend@5.0.21 qrcode-generator@2.0.4
-//   node generate.mjs <out-dir> [label-color] [variant-name]
+//   node generate.mjs <out-dir> [label-color] [variant-name] [dark]
+//   (4th arg "dark": label on a dark field, like the white variant)
 import { writeFileSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname } from "node:path";
@@ -16,7 +17,8 @@ const require = createRequire(import.meta.url);
 const opentype = require("opentype.js");
 const qrcode = require("qrcode-generator");
 
-const [outDir = ".", labelColor = "#1a2a35", variant = "navy"] = process.argv.slice(2);
+const [outDir = ".", labelColor = "#1a2a35", variant = "navy", pillMode = ""] = process.argv.slice(2);
+const darkPill = pillMode === "dark" || labelColor.toLowerCase() === "#ffffff";
 const hearts = "hearts";
 const font = (p) => { const b = readFileSync(require.resolve(p)); return opentype.parse(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)); };
 const HEAD = font("@fontsource/archivo-black/files/archivo-black-latin-400-normal.woff");
@@ -175,7 +177,7 @@ ${attachIcon("dose", 360 - PHI, -1)}
 <path d="${bottom.d}" fill="${WHITE}" stroke="${NAVY}" stroke-width="${BOTTOM_OUTLINE}" stroke-linejoin="round" paint-order="stroke"/>
 <rect x="${C - PLATE / 2}" y="${C - PLATE / 2}" width="${PLATE}" height="${PLATE}" rx="${2 * m}" fill="${WHITE}"/>
 <g fill="${NAVY}"><path d="${mods}"/>${finder(0, 0)}${finder(0, n - 7)}${finder(n - 7, 0)}</g>
-<rect x="${pillX}" y="${pillY}" width="${pill.w}" height="${pill.h}" rx="${m}" fill="${labelColor.toLowerCase() === "#ffffff" ? NAVY : WHITE}"/>
+<rect x="${pillX}" y="${pillY}" width="${pill.w}" height="${pill.h}" rx="${m}" fill="${darkPill ? NAVY : WHITE}"/>
 <path d="${labelPath}" fill="${labelColor}"/>
 </svg>
 `;

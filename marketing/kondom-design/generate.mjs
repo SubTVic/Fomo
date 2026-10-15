@@ -5,10 +5,13 @@
 // the middle is safe), all text converted to outlines (no fonts needed at the
 // print shop). 1 SVG unit = 0.1 mm.
 //
+// Icons: icons/stecker.json, icons/dose.json (traced from the *-vorlage.jpg).
 //   npm i opentype.js@1.3.4 @fontsource/archivo-black@5.0.19 @fontsource/lexend@5.0.21 qrcode-generator@2.0.4
 //   node generate.mjs <out-dir> [label-color] [variant-name]
 import { writeFileSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 const require = createRequire(import.meta.url);
 const opentype = require("opentype.js");
 const qrcode = require("qrcode-generator");
@@ -110,29 +113,27 @@ const arc = (from, to) => {
   const large = Math.abs(to - from) > 180 ? 1 : 0;
   return `M${x1.toFixed(2)} ${y1.toFixed(2)}A${R} ${R} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
 };
-const tEnd = top.span / 2 + gap, bStart = 180 - bottom.span / 2 - gap;
+const tEnd = top.span / 2 + gap;
 // right side: top text end → plug (90°) ; left side: socket (270°) → top text start
-const ringRight = arc(tEnd, 78) + arc(102, bStart);
-const ringLeft = arc(180 + bottom.span / 2 + gap, 258) + arc(282, 360 - top.span / 2 - gap);
-// plug (right, pointing inward = left) and socket (left), drawn around (cx, cy)
-const plug = (cx, cy) => `
-  <g transform="translate(${cx} ${cy})" fill="none" stroke="${NAVY}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M8 -34 V-20 M8 20 V34"/>
-    <path d="M-2 -20 H18 Q24 -20 24 -14 V14 Q24 20 18 20 H-2 Q-10 20 -10 12 V-12 Q-10 -20 -2 -20 Z"/>
-    <path d="M-10 -9 H-28 M-10 9 H-28"/>
-  </g>`;
-const socket = (cx, cy) => `
-  <g transform="translate(${cx} ${cy})" fill="none" stroke="${NAVY}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M-8 -34 V-20 M-8 20 V34"/>
-    <path d="M2 -20 H-14 Q-24 -20 -24 -10 V10 Q-24 20 -14 20 H2 Q14 20 20 8 V-8 Q14 -20 2 -20 Z"/>
-    <circle cx="6" cy="-7" r="3.2" fill="${NAVY}" stroke="none"/><circle cx="6" cy="7" r="3.2" fill="${NAVY}" stroke="none"/>
-  </g>`;
+const ringRight = arc(tEnd, 70);
+const ringLeft = arc(290, 360 - top.span / 2 - gap);
+// plug + socket: hand-drawn icons (icons/*-vorlage.jpg), traced to vector
+// paths with potrace (icons/*.json). Both hang from the ring on their cable.
+const here = dirname(fileURLToPath(import.meta.url)) + "/";
+const icon = (name) => JSON.parse(readFileSync(`${here}icons/${name}.json`, "utf8"));
+const ICON_SCALE = 0.125; // 1 px of the drawing → 0.0125 mm (lines ≈ 0.3 mm)
+const placeIcon = (name, cx, cy, rot) => {
+  const o = icon(name);
+  return `<g transform="translate(${cx} ${cy}) rotate(${rot}) scale(${ICON_SCALE}) translate(${-o.w / 2} ${-o.h / 2})"><path fill="${NAVY}" fill-rule="evenodd" d="${o.d}"/></g>`;
+};
+const plug = (cx, cy) => placeIcon("stecker", cx, cy, 135);
+const socket = (cx, cy) => placeIcon("dose", cx, cy, -90);
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="50mm" height="50mm" viewBox="0 0 ${W} ${W}">
 <title>FOMO Kondom – ${URL}</title>
 <path d="${ringRight}${ringLeft}" fill="none" stroke="${NAVY}" stroke-width="4" stroke-linecap="round"/>
-${plug(C + R, C)}
-${socket(C - R, C)}
+${plug(C + R, C + 22)}
+${socket(C - R, C + 22)}
 <path d="${top.d}" fill="${NAVY}"/>
 <path d="${bottom.d}" fill="${WHITE}" stroke="${NAVY}" stroke-width="0.8" paint-order="stroke"/>
 <rect x="${C - PLATE / 2}" y="${C - PLATE / 2}" width="${PLATE}" height="${PLATE}" rx="${2 * m}" fill="${WHITE}"/>

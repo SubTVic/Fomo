@@ -35,6 +35,15 @@ von `generate.mjs`.
 2. Fragen, ob die Druckerei Weiß unterlegen kann; Farben ggf. als Pantone/CMYK abstimmen.
 3. Nicht skalieren oder verzerren; nichts über den weißen Bereich drucken.
 
+## Stecker und Steckdose
+
+Handgezeichnete Vorlagen `icons/stecker-vorlage.jpg` und `icons/dose-vorlage.jpg`,
+mit potrace in Vektorpfade umgewandelt (`icons/*.json`, Linienstärke im Druck ≈ 0,3 mm).
+Andere Zeichnung verwenden: Bild (schwarz auf weiß) ersetzen und neu umwandeln:
+`npm i potrace@2.1.8`, dann `potrace.trace(bild, { threshold: 128, turdSize: 40 }, …)` und
+Breite/Höhe/Pfad (`w`, `h`, `d`) als JSON speichern. Drehung und Größe stehen in
+`generate.mjs` (`placeIcon`, `ICON_SCALE`).
+
 ## Neu erzeugen / ändern
 
 ```

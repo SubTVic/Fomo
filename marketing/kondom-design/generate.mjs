@@ -9,7 +9,8 @@
 //   npm i opentype.js@1.3.4 @fontsource/archivo-black@5.0.19 @fontsource/lexend@5.0.21 qrcode-generator@2.0.4
 //   node generate.mjs <out-dir> [label-color] [variant-name] [dark]
 //   (4th arg "dark": label on a dark field, like the white variant;
-//    label-color "shiny-gold": bright gold with a light reflection)
+//    label-color "shiny-gold": bright gold with a light reflection;
+//    5th arg "dark-foil": white ring/texts/plugs for black wrapper foil)
 import { writeFileSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname } from "node:path";
@@ -18,7 +19,10 @@ const require = createRequire(import.meta.url);
 const opentype = require("opentype.js");
 const qrcode = require("qrcode-generator");
 
-const [outDir = ".", labelColor = "#1a2a35", variant = "navy", pillMode = ""] = process.argv.slice(2);
+const [outDir = ".", labelColor = "#1a2a35", variant = "navy", pillMode = "", foil = ""] = process.argv.slice(2);
+// 5th arg "dark-foil": for black/dark wrapper foil — ring, texts and plugs in
+// white (INK) instead of navy; the QR code keeps its white plate + navy modules.
+const DARK_FOIL = foil === "dark-foil";
 // label-color "shiny-gold": bright gold with a light reflection (gradient)
 const SHINY = labelColor === "shiny-gold";
 const darkPill = pillMode === "dark" || labelColor.toLowerCase() === "#ffffff";
@@ -28,6 +32,7 @@ const HEAD = font("@fontsource/archivo-black/files/archivo-black-latin-400-norma
 const BODY = font("@fontsource/lexend/files/lexend-latin-700-normal.woff");
 
 const NAVY = "#1a2a35", WHITE = "#ffffff";
+const INK = DARK_FOIL ? WHITE : NAVY; // ring, texts and plugs
 const W = 500, C = 250;
 const URL = "HTTPS://WWW.FOMO-DRESDEN.APP/K";
 
@@ -167,7 +172,7 @@ function attachIcon(name, phi, side) {
     [t[0] - nx * L - ux * L, t[1] - ny * L - uy * L], [t[0] + nx * L - ux * L, t[1] + ny * L - uy * L],
   ].map((q) => q.map((v) => v.toFixed(1)).join(" ")).join(" ");
   const id = `cut-${name}`;
-  return `<clipPath id="${id}"><polygon points="${poly}"/></clipPath><g transform="translate(${P[0].toFixed(2)} ${P[1].toFixed(2)}) rotate(${rot.toFixed(2)}) scale(${o.scale}) translate(${-o.tip[0]} ${-o.tip[1]})"><path clip-path="url(#${id})" fill="${NAVY}" fill-rule="evenodd" stroke="${NAVY}" stroke-width="${OUTLINE}" stroke-linejoin="round" d="${o.d}"/></g>`;
+  return `<clipPath id="${id}"><polygon points="${poly}"/></clipPath><g transform="translate(${P[0].toFixed(2)} ${P[1].toFixed(2)}) rotate(${rot.toFixed(2)}) scale(${o.scale}) translate(${-o.tip[0]} ${-o.tip[1]})"><path clip-path="url(#${id})" fill="${INK}" fill-rule="evenodd" stroke="${INK}" stroke-width="${OUTLINE}" stroke-linejoin="round" d="${o.d}"/></g>`;
 }
 const RING_W = loadIcon("stecker").cableWidth; // ring line as wide as the cables
 
@@ -176,11 +181,11 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="50mm" height="50mm" 
 ${SHINY ? `<defs><linearGradient id="shiny-gold" gradientUnits="userSpaceOnUse" x1="${C - 40}" y1="${C - 14}" x2="${C + 40}" y2="${C + 14}">
   <stop offset="0" stop-color="#f2c94c"/><stop offset="0.35" stop-color="#ffe9a3"/><stop offset="0.5" stop-color="#fff8dc"/>
   <stop offset="0.65" stop-color="#ffe08a"/><stop offset="1" stop-color="#e8b830"/></linearGradient></defs>` : ""}
-<path d="${ringRight}${ringLeft}" fill="none" stroke="${NAVY}" stroke-width="${RING_W.toFixed(2)}" stroke-linecap="butt"/>
+<path d="${ringRight}${ringLeft}" fill="none" stroke="${INK}" stroke-width="${RING_W.toFixed(2)}" stroke-linecap="butt"/>
 ${attachIcon("stecker", PHI, +1)}
 ${attachIcon("dose", 360 - PHI, -1)}
-<path d="${top.d}" fill="${NAVY}"/>
-<path d="${bottom.d}" fill="${WHITE}" stroke="${NAVY}" stroke-width="${BOTTOM_OUTLINE}" stroke-linejoin="round" paint-order="stroke"/>
+<path d="${top.d}" fill="${INK}"/>
+<path d="${bottom.d}" fill="${WHITE}"${DARK_FOIL ? "" : ` stroke="${NAVY}" stroke-width="${BOTTOM_OUTLINE}" stroke-linejoin="round" paint-order="stroke"`}/>
 <rect x="${C - PLATE / 2}" y="${C - PLATE / 2}" width="${PLATE}" height="${PLATE}" rx="${2 * m}" fill="${WHITE}"/>
 <g fill="${NAVY}"><path d="${mods}"/>${finder(0, 0)}${finder(0, n - 7)}${finder(n - 7, 0)}</g>
 <rect x="${pillX}" y="${pillY}" width="${pill.w}" height="${pill.h}" rx="${m}" fill="${darkPill ? NAVY : WHITE}"/>

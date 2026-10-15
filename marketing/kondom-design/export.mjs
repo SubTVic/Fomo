@@ -63,7 +63,10 @@ for (const v of variants) {
 }
 
 // 3) preview grid on blue foil (the dashed square = 50 × 50 mm print area)
-const tile = (v) => `<div style="width:460px;height:460px;border-radius:14px;background:linear-gradient(135deg,#a3c7de,#7fa7c4 55%,#b2d2e6);box-shadow:0 8px 30px #0003,inset 0 0 0 10px #8fb3cc;display:grid;place-items:center"><div style="width:400px;height:400px;outline:1px dashed #fff8">${readFileSync(file(v), "utf8").replace('width="50mm" height="50mm"', 'width="100%" height="100%"')}</div></div>`;
+// variants for black foil ("schwarze-folie") are previewed on black, the rest on blue
+const foilBg = (v) => (v.includes("schwarze-folie") ? "linear-gradient(135deg,#2a2a2a,#0b0b0b 55%,#333)" : "linear-gradient(135deg,#a3c7de,#7fa7c4 55%,#b2d2e6)");
+const foilEdge = (v) => (v.includes("schwarze-folie") ? "#1c1c1c" : "#8fb3cc");
+const tile = (v) => `<div style="width:460px;height:460px;border-radius:14px;background:${foilBg(v)};box-shadow:0 8px 30px #0003,inset 0 0 0 10px ${foilEdge(v)};display:grid;place-items:center"><div style="width:400px;height:400px;outline:1px dashed #fff8">${readFileSync(file(v), "utf8").replace('width="50mm" height="50mm"', 'width="100%" height="100%"')}</div></div>`;
 const cols = variants.length > 4 ? 3 : 2, rows = Math.ceil(variants.length / cols);
 const m = await b.newPage({ viewport: { width: 40 + cols * 500, height: 40 + rows * 500 } });
 await m.setContent(`<body style="margin:0;background:#a6cbe0;display:grid;grid-template-columns:repeat(${cols},460px);gap:40px;padding:40px;box-sizing:border-box;height:100vh">${variants.map(tile).join("")}</body>`);

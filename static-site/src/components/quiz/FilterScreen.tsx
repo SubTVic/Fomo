@@ -23,11 +23,19 @@ export function FilterScreen({
 
   return (
     <div className="animate-fade-up">
-      <h1 className="text-2xl text-navy sm:text-3xl">{title}</h1>
+      <span className="inline-block border-2 border-navy bg-card px-2 py-0.5 text-xs font-bold tracking-wide text-navy uppercase">
+        Optional
+      </span>
+      <h1 className="mt-2 text-2xl text-navy sm:text-3xl">{title}</h1>
       <p className="mt-2 text-sm text-body">
+        <strong className="font-semibold text-navy">
+          {lang === "en"
+            ? "You can skip this and start right away."
+            : "Du kannst das überspringen und direkt starten."}
+        </strong>{" "}
         {lang === "en"
-          ? "Optional — you can start right away. If you pick something, we only show groups that offer it — leave everything unselected to keep all options open."
-          : "Optional – du kannst auch direkt starten. Wenn du etwas auswählst, zeigen wir dir nur Gruppen, die das anbieten — ohne Auswahl bleibt alles offen."}
+          ? "If you pick something, we only show groups that offer it — leave everything unselected to keep all options open."
+          : "Wenn du etwas auswählst, zeigen wir dir nur Gruppen, die das anbieten — ohne Auswahl bleibt alles offen."}
       </p>
 
       <div className="mt-5 grid gap-3">

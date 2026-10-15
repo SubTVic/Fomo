@@ -1,0 +1,201 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+//
+// FOMO condom-wrapper artwork (50 × 50 mm, vector, print-ready).
+// Real, scannable QR code (EC "H" = 30 % redundancy, so the "FOMO" label in
+// the middle is safe), all text converted to outlines (no fonts needed at the
+// print shop). 1 SVG unit = 0.1 mm.
+//
+// Icons: icons/stecker.json, icons/dose.json (traced from the *-vorlage.jpg).
+//   npm i opentype.js@1.3.4 @fontsource/archivo-black@5.0.19 @fontsource/lexend@5.0.21 qrcode-generator@2.0.4
+//   node generate.mjs <out-dir> [label-color] [variant-name] [dark]
+//   (4th arg "dark": label on a dark field, like the white variant;
+//    label-color "shiny-gold": bright gold with a light reflection;
+//    5th arg "dark-foil": white ring/texts/plugs for black wrapper foil,
+//    "light-foil": solid navy bottom text for white wrapper foil)
+import { writeFileSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+const require = createRequire(import.meta.url);
+const opentype = require("opentype.js");
+const qrcode = require("qrcode-generator");
+
+const [outDir = ".", labelColor = "#1a2a35", variant = "navy", pillMode = "", foil = ""] = process.argv.slice(2);
+// 5th arg "dark-foil": for black/dark wrapper foil — ring, texts and plugs in
+// white (INK) instead of navy; the QR code keeps its white plate + navy modules.
+const DARK_FOIL = foil === "dark-foil";
+// "light-foil": for white wrapper foil — bottom text solid navy (a white
+// letter with outline would read as hollow on white).
+const LIGHT_FOIL = foil === "light-foil";
+// label-color "shiny-gold": bright gold with a light reflection (gradient)
+const SHINY = labelColor === "shiny-gold";
+const darkPill = pillMode === "dark" || labelColor.toLowerCase() === "#ffffff";
+const hearts = "hearts";
+const font = (p) => { const b = readFileSync(require.resolve(p)); return opentype.parse(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)); };
+const HEAD = font("@fontsource/archivo-black/files/archivo-black-latin-400-normal.woff");
+const BODY = font("@fontsource/lexend/files/lexend-latin-700-normal.woff");
+
+const NAVY = "#1a2a35", WHITE = "#ffffff";
+const INK = DARK_FOIL ? WHITE : NAVY; // ring, texts and plugs
+const W = 500, C = 250;
+const URL = "HTTPS://WWW.FOMO-DRESDEN.APP/K";
+
+// --- text on a circle (glyph outlines) -------------------------------------
+function arcText(str, f, size, r, centerDeg, { inside = false, spacing = 0 } = {}) {
+  const scale = size / f.unitsPerEm;
+  const glyphs = f.stringToGlyphs(str);
+  const widths = glyphs.map((g) => g.advanceWidth * scale + spacing);
+  const total = widths.reduce((a, b) => a + b, 0) - spacing;
+  // top text runs clockwise (reads left→right), bottom text counter-clockwise
+  const dir = inside ? -1 : 1;
+  let a = centerDeg - dir * (total / 2 / r) * (180 / Math.PI);
+  let d = "";
+  glyphs.forEach((g, i) => {
+    const w = widths[i] - spacing;
+    const mid = a + dir * ((w / 2) / r) * (180 / Math.PI);
+    const rad = (mid * Math.PI) / 180;
+    const x = C + r * Math.sin(rad), y = C - r * Math.cos(rad);
+    const rot = inside ? mid + 180 : mid;
+    const p = g.getPath(-w / 2, inside ? size * 0.72 : 0, size);
+    const tr = (px, py) => {
+      const t = (rot * Math.PI) / 180;
+      return [x + px * Math.cos(t) - py * Math.sin(t), y + px * Math.sin(t) + py * Math.cos(t)];
+    };
+    for (const c of p.commands) {
+      if (c.type === "M" || c.type === "L") { const [X, Y] = tr(c.x, c.y); d += `${c.type}${X.toFixed(2)} ${Y.toFixed(2)}`; }
+      else if (c.type === "Q") { const [a1, b1] = tr(c.x1, c.y1), [X, Y] = tr(c.x, c.y); d += `Q${a1.toFixed(2)} ${b1.toFixed(2)} ${X.toFixed(2)} ${Y.toFixed(2)}`; }
+      else if (c.type === "C") { const [a1, b1] = tr(c.x1, c.y1), [a2, b2] = tr(c.x2, c.y2), [X, Y] = tr(c.x, c.y); d += `C${a1.toFixed(2)} ${b1.toFixed(2)} ${a2.toFixed(2)} ${b2.toFixed(2)} ${X.toFixed(2)} ${Y.toFixed(2)}`; }
+      else if (c.type === "Z") d += "Z";
+    }
+    a += dir * (widths[i] / r) * (180 / Math.PI);
+  });
+  return { d, span: (total / r) * (180 / Math.PI) };
+}
+
+// --- QR --------------------------------------------------------------------
+const qr = qrcode(0, "H");
+qr.addData(URL, "Alphanumeric");
+qr.make();
+const n = qr.getModuleCount();
+const QPX = 200;                 // QR width in units (20 mm)
+const m = QPX / n;               // module size
+const PLATE = QPX + 8 * m;       // white plate incl. 4-module quiet zone
+const qx = C - QPX / 2, qy = C - QPX / 2;
+
+// centre label (Archivo Black "FOMO") on a white pill
+const LABEL_SIZE = 22;
+const lp = HEAD.getPath("FOMO", 0, 0, LABEL_SIZE);
+const bb = lp.getBoundingBox();
+const lw = bb.x2 - bb.x1, lh = bb.y2 - bb.y1;
+const padX = m * 1.2, padY = m * 1.0;
+const pill = { w: lw + 2 * padX, h: lh + 2 * padY };
+const pillX = C - pill.w / 2, pillY = C - pill.h / 2;
+const labelPath = HEAD.getPath("FOMO", C - lw / 2 - bb.x1, C - lh / 2 - bb.y1, LABEL_SIZE).toPathData(2);
+const inPill = (r, c) => {
+  const x0 = qx + c * m, y0 = qy + r * m;
+  return x0 + m > pillX - m * 0.3 && x0 < pillX + pill.w + m * 0.3 && y0 + m > pillY - m * 0.3 && y0 < pillY + pill.h + m * 0.3;
+};
+const inFinder = (r, c) => (r < 7 && c < 7) || (r < 7 && c >= n - 7) || (r >= n - 7 && c < 7);
+
+let mods = "";
+for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+  if (!qr.isDark(r, c) || inFinder(r, c) || inPill(r, c)) continue;
+  mods += `M${(qx + c * m).toFixed(3)} ${(qy + r * m).toFixed(3)}h${m.toFixed(3)}v${m.toFixed(3)}h-${m.toFixed(3)}z`;
+}
+// heart path in a unit box (0..1)
+const HEART = (x, y, s) => {
+  const p = (u, v) => `${(x + u * s).toFixed(2)} ${(y + v * s).toFixed(2)}`;
+  return `M${p(0.5, 0.97)}C${p(0.2, 0.75)} ${p(-0.02, 0.55)} ${p(0.02, 0.3)}C${p(0.06, 0.08)} ${p(0.36, 0.02)} ${p(0.5, 0.24)}C${p(0.64, 0.02)} ${p(0.94, 0.08)} ${p(0.98, 0.3)}C${p(1.02, 0.55)} ${p(0.8, 0.75)} ${p(0.5, 0.97)}Z`;
+};
+const finder = (r, c) => {
+  const x = qx + c * m, y = qy + r * m;
+  const ring = `M${x} ${y}h${7 * m}v${7 * m}h${-7 * m}z M${x + m} ${y + m}v${5 * m}h${5 * m}v${-5 * m}z`;
+  const eye = hearts === "hearts"
+    ? HEART(x + 1.5 * m, y + 1.45 * m, 4.0 * m)
+    : `M${x + 2 * m} ${y + 2 * m}h${3 * m}v${3 * m}h${-3 * m}z`;
+  return `<path fill-rule="evenodd" d="${ring}"/><path d="${eye}"/>`;
+};
+
+// --- ring, icons, text -----------------------------------------------------
+const R = 196;
+const top = arcText("FOMO-DRESDEN.APP", HEAD, 27, R - 9, 0, { spacing: 1.2 });
+// white letters with a thick navy outline (BOTTOM_OUTLINE) so they stay legible on the foil
+const BOTTOM_OUTLINE = 4.5; // total stroke width; half of it shows outside the letters (≈ 0.2 mm)
+const bottom = arcText("CONNECT WITH THE RIGHT PEOPLE", BODY, 21, R - 6, 180, { inside: true, spacing: 1.1 });
+const gap = 4; // degrees of air between text and ring line
+const arc = (from, to) => {
+  const p = (deg) => [C + R * Math.sin((deg * Math.PI) / 180), C - R * Math.cos((deg * Math.PI) / 180)];
+  const [x1, y1] = p(from), [x2, y2] = p(to);
+  const large = Math.abs(to - from) > 180 ? 1 : 0;
+  return `M${x1.toFixed(2)} ${y1.toFixed(2)}A${R} ${R} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
+};
+const tEnd = top.span / 2 + gap;
+// right side: top text end → plug (90°) ; left side: socket (270°) → top text start
+const PHI = 88; // where the plugs join the ring (right side; left mirrored) — just above the bottom text
+const ringRight = arc(tEnd, PHI);
+const ringLeft = arc(360 - PHI, 360 - top.span / 2 - gap);
+// plug + socket: hand-drawn icons (icons/*-vorlage.jpg), traced to vector
+// paths with potrace (icons/*.json). Each one is attached by its cable end to
+// the end of the ring line, turned so the cable continues in the ring's
+// direction (seamless line → cable).
+const here = dirname(fileURLToPath(import.meta.url)) + "/";
+const ICONS = {
+  // scale chosen so both cables are about as wide as the ring line
+  stecker: { scale: 0.085 },
+  dose: { scale: 0.0595 },
+};
+const OUTLINE = 10; // extra outline (drawing px) so lines stay ≥ 0.25 mm in print
+function loadIcon(name) {
+  // icons/<name>.json: traced outline (w, h, d) + cable centre line `cable`
+  // from the drawing edge to the plug body and its width (cableWidthPx),
+  // both measured on the original bitmap (see README).
+  const o = JSON.parse(readFileSync(`${here}icons/${name}.json`, "utf8"));
+  const { scale } = ICONS[name];
+  // The drawn cable is cut off where it meets the body; the ring line takes
+  // its place. tip = that junction, dir = outward along the (former) cable.
+  const tip = o.cable[o.cable.length - 1];
+  const ref = o.cable[Math.max(0, o.cable.length - 9)];
+  const dir = Math.atan2(ref[1] - tip[1], ref[0] - tip[0]);
+  return { ...o, tip, dir, scale, cableWidth: o.cableWidthPx * scale };
+}
+// Attach the icon so its cable junction sits on ring point (angle phi) and
+// the (cut) cable direction runs along the ring tangent, i.e. the ring line
+// flows straight into the plug body. side = +1: icon hangs clockwise of phi.
+function attachIcon(name, phi, side) {
+  const o = loadIcon(name);
+  const rad = (phi * Math.PI) / 180;
+  const P = [C + R * Math.sin(rad), C - R * Math.cos(rad)];
+  const tangent = Math.atan2(Math.sin(rad), Math.cos(rad)); // clockwise direction
+  const want = side > 0 ? tangent + Math.PI : tangent;
+  const rot = ((want - o.dir) * 180) / Math.PI;
+  // clip away everything beyond the junction (the drawn cable stub)
+  const ux = Math.cos(o.dir), uy = Math.sin(o.dir), nx = -uy, ny = ux, L = 4000, OVER = 6;
+  const t = [o.tip[0] + ux * OVER, o.tip[1] + uy * OVER];
+  const poly = [
+    [t[0] + nx * L, t[1] + ny * L], [t[0] - nx * L, t[1] - ny * L],
+    [t[0] - nx * L - ux * L, t[1] - ny * L - uy * L], [t[0] + nx * L - ux * L, t[1] + ny * L - uy * L],
+  ].map((q) => q.map((v) => v.toFixed(1)).join(" ")).join(" ");
+  const id = `cut-${name}`;
+  return `<clipPath id="${id}"><polygon points="${poly}"/></clipPath><g transform="translate(${P[0].toFixed(2)} ${P[1].toFixed(2)}) rotate(${rot.toFixed(2)}) scale(${o.scale}) translate(${-o.tip[0]} ${-o.tip[1]})"><path clip-path="url(#${id})" fill="${INK}" fill-rule="evenodd" stroke="${INK}" stroke-width="${OUTLINE}" stroke-linejoin="round" d="${o.d}"/></g>`;
+}
+const RING_W = loadIcon("stecker").cableWidth; // ring line as wide as the cables
+
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="50mm" height="50mm" viewBox="0 0 ${W} ${W}">
+<title>FOMO Kondom – ${URL}</title>
+${SHINY ? `<defs><linearGradient id="shiny-gold" gradientUnits="userSpaceOnUse" x1="${C - 40}" y1="${C - 14}" x2="${C + 40}" y2="${C + 14}">
+  <stop offset="0" stop-color="#f2c94c"/><stop offset="0.35" stop-color="#ffe9a3"/><stop offset="0.5" stop-color="#fff8dc"/>
+  <stop offset="0.65" stop-color="#ffe08a"/><stop offset="1" stop-color="#e8b830"/></linearGradient></defs>` : ""}
+<path d="${ringRight}${ringLeft}" fill="none" stroke="${INK}" stroke-width="${RING_W.toFixed(2)}" stroke-linecap="butt"/>
+${attachIcon("stecker", PHI, +1)}
+${attachIcon("dose", 360 - PHI, -1)}
+<path d="${top.d}" fill="${INK}"/>
+<path d="${bottom.d}" fill="${LIGHT_FOIL ? NAVY : WHITE}"${DARK_FOIL || LIGHT_FOIL ? "" : ` stroke="${NAVY}" stroke-width="${BOTTOM_OUTLINE}" stroke-linejoin="round" paint-order="stroke"`}/>
+<rect x="${C - PLATE / 2}" y="${C - PLATE / 2}" width="${PLATE}" height="${PLATE}" rx="${2 * m}" fill="${WHITE}"/>
+<g fill="${NAVY}"><path d="${mods}"/>${finder(0, 0)}${finder(0, n - 7)}${finder(n - 7, 0)}</g>
+<rect x="${pillX}" y="${pillY}" width="${pill.w}" height="${pill.h}" rx="${m}" fill="${darkPill ? NAVY : WHITE}"/>
+<path d="${labelPath}" fill="${SHINY ? "url(#shiny-gold)" : labelColor}"/>
+</svg>
+`;
+const name = `${outDir}/fomo-kondom-${variant}.svg`;
+writeFileSync(name, svg);
+console.log(name, `QR v${(n - 17) / 4} ${n}×${n}, ${(m / 10).toFixed(2)} mm/module, label covers ~${((pill.w * pill.h) / (QPX * QPX) * 100).toFixed(1)} %`);

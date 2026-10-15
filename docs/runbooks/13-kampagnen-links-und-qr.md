@@ -42,6 +42,9 @@ größere Punkte = auch winzig noch scannbar.
 4. **Nach dem Merge** den Kurzlink im Browser aufrufen: muss auf `/quiz/` landen.
 5. **Probedruck in Originalgröße** auf dem echten Material, mit iPhone und Android scannen.
 
+Fertiges Kondom-Design mit Deko (Ring-Schrift, Stecker, Herzen, „FOMO“-Label):
+`marketing/kondom-design/` (PDF für die Druckerei, Anleitung in der README).
+
 Druckregeln (Details: `marketing/qr/README.md`):
 - schwarz auf weiß, nie invertiert, kein Logo, keine abgerundeten Punkte;
 - schwarze Fläche ≥ ca. 10–11 mm (≈ 0,4–0,45 mm pro Modul bei 25 × 25 Modulen);

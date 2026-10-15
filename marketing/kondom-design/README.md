@@ -33,7 +33,13 @@ Schräglage scheitert.
   scannten im Test schlechter.
 - Weiße Fläche hinter dem QR-Code (inkl. 4 Module Rand) – auf Folie **weiß drucken
   lassen**, nicht transparent. Code-Farbe dunkel (navy), nie hell auf dunkel.
-- QR 20 × 20 mm, 0,69 mm pro Modul.
+- QR 24 × 24 mm (0,83 mm pro Modul) – das Motiv füllt die 50 × 50 mm fast randlos
+  (48,6 × 49,3 mm), Schrift und Stecker reichen bis an den Rand.
+
+**Wichtig für die Druckerei:** Weil das Motiv bis an den Rand geht, fragen, ob die
+Druckfläche wirklich 50 × 50 mm ist oder ob ein Sicherheitsabstand (z. B. zur
+Siegelnaht) gilt. Falls ja: in `export.mjs` die Seitengröße auf die echte
+Druckfläche setzen oder das PDF passend verkleinert platzieren lassen.
 
 ## Vor der Bestellung
 
@@ -61,5 +67,9 @@ mit potrace umwandeln (`npm i potrace@2.1.8`, `threshold: 128, turdSize: 40` →
 npm i opentype.js@1.3.4 @fontsource/archivo-black@5.0.19 @fontsource/lexend@5.0.21 qrcode-generator@2.0.4
 node generate.mjs <ordner> "#1a2a35" navy
 ```
-(in einem temporären Ordner installieren; PDF/PNG danach per Browser-Export).
+node export.mjs <ordner> navy pink gold weiss   # randlos einpassen + PDF/PNG/Vorschau (braucht playwright)
+```
+(in einem temporären Ordner installieren). `export.mjs` misst das fertige Motiv und
+schneidet den leeren Rand weg, sodass das äußerste Element den Bildrand berührt.
+```
 Nach jeder Änderung den Code erneut mit Handys testen.

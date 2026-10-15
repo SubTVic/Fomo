@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { FAQ_DE, FAQ_EN } from "@/lib/faq";
 import { GroupsPortalLink } from "./GroupsPortalLink";
+import { InstagramIcon, InstagramLink } from "./InstagramLink";
 
 type Lang = "de" | "en";
 
@@ -15,6 +16,7 @@ const copy = {
     groups: "Alle Hochschulgruppen",
     contactTitle: "Fragen oder Anmerkungen?",
     contactText: "Bitte wende dich direkt an uns.",
+    instagram: "Folg FOMO auf Instagram",
   },
   en: {
     eyebrow: "TU DRESDEN",
@@ -25,8 +27,21 @@ const copy = {
     groups: "All student groups",
     contactTitle: "Questions or feedback?",
     contactText: "Please contact us directly.",
+    instagram: "Follow FOMO on Instagram",
   },
-} satisfies Record<Lang, { eyebrow: string; title: string; intro: (groupCount: number) => string; quiz: string; groups: string; contactTitle: string; contactText: string }>;
+} satisfies Record<
+  Lang,
+  {
+    eyebrow: string;
+    title: string;
+    intro: (groupCount: number) => string;
+    quiz: string;
+    groups: string;
+    contactTitle: string;
+    contactText: string;
+    instagram: string;
+  }
+>;
 
 export function HomePageContent({ lang, groupCount }: { lang: Lang; groupCount: number }) {
   const t = copy[lang];
@@ -57,6 +72,14 @@ export function HomePageContent({ lang, groupCount }: { lang: Lang; groupCount: 
             {t.groups}
           </Link>
         </div>
+
+        <InstagramLink
+          context="home-hero"
+          className="mt-5 inline-flex items-center gap-2 font-heading text-base text-navy underline-offset-4 hover:underline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-navy"
+        >
+          <InstagramIcon />
+          {t.instagram} · @fomo_dresden
+        </InstagramLink>
       </section>
 
       <GroupsPortalLink lang={lang} />
@@ -70,7 +93,9 @@ export function HomePageContent({ lang, groupCount }: { lang: Lang; groupCount: 
           {(lang === "de" ? FAQ_DE : FAQ_EN).map((f) => (
             <details key={f.q} className="group py-3">
               <summary className="cursor-pointer list-none font-heading text-base text-navy marker:content-none">
-                <span className="mr-2 inline-block transition-transform group-open:rotate-90">→</span>
+                <span className="mr-2 inline-block transition-transform group-open:rotate-90">
+                  →
+                </span>
                 {f.q}
               </summary>
               <p className="mt-2 max-w-prose pl-6 text-sm text-body">{f.a}</p>
@@ -82,12 +107,21 @@ export function HomePageContent({ lang, groupCount }: { lang: Lang; groupCount: 
       <section className="mt-6 border-poster bg-card p-5 text-center sm:p-6">
         <p className="font-heading text-lg text-navy sm:text-xl">{t.contactTitle}</p>
         <p className="mx-auto mt-2 max-w-prose text-sm text-body">{t.contactText}</p>
-        <a
-          href="mailto:fomo@yeti-dresden.org"
-          className="mt-4 inline-flex border-4 border-navy bg-navy px-5 py-3 text-center font-heading text-sm text-sky transition-colors hover:bg-navy-hover focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-navy sm:text-base"
-        >
-          fomo@yeti-dresden.org
-        </a>
+        <div className="mt-4 flex flex-wrap justify-center gap-3">
+          <a
+            href="mailto:fomo@yeti-dresden.org"
+            className="inline-flex border-4 border-navy bg-navy px-5 py-3 text-center font-heading text-sm text-sky transition-colors hover:bg-navy-hover focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-navy sm:text-base"
+          >
+            fomo@yeti-dresden.org
+          </a>
+          <InstagramLink
+            context="home-contact"
+            className="inline-flex items-center gap-2 border-4 border-navy px-5 py-3 text-center font-heading text-sm text-navy transition-colors hover:bg-sky focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-navy sm:text-base"
+          >
+            <InstagramIcon />
+            @fomo_dresden
+          </InstagramLink>
+        </div>
       </section>
     </div>
   );

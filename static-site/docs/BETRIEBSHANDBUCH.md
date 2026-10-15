@@ -144,6 +144,10 @@ einmalig in Vercel einen „Deploy Hook" (Settings → Git) erstellen und die
 URL als GitHub-Secret `VERCEL_DEPLOY_HOOK_URL` hinterlegen. Sofort
 aktualisieren: GitHub → Actions → „Daily report redeploy" → „Run workflow".
 
+**Zeitraum:** Der Bericht zählt seit dem Launch (01.07.2026, Feld `reportSince` in
+`static-site/data/report-milestones.json`) bis heute. **Werbekampagnen** (Link für
+Anzeigen, QR-Code für Druck): `docs/runbooks/13-kampagnen-links-und-qr.md`.
+
 **Zwei Knöpfe, zwei Zwecke — nicht verwechseln:**
 
 | GitHub-Action | Was sie tut | Was sie NICHT tut |

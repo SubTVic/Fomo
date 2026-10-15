@@ -170,7 +170,7 @@ Akzent #5a8a9a. Fallback-Farben der Kategorien: `static-site/data/categories.jso
 
 ## Wo was steht
 
-- **Runbooks je Aufgabe:** [`docs/runbooks/`](docs/runbooks/README.md) (Index der 13
+- **Runbooks je Aufgabe:** [`docs/runbooks/`](docs/runbooks/README.md) (Index der 14
   typischen Wartungsaufgaben; Backup/Migration/Wiederherstellung: Runbook 11).
 - Setup, alle Env-Variablen und GitHub-Secrets, Deployment beider Vercel-Projekte:
   `README.md` (Root).

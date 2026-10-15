@@ -39,6 +39,7 @@ export function Footer() {
             href={INSTAGRAM_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => track(EVENTS.instagramClick, { context: "footer" })}
             className="hover:text-navy"
           >
             Instagram

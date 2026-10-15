@@ -323,6 +323,16 @@ Die Root-App bleibt Datenerfassungs-Tool (Registrierung + Admin). Offen:
 
 ## Erledigt / Verworfen (Kurzchronik)
 
+- ✅ **Oktober 2026 (Werbekampagne):** `/report/` zählt seit Launch statt gleitender
+  90 Tage (Zahlen sanken scheinbar); Kampagnen-Event `campaign-visit` (UTM ging durch
+  `data-exclude-search` verloren); Instagram-Link im Footer; Kurzlink `/K` + kleiner
+  Druck-QR für die Kondom-Aktion (`marketing/qr/`, `scripts/make-qr.mjs`); „Los geht's“
+  auf der Filterseite klebt unten (im Instagram-Browser lag er ~2 Bildschirme tief,
+  86 % starteten nicht). Anleitung: `docs/runbooks/13-kampagnen-links-und-qr.md`.
+  Offen danach: `/K` live aufrufen; Kondom-QR-Probedruck mit iPhone + Android;
+  Quiz einmal im echten Instagram-Browser testen; nach ein paar Tagen Startquote der
+  Instagram-Besucher (vorher 9 %) neu messen, erst dann weiteres Werbebudget.
+
 - ✅ **Juli 2026:** Statische Seite live (www.fomo-dresden.app); Merge
   `static_alternative` (EN-Routen, Redesign); SEO komplett (Sitemap, hreflang,
   JSON-LD, Kategorieseiten); Impressum/Datenschutz auf Victor Kling;

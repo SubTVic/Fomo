@@ -45,6 +45,8 @@ brauchen.
 | `groups-show-unverified` | Toggle „Auch unbestätigte…" | neuer Zustand |
 | `register-click` | Klick auf „Gruppe registrieren" (Link zur Registrierungs-App) | `context` (browse/footer/unverified-notice/home — „Zum Gruppenbereich" auf der Startseite) |
 | `lang-switch` | DE/EN-Umschalter | Zielsprache |
+| `campaign-visit` | Ankunft über einen Kampagnen-Link mit `utm_source` (Seitenaufrufe speichern keine Query, deshalb eigenes Event) | `source`, `medium`, `campaign`, `content` (bereinigt: a-z0-9_-), `path` — Anleitung: `docs/runbooks/13-kampagnen-links-und-qr.md` |
+| `instagram-click` | Klick auf den FOMO-Instagram-Link im Footer | `context` (footer) |
 
 **Hinweis zur Abweichung vom Konzept unten:** Der ursprüngliche Plan (siehe
 „Bewusst NICHT sammeln") wollte bewusst **keine vollständigen Antwortvektoren**

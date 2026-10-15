@@ -60,4 +60,9 @@ export const EVENTS = {
   // Click on "register your group" (outbound to the dynamic registration app).
   registerClick: "register-click",
   langSwitch: "lang-switch",
+  // Click on FOMO's own Instagram link (outbound).
+  instagramClick: "instagram-click",
+  // Arrival via a campaign link (utm_source/medium/campaign/content, cleaned
+  // labels only) — pageviews drop query strings, so this is the only record.
+  campaignVisit: "campaign-visit",
 } as const;

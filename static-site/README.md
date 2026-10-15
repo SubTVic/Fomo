@@ -36,7 +36,7 @@ All content comes from JSON files in `data/`, baked in at build time:
 | `categories.json` | Categories: name DE/EN, colour, SEO landing page | By PR; a new category in the DB must be added here or validation fails |
 | `group-translations.json` | English group descriptions + `sourceHash` of the German text | By PR; validation warns when the German text changed since |
 | `logos.json` | Slug → logo path overlay (a group's own `logoUrl` wins) | By PR, logo files in `public/group-logos/` |
-| `report-milestones.json` | Dated changes the `/report/` splits its numbers at | By PR after matching/data changes |
+| `report-milestones.json` | Report start date (`reportSince`, launch) + dated changes the `/report/` splits its numbers at | By PR after matching/data changes |
 
 How `groups.json` gets updated: admin app → GitHub Action „Daten-Sync“ → PR with a
 change list → merge (step by step: `docs/runbooks/01-gruppe-aendern.md`). The code
@@ -169,7 +169,9 @@ thousands of profiles against the real matcher. Auth via env — either
 `UMAMI_API_KEY` (Umami Cloud, needs a plan with API access) or
 `UMAMI_URL` + `UMAMI_USER` + `UMAMI_PASSWORD` (self-hosted, API always
 included); both need `UMAMI_WEBSITE_ID`. `--offline` builds the
-simulation-only bias report without any API access.
+simulation-only bias report without any API access. Totals count from
+`reportSince` in `data/report-milestones.json` (the launch) until now;
+`--days N` switches to a rolling window, `--since YYYY-MM-DD` to another start.
 
 The report is also **built into the live site**: `npm run build` runs the
 generator first (prebuild) and ships the result at **`/report/`** (public,

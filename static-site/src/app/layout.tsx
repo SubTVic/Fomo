@@ -11,6 +11,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { UmamiScript } from "@/components/UmamiScript";
+import { CampaignTracker } from "@/components/CampaignTracker";
 import { HtmlLangSync } from "@/components/HtmlLangSync";
 import { INSTAGRAM_URL, SITE_URL, absUrl } from "@/lib/site";
 
@@ -113,6 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="flex w-full flex-1 flex-col">{children}</main>
         <Footer />
         <UmamiScript />
+        <CampaignTracker />
       </body>
     </html>
   );

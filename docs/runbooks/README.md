@@ -22,6 +22,7 @@ Texte nur über **Branch + Pull Request**.
 | 11 | „Etwas ist kaputt" / Deployment | [05 Fehlersuche und Deploy](05-fehlersuche-und-deploy.md) | Diagnose ja, Behebung teils nein |
 | 12 | Software-Updates | [12 Updates](12-updates.md) | nein |
 | 13 | Backup ziehen, DB-Migration einspielen, Notfall-Wiederherstellung | [11 Backup und Migration](11-backup-und-migration.md) | nein (Person mit DB-Zugang) |
+| 14 | Werbe-Link (UTM) oder gedruckten QR-Code für eine Kampagne erstellen und auswerten | [13 Kampagnen-Links und QR](13-kampagnen-links-und-qr.md) | Link ja; QR/Kurzlink nein |
 
 Datenschutz-Fristen und Löschanfragen: [`docs/datenschutz-loeschkonzept.md`](../datenschutz-loeschkonzept.md).
 

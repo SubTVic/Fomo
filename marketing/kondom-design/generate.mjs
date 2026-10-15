@@ -8,7 +8,8 @@
 // Icons: icons/stecker.json, icons/dose.json (traced from the *-vorlage.jpg).
 //   npm i opentype.js@1.3.4 @fontsource/archivo-black@5.0.19 @fontsource/lexend@5.0.21 qrcode-generator@2.0.4
 //   node generate.mjs <out-dir> [label-color] [variant-name] [dark]
-//   (4th arg "dark": label on a dark field, like the white variant)
+//   (4th arg "dark": label on a dark field, like the white variant;
+//    label-color "shiny-gold": bright gold with a light reflection)
 import { writeFileSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname } from "node:path";
@@ -18,6 +19,8 @@ const opentype = require("opentype.js");
 const qrcode = require("qrcode-generator");
 
 const [outDir = ".", labelColor = "#1a2a35", variant = "navy", pillMode = ""] = process.argv.slice(2);
+// label-color "shiny-gold": bright gold with a light reflection (gradient)
+const SHINY = labelColor === "shiny-gold";
 const darkPill = pillMode === "dark" || labelColor.toLowerCase() === "#ffffff";
 const hearts = "hearts";
 const font = (p) => { const b = readFileSync(require.resolve(p)); return opentype.parse(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)); };
@@ -170,6 +173,9 @@ const RING_W = loadIcon("stecker").cableWidth; // ring line as wide as the cable
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="50mm" height="50mm" viewBox="0 0 ${W} ${W}">
 <title>FOMO Kondom – ${URL}</title>
+${SHINY ? `<defs><linearGradient id="shiny-gold" gradientUnits="userSpaceOnUse" x1="${C - 40}" y1="${C - 14}" x2="${C + 40}" y2="${C + 14}">
+  <stop offset="0" stop-color="#f2c94c"/><stop offset="0.35" stop-color="#ffe9a3"/><stop offset="0.5" stop-color="#fff8dc"/>
+  <stop offset="0.65" stop-color="#ffe08a"/><stop offset="1" stop-color="#e8b830"/></linearGradient></defs>` : ""}
 <path d="${ringRight}${ringLeft}" fill="none" stroke="${NAVY}" stroke-width="${RING_W.toFixed(2)}" stroke-linecap="butt"/>
 ${attachIcon("stecker", PHI, +1)}
 ${attachIcon("dose", 360 - PHI, -1)}
@@ -178,7 +184,7 @@ ${attachIcon("dose", 360 - PHI, -1)}
 <rect x="${C - PLATE / 2}" y="${C - PLATE / 2}" width="${PLATE}" height="${PLATE}" rx="${2 * m}" fill="${WHITE}"/>
 <g fill="${NAVY}"><path d="${mods}"/>${finder(0, 0)}${finder(0, n - 7)}${finder(n - 7, 0)}</g>
 <rect x="${pillX}" y="${pillY}" width="${pill.w}" height="${pill.h}" rx="${m}" fill="${darkPill ? NAVY : WHITE}"/>
-<path d="${labelPath}" fill="${labelColor}"/>
+<path d="${labelPath}" fill="${SHINY ? "url(#shiny-gold)" : labelColor}"/>
 </svg>
 `;
 const name = `${outDir}/fomo-kondom-${variant}.svg`;

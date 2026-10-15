@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: AGPL-3.0-only -->
 # Kondom-Design „Connect with the right people“
 
-Druckvorlage 50 × 50 mm, fünf Farbvarianten des „FOMO“-Labels (navy, pink, gold, gold-schwarz = gold auf dunklem Feld, weiss = weiß auf dunklem Feld).
+Druckvorlage 50 × 50 mm, fünf Farbvarianten des „FOMO“-Labels (navy, pink, gold, gold-schwarz = helles, glänzendes Gold (Farbverlauf) auf dunklem Feld, weiss = weiß auf dunklem Feld).
 QR-Inhalt: `HTTPS://WWW.FOMO-DRESDEN.APP/K` → Quiz mit `utm_source=kondom`
 (Kurzlink in `static-site/vercel.json`, Auswertung: Event `campaign-visit`).
 
@@ -43,6 +43,9 @@ Druckfläche setzen oder das PDF passend verkleinert platzieren lassen.
 
 ## Vor der Bestellung
 
+0. „gold-schwarz“: Der Glanz ist ein gedruckter Farbverlauf. Echtes Metallic-Gold
+   gibt es nur mit Heißfolienprägung/Sonderfarbe – bei der Druckerei nachfragen.
+
 1. Probedruck/Proof in Originalgröße mit **iPhone und Android** scannen.
 2. Fragen, ob die Druckerei Weiß unterlegen kann; Farben ggf. als Pantone/CMYK abstimmen.
 3. Nicht skalieren oder verzerren; nichts über den weißen Bereich drucken.
@@ -72,7 +75,7 @@ In einem temporären Ordner installieren, dann:
 ```
 npm i opentype.js@1.3.4 @fontsource/archivo-black@5.0.19 @fontsource/lexend@5.0.21 qrcode-generator@2.0.4 playwright
 node generate.mjs <ordner> "#1a2a35" navy        # je Farbvariante
-node generate.mjs <ordner> "#a8862f" gold-schwarz dark   # Label auf dunklem Feld
+node generate.mjs <ordner> shiny-gold gold-schwarz dark   # glänzendes Gold auf dunklem Feld
 node export.mjs <ordner> navy pink gold gold-schwarz weiss   # randlos einpassen + PDF/PNG/Vorschau
 ```
 

@@ -20,6 +20,12 @@ von `generate.mjs`.
 
 ## Was den Code trotz Deko scannbar hält (getestet)
 
+Geprüft mit zwei Decodern (jsQR und ZXing, der Bibliothek vieler Scanner-Apps) in
+verschiedenen Größen, unscharf und schräg. ZXing liest alle Varianten in 11 von 12
+Fällen (ein schlichter QR-Code ohne Deko: 12 von 12) – nur extreme Unschärfe/
+Schräglage scheitert.
+
+
 - Fehlerkorrektur **H** (30 % Reserve) – das „FOMO“-Label deckt nur ~6 % ab.
   Größere Labels (ab ~2,4 mm Schrifthöhe) haben im Test die Reserve aufgefressen:
   **Label nicht vergrößern.**
@@ -38,11 +44,16 @@ von `generate.mjs`.
 ## Stecker und Steckdose
 
 Handgezeichnete Vorlagen `icons/stecker-vorlage.jpg` und `icons/dose-vorlage.jpg`,
-mit potrace in Vektorpfade umgewandelt (`icons/*.json`, Linienstärke im Druck ≈ 0,3 mm).
-Andere Zeichnung verwenden: Bild (schwarz auf weiß) ersetzen und neu umwandeln:
-`npm i potrace@2.1.8`, dann `potrace.trace(bild, { threshold: 128, turdSize: 40 }, …)` und
-Breite/Höhe/Pfad (`w`, `h`, `d`) als JSON speichern. Drehung und Größe stehen in
-`generate.mjs` (`placeIcon`, `ICON_SCALE`).
+in Vektorpfade umgewandelt (`icons/*.json`). Die Kabel hängen **nahtlos an den
+Enden der Ringlinie**: `icons/*.json` enthält zusätzlich die Kabel-Mittellinie
+(`cable`) und -breite (`cableWidthPx`), auf dem Originalbild gemessen;
+`generate.mjs` dreht jede Zeichnung so, dass das Kabel genau am Linienende in
+Ringrichtung weiterläuft, und füllt das hohle Kabel massiv wie die Linie.
+Größe: `ICONS` (`scale`), Position am Ring: `PHI`.
+
+Andere Zeichnung (schwarz auf weiß, Kabel läuft am Bildrand heraus): Bild ersetzen,
+mit potrace umwandeln (`npm i potrace@2.1.8`, `threshold: 128, turdSize: 40` →
+`w`, `h`, `d` als JSON) und die Kabel-Mittellinie neu messen.
 
 ## Neu erzeugen / ändern
 

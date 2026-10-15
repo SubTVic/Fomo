@@ -115,25 +115,50 @@ const arc = (from, to) => {
 };
 const tEnd = top.span / 2 + gap;
 // right side: top text end → plug (90°) ; left side: socket (270°) → top text start
-const ringRight = arc(tEnd, 70);
-const ringLeft = arc(290, 360 - top.span / 2 - gap);
+const PHI = 70; // where the cables join the ring (right side; left mirrored)
+const ringRight = arc(tEnd, PHI);
+const ringLeft = arc(360 - PHI, 360 - top.span / 2 - gap);
 // plug + socket: hand-drawn icons (icons/*-vorlage.jpg), traced to vector
-// paths with potrace (icons/*.json). Both hang from the ring on their cable.
+// paths with potrace (icons/*.json). Each one is attached by its cable end to
+// the end of the ring line, turned so the cable continues in the ring's
+// direction (seamless line → cable).
 const here = dirname(fileURLToPath(import.meta.url)) + "/";
-const icon = (name) => JSON.parse(readFileSync(`${here}icons/${name}.json`, "utf8"));
-const ICON_SCALE = 0.125; // 1 px of the drawing → 0.0125 mm (lines ≈ 0.3 mm)
-const placeIcon = (name, cx, cy, rot) => {
-  const o = icon(name);
-  return `<g transform="translate(${cx} ${cy}) rotate(${rot}) scale(${ICON_SCALE}) translate(${-o.w / 2} ${-o.h / 2})"><path fill="${NAVY}" fill-rule="evenodd" d="${o.d}"/></g>`;
+const ICONS = {
+  // scale chosen so both cables are about as wide as the ring line
+  stecker: { scale: 0.085 },
+  dose: { scale: 0.0595 },
 };
-const plug = (cx, cy) => placeIcon("stecker", cx, cy, 135);
-const socket = (cx, cy) => placeIcon("dose", cx, cy, -90);
+const OUTLINE = 10; // extra outline (drawing px) so lines stay ≥ 0.25 mm in print
+function loadIcon(name) {
+  // icons/<name>.json: traced outline (w, h, d) + cable centre line `cable`
+  // from the drawing edge to the plug body and its width (cableWidthPx),
+  // both measured on the original bitmap (see README).
+  const o = JSON.parse(readFileSync(`${here}icons/${name}.json`, "utf8"));
+  const { scale } = ICONS[name];
+  const tip = o.cable[0];
+  const ref = o.cable[Math.min(8, o.cable.length - 1)];
+  const dir = Math.atan2(tip[1] - ref[1], tip[0] - ref[0]); // inside → tip
+  return { ...o, tip, dir, scale, centre: o.cable, cableWidth: o.cableWidthPx * scale };
+}
+// Attach the icon so its cable tip sits on ring point (angle phi) and the
+// cable runs along the ring tangent. side = +1: icon hangs clockwise of phi.
+function attachIcon(name, phi, side) {
+  const o = loadIcon(name);
+  const rad = (phi * Math.PI) / 180;
+  const P = [C + R * Math.sin(rad), C - R * Math.cos(rad)];
+  const tangent = Math.atan2(Math.sin(rad), Math.cos(rad)); // clockwise direction
+  // dir (inside → tip) must point back along the ring, away from the icon
+  const want = side > 0 ? tangent + Math.PI : tangent;
+  const rot = ((want - o.dir) * 180) / Math.PI;
+  return `<g transform="translate(${P[0].toFixed(2)} ${P[1].toFixed(2)}) rotate(${rot.toFixed(2)}) scale(${o.scale}) translate(${-o.tip[0]} ${-o.tip[1]})"><path fill="${NAVY}" fill-rule="evenodd" stroke="${NAVY}" stroke-width="${OUTLINE}" stroke-linejoin="round" d="${o.d}"/><path fill="none" stroke="${NAVY}" stroke-width="${o.cableWidthPx}" stroke-linejoin="round" d="M${o.centre.map((q) => q.map((v) => v.toFixed(1)).join(" ")).join("L")}"/></g>`;
+}
+const RING_W = loadIcon("stecker").cableWidth; // ring line as wide as the cables
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="50mm" height="50mm" viewBox="0 0 ${W} ${W}">
 <title>FOMO Kondom – ${URL}</title>
-<path d="${ringRight}${ringLeft}" fill="none" stroke="${NAVY}" stroke-width="4" stroke-linecap="round"/>
-${plug(C + R, C + 22)}
-${socket(C - R, C + 22)}
+<path d="${ringRight}${ringLeft}" fill="none" stroke="${NAVY}" stroke-width="${RING_W.toFixed(2)}" stroke-linecap="butt"/>
+${attachIcon("stecker", PHI, +1)}
+${attachIcon("dose", 360 - PHI, -1)}
 <path d="${top.d}" fill="${NAVY}"/>
 <path d="${bottom.d}" fill="${WHITE}" stroke="${NAVY}" stroke-width="0.8" paint-order="stroke"/>
 <rect x="${C - PLATE / 2}" y="${C - PLATE / 2}" width="${PLATE}" height="${PLATE}" rx="${2 * m}" fill="${WHITE}"/>

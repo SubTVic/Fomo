@@ -63,13 +63,14 @@ mit potrace umwandeln (`npm i potrace@2.1.8`, `threshold: 128, turdSize: 40` →
 
 ## Neu erzeugen / ändern
 
+In einem temporären Ordner installieren, dann:
+
 ```
-npm i opentype.js@1.3.4 @fontsource/archivo-black@5.0.19 @fontsource/lexend@5.0.21 qrcode-generator@2.0.4
-node generate.mjs <ordner> "#1a2a35" navy
+npm i opentype.js@1.3.4 @fontsource/archivo-black@5.0.19 @fontsource/lexend@5.0.21 qrcode-generator@2.0.4 playwright
+node generate.mjs <ordner> "#1a2a35" navy        # je Farbvariante
+node export.mjs <ordner> navy pink gold weiss    # randlos einpassen + PDF/PNG/Vorschau
 ```
-node export.mjs <ordner> navy pink gold weiss   # randlos einpassen + PDF/PNG/Vorschau (braucht playwright)
-```
-(in einem temporären Ordner installieren). `export.mjs` misst das fertige Motiv und
-schneidet den leeren Rand weg, sodass das äußerste Element den Bildrand berührt.
-```
-Nach jeder Änderung den Code erneut mit Handys testen.
+
+`export.mjs` misst das fertige Motiv und schneidet den leeren Rand weg, sodass das
+äußerste Element den Bildrand berührt. Nach jeder Änderung den Code erneut mit
+Handys testen.

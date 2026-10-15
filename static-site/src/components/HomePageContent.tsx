@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { FAQ_DE, FAQ_EN } from "@/lib/faq";
 import { GroupsPortalLink } from "./GroupsPortalLink";
-import { InstagramIcon, InstagramLink } from "./InstagramLink";
+import { InstagramHandle, InstagramIcon, InstagramLink } from "./InstagramLink";
 
 type Lang = "de" | "en";
 
@@ -78,7 +78,9 @@ export function HomePageContent({ lang, groupCount }: { lang: Lang; groupCount: 
           className="mt-5 inline-flex items-center gap-2 font-heading text-base text-navy underline-offset-4 hover:underline focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-navy"
         >
           <InstagramIcon />
-          {t.instagram} · @fomo_dresden
+          <span>
+            {t.instagram} · <InstagramHandle />
+          </span>
         </InstagramLink>
       </section>
 
@@ -119,7 +121,7 @@ export function HomePageContent({ lang, groupCount }: { lang: Lang; groupCount: 
             className="inline-flex items-center gap-2 border-4 border-navy px-5 py-3 text-center font-heading text-sm text-navy transition-colors hover:bg-sky focus-visible:outline-4 focus-visible:outline-offset-4 focus-visible:outline-navy sm:text-base"
           >
             <InstagramIcon />
-            @fomo_dresden
+            <InstagramHandle />
           </InstagramLink>
         </div>
       </section>

@@ -28,20 +28,20 @@ export function InstagramLink({
   );
 }
 
-/** Instagram glyph (simple outline), sized by the surrounding font. */
+/** Official Instagram app icon (decorative; the link text names the target). */
 export function InstagramIcon() {
   return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="h-[1.1em] w-[1.1em] shrink-0"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.25"
-    >
-      <rect x="3" y="3" width="18" height="18" rx="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-    </svg>
+    <img
+      src="/logos/instagram.png"
+      alt=""
+      width={96}
+      height={96}
+      className="h-[1.6em] w-[1.6em] shrink-0"
+    />
   );
+}
+
+/** "@fomo_dresden" in the body font: Archivo Black renders "@" oddly. */
+export function InstagramHandle() {
+  return <span className="font-body font-semibold">@fomo_dresden</span>;
 }

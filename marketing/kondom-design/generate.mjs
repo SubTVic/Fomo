@@ -115,7 +115,7 @@ const arc = (from, to) => {
 };
 const tEnd = top.span / 2 + gap;
 // right side: top text end → plug (90°) ; left side: socket (270°) → top text start
-const PHI = 70; // where the cables join the ring (right side; left mirrored)
+const PHI = 91; // where the plugs join the ring (right side; left mirrored) — just above the bottom text
 const ringRight = arc(tEnd, PHI);
 const ringLeft = arc(360 - PHI, 360 - top.span / 2 - gap);
 // plug + socket: hand-drawn icons (icons/*-vorlage.jpg), traced to vector
@@ -135,22 +135,32 @@ function loadIcon(name) {
   // both measured on the original bitmap (see README).
   const o = JSON.parse(readFileSync(`${here}icons/${name}.json`, "utf8"));
   const { scale } = ICONS[name];
-  const tip = o.cable[0];
-  const ref = o.cable[Math.min(8, o.cable.length - 1)];
-  const dir = Math.atan2(tip[1] - ref[1], tip[0] - ref[0]); // inside → tip
-  return { ...o, tip, dir, scale, centre: o.cable, cableWidth: o.cableWidthPx * scale };
+  // The drawn cable is cut off where it meets the body; the ring line takes
+  // its place. tip = that junction, dir = outward along the (former) cable.
+  const tip = o.cable[o.cable.length - 1];
+  const ref = o.cable[Math.max(0, o.cable.length - 9)];
+  const dir = Math.atan2(ref[1] - tip[1], ref[0] - tip[0]);
+  return { ...o, tip, dir, scale, cableWidth: o.cableWidthPx * scale };
 }
-// Attach the icon so its cable tip sits on ring point (angle phi) and the
-// cable runs along the ring tangent. side = +1: icon hangs clockwise of phi.
+// Attach the icon so its cable junction sits on ring point (angle phi) and
+// the (cut) cable direction runs along the ring tangent, i.e. the ring line
+// flows straight into the plug body. side = +1: icon hangs clockwise of phi.
 function attachIcon(name, phi, side) {
   const o = loadIcon(name);
   const rad = (phi * Math.PI) / 180;
   const P = [C + R * Math.sin(rad), C - R * Math.cos(rad)];
   const tangent = Math.atan2(Math.sin(rad), Math.cos(rad)); // clockwise direction
-  // dir (inside → tip) must point back along the ring, away from the icon
   const want = side > 0 ? tangent + Math.PI : tangent;
   const rot = ((want - o.dir) * 180) / Math.PI;
-  return `<g transform="translate(${P[0].toFixed(2)} ${P[1].toFixed(2)}) rotate(${rot.toFixed(2)}) scale(${o.scale}) translate(${-o.tip[0]} ${-o.tip[1]})"><path fill="${NAVY}" fill-rule="evenodd" stroke="${NAVY}" stroke-width="${OUTLINE}" stroke-linejoin="round" d="${o.d}"/><path fill="none" stroke="${NAVY}" stroke-width="${o.cableWidthPx}" stroke-linejoin="round" d="M${o.centre.map((q) => q.map((v) => v.toFixed(1)).join(" ")).join("L")}"/></g>`;
+  // clip away everything beyond the junction (the drawn cable stub)
+  const ux = Math.cos(o.dir), uy = Math.sin(o.dir), nx = -uy, ny = ux, L = 4000, OVER = 6;
+  const t = [o.tip[0] + ux * OVER, o.tip[1] + uy * OVER];
+  const poly = [
+    [t[0] + nx * L, t[1] + ny * L], [t[0] - nx * L, t[1] - ny * L],
+    [t[0] - nx * L - ux * L, t[1] - ny * L - uy * L], [t[0] + nx * L - ux * L, t[1] + ny * L - uy * L],
+  ].map((q) => q.map((v) => v.toFixed(1)).join(" ")).join(" ");
+  const id = `cut-${name}`;
+  return `<clipPath id="${id}"><polygon points="${poly}"/></clipPath><g transform="translate(${P[0].toFixed(2)} ${P[1].toFixed(2)}) rotate(${rot.toFixed(2)}) scale(${o.scale}) translate(${-o.tip[0]} ${-o.tip[1]})"><path clip-path="url(#${id})" fill="${NAVY}" fill-rule="evenodd" stroke="${NAVY}" stroke-width="${OUTLINE}" stroke-linejoin="round" d="${o.d}"/></g>`;
 }
 const RING_W = loadIcon("stecker").cableWidth; // ring line as wide as the cables
 

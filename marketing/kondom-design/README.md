@@ -33,8 +33,8 @@ Schräglage scheitert.
   scannten im Test schlechter.
 - Weiße Fläche hinter dem QR-Code (inkl. 4 Module Rand) – auf Folie **weiß drucken
   lassen**, nicht transparent. Code-Farbe dunkel (navy), nie hell auf dunkel.
-- QR 24 × 24 mm (0,83 mm pro Modul) – das Motiv füllt die 50 × 50 mm fast randlos
-  (48,6 × 49,3 mm), Schrift und Stecker reichen bis an den Rand.
+- QR ca. 23 × 23 mm (0,78 mm pro Modul) – das Motiv füllt die 50 × 50 mm in der
+  Breite randlos (49,3 × 46,6 mm), die Stecker reichen bis an den Rand.
 
 **Wichtig für die Druckerei:** Weil das Motiv bis an den Rand geht, fragen, ob die
 Druckfläche wirklich 50 × 50 mm ist oder ob ein Sicherheitsabstand (z. B. zur
@@ -50,12 +50,13 @@ Druckfläche setzen oder das PDF passend verkleinert platzieren lassen.
 ## Stecker und Steckdose
 
 Handgezeichnete Vorlagen `icons/stecker-vorlage.jpg` und `icons/dose-vorlage.jpg`,
-in Vektorpfade umgewandelt (`icons/*.json`). Die Kabel hängen **nahtlos an den
-Enden der Ringlinie**: `icons/*.json` enthält zusätzlich die Kabel-Mittellinie
-(`cable`) und -breite (`cableWidthPx`), auf dem Originalbild gemessen;
-`generate.mjs` dreht jede Zeichnung so, dass das Kabel genau am Linienende in
-Ringrichtung weiterläuft, und füllt das hohle Kabel massiv wie die Linie.
-Größe: `ICONS` (`scale`), Position am Ring: `PHI`.
+in Vektorpfade umgewandelt (`icons/*.json`). Das gezeichnete Kabelstück wird
+abgeschnitten; **die Ringlinie selbst ist das Kabel** und läuft direkt ins Gehäuse.
+`icons/*.json` enthält dafür die Kabel-Mittellinie (`cable`) und -breite
+(`cableWidthPx`), auf dem Originalbild gemessen; `generate.mjs` schneidet am
+Übergang Kabel→Gehäuse ab und dreht die Zeichnung in Ringrichtung.
+Größe: `ICONS` (`scale`), Position am Ring: `PHI` (91° = knapp über dem unteren
+Text, damit der Ring geschlossen wirkt; ab ~94° berühren die Stecker den Text).
 
 Andere Zeichnung (schwarz auf weiß, Kabel läuft am Bildrand heraus): Bild ersetzen,
 mit potrace umwandeln (`npm i potrace@2.1.8`, `threshold: 128, turdSize: 40` →

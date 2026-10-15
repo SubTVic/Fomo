@@ -10,7 +10,8 @@
 //   node generate.mjs <out-dir> [label-color] [variant-name] [dark]
 //   (4th arg "dark": label on a dark field, like the white variant;
 //    label-color "shiny-gold": bright gold with a light reflection;
-//    5th arg "dark-foil": white ring/texts/plugs for black wrapper foil)
+//    5th arg "dark-foil": white ring/texts/plugs for black wrapper foil,
+//    "light-foil": solid navy bottom text for white wrapper foil)
 import { writeFileSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname } from "node:path";
@@ -23,6 +24,9 @@ const [outDir = ".", labelColor = "#1a2a35", variant = "navy", pillMode = "", fo
 // 5th arg "dark-foil": for black/dark wrapper foil — ring, texts and plugs in
 // white (INK) instead of navy; the QR code keeps its white plate + navy modules.
 const DARK_FOIL = foil === "dark-foil";
+// "light-foil": for white wrapper foil — bottom text solid navy (a white
+// letter with outline would read as hollow on white).
+const LIGHT_FOIL = foil === "light-foil";
 // label-color "shiny-gold": bright gold with a light reflection (gradient)
 const SHINY = labelColor === "shiny-gold";
 const darkPill = pillMode === "dark" || labelColor.toLowerCase() === "#ffffff";
@@ -185,7 +189,7 @@ ${SHINY ? `<defs><linearGradient id="shiny-gold" gradientUnits="userSpaceOnUse" 
 ${attachIcon("stecker", PHI, +1)}
 ${attachIcon("dose", 360 - PHI, -1)}
 <path d="${top.d}" fill="${INK}"/>
-<path d="${bottom.d}" fill="${WHITE}"${DARK_FOIL ? "" : ` stroke="${NAVY}" stroke-width="${BOTTOM_OUTLINE}" stroke-linejoin="round" paint-order="stroke"`}/>
+<path d="${bottom.d}" fill="${LIGHT_FOIL ? NAVY : WHITE}"${DARK_FOIL || LIGHT_FOIL ? "" : ` stroke="${NAVY}" stroke-width="${BOTTOM_OUTLINE}" stroke-linejoin="round" paint-order="stroke"`}/>
 <rect x="${C - PLATE / 2}" y="${C - PLATE / 2}" width="${PLATE}" height="${PLATE}" rx="${2 * m}" fill="${WHITE}"/>
 <g fill="${NAVY}"><path d="${mods}"/>${finder(0, 0)}${finder(0, n - 7)}${finder(n - 7, 0)}</g>
 <rect x="${pillX}" y="${pillY}" width="${pill.w}" height="${pill.h}" rx="${m}" fill="${darkPill ? NAVY : WHITE}"/>

@@ -9,7 +9,8 @@
 #      create a hook for branch "main", copy its URL.
 #   2. GitHub → repo → Settings → Secrets and variables → Actions →
 #      new secret VERCEL_DEPLOY_HOOK_URL with that URL.
-# Without the secret the job exits quietly (no failure noise).
+# Without the secret, or if Vercel rejects the hook, the job fails (red X in
+# the Actions tab) instead of a green run that did nothing.
 
 name: Daily report redeploy
 
@@ -27,7 +28,12 @@ jobs:
           HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
         run: |
           if [ -z "$HOOK" ]; then
-            echo "VERCEL_DEPLOY_HOOK_URL secret not set — skipping."
-            exit 0
+            echo "::error::Secret VERCEL_DEPLOY_HOOK_URL is not set — no redeploy triggered. See setup notes at the top of this workflow."
+            exit 1
           fi
-          curl -sS -X POST "$HOOK" -o /dev/null -w "Deploy hook → HTTP %{http_code}\n"
+          code=$(curl -sS -X POST "$HOOK" -o /dev/null -w "%{http_code}")
+          echo "Deploy hook → HTTP $code"
+          if [ "$code" -lt 200 ] || [ "$code" -ge 300 ]; then
+            echo "::error::Vercel deploy hook answered HTTP $code — check the hook URL in the secret."
+            exit 1
+          fi

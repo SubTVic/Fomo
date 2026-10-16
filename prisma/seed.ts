@@ -2,6 +2,7 @@
 
 import { PrismaClient, AdminRole } from "@prisma/client";
 import { hash } from "bcryptjs";
+import { DEV_ADMIN_EMAIL, DEV_ADMIN_PASSWORD } from "../src/lib/default-admin";
 
 const prisma = new PrismaClient();
 
@@ -240,13 +241,13 @@ async function main() {
 
   // ─── Admin User ──────────────────────────────────────────────
 
-  // WARNING: Development-only credentials. Change in production!
-  const DEV_ADMIN_PASSWORD = "fomo-dev-2026!";
+  // WARNING: Development-only credentials. The admin area shows a warning
+  // banner while any active admin still uses this password.
   const hashedPassword = await hash(DEV_ADMIN_PASSWORD, 12);
 
   await prisma.admin.create({
     data: {
-      email: "admin@fomo.dev",
+      email: DEV_ADMIN_EMAIL,
       name: "FOMO Admin",
       passwordHash: hashedPassword,
       role: AdminRole.SUPER_ADMIN,
@@ -257,7 +258,7 @@ async function main() {
   console.log("✅ Seed complete!");
   console.log(`   → ${categories.length} categories`);
   console.log(`   → ${groups.length} groups`);
-  console.log(`   → 1 admin user (admin@fomo.dev / ${DEV_ADMIN_PASSWORD})`);
+  console.log(`   → 1 admin user (${DEV_ADMIN_EMAIL} / ${DEV_ADMIN_PASSWORD})`);
   console.log("   ⚠️  Change admin password before deploying to production!");
 }
 

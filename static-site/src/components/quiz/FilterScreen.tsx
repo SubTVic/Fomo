@@ -26,7 +26,7 @@ export function FilterScreen({
     <div className="animate-fade-up">
       <Link
         href={lang === "en" ? "/en" : "/"}
-        className="mb-4 inline-block text-xs font-semibold uppercase tracking-wide text-body hover:text-navy"
+        className="mb-5 inline-flex items-center border-2 border-navy bg-card px-3 py-2 text-sm font-semibold uppercase tracking-wide text-navy transition-colors hover:bg-navy hover:text-sky"
       >
         {lang === "en" ? "← Back to home" : "← Zur Startseite"}
       </Link>

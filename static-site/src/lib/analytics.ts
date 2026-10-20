@@ -65,4 +65,8 @@ export const EVENTS = {
   // Arrival via a campaign link (utm_source/medium/campaign/content, cleaned
   // labels only) — pageviews drop query strings, so this is the only record.
   campaignVisit: "campaign-visit",
+  // Paid partner placement on the results page (see lib/partner.ts): outbound
+  // click (`placement`) and copying the discount code. Partner id only.
+  partnerClick: "partner-click",
+  partnerCodeCopy: "partner-code-copy",
 } as const;

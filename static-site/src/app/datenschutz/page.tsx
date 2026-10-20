@@ -92,7 +92,8 @@ E-Mail: fomo@yeti-dresden.org`}
             Ergebnis vorgeschlagen wurden, welche Gruppen-Links angeklickt
             werden (aus dem Browsen, den Ergebnissen oder von Profilseiten), Bedienelemente wie die
             Vergleichs-Ansicht, Sprachumschaltung, ob du über einen Kampagnen-Link (z. B. eine
-            Anzeige) gekommen bist und über welchen, der Klick auf „Gruppe registrieren“ oder das
+            Anzeige) gekommen bist und über welchen, der Klick auf „Gruppe registrieren“, Klicks auf
+            eine Partner-Anzeige auf der Ergebnisseite (und das Kopieren ihres Rabatt-Codes) oder das
             optionale 👍/👎-Feedback, die freiwillige
             Angabe, ob du bereits Mitglied einer Hochschulgruppe bist (und welcher), und – zur
             Verbesserung des Frage- und Matching-Konzepts – die{" "}
@@ -125,6 +126,16 @@ E-Mail: fomo@yeti-dresden.org`}
             Auf den Gruppenseiten verlinkte E-Mail-Adressen, Websites und Social-Media-Profile
             liegen in der Verantwortung der jeweiligen Gruppen. Nimmst du Kontakt auf, gelten deren
             Datenschutzbestimmungen.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-heading text-lg text-navy">Partner-Anzeigen</h2>
+          <p className="mt-2">
+            Auf der Ergebnisseite kann eine als „Anzeige“ gekennzeichnete Werbung eines Partners
+            erscheinen. Sie ist ein einfacher Link: FOMO lädt dafür keine Skripte, Pixel oder Cookies
+            des Partners und gibt keine Daten an ihn weiter, auch nicht deine Quiz-Antworten. Erst
+            wenn du den Link öffnest, gelten die Datenschutzbestimmungen des Partners.
           </p>
         </section>
 

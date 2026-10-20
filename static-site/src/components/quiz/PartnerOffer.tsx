@@ -7,22 +7,41 @@ import { PARTNER_COPY, PARTNER_OFFER, type PartnerPlacement } from "@/lib/partne
 
 type Lang = "de" | "en";
 
-function AdLabel({ lang }: { lang: Lang }) {
+// FOKUS brand colours (from their logo file): deep blue + cream.
+const BLUE = "#182078";
+const CREAM = "#fefaf3";
+
+function AdLabel({ lang, className }: { lang: Lang; className: string }) {
   return (
-    <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-body">
+    <p className={`text-xs font-bold uppercase tracking-widest ${className}`}>
       <span className="border-2 border-current px-1.5">{PARTNER_COPY[lang].label}</span>
-      <span>{PARTNER_OFFER.name}</span>
     </p>
+  );
+}
+
+function Logo({ variant, className }: { variant: "cream" | "blue"; className: string }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- static export, tiny local asset
+    <img
+      src={`/partners/fokus-logo-${variant}.png`}
+      alt={PARTNER_OFFER.name}
+      width={480}
+      height={60}
+      loading="lazy"
+      className={`w-auto ${className}`}
+    />
   );
 }
 
 function PartnerLink({
   placement,
   className,
+  style,
   children,
 }: {
   placement: PartnerPlacement;
   className: string;
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }) {
   return (
@@ -33,6 +52,7 @@ function PartnerLink({
       rel="sponsored noopener noreferrer"
       onClick={() => track(EVENTS.partnerClick, { partner: PARTNER_OFFER.id, placement })}
       className={className}
+      style={style}
     >
       {children}
     </a>
@@ -44,13 +64,17 @@ export function PartnerCard({ lang }: { lang: Lang }) {
   if (!PARTNER_OFFER.enabled) return null;
   const t = PARTNER_COPY[lang];
   return (
-    <aside aria-label={t.label} className="mt-5 grid gap-3 border-poster bg-[#f6f6f2] p-5">
-      <AdLabel lang={lang} />
-      <p className="font-heading text-lg leading-tight text-navy sm:text-xl">{t.cardTitle}</p>
-      <p className="max-w-[680px] text-sm leading-relaxed text-body sm:text-base">{t.cardText}</p>
+    <aside aria-label={t.label} className="mt-5 grid gap-4 border-poster p-5 sm:p-6" style={{ backgroundColor: BLUE, color: CREAM }}>
+      <div className="flex items-center justify-between gap-3">
+        <Logo variant="cream" className="h-5 sm:h-6" />
+        <AdLabel lang={lang} className="opacity-80" />
+      </div>
+      <p className="font-heading text-lg leading-tight sm:text-xl">{t.cardTitle}</p>
+      <p className="max-w-[680px] text-sm leading-relaxed opacity-90 sm:text-base">{t.cardText}</p>
       <PartnerLink
         placement="results-card"
-        className="border-poster bg-navy px-6 py-3 text-center font-heading text-sky transition-colors hover:bg-navy-hover sm:justify-self-start"
+        className="border-2 px-6 py-3 text-center font-heading transition-opacity hover:opacity-90 sm:justify-self-start"
+        style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
       >
         {t.cardCta} →
       </PartnerLink>
@@ -76,31 +100,41 @@ export function PartnerCoupon({ lang }: { lang: Lang }) {
   }
 
   return (
-    <aside aria-label={t.label} className="mt-8 grid gap-2">
-      <AdLabel lang={lang} />
-      <div className="grid gap-3 border-poster border-dashed bg-[#ffe14d] p-5 sm:grid-cols-[1fr_auto] sm:items-center">
-        <div className="grid gap-1">
-          <p className="font-heading text-base text-navy sm:text-lg">{t.couponTitle}</p>
-          <p className="text-sm text-navy">{t.couponText}</p>
+    <aside
+      aria-label={t.label}
+      className="mt-8 grid gap-3 border-poster p-5 sm:grid-cols-[1fr_auto] sm:items-center"
+      style={{ backgroundColor: CREAM, color: BLUE }}
+    >
+      <div className="grid gap-2">
+        <div className="flex items-center gap-3">
+          <Logo variant="blue" className="h-4" />
+          <AdLabel lang={lang} className="opacity-70" />
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="select-all border-2 border-navy bg-card px-3 py-1.5 font-mono text-lg font-bold tracking-wider text-navy">
-            {PARTNER_OFFER.code}
-          </span>
-          <button
-            type="button"
-            onClick={copyCode}
-            className="border-2 border-navy bg-card px-3 py-2 text-sm font-semibold text-navy transition-colors hover:bg-surface"
-          >
-            {copied ? t.copied : t.copy}
-          </button>
-          <PartnerLink
-            placement="results-coupon"
-            className="border-2 border-navy bg-navy px-3 py-2 text-sm font-semibold text-sky transition-colors hover:bg-navy-hover"
-          >
-            {t.couponCta} →
-          </PartnerLink>
-        </div>
+        <p className="font-heading text-base sm:text-lg">{t.couponTitle}</p>
+        <p className="text-sm">{t.couponText}</p>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <span
+          className="select-all border-2 border-dashed px-3 py-1.5 font-mono text-lg font-bold tracking-wider"
+          style={{ borderColor: BLUE }}
+        >
+          {PARTNER_OFFER.code}
+        </span>
+        <button
+          type="button"
+          onClick={copyCode}
+          className="border-2 bg-white px-3 py-2 text-sm font-semibold transition-opacity hover:opacity-80"
+          style={{ borderColor: BLUE, color: BLUE }}
+        >
+          {copied ? t.copied : t.copy}
+        </button>
+        <PartnerLink
+          placement="results-coupon"
+          className="border-2 px-3 py-2 text-sm font-semibold transition-opacity hover:opacity-90"
+          style={{ backgroundColor: BLUE, color: CREAM, borderColor: BLUE }}
+        >
+          {t.couponCta} →
+        </PartnerLink>
       </div>
     </aside>
   );

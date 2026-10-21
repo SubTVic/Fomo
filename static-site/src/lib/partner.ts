@@ -83,15 +83,12 @@ export const GAME_NOTIFICATIONS: Record<"de" | "en", Array<{ app: string; color:
 /** Copy for the 30-second "Fokus-Minispiel" round inside the ad. */
 export const CHALLENGE_COPY = {
   de: {
-    cta: "▶ Fokus-Minispiel starten",
     title: "Fokus-Minispiel",
-    rules: [
-      "👆 Tipp Ablenkungen weg, bevor dein Handy überläuft.",
-      "★ Nachrichten deiner Gruppe stehen lassen – die zählen extra.",
-      "Tag voll geladen? Antippen räumt alles ab.",
-      "Mehr als 5 auf dem Screen = abgelenkt.",
-    ],
-    start: "Los geht’s · 30 s",
+    practice: "Übung",
+    tutTap: "Tipp die Ablenkung weg 👆",
+    tutGroup: "★ = deine Gruppe. Stehen lassen!",
+    tutTag: "Tag voll! Tipp ihn an – alles weg 👇",
+    tutGo: "Jetzt du! 30 Sekunden 🔥",
     blocked: "geblockt",
     points: "Punkte",
     best: "Bestwert",
@@ -108,15 +105,12 @@ export const CHALLENGE_COPY = {
     exit: "✕ Spiel beenden",
   },
   en: {
-    cta: "▶ Play the focus mini game",
     title: "Focus mini game",
-    rules: [
-      "👆 Tap distractions away before your phone overflows.",
-      "★ Leave messages from your group – they score extra.",
-      "Tag fully charged? Tap it to clear everything.",
-      "More than 5 on screen = distracted.",
-    ],
-    start: "Let’s go · 30 s",
+    practice: "Practice",
+    tutTap: "Tap the distraction away 👆",
+    tutGroup: "★ = your group. Leave it!",
+    tutTag: "Tag charged! Tap it – all gone 👇",
+    tutGo: "Your turn! 30 seconds 🔥",
     blocked: "blocked",
     points: "points",
     best: "Best",

@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { track, EVENTS } from "@/lib/analytics";
-import { CHALLENGE_COPY, GAME_NOTIFICATIONS, PARTNER_COPY, PARTNER_OFFER } from "@/lib/partner";
+import { GAME_NOTIFICATIONS, PARTNER_COPY, PARTNER_OFFER } from "@/lib/partner";
 
 type Lang = "de" | "en";
 type Stage = "idle" | "flying" | "blocked";
@@ -96,6 +96,13 @@ export function FokusTagGame({ lang, onChallenge }: { lang: Lang; onChallenge?: 
       clearInterval(id);
     };
   }, [stage, inView]);
+
+  // Straight into the mini game once the zap has played (no rules screen).
+  useEffect(() => {
+    if (stage !== "blocked" || !onChallenge) return;
+    const id = setTimeout(onChallenge, prefersReducedMotion() ? 600 : 1400);
+    return () => clearTimeout(id);
+  }, [stage, onChallenge]);
 
   // Count up to the number of blocked notifications.
   useEffect(() => {
@@ -252,23 +259,15 @@ export function FokusTagGame({ lang, onChallenge }: { lang: Lang; onChallenge?: 
           <>
             <p className="font-heading text-3xl leading-none tabular-nums sm:text-4xl">{shown}</p>
             <p className="text-sm font-semibold leading-tight">{t.blocked}</p>
-            {onChallenge && (
+            {!onChallenge && (
               <button
                 type="button"
-                onClick={onChallenge}
-                className="animate-stamp border-2 px-3 py-2 font-heading text-xs uppercase"
-                style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM, animationDelay: "500ms" }}
+                onClick={replay}
+                className="text-xs font-bold uppercase tracking-wider underline underline-offset-4 opacity-80 transition-opacity hover:opacity-100"
               >
-                {CHALLENGE_COPY[lang].cta}
+                ↺ {t.again}
               </button>
             )}
-            <button
-              type="button"
-              onClick={replay}
-              className="text-xs font-bold uppercase tracking-wider underline underline-offset-4 opacity-80 transition-opacity hover:opacity-100"
-            >
-              ↺ {t.again}
-            </button>
           </>
         ) : (
           <div className="grid gap-1">

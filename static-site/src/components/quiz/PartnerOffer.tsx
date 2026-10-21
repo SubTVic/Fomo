@@ -64,6 +64,7 @@ function PartnerLink({
 /** Ad card shown directly below the result list (variant 1). */
 export function PartnerCard({ lang }: { lang: Lang }) {
   const [mode, setMode] = useState<"demo" | "challenge">("demo");
+  const [played, setPlayed] = useState(false); // tutorial only on the first round
   if (!PARTNER_OFFER.enabled) return null;
   const t = PARTNER_COPY[lang];
   return (
@@ -78,7 +79,14 @@ export function PartnerCard({ lang }: { lang: Lang }) {
       </div>
       <p className="font-heading text-lg leading-tight sm:text-xl">{t.cardTitle}</p>
       {mode === "challenge" ? (
-        <FokusChallenge lang={lang} onExit={() => setMode("demo")} />
+        <FokusChallenge
+          lang={lang}
+          tutorial={!played}
+          onExit={() => {
+            setPlayed(true);
+            setMode("demo");
+          }}
+        />
       ) : (
         <FokusTagGame lang={lang} onChallenge={() => setMode("challenge")} />
       )}

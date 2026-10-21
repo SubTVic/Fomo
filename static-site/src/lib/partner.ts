@@ -85,7 +85,7 @@ export const CHALLENGE_COPY = {
   de: {
     title: "Fokus-Minispiel",
     practice: "Übung",
-    tutTap: "Tipp die Ablenkung weg 👆",
+    tutTap: "Tipp oder wisch die Ablenkung weg 👆",
     tutGroup: "★ = deine Gruppe. Stehen lassen!",
     tutTag: "Tag voll! Tipp ihn unten an 👇",
     tutGo: "Jetzt du! Wie lange hältst du durch? 🔥",
@@ -108,7 +108,7 @@ export const CHALLENGE_COPY = {
   en: {
     title: "Focus mini game",
     practice: "Practice",
-    tutTap: "Tap the distraction away 👆",
+    tutTap: "Tap or swipe the distraction away 👆",
     tutGroup: "★ = your group. Leave it!",
     tutTag: "Tag charged! Tap it below 👇",
     tutGo: "Your turn! How long can you last? 🔥",

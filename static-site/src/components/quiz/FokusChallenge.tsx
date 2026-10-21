@@ -339,7 +339,15 @@ export function FokusChallenge({ lang, tutorial, onExit }: { lang: Lang; tutoria
 
       {/* phone: fixed slots; hint line + tag dock at the bottom, where the thumb already is */}
       <div
-        className="relative h-[404px] overflow-hidden rounded-[26px] border-4"
+        // While playing, gestures on the phone belong to the game: no page
+        // scrolling, and a swipe across notifications blocks each one it
+        // touches (people instinctively swipe notifications away).
+        className={`relative h-[404px] overflow-hidden rounded-[26px] border-4 ${running ? "touch-none select-none" : ""}`}
+        onPointerMove={(e) => {
+          if (!running || (e.pointerType === "mouse" && e.buttons === 0)) return;
+          const hit = document.elementFromPoint(e.clientX, e.clientY)?.closest<HTMLElement>("[data-note-id]");
+          if (hit) dispatch({ type: "tap", id: Number(hit.dataset.noteId), now: performance.now() });
+        }}
         style={{
           borderColor: live >= SLOTS ? "#ff5a5a" : "#0b0f3a",
           background: calm ? "linear-gradient(180deg,#2b3aa8,#182078)" : "#0b0f3a",
@@ -358,6 +366,7 @@ export function FokusChallenge({ lang, tutorial, onExit }: { lang: Lang; tutoria
                     type="button"
                     disabled={!active(n)}
                     // pointerdown reacts on touch, before the finger lifts; click covers keyboard
+                    data-note-id={n.id}
                     onPointerDown={() => dispatch({ type: "tap", id: n.id, now: performance.now() })}
                     onClick={() => dispatch({ type: "tap", id: n.id, now: performance.now() })}
                     className={`flex h-full w-full touch-manipulation items-center gap-2 rounded-xl px-2.5 text-left ${

@@ -13,14 +13,20 @@ const GOOD_GREEN = "#10c463";
 
 const ROUND_MS = 30_000;
 const SLOTS = 5; // fixed places on the screen; no free slot when spawning = distracted
-const CHARGE_FULL = 8; // blocks needed to charge the tag
-const CALM_MS = 2_500; // spawn pause after using the tag
+const CHARGE_FULL = 5; // blocks needed to charge the tag
+const CALM_MS = 2_500; // full pause after using the tag: clock, speed and bursts freeze
 const GOOD_TTL = 2_400; // a group message disappears on its own after this
 const GOOD_TTL_TUTORIAL = 3_500;
 const GOOD_SHARE = 0.18;
 const LEAVE_MS = 320; // zap animation length
 const TICK_MS = 100;
 const TUT_GO_MS = 1_600; // "your turn" pause before the real round
+/** Bursts ("group chat explodes"): several at once — made for the tag. */
+const BURSTS: Array<{ at: number; size: number }> = [
+  { at: 8_000, size: 3 },
+  { at: 16_000, size: 3 },
+  { at: 23_000, size: 4 },
+];
 
 /** Spawn gap shrinks from 0.95 s to 0.3 s over the round — the last
  *  seconds are meant to be hectic (a slow tapper should not survive). */
@@ -49,8 +55,10 @@ interface State {
   charge: number;
   calmUntil: number;
   nextId: number;
-  flash: { text: "oops" | "seen"; at: number } | null;
-  waves: number; // bumps on each tag use → re-keys the ripple
+  flash: { text: "oops" | "seen" | "burst"; at: number } | null;
+  ripples: number; // bumps on each tag use → re-keys the ripple
+  pausedMs: number; // total focus-mode time, excluded from the round clock
+  burstsDone: number;
 }
 
 type Action =
@@ -60,7 +68,7 @@ type Action =
   | { type: "tap"; id: number; now: number }
   | { type: "tag"; now: number };
 
-const initial: State = {
+export const initial: State = {
   phase: "tutorial",
   tutStep: 0,
   tutSpawned: false,
@@ -76,10 +84,17 @@ const initial: State = {
   calmUntil: 0,
   nextId: 1,
   flash: null,
-  waves: 0,
+  ripples: 0,
+  pausedMs: 0,
+  burstsDone: 0,
 };
 
 const active = (n: Note) => n.leftAt === undefined;
+
+/** Round time that counts: frozen while focus mode (calm) is running. */
+export function elapsed(s: State, now: number): number {
+  return now - s.startedAt - s.pausedMs + (now < s.calmUntil ? s.calmUntil - now : 0);
+}
 
 function freeSlots(notes: Note[]): number[] {
   return Array.from({ length: SLOTS }, (_, i) => i).filter((i) => !notes.some((n) => n.slot === i && active(n)));
@@ -94,7 +109,7 @@ function startRound(s: State, now: number): State {
   return {
     ...initial,
     best: s.best,
-    waves: s.waves,
+    ripples: s.ripples,
     phase: "playing",
     startedAt: now,
     now,
@@ -107,7 +122,7 @@ function finish(s: State, phase: "won" | "lost"): State {
   return { ...s, phase, best: Math.max(s.best, s.score) };
 }
 
-function reducer(s: State, a: Action): State {
+export function reducer(s: State, a: Action): State {
   switch (a.type) {
     case "boot":
       return a.tutorial
@@ -158,14 +173,33 @@ function reducer(s: State, a: Action): State {
         return next;
       }
 
-      if (now - s.startedAt >= ROUND_MS) return finish(next, "won");
+      const t = elapsed(s, now);
+      if (t >= ROUND_MS) return finish(next, "won");
+      const burst = BURSTS[s.burstsDone];
+      if (burst && t >= burst.at && now >= s.calmUntil) {
+        const free = freeSlots(notes);
+        if (free.length === 0) return finish(next, "lost");
+        let id = s.nextId;
+        for (const slot of free.slice(0, burst.size)) {
+          notes = place(notes, { id, kind: "bad", idx: id * 7 + slot, born: now, slot });
+          id++;
+        }
+        return {
+          ...next,
+          notes,
+          nextId: id,
+          burstsDone: s.burstsDone + 1,
+          flash: { text: "burst", at: now },
+          nextSpawnAt: now + spawnGap(t) * 1.5,
+        };
+      }
       if (now >= s.nextSpawnAt && now >= s.calmUntil) {
         const free = freeSlots(notes);
         if (free.length === 0) return finish(next, "lost");
         const slot = free[Math.floor(a.r2 * free.length)];
         const kind = a.r1 < GOOD_SHARE ? "good" : "bad";
         notes = place(notes, { id: s.nextId, kind, idx: Math.floor(a.r2 * 1000) + s.nextId, born: now, slot });
-        next = { ...next, notes, nextId: s.nextId + 1, nextSpawnAt: now + spawnGap(now - s.startedAt) };
+        next = { ...next, notes, nextId: s.nextId + 1, nextSpawnAt: now + spawnGap(t) };
       }
       return next;
     }
@@ -193,8 +227,9 @@ function reducer(s: State, a: Action): State {
         blocked: s.blocked + hit,
         charge: 0,
         calmUntil,
+        pausedMs: s.pausedMs + CALM_MS,
         nextSpawnAt: calmUntil + 300,
-        waves: s.waves + 1,
+        ripples: s.ripples + 1,
       };
     }
   }
@@ -250,13 +285,15 @@ export function FokusChallenge({ lang, tutorial, onExit }: { lang: Lang; tutoria
   const calm = s.phase === "playing" && s.now < s.calmUntil;
   const live = s.notes.filter(active).length;
   const secondsLeft = s.phase === "playing" || s.phase === "won" || s.phase === "lost"
-    ? Math.max(0, Math.ceil((ROUND_MS - (s.now - s.startedAt)) / 1000))
+    ? Math.max(0, Math.ceil((ROUND_MS - elapsed(s, s.now)) / 1000))
     : 30;
   const ready = s.charge >= CHARGE_FULL;
   const flashOn = s.flash !== null && s.now - s.flash.at < 900;
   const tutHint = inTutorial ? [c.tutTap, c.tutGroup, c.tutTag, c.tutGo][s.tutStep] : null;
-  const hint = flashOn ? (s.flash?.text === "oops" ? c.oops : c.seen) : calm ? `🔒 ${c.calm}` : tutHint;
-  const hintColor = flashOn ? (s.flash?.text === "oops" ? "#ff8a8a" : "#7dffb4") : CREAM;
+  const flashText = { oops: c.oops, seen: c.seen, burst: c.burst };
+  const flashColor = { oops: "#ff8a8a", seen: "#7dffb4", burst: "#ffd34d" };
+  const hint = flashOn && s.flash ? flashText[s.flash.text] : calm ? `🔒 ${c.calm}` : tutHint;
+  const hintColor = flashOn && s.flash ? flashColor[s.flash.text] : CREAM;
 
   return (
     <div ref={rootRef} className="grid scroll-my-4 gap-3">
@@ -292,9 +329,9 @@ export function FokusChallenge({ lang, tutorial, onExit }: { lang: Lang; tutoria
         </div>
       </div>
 
-      {/* phone: fixed slots, hint bar at the bottom */}
+      {/* phone: fixed slots; hint line + tag dock at the bottom, where the thumb already is */}
       <div
-        className="relative h-[352px] overflow-hidden rounded-[26px] border-4"
+        className="relative h-[404px] overflow-hidden rounded-[26px] border-4"
         style={{
           borderColor: live >= SLOTS ? "#ff5a5a" : "#0b0f3a",
           background: calm ? "linear-gradient(180deg,#2b3aa8,#182078)" : "#0b0f3a",
@@ -357,16 +394,45 @@ export function FokusChallenge({ lang, tutorial, onExit }: { lang: Lang; tutoria
         {hint && (
           <p
             key={`${hint}-${s.flash?.at ?? 0}`}
-            className="animate-stamp pointer-events-none absolute inset-x-2 bottom-3 text-center font-heading text-sm leading-tight"
+            className="animate-stamp pointer-events-none absolute inset-x-2 bottom-[70px] text-center font-heading text-sm leading-tight"
             style={{ color: hintColor }}
           >
             {hint}
           </p>
         )}
-        {s.waves > 0 &&
+        {/* tag dock: charge bar, then a big tag button inside the screen */}
+        <div className="absolute inset-x-2.5 bottom-2.5 h-[52px]">
+          {ready && running ? (
+            <button
+              type="button"
+              aria-label={c.tagAria}
+              onPointerDown={() => dispatch({ type: "tag", now: performance.now() })}
+              onClick={() => dispatch({ type: "tag", now: performance.now() })}
+              className="animate-stamp relative flex h-full w-full touch-manipulation items-center justify-center gap-2 rounded-full font-heading text-sm uppercase"
+              style={{ backgroundColor: CREAM, color: BLUE, boxShadow: `inset 0 0 0 4px ${CREAM}, inset 0 0 0 7px ${BLUE}` }}
+            >
+              <span aria-hidden className="motion-safe:animate-pulse-ring absolute inset-0 rounded-full border-4" style={{ borderColor: CREAM }} />
+              {c.tagCta}
+            </button>
+          ) : (
+            <div className="grid h-full content-center gap-1 px-1">
+              <div className="h-2.5 overflow-hidden rounded-full bg-white/15">
+                <div
+                  className="h-full rounded-full transition-[width] duration-200"
+                  style={{ width: `${(s.charge / CHARGE_FULL) * 100}%`, backgroundColor: CREAM }}
+                />
+              </div>
+              <p className="text-center text-[10px] font-bold uppercase tracking-wider opacity-80">
+                {c.tagCharging} {s.charge}/{CHARGE_FULL}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {s.ripples > 0 &&
           [0, 160, 320].map((delay) => (
             <span
-              key={`${s.waves}-${delay}`}
+              key={`${s.ripples}-${delay}`}
               className="animate-ripple pointer-events-none absolute left-1/2 top-1/2 h-24 w-24 rounded-full border-4"
               style={{ borderColor: CREAM, animationDelay: `${delay}ms` }}
             />
@@ -396,37 +462,11 @@ export function FokusChallenge({ lang, tutorial, onExit }: { lang: Lang; tutoria
         )}
       </div>
 
-      {/* tag */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            aria-label={c.tagAria}
-            disabled={!running || !ready}
-            onClick={() => dispatch({ type: "tag", now: performance.now() })}
-            className="relative grid h-16 w-16 touch-manipulation place-items-center rounded-full p-1 disabled:cursor-default"
-            style={{ background: `conic-gradient(${CREAM} ${(s.charge / CHARGE_FULL) * 360}deg, rgba(255,255,255,0.15) 0)` }}
-          >
-            {ready && running && (
-              <span aria-hidden className="motion-safe:animate-pulse-ring absolute inset-0 rounded-full border-4" style={{ borderColor: CREAM }} />
-            )}
-            <span
-              className="flex h-full w-full items-center justify-center rounded-full font-heading text-[10px] uppercase tracking-widest"
-              style={{ backgroundColor: ready ? CREAM : BLUE, color: ready ? BLUE : CREAM, boxShadow: `inset 0 0 0 3px ${CREAM}` }}
-            >
-              Tag
-            </span>
-          </button>
-          <p className="w-24 text-left text-xs font-bold uppercase tracking-wider">
-            {ready ? c.tagReady : `${c.tagCharging} ${s.charge}/${CHARGE_FULL}`}
-          </p>
-        </div>
-        {running && (
-          <button type="button" onClick={onExit} className="text-xs underline underline-offset-4 opacity-70">
-            {c.exit}
-          </button>
-        )}
-      </div>
+      {running && (
+        <button type="button" onClick={onExit} className="justify-self-end text-xs underline underline-offset-4 opacity-70">
+          {c.exit}
+        </button>
+      )}
     </div>
   );
 }

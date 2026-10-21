@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from "vitest";
-import { PARTNER_COPY, PARTNER_OFFER } from "@/lib/partner";
+import { CHALLENGE_COPY, GAME_NOTIFICATIONS, PARTNER_COPY, PARTNER_OFFER } from "@/lib/partner";
+import { DISTRACTIONS, GROUP_MESSAGES } from "@/lib/fokus-notifications";
 
 describe("partner offer", () => {
   it("links to an https URL that carries the advertised code", () => {
@@ -17,5 +18,28 @@ describe("partner offer", () => {
   it("mentions the same code in the card text it links to", () => {
     expect(PARTNER_COPY.de.cardText).toContain(PARTNER_OFFER.code);
     expect(PARTNER_COPY.en.cardText).toContain(PARTNER_OFFER.code);
+  });
+});
+
+describe("partner ad works in English too", () => {
+  const keys = (o: object) => Object.keys(o).sort();
+
+  it("has the same copy keys in both languages", () => {
+    expect(keys(PARTNER_COPY.en)).toEqual(keys(PARTNER_COPY.de));
+    expect(keys(CHALLENGE_COPY.en)).toEqual(keys(CHALLENGE_COPY.de));
+    expect(GAME_NOTIFICATIONS.en.length).toBe(GAME_NOTIFICATIONS.de.length);
+  });
+
+  it("has an English text for every game message, without German leftovers", () => {
+    // umlauts only inside proper names that stay German in English too
+    const PROPER_NAMES = /Zeltschlösschen/g;
+    const german = (x: string) => /[äöüÄÖÜß]/.test(x.replace(PROPER_NAMES, ""));
+    for (const m of DISTRACTIONS) {
+      expect(m.text.en.trim(), m.text.de).not.toBe("");
+      expect(m.from.en.trim(), m.text.de).not.toBe("");
+      expect(german(m.text.en) || german(m.from.en), m.text.en).toBe(false);
+    }
+    for (const g of GROUP_MESSAGES) expect(german(g.en), g.en).toBe(false);
+    for (const v of Object.values(CHALLENGE_COPY.en)) expect(german(String(v)), String(v)).toBe(false);
   });
 });

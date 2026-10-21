@@ -402,15 +402,11 @@ export function FokusChallenge({
       {/* phone: fixed slots; hint line + tag dock at the bottom, where the thumb already is */}
       <div
         ref={phoneRef}
-        // While playing, gestures on the phone belong to the game: no page
-        // scrolling, and a swipe across notifications blocks each one it
-        // touches (people instinctively swipe notifications away).
+        // While playing, gestures on the phone belong to the game (no page
+        // scrolling). A swipe blocks only the notification it starts on —
+        // like dismissing real notifications one by one; sweeping across
+        // several at once made the game too easy.
         className={`relative h-[min(404px,calc(100dvh-170px))] min-h-[360px] overflow-hidden rounded-[26px] border-4 ${running ? "touch-none select-none" : ""}`}
-        onPointerMove={(e) => {
-          if (!running || (e.pointerType === "mouse" && e.buttons === 0)) return;
-          const hit = document.elementFromPoint(e.clientX, e.clientY)?.closest<HTMLElement>("[data-note-id]");
-          if (hit) dispatch({ type: "tap", id: Number(hit.dataset.noteId), now: performance.now() });
-        }}
         style={{
           borderColor: live >= SLOTS || stunned ? "#ff5a5a" : "#0b0f3a",
           background: calm ? "linear-gradient(180deg,#2b3aa8,#182078)" : "#0b0f3a",

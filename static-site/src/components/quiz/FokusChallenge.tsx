@@ -3,7 +3,8 @@
 
 import { useEffect, useReducer, useRef } from "react";
 import { track, EVENTS } from "@/lib/analytics";
-import { CHALLENGE_COPY, GAME_NOTIFICATIONS, GROUP_NOTIFICATIONS, PARTNER_OFFER } from "@/lib/partner";
+import { DISTRACTIONS, GROUP_MESSAGES, VIA, pickDistraction } from "@/lib/fokus-notifications";
+import { CHALLENGE_COPY, PARTNER_OFFER } from "@/lib/partner";
 
 type Lang = "de" | "en";
 
@@ -63,13 +64,14 @@ interface State {
   stunnedUntil: number;
   pausedMs: number; // total focus-mode time, excluded from the round clock
   burstsDone: number;
+  seen: number[]; // distractions shown this round → prefer new ones
   survivedMs: number; // set when the round ends
 }
 
 type Action =
   | { type: "boot"; now: number; tutorial: boolean }
   | { type: "restart"; now: number }
-  | { type: "tick"; now: number; r1: number; r2: number }
+  | { type: "tick"; now: number; r1: number; r2: number; r3: number; r4: number }
   | { type: "tap"; id: number; now: number }
   | { type: "tag"; now: number };
 
@@ -92,6 +94,7 @@ export const initial: State = {
   stunnedUntil: 0,
   pausedMs: 0,
   burstsDone: 0,
+  seen: [],
   survivedMs: 0,
 };
 
@@ -187,14 +190,16 @@ export function reducer(s: State, a: Action): State {
         const free = freeSlots(notes);
         if (free.length === 0) return finish(next, now);
         let id = s.nextId;
-        for (const slot of free.slice(0, burstSize(s.burstsDone))) {
-          // ×5 is coprime to the 8 texts → every note in a burst looks different
-          notes = place(notes, { id, kind: "bad", idx: id * 5, born: now, slot });
-          id++;
-        }
+        let seen = s.seen;
+        free.slice(0, burstSize(s.burstsDone)).forEach((slot, i) => {
+          const idx = pickDistraction(t, seen, (a.r3 + i * 0.37) % 1, (a.r4 + i * 0.61) % 1);
+          seen = [...seen, idx];
+          notes = place(notes, { id: id++, kind: "bad", idx, born: now, slot });
+        });
         return {
           ...next,
           notes,
+          seen,
           nextId: id,
           burstsDone: s.burstsDone + 1,
           flash: { text: "burst", at: now },
@@ -206,8 +211,10 @@ export function reducer(s: State, a: Action): State {
         if (free.length === 0) return finish(next, now);
         const slot = free[Math.floor(a.r2 * free.length)];
         const kind = a.r1 < GOOD_SHARE ? "good" : "bad";
-        notes = place(notes, { id: s.nextId, kind, idx: Math.floor(a.r2 * 1000) + s.nextId, born: now, slot });
-        next = { ...next, notes, nextId: s.nextId + 1, nextSpawnAt: now + spawnGap(t) };
+        const idx = kind === "good" ? Math.floor(a.r3 * GROUP_MESSAGES.length) : pickDistraction(t, s.seen, a.r3, a.r4);
+        notes = place(notes, { id: s.nextId, kind, idx, born: now, slot });
+        const seen = kind === "bad" ? [...s.seen, idx] : s.seen;
+        next = { ...next, notes, seen, nextId: s.nextId + 1, nextSpawnAt: now + spawnGap(t) };
       }
       return next;
     }
@@ -268,8 +275,6 @@ export function FokusChallenge({
   endCta?: React.ReactNode;
 }) {
   const c = CHALLENGE_COPY[lang];
-  const bad = GAME_NOTIFICATIONS[lang];
-  const good = GROUP_NOTIFICATIONS[lang];
   const [s, dispatch] = useReducer(reducer, initial);
   const reportedStart = useRef(0);
   const reportedEnd = useRef(0);
@@ -292,7 +297,7 @@ export function FokusChallenge({
   useEffect(() => {
     if (!running) return;
     const id = setInterval(
-      () => dispatch({ type: "tick", now: performance.now(), r1: Math.random(), r2: Math.random() }),
+      () => dispatch({ type: "tick", now: performance.now(), r1: Math.random(), r2: Math.random(), r3: Math.random(), r4: Math.random() }),
       TICK_MS,
     );
     return () => clearInterval(id);
@@ -379,7 +384,7 @@ export function FokusChallenge({
           {Array.from({ length: SLOTS }, (_, slot) => {
             const n = s.notes.find((x) => x.slot === slot && active(x)) ?? s.notes.find((x) => x.slot === slot);
             return (
-              <div key={slot} className="h-12">
+              <div key={slot} className="h-[52px]">
                 {n && (
                   <button
                     key={n.id}
@@ -402,22 +407,22 @@ export function FokusChallenge({
                         >
                           ★
                         </span>
-                        <span className="min-w-0 text-xs leading-tight text-navy">
+                        <span className="min-w-0 text-[11px] leading-[1.2] text-navy">
                           <b className="block">FOMO</b>
-                          <span className="line-clamp-1">{good[n.idx % good.length]}</span>
+                          <span className="line-clamp-2">{GROUP_MESSAGES[n.idx % GROUP_MESSAGES.length][lang]}</span>
                         </span>
                       </>
                     ) : (
                       <>
                         <span
                           className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold text-white"
-                          style={{ backgroundColor: bad[n.idx % bad.length].color }}
+                          style={{ backgroundColor: VIA[DISTRACTIONS[n.idx].via] }}
                         >
-                          {bad[n.idx % bad.length].app[0]}
+                          {DISTRACTIONS[n.idx].via[0]}
                         </span>
-                        <span className="min-w-0 text-xs leading-tight text-navy">
-                          <b className="block">{bad[n.idx % bad.length].app}</b>
-                          <span className="line-clamp-1">{bad[n.idx % bad.length].text}</span>
+                        <span className="min-w-0 text-[11px] leading-[1.2] text-navy">
+                          <b className="block truncate">{DISTRACTIONS[n.idx].from[lang]}</b>
+                          <span className="line-clamp-2">{DISTRACTIONS[n.idx].text[lang]}</span>
                         </span>
                       </>
                     )}

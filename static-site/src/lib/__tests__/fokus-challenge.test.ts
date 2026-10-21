@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from "vitest";
 import { elapsed, initial, reducer, spawnGap } from "@/components/quiz/FokusChallenge";
+import { DISTRACTIONS, pickDistraction } from "@/lib/fokus-notifications";
 
-const tick = (s: ReturnType<typeof reducer>, now: number) => reducer(s, { type: "tick", now, r1: 0.9, r2: 0.5 });
+const tick = (s: ReturnType<typeof reducer>, now: number) => reducer(s, { type: "tick", now, r1: 0.9, r2: 0.5, r3: 0.3, r4: 0.7 });
 
 describe("Fokus mini game", () => {
   it("freezes the round clock while focus mode runs", () => {
@@ -95,5 +96,18 @@ describe("Fokus mini game", () => {
     for (let t = 100; t <= 8_000 && s.phase === "playing"; t += 100) s = tick(s, t);
     expect(s.phase).toBe("lost");
     expect(s.survivedMs).toBeGreaterThan(0);
+  });
+
+  it("unlocks rarer messages the longer you play, preferring unseen ones", () => {
+    const tierAt = (ms: number) =>
+      new Set(Array.from({ length: 200 }, (_, i) => DISTRACTIONS[pickDistraction(ms, [], i / 200, 0.5)].tier));
+    expect([...tierAt(5_000)]).toEqual([0]);
+    expect(tierAt(20_000).has(1)).toBe(true);
+    expect(tierAt(20_000).has(2)).toBe(false);
+    expect(tierAt(80_000).has(3)).toBe(true);
+    // with all but one tier-0 message seen, the unseen one comes next
+    const tier0 = DISTRACTIONS.map((_, i) => i).filter((i) => DISTRACTIONS[i].tier === 0);
+    const seen = tier0.slice(0, -1);
+    expect(pickDistraction(1_000, seen, 0, 0.99)).toBe(tier0[tier0.length - 1]);
   });
 });

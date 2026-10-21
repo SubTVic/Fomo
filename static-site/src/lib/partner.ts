@@ -133,19 +133,3 @@ export const CHALLENGE_COPY = {
     exit: "✕ End game",
   },
 } as const;
-
-/** "Good" notifications in the challenge: messages from your student group. */
-export const GROUP_NOTIFICATIONS: Record<"de" | "en", string[]> = {
-  de: [
-    "Deine Gruppe: Treffen heute 19 Uhr",
-    "Willkommen im Team! 👋",
-    "Wer kommt mit zur Ersti-Party?",
-    "Probe ist verschoben auf Donnerstag",
-  ],
-  en: [
-    "Your group: meeting today 7 pm",
-    "Welcome to the team! 👋",
-    "Who’s coming to the freshers’ party?",
-    "Rehearsal moved to Thursday",
-  ],
-};

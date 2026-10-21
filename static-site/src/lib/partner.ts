@@ -80,7 +80,7 @@ export const GAME_NOTIFICATIONS: Record<"de" | "en", Array<{ app: string; color:
   ],
 };
 
-/** Copy for the 30-second "Fokus-Minispiel" round inside the ad. */
+/** Copy for the endless "Fokus-Minispiel" round inside the ad. */
 export const CHALLENGE_COPY = {
   de: {
     title: "Fokus-Minispiel",
@@ -88,7 +88,7 @@ export const CHALLENGE_COPY = {
     tutTap: "Tipp die Ablenkung weg 👆",
     tutGroup: "★ = deine Gruppe. Stehen lassen!",
     tutTag: "Tag voll! Tipp ihn unten an 👇",
-    tutGo: "Jetzt du! 30 Sekunden 🔥",
+    tutGo: "Jetzt du! Wie lange hältst du durch? 🔥",
     blocked: "geblockt",
     points: "Punkte",
     best: "Bestwert",
@@ -99,8 +99,8 @@ export const CHALLENGE_COPY = {
     calm: "Fokus-Modus",
     oops: "Das war deine Gruppe! −2",
     seen: "Gruppe gesehen +2",
-    won: "Fokus gehalten! 🏆",
-    lost: "Abgelenkt! 📱",
+    survived: "durchgehalten",
+    lostAfter: "Abgelenkt nach",
     endLine: "Im echten Alltag übernimmt das der FOKUS-Tag für dich.",
     again: "↺ Nochmal",
     exit: "✕ Spiel beenden",
@@ -111,7 +111,7 @@ export const CHALLENGE_COPY = {
     tutTap: "Tap the distraction away 👆",
     tutGroup: "★ = your group. Leave it!",
     tutTag: "Tag charged! Tap it below 👇",
-    tutGo: "Your turn! 30 seconds 🔥",
+    tutGo: "Your turn! How long can you last? 🔥",
     blocked: "blocked",
     points: "points",
     best: "Best",
@@ -122,8 +122,8 @@ export const CHALLENGE_COPY = {
     calm: "Focus mode",
     oops: "That was your group! −2",
     seen: "Group message seen +2",
-    won: "Focus held! 🏆",
-    lost: "Distracted! 📱",
+    survived: "survived",
+    lostAfter: "Distracted after",
     endLine: "In real life, the FOKUS tag does this for you.",
     again: "↺ Again",
     exit: "✕ End game",

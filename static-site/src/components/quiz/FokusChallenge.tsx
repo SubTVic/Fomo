@@ -11,7 +11,6 @@ const BLUE = "#182078";
 const CREAM = "#fefaf3";
 const GOOD_GREEN = "#10c463";
 
-const ROUND_MS = 30_000;
 const SLOTS = 5; // fixed places on the screen; no free slot when spawning = distracted
 const CHARGE_FULL = 5; // blocks needed to charge the tag
 const CALM_MS = 2_500; // full pause after using the tag: clock, speed and bursts freeze
@@ -21,22 +20,22 @@ const GOOD_SHARE = 0.18;
 const LEAVE_MS = 320; // zap animation length
 const TICK_MS = 100;
 const TUT_GO_MS = 1_600; // "your turn" pause before the real round
-/** Bursts ("group chat explodes"): several at once — made for the tag. */
-const BURSTS: Array<{ at: number; size: number }> = [
-  { at: 8_000, size: 3 },
-  { at: 16_000, size: 3 },
-  { at: 23_000, size: 4 },
-];
+/** Bursts ("group chat explodes"): several at once, made for the tag.
+ *  Every 8 s, growing from 3 to 5 notifications. */
+const BURST_EVERY_MS = 8_000;
+function burstSize(n: number): number {
+  return Math.min(5, 3 + Math.floor(n / 2));
+}
 
-/** Spawn gap shrinks from 0.95 s to 0.3 s over the round — the last
- *  seconds are meant to be hectic (a slow tapper should not survive). */
+/** Endless: the spawn gap shrinks 3 % per second (0.95 s → ~0.38 s at 30 s →
+ *  floor 0.2 s), so everyone gets distracted eventually. */
 function spawnGap(elapsed: number): number {
-  return Math.max(300, 950 - elapsed * 0.025);
+  return Math.max(200, 950 * Math.pow(0.97, elapsed / 1000));
 }
 
 /** Notifications keep a fixed slot so nothing jumps while you aim at it. */
 type Note = { id: number; kind: "bad" | "good"; idx: number; born: number; slot: number; leftAt?: number };
-type Phase = "tutorial" | "playing" | "won" | "lost";
+type Phase = "tutorial" | "playing" | "lost";
 /** Tutorial: 0 tap one away · 1 leave the group message · 2 use the tag · 3 "your turn" */
 type TutStep = 0 | 1 | 2 | 3;
 
@@ -59,6 +58,7 @@ interface State {
   ripples: number; // bumps on each tag use → re-keys the ripple
   pausedMs: number; // total focus-mode time, excluded from the round clock
   burstsDone: number;
+  survivedMs: number; // set when the round ends
 }
 
 type Action =
@@ -87,11 +87,18 @@ export const initial: State = {
   ripples: 0,
   pausedMs: 0,
   burstsDone: 0,
+  survivedMs: 0,
 };
 
 const active = (n: Note) => n.leftAt === undefined;
 
 /** Round time that counts: frozen while focus mode (calm) is running. */
+/** 47_300 → "0:47" */
+function clock(ms: number): string {
+  const sec = Math.floor(ms / 1000);
+  return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+}
+
 export function elapsed(s: State, now: number): number {
   return now - s.startedAt - s.pausedMs + (now < s.calmUntil ? s.calmUntil - now : 0);
 }
@@ -118,8 +125,8 @@ function startRound(s: State, now: number): State {
   };
 }
 
-function finish(s: State, phase: "won" | "lost"): State {
-  return { ...s, phase, best: Math.max(s.best, s.score) };
+function finish(s: State, now: number): State {
+  return { ...s, phase: "lost", survivedMs: elapsed(s, now), best: Math.max(s.best, s.score) };
 }
 
 export function reducer(s: State, a: Action): State {
@@ -133,7 +140,7 @@ export function reducer(s: State, a: Action): State {
       return startRound(s, a.now);
 
     case "tick": {
-      if (s.phase === "won" || s.phase === "lost") return s;
+      if (s.phase === "lost") return s;
       const now = a.now;
       const ttl = s.phase === "tutorial" ? GOOD_TTL_TUTORIAL : GOOD_TTL;
       let score = s.score;
@@ -174,14 +181,13 @@ export function reducer(s: State, a: Action): State {
       }
 
       const t = elapsed(s, now);
-      if (t >= ROUND_MS) return finish(next, "won");
-      const burst = BURSTS[s.burstsDone];
-      if (burst && t >= burst.at && now >= s.calmUntil) {
+      if (t >= (s.burstsDone + 1) * BURST_EVERY_MS && now >= s.calmUntil) {
         const free = freeSlots(notes);
-        if (free.length === 0) return finish(next, "lost");
+        if (free.length === 0) return finish(next, now);
         let id = s.nextId;
-        for (const slot of free.slice(0, burst.size)) {
-          notes = place(notes, { id, kind: "bad", idx: id * 7 + slot, born: now, slot });
+        for (const slot of free.slice(0, burstSize(s.burstsDone))) {
+          // ×5 is coprime to the 8 texts → every note in a burst looks different
+          notes = place(notes, { id, kind: "bad", idx: id * 5, born: now, slot });
           id++;
         }
         return {
@@ -195,7 +201,7 @@ export function reducer(s: State, a: Action): State {
       }
       if (now >= s.nextSpawnAt && now >= s.calmUntil) {
         const free = freeSlots(notes);
-        if (free.length === 0) return finish(next, "lost");
+        if (free.length === 0) return finish(next, now);
         const slot = free[Math.floor(a.r2 * free.length)];
         const kind = a.r1 < GOOD_SHARE ? "good" : "bad";
         notes = place(notes, { id: s.nextId, kind, idx: Math.floor(a.r2 * 1000) + s.nextId, born: now, slot });
@@ -236,7 +242,7 @@ export function reducer(s: State, a: Action): State {
 }
 
 /**
- * 30-second arcade round inside the FOKUS ad. Starts with a short hands-on
+ * Endless arcade round inside the FOKUS ad (play until distracted). Starts with a short hands-on
  * tutorial instead of a rules screen: tap distractions away, leave your
  * group's messages alone, use the charged tag to clear the screen. Score and
  * best live in component state only.
@@ -275,18 +281,21 @@ export function FokusChallenge({ lang, tutorial, onExit }: { lang: Lang; tutoria
       reportedStart.current = s.startedAt;
       track(EVENTS.partnerPlay, { partner: PARTNER_OFFER.id, action: "challenge-start" });
     }
-    if ((s.phase === "won" || s.phase === "lost") && reportedEnd.current !== s.startedAt) {
+    if (s.phase === "lost" && reportedEnd.current !== s.startedAt) {
       reportedEnd.current = s.startedAt;
-      track(EVENTS.partnerPlay, { partner: PARTNER_OFFER.id, action: "challenge-end", result: s.phase, score: s.score });
+      track(EVENTS.partnerPlay, {
+        partner: PARTNER_OFFER.id,
+        action: "challenge-end",
+        score: s.score,
+        seconds: Math.floor(s.survivedMs / 1000),
+      });
     }
-  }, [s.phase, s.startedAt, s.score]);
+  }, [s.phase, s.startedAt, s.score, s.survivedMs]);
 
   const inTutorial = s.phase === "tutorial";
   const calm = s.phase === "playing" && s.now < s.calmUntil;
   const live = s.notes.filter(active).length;
-  const secondsLeft = s.phase === "playing" || s.phase === "won" || s.phase === "lost"
-    ? Math.max(0, Math.ceil((ROUND_MS - elapsed(s, s.now)) / 1000))
-    : 30;
+  const survived = s.phase === "lost" ? s.survivedMs : s.phase === "playing" ? elapsed(s, s.now) : 0;
   const ready = s.charge >= CHARGE_FULL;
   const flashOn = s.flash !== null && s.now - s.flash.at < 900;
   const tutHint = inTutorial ? [c.tutTap, c.tutGroup, c.tutTag, c.tutGo][s.tutStep] : null;
@@ -300,13 +309,8 @@ export function FokusChallenge({ lang, tutorial, onExit }: { lang: Lang; tutoria
       {/* HUD */}
       <div className="grid grid-cols-3 items-end gap-2 text-center">
         <div>
-          <p className="font-heading text-2xl leading-none tabular-nums">{inTutorial ? c.practice : `${secondsLeft}s`}</p>
-          <div className="mt-1 h-1.5 bg-white/15">
-            <div
-              className="h-full transition-[width] duration-100 ease-linear"
-              style={{ width: `${inTutorial ? 100 : (secondsLeft / 30) * 100}%`, backgroundColor: CREAM }}
-            />
-          </div>
+          <p className="font-heading text-2xl leading-none tabular-nums">{inTutorial ? c.practice : clock(survived)}</p>
+          <p className="mt-1 text-[10px] font-bold uppercase tracking-wider opacity-80">{c.survived}</p>
         </div>
         <div>
           <p className="font-heading text-2xl leading-none tabular-nums">{s.score}</p>
@@ -439,9 +443,11 @@ export function FokusChallenge({ lang, tutorial, onExit }: { lang: Lang; tutoria
           ))}
 
         {/* result overlay */}
-        {(s.phase === "won" || s.phase === "lost") && (
+        {s.phase === "lost" && (
           <div className="absolute inset-0 grid content-center gap-3 bg-[#0b0f3a]/95 p-4 text-center animate-fade-up" style={{ color: CREAM }}>
-            <p className="animate-stamp font-heading text-2xl">{s.phase === "won" ? c.won : c.lost}</p>
+            <p className="animate-stamp font-heading text-2xl">
+              {c.lostAfter} {clock(s.survivedMs)}! 📱
+            </p>
             <p className="font-heading text-4xl tabular-nums">{s.score}</p>
             <p className="text-xs">
               {c.points} · {s.blocked} {c.blocked} · {c.best}: {s.best}

@@ -31,9 +31,17 @@ describe("Fokus mini game", () => {
     expect(s.notes.length).toBeGreaterThanOrEqual(3);
   });
 
+  it("has no time limit: survives past 30 s while the screen is kept clear", () => {
+    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
+    for (let t = 100; t <= 60_000; t += 100) s = { ...tick(s, t), notes: [] };
+    expect(s.phase).toBe("playing");
+    expect(s.burstsDone).toBe(7); // one every 8 s
+  });
+
   it("is lost when a notification has no free slot", () => {
     let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
     for (let t = 100; t <= 8_000 && s.phase === "playing"; t += 100) s = tick(s, t);
     expect(s.phase).toBe("lost");
+    expect(s.survivedMs).toBeGreaterThan(0);
   });
 });

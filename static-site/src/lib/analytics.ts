@@ -69,7 +69,7 @@ export const EVENTS = {
   // click (`placement`). Partner id only.
   partnerClick: "partner-click",
   // Mini games in the partner ad: tag held to the phone (`block`, `method`
-  // drag|tap), `replay`, and the 30 s challenge (`challenge-start`,
-  // `challenge-end` with `result` won|lost and `score`). Never personal.
+  // drag|tap), `replay`, and the endless mini game (`challenge-start`,
+  // `challenge-end` with `score` and `seconds` survived). Never personal.
   partnerPlay: "partner-play",
 } as const;

@@ -84,11 +84,8 @@ export const GAME_NOTIFICATIONS: Record<"de" | "en", Array<{ app: string; color:
 export const CHALLENGE_COPY = {
   de: {
     title: "Fokus-Minispiel",
-    practice: "Übung",
-    tutTap: "Tipp oder wisch die Ablenkung weg 👆",
-    tutGroup: "★ = deine Gruppe. Stehen lassen!",
-    tutTag: "Tag voll! Tipp ihn unten an 👇",
-    tutGo: "Jetzt du! Wie lange hältst du durch? 🔥",
+    go: "Los! 🔥",
+    close: "Spiel schließen",
     blocked: "geblockt",
     points: "Punkte",
     best: "Bestwert",
@@ -107,11 +104,8 @@ export const CHALLENGE_COPY = {
   },
   en: {
     title: "Focus mini game",
-    practice: "Practice",
-    tutTap: "Tap or swipe the distraction away 👆",
-    tutGroup: "★ = your group. Leave it!",
-    tutTag: "Tag charged! Tap it below 👇",
-    tutGo: "Your turn! How long can you last? 🔥",
+    go: "Go! 🔥",
+    close: "Close game",
     blocked: "blocked",
     points: "points",
     best: "Best",

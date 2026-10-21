@@ -6,7 +6,7 @@ const tick = (s: ReturnType<typeof reducer>, now: number) => reducer(s, { type: 
 
 describe("Fokus mini game", () => {
   it("freezes the round clock while focus mode runs", () => {
-    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
+    let s = reducer(initial, { type: "boot", now: 0 });
     s = tick(s, 4_000);
     s = reducer({ ...s, charge: 5 }, { type: "tag", now: 4_000 });
     expect(elapsed(s, 4_000)).toBe(4_000);
@@ -15,7 +15,7 @@ describe("Fokus mini game", () => {
   });
 
   it("does not spawn during focus mode", () => {
-    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
+    let s = reducer(initial, { type: "boot", now: 0 });
     s = reducer({ ...s, charge: 5 }, { type: "tag", now: 1_000 });
     const before = s.notes.length;
     for (let t = 1_100; t < 3_400; t += 100) s = tick(s, t);
@@ -23,7 +23,7 @@ describe("Fokus mini game", () => {
   });
 
   it("fires a burst of several notifications at once", () => {
-    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
+    let s = reducer(initial, { type: "boot", now: 0 });
     // keep the screen empty so only the burst counts
     for (let t = 100; t < 8_000; t += 100) s = { ...tick(s, t), notes: [] };
     s = tick(s, 8_000);
@@ -32,7 +32,7 @@ describe("Fokus mini game", () => {
   });
 
   it("has no time limit: survives past 30 s while the screen is kept clear", () => {
-    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
+    let s = reducer(initial, { type: "boot", now: 0 });
     for (let t = 100; t <= 60_000; t += 100) s = { ...tick(s, t), notes: [] };
     expect(s.phase).toBe("playing");
     expect(s.burstsDone).toBe(7); // one every 8 s
@@ -49,7 +49,7 @@ describe("Fokus mini game", () => {
   });
 
   it("is lost when a notification has no free slot", () => {
-    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
+    let s = reducer(initial, { type: "boot", now: 0 });
     for (let t = 100; t <= 8_000 && s.phase === "playing"; t += 100) s = tick(s, t);
     expect(s.phase).toBe("lost");
     expect(s.survivedMs).toBeGreaterThan(0);

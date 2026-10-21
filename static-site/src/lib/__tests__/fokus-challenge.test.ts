@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from "vitest";
-import { elapsed, initial, reducer } from "@/components/quiz/FokusChallenge";
+import { elapsed, initial, reducer, spawnGap } from "@/components/quiz/FokusChallenge";
 
 const tick = (s: ReturnType<typeof reducer>, now: number) => reducer(s, { type: "tick", now, r1: 0.9, r2: 0.5 });
 
@@ -36,6 +36,16 @@ describe("Fokus mini game", () => {
     for (let t = 100; t <= 60_000; t += 100) s = { ...tick(s, t), notes: [] };
     expect(s.phase).toBe("playing");
     expect(s.burstsDone).toBe(7); // one every 8 s
+  });
+
+  it("speeds up, then levels off at a holdable pace", () => {
+    expect(spawnGap(0)).toBe(950);
+    expect(spawnGap(30_000)).toBeLessThan(600);
+    // after a minute it barely changes …
+    expect(spawnGap(60_000) - spawnGap(90_000)).toBeLessThan(40);
+    // … and never drops below 0.42 s (≈2.4 per second)
+    expect(spawnGap(600_000)).toBe(420);
+    for (let t = 0; t < 600_000; t += 1_000) expect(spawnGap(t + 1_000)).toBeLessThanOrEqual(spawnGap(t));
   });
 
   it("is lost when a notification has no free slot", () => {

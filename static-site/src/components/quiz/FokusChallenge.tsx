@@ -21,16 +21,20 @@ const LEAVE_MS = 320; // zap animation length
 const TICK_MS = 100;
 const TUT_GO_MS = 1_600; // "your turn" pause before the real round
 /** Bursts ("group chat explodes"): several at once, made for the tag.
- *  Every 8 s, growing from 3 to 5 notifications. */
+ *  Every 8 s, 3 notifications, from the third burst on 4. */
 const BURST_EVERY_MS = 8_000;
 function burstSize(n: number): number {
-  return Math.min(5, 3 + Math.floor(n / 2));
+  return n < 2 ? 3 : 4;
 }
 
-/** Endless: the spawn gap shrinks 3 % per second (0.95 s → ~0.38 s at 30 s →
- *  floor 0.2 s), so everyone gets distracted eventually. */
-function spawnGap(elapsed: number): number {
-  return Math.max(200, 950 * Math.pow(0.97, elapsed / 1000));
+/** Spawn gap: eases from 0.95 s towards a plateau of ~0.47 s (≈2 per
+ *  second — hard but holdable) within about a minute, then creeps only
+ *  ~1 ms faster every 2 s down to a floor of 0.42 s. Nobody is forced to
+ *  lose, so good runs can set real highscores. */
+export function spawnGap(elapsed: number): number {
+  const ease = 470 + 480 * Math.exp(-elapsed / 18_000);
+  const creep = Math.max(0, (elapsed - 60_000) / 2_000);
+  return Math.max(420, ease - creep);
 }
 
 /** Notifications keep a fixed slot so nothing jumps while you aim at it. */

@@ -47,12 +47,13 @@ export function spawnGap(elapsed: number): number {
   return Math.max(420, ease - creep);
 }
 
-/** Notifications keep a fixed slot so nothing jumps while you aim at it. */
-type Note = { id: number; kind: "bad" | "good"; idx: number; born: number; slot: number; leftAt?: number };
+/** Notifications keep a fixed slot so nothing jumps while you aim at it.
+ *  `charged`: blocked by hand → sends a ⚡ spark to the tag. */
+type Note = { id: number; kind: "bad" | "good"; idx: number; born: number; slot: number; leftAt?: number; charged?: boolean };
 type Phase = "tutorial" | "playing" | "lost";
 /** Hands-on tutorial with one short line each: 0 block one · 1 leave the group
  *  message · 2 use the tag · 3 the tag's focus pause plays, then the round starts */
-type TutStep = 0 | 1 | 2 | 3;
+type TutStep = 0 | 1 | 2 | 3 | 4;
 
 interface State {
   phase: Phase;
@@ -206,21 +207,24 @@ export function reducer(s: State, a: Action): State {
       let next: State = { ...s, now, notes, score, flash };
 
       if (s.phase === "tutorial") {
-        // step 3: the tag's focus pause (breathe, 3-2-1) plays, then the round starts
-        if (s.tutStep === 3) return now >= s.calmUntil ? startRound(next, now) : next;
+        // step 4: the tag's focus pause (breathe, 3-2-1) plays, then the round starts
+        if (s.tutStep === 4) return now >= s.calmUntil ? startRound(next, now) : next;
         if (s.tutSpawned && !notes.some(active)) {
-          if (s.tutStep === 2) return { ...next, tutStep: 3 };
+          if (s.tutStep === 3) return { ...next, tutStep: 4 };
           return { ...next, tutStep: (s.tutStep + 1) as TutStep, tutSpawned: false, nextSpawnAt: now + 600 };
         }
         if (!s.tutSpawned && now >= s.nextSpawnAt) {
           let id = s.nextId;
           if (s.tutStep === 0) notes = place(notes, { id: id++, kind: "bad", idx: 0, born: now, slot: 1 });
           if (s.tutStep === 1) notes = place(notes, { id: id++, kind: "good", idx: 0, born: now, slot: 1 });
-          if (s.tutStep === 2) {
-            for (const [slot, idx] of [[0, 1], [2, 2], [3, 3]]) {
-              notes = place(notes, { id: id++, kind: "bad", idx, born: now, slot });
+          // step 2: blocking charges the tag (big chunks here, so it fills visibly)
+          // step 3: tag is full — clear these three with it
+          if (s.tutStep === 2 || s.tutStep === 3) {
+            const base = s.tutStep === 2 ? 1 : 4;
+            for (const [slot, k] of [[0, 0], [1, 1], [2, 2]]) {
+              notes = place(notes, { id: id++, kind: "bad", idx: base + k, born: now, slot });
             }
-            next = { ...next, charge: chargeNeeded(s) };
+            if (s.tutStep === 3) next = { ...next, charge: chargeNeeded(s) };
           }
           return { ...next, notes, nextId: id, tutSpawned: true };
         }
@@ -264,7 +268,7 @@ export function reducer(s: State, a: Action): State {
       if ((s.phase !== "playing" && s.phase !== "tutorial") || a.now < s.stunnedUntil) return s;
       const note = s.notes.find((n) => n.id === a.id);
       if (!note || !active(note)) return s;
-      const notes = s.notes.map((n) => (n.id === a.id ? { ...n, leftAt: a.now } : n));
+      const notes = s.notes.map((n) => (n.id === a.id ? { ...n, leftAt: a.now, charged: n.kind === "bad" } : n));
       if (note.kind === "good") {
         return {
           ...s,
@@ -274,7 +278,9 @@ export function reducer(s: State, a: Action): State {
           stunnedUntil: a.now + STUN_MS,
         };
       }
-      return { ...s, notes, score: s.score + 1, blocked: s.blocked + 1, charge: Math.min(chargeNeeded(s), s.charge + 1) };
+      // in the tutorial's charge step each block fills a third of the tag
+      const gain = s.phase === "tutorial" && s.tutStep === 2 ? Math.ceil(chargeNeeded(s) / 3) : 1;
+      return { ...s, notes, score: s.score + 1, blocked: s.blocked + 1, charge: Math.min(chargeNeeded(s), s.charge + gain) };
     }
 
     case "tag": {
@@ -365,7 +371,7 @@ export function FokusChallenge({
     tag: c.tagged.replace("{n}", String(s.flash?.n ?? 0)),
   };
   const flashColor = { go: CREAM, oops: CREAM, seen: "#7dffb4", burst: "#ffd34d", tag: "#7dffb4" };
-  const tutHint = inTutorial ? [c.tutTap, c.tutGroup, c.tutTag, null][s.tutStep] : null;
+  const tutHint = inTutorial ? [c.tutTap, c.tutGroup, c.tutCharge, c.tutTag, null][s.tutStep] : null;
   const stunned = running && s.now < s.stunnedUntil;
   const hint = flashOn && s.flash ? flashText[s.flash.text] : stunned ? c.stunned : null;
   const hintColor = flashOn && s.flash ? flashColor[s.flash.text] : CREAM;
@@ -508,12 +514,26 @@ export function FokusChallenge({
         {tutHint && !calm && (
           <p
             key={s.tutStep}
-            className={`animate-stamp pointer-events-none absolute inset-x-4 z-20 -translate-y-1/2 ${s.tutStep === 2 ? "top-[71%]" : "top-[56%]"} rounded-2xl px-4 py-3 text-center font-heading text-xl leading-tight shadow-[0_8px_24px_rgba(0,0,0,0.45)]`}
+            className={`animate-stamp pointer-events-none absolute inset-x-4 z-20 -translate-y-1/2 ${s.tutStep >= 2 ? "top-[71%]" : "top-[56%]"} rounded-2xl px-4 py-3 text-center font-heading text-xl leading-tight shadow-[0_8px_24px_rgba(0,0,0,0.45)]`}
             style={{ backgroundColor: CREAM, color: BLUE }}
           >
             {tutHint}
           </p>
         )}
+
+        {/* ⚡ from every hand-blocked distraction to the tag: blocking charges it */}
+        {s.notes
+          .filter((n) => n.charged && n.leftAt !== undefined && s.now - n.leftAt < LEAVE_MS)
+          .map((n) => (
+            <span
+              key={`spark-${n.id}`}
+              aria-hidden
+              className="animate-spark pointer-events-none absolute z-30 text-2xl leading-none"
+              style={{ "--y0": `${52 + n.slot * 58}px` } as React.CSSProperties}
+            >
+              ⚡
+            </span>
+          ))}
 
         {/* the device pressed onto the screen when used */}
         {flashOn && s.flash?.text === "tag" && s.now - s.flash.at < 800 && (
@@ -539,7 +559,7 @@ export function FokusChallenge({
             className={`min-w-0 font-heading text-[13px] leading-tight ${hint ? "animate-stamp" : "opacity-80"}`}
             style={{ color: hint ? hintColor : CREAM }}
           >
-            {hint ?? (ready && running ? c.tagReady : `${s.charge}/${need}`)}
+            {hint ?? (ready && running ? c.tagReady : `⚡ ${s.charge}/${need}`)}
           </p>
         </div>
 

@@ -189,6 +189,26 @@ h3 {
   animation: fomo-exhale 3s ease-in-out both;
 }
 
+/* ⚡ spark flying from a blocked notification down to the tag dock. */
+@keyframes fomo-spark {
+  from {
+    left: 50%;
+    top: var(--y0);
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  to {
+    left: 44px;
+    top: calc(100% - 46px);
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0.4;
+  }
+}
+
+@utility animate-spark {
+  animation: fomo-spark 0.32s ease-in both;
+}
+
 /* Stunned after tapping your own group: red flash + draining bar. */
 @keyframes fomo-stun-flash {
   from {

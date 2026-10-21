@@ -79,22 +79,25 @@ describe("Fokus mini game", () => {
   });
 
   it("runs the hands-on tutorial, then starts the round", () => {
+    const active = (st: ReturnType<typeof reducer>) => st.notes.filter((n) => n.leftAt === undefined);
     let s = reducer(initial, { type: "boot", now: 0, tutorial: true });
     s = tick(s, 600);
     expect(s.phase).toBe("tutorial");
-    s = reducer(s, { type: "tap", id: s.notes[0].id, now: 700 }); // step 0: block it
+    s = reducer(s, { type: "tap", id: active(s)[0].id, now: 700 }); // step 0: block one
     s = tick(s, 800);
     s = tick(s, 1_500); // step 1: group message appears …
-    expect(s.notes.some((n) => n.kind === "good" && n.leftAt === undefined)).toBe(true);
+    expect(active(s).some((n) => n.kind === "good")).toBe(true);
     for (let t = 1_600; t <= 5_000; t += 100) s = tick(s, t); // … and is left alone (+2)
-    for (let t = 5_100; t <= 6_000 && s.tutStep === 2 && !s.tutSpawned; t += 100) s = tick(s, t);
-    expect(s.charge).toBe(CHARGE_FULL); // step 2: tag is charged for the three notes
-    s = reducer(s, { type: "tag", now: 6_100 });
-    s = tick(s, 6_200);
-    expect(s.phase).toBe("tutorial"); // the focus pause (breathe, 3-2-1) plays …
-    s = tick(s, 9_000);
-    expect(s.phase).toBe("tutorial");
-    s = tick(s, 16_000);
+    for (let t = 5_100; t <= 6_000 && !s.tutSpawned; t += 100) s = tick(s, t);
+    expect(s.tutStep).toBe(2); // step 2: three blocks charge the tag
+    for (const n of active(s)) s = reducer(s, { type: "tap", id: n.id, now: 6_100 });
+    expect(s.charge).toBe(CHARGE_FULL);
+    for (let t = 6_200; t <= 7_200 && !(s.tutStep === 3 && s.tutSpawned); t += 100) s = tick(s, t);
+    expect(active(s).length).toBe(3); // step 3: clear these with the tag
+    s = reducer(s, { type: "tag", now: 7_300 });
+    s = tick(s, 7_400);
+    expect(s.phase).toBe("tutorial"); // the focus pause plays …
+    s = tick(s, 17_200);
     expect(s.phase).toBe("playing"); // … then the round starts
   });
 

@@ -17,7 +17,12 @@ const SLOTS = 5; // fixed places on the screen; no free slot when spawning = dis
 /** The tag is the big joker: slow to charge, but it clears the screen for
  *  double points, pauses everything for 4 s and even breaks a stun. */
 export const CHARGE_FULL = 12; // blocks needed to charge the tag
-const CALM_MS = 4_000; // full pause after using the tag: clock, speed and bursts freeze
+/** Full pause after using the tag (clock, speed and bursts freeze):
+ *  ~1 s effect, ~1 s "breathe … focus", then a 3-2-1 countdown. */
+const CALM_MS = 5_000;
+/** Quick-time event when the screen is full: tap the tag before the bar runs out. */
+const QTE_MS = 2_000;
+const QTE_TAPS_UNCHARGED = 8; // without charge: tap 8×, once per round
 const TAG_MULTIPLIER = 2;
 const GOOD_TTL = 2_400; // a group message disappears on its own after this
 const GOOD_TTL_TUTORIAL = 3_000;
@@ -45,7 +50,7 @@ export function spawnGap(elapsed: number): number {
 
 /** Notifications keep a fixed slot so nothing jumps while you aim at it. */
 type Note = { id: number; kind: "bad" | "good"; idx: number; born: number; slot: number; leftAt?: number };
-type Phase = "tutorial" | "playing" | "lost";
+type Phase = "tutorial" | "playing" | "qte" | "lost";
 /** Hands-on tutorial with one short line each: 0 block one · 1 leave the group
  *  message · 2 use the tag · 3 let the tag effect play, then the round starts */
 type TutStep = 0 | 1 | 2 | 3;
@@ -67,6 +72,10 @@ interface State {
   flash: { text: "go" | "oops" | "seen" | "burst" | "tag"; at: number; n?: number } | null;
   ripples: number; // bumps on each tag use → re-keys the ripple
   stunnedUntil: number;
+  qteStart: number;
+  qteNeed: number;
+  qteTaps: number;
+  rescueUsed: boolean; // the uncharged 8-tap rescue, once per round
   pausedMs: number; // total focus-mode time, excluded from the round clock
   burstsDone: number;
   seen: number[]; // distractions shown this round → prefer new ones
@@ -97,6 +106,10 @@ export const initial: State = {
   flash: null,
   ripples: 0,
   stunnedUntil: 0,
+  qteStart: 0,
+  qteNeed: 0,
+  qteTaps: 0,
+  rescueUsed: false,
   pausedMs: 0,
   burstsDone: 0,
   seen: [],
@@ -113,7 +126,9 @@ function clock(ms: number): string {
 
 /** Round time that counts: frozen while focus mode (calm) is running. */
 export function elapsed(s: State, now: number): number {
-  return now - s.startedAt - s.pausedMs + (now < s.calmUntil ? s.calmUntil - now : 0);
+  return (
+    now - s.startedAt - s.pausedMs + (now < s.calmUntil ? s.calmUntil - now : 0) - (s.phase === "qte" ? now - s.qteStart : 0)
+  );
 }
 
 function freeSlots(notes: Note[]): number[] {
@@ -139,6 +154,33 @@ function startRound(s: State, now: number): State {
   };
 }
 
+/** Screen full: a last chance (quick-time event) instead of losing at once. */
+function overflow(s: State, now: number): State {
+  const charged = s.charge >= CHARGE_FULL;
+  if (!charged && s.rescueUsed) return finish(s, now);
+  return { ...s, phase: "qte", qteStart: now, qteTaps: 0, qteNeed: charged ? 1 : QTE_TAPS_UNCHARGED };
+}
+
+/** The tag effect: clear distractions (×multiplier points), break a stun, pause. */
+function fireTag(s: State, now: number, multiplier: number): State {
+  const hit = s.notes.filter((n) => active(n) && n.kind === "bad").length;
+  const notes = s.notes.map((n) => (active(n) && n.kind === "bad" ? { ...n, leftAt: now } : n));
+  const calmUntil = now + CALM_MS;
+  return {
+    ...s,
+    notes,
+    score: s.score + hit * multiplier,
+    blocked: s.blocked + hit,
+    stunnedUntil: 0,
+    flash: { text: "tag", at: now, n: hit * multiplier },
+    charge: 0,
+    calmUntil,
+    pausedMs: s.pausedMs + CALM_MS,
+    nextSpawnAt: calmUntil + 300,
+    ripples: s.ripples + 1,
+  };
+}
+
 function finish(s: State, now: number): State {
   return { ...s, phase: "lost", survivedMs: elapsed(s, now), best: Math.max(s.best, s.score) };
 }
@@ -155,6 +197,7 @@ export function reducer(s: State, a: Action): State {
 
     case "tick": {
       if (s.phase === "lost") return s;
+      if (s.phase === "qte") return a.now - s.qteStart > QTE_MS ? finish({ ...s, now: a.now }, a.now) : { ...s, now: a.now };
       const now = a.now;
       let score = s.score;
       let flash = s.flash;
@@ -194,7 +237,7 @@ export function reducer(s: State, a: Action): State {
       const t = elapsed(s, now);
       if (t >= (s.burstsDone + 1) * BURST_EVERY_MS && now >= s.calmUntil) {
         const free = freeSlots(notes);
-        if (free.length === 0) return finish(next, now);
+        if (free.length === 0) return overflow(next, now);
         let id = s.nextId;
         let seen = s.seen;
         free.slice(0, burstSize(s.burstsDone)).forEach((slot, i) => {
@@ -214,7 +257,7 @@ export function reducer(s: State, a: Action): State {
       }
       if (now >= s.nextSpawnAt && now >= s.calmUntil) {
         const free = freeSlots(notes);
-        if (free.length === 0) return finish(next, now);
+        if (free.length === 0) return overflow(next, now);
         const slot = free[Math.floor(a.r2 * free.length)];
         const kind = a.r1 < GOOD_SHARE ? "good" : "bad";
         const idx = kind === "good" ? Math.floor(a.r3 * GROUP_MESSAGES.length) : pickDistraction(t, s.seen, a.r3, a.r4);
@@ -243,24 +286,23 @@ export function reducer(s: State, a: Action): State {
     }
 
     case "tag": {
+      if (s.phase === "qte") {
+        // tapping the device during the quick-time event
+        const taps = s.qteTaps + 1;
+        if (taps < s.qteNeed) return { ...s, qteTaps: taps, now: a.now };
+        const charged = s.charge >= CHARGE_FULL;
+        const resumed: State = {
+          ...s,
+          phase: "playing",
+          qteTaps: taps,
+          pausedMs: s.pausedMs + (a.now - s.qteStart),
+          rescueUsed: s.rescueUsed || !charged,
+        };
+        return fireTag(resumed, a.now, charged ? TAG_MULTIPLIER : 1);
+      }
       // usable while stunned on purpose: the tag is the way out
       if ((s.phase !== "playing" && s.phase !== "tutorial") || s.charge < CHARGE_FULL) return s;
-      const hit = s.notes.filter((n) => active(n) && n.kind === "bad").length;
-      const notes = s.notes.map((n) => (active(n) && n.kind === "bad" ? { ...n, leftAt: a.now } : n));
-      const calmUntil = a.now + CALM_MS;
-      return {
-        ...s,
-        notes,
-        score: s.score + hit * TAG_MULTIPLIER,
-        blocked: s.blocked + hit,
-        stunnedUntil: 0,
-        flash: { text: "tag", at: a.now, n: hit * TAG_MULTIPLIER },
-        charge: 0,
-        calmUntil,
-        pausedMs: s.pausedMs + CALM_MS,
-        nextSpawnAt: calmUntil + 300,
-        ripples: s.ripples + 1,
-      };
+      return fireTag(s, a.now, TAG_MULTIPLIER);
     }
   }
 }
@@ -302,7 +344,7 @@ export function FokusChallenge({
     dispatch({ type: "boot", now: performance.now(), tutorial });
   }, [tutorial]);
 
-  const running = s.phase === "playing" || s.phase === "tutorial";
+  const running = s.phase === "playing" || s.phase === "tutorial" || s.phase === "qte";
   useEffect(() => {
     if (!running) return;
     const id = setInterval(
@@ -329,6 +371,8 @@ export function FokusChallenge({
   }, [s.phase, s.startedAt, s.score, s.survivedMs]);
 
   const calm = s.phase === "playing" && s.now < s.calmUntil;
+  const calmLeft = calm ? s.calmUntil - s.now : 0; // counts down from CALM_MS
+  const qte = s.phase === "qte";
   const live = s.notes.filter(active).length;
   const inTutorial = s.phase === "tutorial";
   const survived = s.phase === "lost" ? s.survivedMs : inTutorial ? 0 : elapsed(s, s.now);
@@ -344,7 +388,7 @@ export function FokusChallenge({
   const flashColor = { go: CREAM, oops: CREAM, seen: "#7dffb4", burst: "#ffd34d", tag: "#7dffb4" };
   const tutHint = inTutorial ? [c.tutTap, c.tutGroup, c.tutTag, null][s.tutStep] : null;
   const stunned = running && s.now < s.stunnedUntil;
-  const hint = flashOn && s.flash ? flashText[s.flash.text] : stunned ? c.stunned : calm ? `🔒 ${c.calm}` : tutHint;
+  const hint = flashOn && s.flash ? flashText[s.flash.text] : stunned ? c.stunned : qte ? null : calm ? `🔒 ${c.calm}` : tutHint;
   const hintColor = flashOn && s.flash ? flashColor[s.flash.text] : CREAM;
 
   return (
@@ -458,6 +502,55 @@ export function FokusChallenge({
             />
           </div>
         )}
+        {/* focus pause: breathe, then 3-2-1 */}
+        {calm && calmLeft < CALM_MS - 1_000 && (
+          <div aria-live="polite" className="pointer-events-none absolute inset-0 z-20 grid place-content-center justify-items-center gap-3 text-center" style={{ color: CREAM }}>
+            {calmLeft > 3_000 ? (
+              <>
+                <span className="motion-safe:animate-breathe h-20 w-20 rounded-full border-4" style={{ borderColor: CREAM, backgroundColor: "rgba(254,250,243,0.12)" }} />
+                <p key={calmLeft > 3_500 ? "a" : "b"} className="animate-stamp font-heading text-lg">
+                  {calmLeft > 3_500 ? c.breathe : c.focus}
+                </p>
+              </>
+            ) : (
+              <>
+                <p key={Math.ceil(calmLeft / 1000)} className="animate-stamp font-heading text-7xl leading-none tabular-nums">
+                  {Math.ceil(calmLeft / 1000)}
+                </p>
+                <p className="text-xs font-bold uppercase tracking-widest opacity-80">{c.resume}</p>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* quick-time event: the screen is full — tap the tag before the bar runs out */}
+        {qte && (
+          <div className="absolute inset-0 z-30 grid content-center justify-items-center gap-3 bg-[#3a0610]/92 p-4 text-center" style={{ color: CREAM }}>
+            <div
+              className="animate-stun-bar absolute left-0 top-0 h-2 w-full origin-left bg-[#ff5a5a]"
+              style={{ animationDuration: `${QTE_MS}ms` }}
+            />
+            <p className="animate-stamp font-heading text-3xl">{c.qteNow}</p>
+            <button
+              type="button"
+              aria-label={c.tagAria}
+              // click only (not pointerdown too): every tap must count exactly once
+              onClick={() => dispatch({ type: "tag", now: performance.now() })}
+              className="motion-safe:animate-pulse touch-manipulation"
+            >
+              <FokusDevice size={124} ready />
+            </button>
+            <p className="font-heading text-base">
+              {s.qteNeed > 1 ? c.qteTapMany.replace("{n}", String(s.qteNeed)) : c.qteTapOnce}
+            </p>
+            {s.qteNeed > 1 && (
+              <p className="font-heading text-2xl tabular-nums">
+                {s.qteTaps}/{s.qteNeed}
+              </p>
+            )}
+          </div>
+        )}
+
         {/* the device pressed onto the screen when used */}
         {flashOn && s.flash?.text === "tag" && (
           <div key={s.flash.at} aria-hidden className="animate-stamp pointer-events-none absolute left-1/2 top-[42%] z-20 -translate-x-1/2 -translate-y-1/2">
@@ -470,7 +563,7 @@ export function FokusChallenge({
           <button
             type="button"
             aria-label={c.tagAria}
-            disabled={!running || !ready}
+            disabled={!running || (!ready && !qte)}
             onPointerDown={() => dispatch({ type: "tag", now: performance.now() })}
             onClick={() => dispatch({ type: "tag", now: performance.now() })}
             className={`shrink-0 touch-manipulation disabled:cursor-default ${ready && running ? "motion-safe:animate-pulse" : "opacity-90"}`}

@@ -162,6 +162,23 @@ h3 {
   animation: fomo-drag-hint 2.8s ease-in-out 0.8s infinite;
 }
 
+/* Focus pause: a slow breathing circle. */
+@keyframes fomo-breathe {
+  0%,
+  100% {
+    transform: scale(0.75);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+@utility animate-breathe {
+  animation: fomo-breathe 2s ease-in-out infinite;
+}
+
 /* Stunned after tapping your own group: red flash + draining bar. */
 @keyframes fomo-stun-flash {
   from {

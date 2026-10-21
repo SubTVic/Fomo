@@ -12,14 +12,14 @@ describe("Fokus mini game", () => {
     s = reducer({ ...s, charge: CHARGE_FULL }, { type: "tag", now: 4_000 });
     expect(elapsed(s, 4_000)).toBe(4_000);
     expect(elapsed(s, 5_500)).toBe(4_000); // still paused
-    expect(elapsed(s, 9_000)).toBe(5_000); // 4 s pause excluded
+    expect(elapsed(s, 10_000)).toBe(5_000); // 5 s pause excluded
   });
 
   it("does not spawn during focus mode", () => {
     let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
     s = reducer({ ...s, charge: CHARGE_FULL }, { type: "tag", now: 1_000 });
     const before = s.notes.length;
-    for (let t = 1_100; t < 5_000; t += 100) s = tick(s, t);
+    for (let t = 1_100; t < 6_000; t += 100) s = tick(s, t);
     expect(s.notes.filter((n) => n.leftAt === undefined).length).toBe(before);
   });
 
@@ -98,7 +98,12 @@ describe("Fokus mini game", () => {
 
   it("is lost when a notification has no free slot", () => {
     let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
+    // first overflow → quick-time event (the once-per-round rescue) …
     for (let t = 100; t <= 8_000 && s.phase === "playing"; t += 100) s = tick(s, t);
+    expect(s.phase).toBe("qte");
+    // … ignored → distracted
+    const qteAt = s.now;
+    s = tick(s, qteAt + 2_100);
     expect(s.phase).toBe("lost");
     expect(s.survivedMs).toBeGreaterThan(0);
   });
@@ -127,5 +132,40 @@ describe("Fokus mini game", () => {
     s = reducer(s, { type: "tap", id: 1, now: 100 }); // +1, now charged
     s = reducer(s, { type: "tag", now: 200 });
     expect(s.score).toBe(1 + 2 * 2); // two left on screen, ×2
+  });
+
+  it("full screen with a charged tag: one tap in the quick-time event saves you", () => {
+    const full = (charge: number, rescueUsed = false) => ({
+      ...reducer(initial, { type: "boot", now: 0, tutorial: false }),
+      charge,
+      rescueUsed,
+      nextSpawnAt: 0,
+      notes: [0, 1, 2, 3, 4].map((slot) => ({ id: slot + 1, kind: "bad" as const, idx: 0, born: 0, slot })),
+    });
+    let s = tick(full(CHARGE_FULL), 1_000);
+    expect(s.phase).toBe("qte");
+    expect(s.qteNeed).toBe(1);
+    expect(elapsed(s, 1_800)).toBe(elapsed(s, 1_000)); // clock frozen during the event
+    s = reducer(s, { type: "tag", now: 1_500 });
+    expect(s.phase).toBe("playing");
+    expect(s.notes.filter((n) => n.leftAt === undefined).length).toBe(0);
+    expect(s.score).toBe(10); // 5 cleared ×2
+  });
+
+  it("uncharged: 8 taps rescue you once per round, the second time you lose", () => {
+    const full = (rescueUsed: boolean) => ({
+      ...reducer(initial, { type: "boot", now: 0, tutorial: false }),
+      rescueUsed,
+      nextSpawnAt: 0,
+      notes: [0, 1, 2, 3, 4].map((slot) => ({ id: slot + 1, kind: "bad" as const, idx: 0, born: 0, slot })),
+    });
+    let s = tick(full(false), 1_000);
+    expect(s.qteNeed).toBe(8);
+    for (let i = 0; i < 7; i++) s = reducer(s, { type: "tag", now: 1_100 + i * 100 });
+    expect(s.phase).toBe("qte");
+    s = reducer(s, { type: "tag", now: 1_900 });
+    expect(s.phase).toBe("playing");
+    expect(s.rescueUsed).toBe(true);
+    expect(tick(full(true), 1_000).phase).toBe("lost");
   });
 });

@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { track, EVENTS } from "@/lib/analytics";
-import { GAME_NOTIFICATIONS, PARTNER_COPY, PARTNER_OFFER } from "@/lib/partner";
+import { CHALLENGE_COPY, GAME_NOTIFICATIONS, PARTNER_COPY, PARTNER_OFFER } from "@/lib/partner";
 
 type Lang = "de" | "en";
 type Stage = "idle" | "flying" | "blocked";
@@ -23,7 +23,7 @@ function prefersReducedMotion(): boolean {
  * the notifications are zapped, the screen goes calm and a counter runs up.
  * Pure UI — nothing is stored, only one anonymous Umami event per play.
  */
-export function FokusTagGame({ lang }: { lang: Lang }) {
+export function FokusTagGame({ lang, onChallenge }: { lang: Lang; onChallenge?: () => void }) {
   const t = PARTNER_COPY[lang];
   const notes = GAME_NOTIFICATIONS[lang];
 
@@ -252,11 +252,20 @@ export function FokusTagGame({ lang }: { lang: Lang }) {
           <>
             <p className="font-heading text-3xl leading-none tabular-nums sm:text-4xl">{shown}</p>
             <p className="text-sm font-semibold leading-tight">{t.blocked}</p>
+            {onChallenge && (
+              <button
+                type="button"
+                onClick={onChallenge}
+                className="animate-stamp border-2 px-3 py-2 font-heading text-xs uppercase"
+                style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM, animationDelay: "500ms" }}
+              >
+                {CHALLENGE_COPY[lang].cta}
+              </button>
+            )}
             <button
               type="button"
               onClick={replay}
-              className="border-2 px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-opacity hover:opacity-80"
-              style={{ borderColor: CREAM }}
+              className="text-xs font-bold uppercase tracking-wider underline underline-offset-4 opacity-80 transition-opacity hover:opacity-100"
             >
               ↺ {t.again}
             </button>

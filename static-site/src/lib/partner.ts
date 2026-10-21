@@ -79,3 +79,73 @@ export const GAME_NOTIFICATIONS: Record<"de" | "en", Array<{ app: string; color:
     { app: "WhatsApp", color: "#25d366", text: "Mum: Have you eaten yet?" },
   ],
 };
+
+/** Copy for the 30-second "Fokus-Challenge" round inside the ad. */
+export const CHALLENGE_COPY = {
+  de: {
+    cta: "▶ Fokus-Challenge",
+    title: "Fokus-Challenge",
+    rules: [
+      "👆 Tipp Ablenkungen weg, bevor dein Handy überläuft.",
+      "★ Nachrichten deiner Gruppe stehen lassen – die zählen extra.",
+      "Tag voll geladen? Antippen räumt alles ab.",
+      "Mehr als 5 auf dem Screen = abgelenkt.",
+    ],
+    start: "Los geht’s · 30 s",
+    blocked: "geblockt",
+    points: "Punkte",
+    best: "Bestwert",
+    tagCharging: "Tag lädt …",
+    tagReady: "Tag antippen!",
+    tagAria: "FOKUS-Tag einsetzen und alle Ablenkungen blocken",
+    calm: "Fokus-Modus",
+    oops: "Das war deine Gruppe! −2",
+    seen: "Gruppe gesehen +2",
+    won: "Fokus gehalten! 🏆",
+    lost: "Abgelenkt! 📱",
+    endLine: "Im echten Alltag übernimmt das der FOKUS-Tag für dich.",
+    again: "↺ Nochmal",
+    exit: "✕ Spiel beenden",
+  },
+  en: {
+    cta: "▶ Focus challenge",
+    title: "Focus challenge",
+    rules: [
+      "👆 Tap distractions away before your phone overflows.",
+      "★ Leave messages from your group – they score extra.",
+      "Tag fully charged? Tap it to clear everything.",
+      "More than 5 on screen = distracted.",
+    ],
+    start: "Let’s go · 30 s",
+    blocked: "blocked",
+    points: "points",
+    best: "Best",
+    tagCharging: "Tag charging …",
+    tagReady: "Tap the tag!",
+    tagAria: "Use the FOKUS tag and block all distractions",
+    calm: "Focus mode",
+    oops: "That was your group! −2",
+    seen: "Group message seen +2",
+    won: "Focus held! 🏆",
+    lost: "Distracted! 📱",
+    endLine: "In real life, the FOKUS tag does this for you.",
+    again: "↺ Again",
+    exit: "✕ End game",
+  },
+} as const;
+
+/** "Good" notifications in the challenge: messages from your student group. */
+export const GROUP_NOTIFICATIONS: Record<"de" | "en", string[]> = {
+  de: [
+    "Deine Gruppe: Treffen heute 19 Uhr",
+    "Willkommen im Team! 👋",
+    "Wer kommt mit zur Ersti-Party?",
+    "Probe ist verschoben auf Donnerstag",
+  ],
+  en: [
+    "Your group: meeting today 7 pm",
+    "Welcome to the team! 👋",
+    "Who’s coming to the freshers’ party?",
+    "Rehearsal moved to Thursday",
+  ],
+};

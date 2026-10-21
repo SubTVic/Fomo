@@ -68,6 +68,8 @@ export const EVENTS = {
   // Paid partner placement on the results page (see lib/partner.ts): outbound
   // click (`placement`). Partner id only.
   partnerClick: "partner-click",
-  // Mini game in the partner ad: tag held to the phone (`method` drag|tap) or replay.
+  // Mini games in the partner ad: tag held to the phone (`block`, `method`
+  // drag|tap), `replay`, and the 30 s challenge (`challenge-start`,
+  // `challenge-end` with `result` won|lost and `score`). Never personal.
   partnerPlay: "partner-play",
 } as const;

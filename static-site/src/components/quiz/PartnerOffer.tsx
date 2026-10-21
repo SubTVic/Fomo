@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
+import { useState } from "react";
 import { track, EVENTS } from "@/lib/analytics";
 import { PARTNER_COPY, PARTNER_OFFER, type PartnerPlacement } from "@/lib/partner";
+import { FokusChallenge } from "./FokusChallenge";
 import { FokusTagGame } from "./FokusTagGame";
 
 type Lang = "de" | "en";
@@ -61,6 +63,7 @@ function PartnerLink({
 
 /** Ad card shown directly below the result list (variant 1). */
 export function PartnerCard({ lang }: { lang: Lang }) {
+  const [mode, setMode] = useState<"demo" | "challenge">("demo");
   if (!PARTNER_OFFER.enabled) return null;
   const t = PARTNER_COPY[lang];
   return (
@@ -74,7 +77,11 @@ export function PartnerCard({ lang }: { lang: Lang }) {
         <AdLabel lang={lang} className="opacity-80" />
       </div>
       <p className="font-heading text-lg leading-tight sm:text-xl">{t.cardTitle}</p>
-      <FokusTagGame lang={lang} />
+      {mode === "challenge" ? (
+        <FokusChallenge lang={lang} onExit={() => setMode("demo")} />
+      ) : (
+        <FokusTagGame lang={lang} onChallenge={() => setMode("challenge")} />
+      )}
       <p className="max-w-[680px] text-sm leading-relaxed opacity-90 sm:text-base">{t.cardText}</p>
       <PartnerLink
         placement="results-card"

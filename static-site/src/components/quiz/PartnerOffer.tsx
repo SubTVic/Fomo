@@ -82,59 +82,113 @@ export function PartnerCard({ lang }: { lang: Lang }) {
   );
 }
 
-/** Coupon with a copyable code, shown above the feedback box (variant 3). */
+/**
+ * Coupon with a perforated stub (variant 3). Tapping the stub tears it off:
+ * it swings down and falls away, the code is copied and the shop link appears.
+ */
 export function PartnerCoupon({ lang }: { lang: Lang }) {
+  const [stage, setStage] = useState<"intact" | "tearing" | "torn">("intact");
+  const [clipboardOk, setClipboardOk] = useState(true);
   const [copied, setCopied] = useState(false);
   if (!PARTNER_OFFER.enabled) return null;
   const t = PARTNER_COPY[lang];
 
-  async function copyCode() {
-    track(EVENTS.partnerCodeCopy, { partner: PARTNER_OFFER.id });
+  async function writeCode(): Promise<boolean> {
     try {
       await navigator.clipboard.writeText(PARTNER_OFFER.code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
+      return true;
     } catch {
-      // clipboard blocked — the code stays visible and selectable
+      return false; // clipboard blocked — the code stays visible and selectable
     }
   }
 
+  function tearOff() {
+    if (stage !== "intact") return;
+    track(EVENTS.partnerCodeCopy, { partner: PARTNER_OFFER.id, method: "tear" });
+    setStage("tearing");
+    // Fallback in case animationend never fires (animations disabled).
+    setTimeout(() => setStage("torn"), 1200);
+    // Started inside the click handler so mobile browsers allow the write.
+    void writeCode().then(setClipboardOk);
+  }
+
+  async function copyAgain() {
+    track(EVENTS.partnerCodeCopy, { partner: PARTNER_OFFER.id, method: "button" });
+    if (await writeCode()) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    }
+  }
+
+  const torn = stage === "torn";
+
   return (
-    <aside
-      aria-label={t.label}
-      className="mt-8 grid gap-3 border-poster p-5 sm:grid-cols-[1fr_auto] sm:items-center"
-      style={{ backgroundColor: CREAM, color: BLUE }}
-    >
-      <div className="grid gap-2">
+    <aside aria-label={t.label} className="mt-8 flex" style={{ color: BLUE }}>
+      <div
+        className="relative grid min-w-0 flex-1 content-start gap-2 border-4 border-navy p-5"
+        style={{ backgroundColor: CREAM, borderRight: `3px dashed ${BLUE}` }}
+      >
         <div className="flex items-center gap-3">
           <Logo variant="blue" className="h-4" />
           <AdLabel lang={lang} className="opacity-70" />
         </div>
         <p className="font-heading text-base sm:text-lg">{t.couponTitle}</p>
-        <p className="text-sm">{t.couponText}</p>
+        {torn ? (
+          <div className="grid gap-2 animate-fade-up" aria-live="polite">
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className="select-all border-2 border-dashed px-3 py-1.5 font-mono text-lg font-bold tracking-wider"
+                style={{ borderColor: BLUE }}
+              >
+                {PARTNER_OFFER.code}
+              </span>
+              <button
+                type="button"
+                onClick={copyAgain}
+                className="border-2 bg-white px-3 py-2 text-sm font-semibold transition-opacity hover:opacity-80"
+                style={{ borderColor: BLUE, color: BLUE }}
+              >
+                {copied ? t.copied : t.copy}
+              </button>
+              <PartnerLink
+                placement="results-coupon"
+                className="border-2 px-3 py-2 text-sm font-semibold transition-opacity hover:opacity-90"
+                style={{ backgroundColor: BLUE, color: CREAM, borderColor: BLUE }}
+              >
+                {t.couponCta} →
+              </PartnerLink>
+            </div>
+            <p className="text-sm">{clipboardOk ? t.torn : t.tornNoClipboard}</p>
+          </div>
+        ) : (
+          <p className="text-sm">{t.couponText}</p>
+        )}
+        {!torn && (
+          <>
+            {/* notches punched into the perforation line */}
+            <span aria-hidden className="absolute -right-[14px] -top-[14px] z-10 h-6 w-6 rounded-full border-4 border-navy bg-sky" />
+            <span aria-hidden className="absolute -bottom-[14px] -right-[14px] z-10 h-6 w-6 rounded-full border-4 border-navy bg-sky" />
+          </>
+        )}
       </div>
-      <div className="flex flex-wrap items-center gap-2">
-        <span
-          className="select-all border-2 border-dashed px-3 py-1.5 font-mono text-lg font-bold tracking-wider"
-          style={{ borderColor: BLUE }}
-        >
-          {PARTNER_OFFER.code}
-        </span>
-        <button
-          type="button"
-          onClick={copyCode}
-          className="border-2 bg-white px-3 py-2 text-sm font-semibold transition-opacity hover:opacity-80"
-          style={{ borderColor: BLUE, color: BLUE }}
-        >
-          {copied ? t.copied : t.copy}
-        </button>
-        <PartnerLink
-          placement="results-coupon"
-          className="border-2 px-3 py-2 text-sm font-semibold transition-opacity hover:opacity-90"
-          style={{ backgroundColor: BLUE, color: CREAM, borderColor: BLUE }}
-        >
-          {t.couponCta} →
-        </PartnerLink>
+      {/* the slot keeps its width while the stub falls, then collapses */}
+      <div className={`shrink-0 transition-[width] duration-300 ${torn ? "w-0" : "w-24"}`}>
+        {!torn && (
+          <button
+            type="button"
+            onClick={tearOff}
+            onAnimationEnd={() => setStage("torn")}
+            aria-label={t.tearAria}
+            disabled={stage === "tearing"}
+            className={`relative z-20 flex h-full w-full flex-col items-center justify-center gap-1 border-4 border-l-0 border-navy px-2 py-4 text-center transition-colors ${
+              stage === "tearing" ? "animate-coupon-tear" : "hover:brightness-125"
+            }`}
+            style={{ backgroundColor: BLUE, color: CREAM }}
+          >
+            <span aria-hidden className="text-2xl leading-none">✂</span>
+            <span className="font-heading text-xs uppercase leading-tight">{t.tear}</span>
+          </button>
+        )}
       </div>
     </aside>
   );

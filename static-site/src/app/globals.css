@@ -68,6 +68,29 @@ h3 {
   animation: fomo-fade-up 0.3s ease-out both;
 }
 
+/* Coupon stub tearing off along the perforation, then falling away. */
+@keyframes fomo-coupon-tear {
+  0% {
+    transform: none;
+    opacity: 1;
+  }
+  12% {
+    transform: rotate(-3deg);
+  }
+  28% {
+    transform: rotate(7deg) translateX(4px);
+  }
+  100% {
+    transform: translateY(260px) rotate(38deg);
+    opacity: 0;
+  }
+}
+
+@utility animate-coupon-tear {
+  transform-origin: top left;
+  animation: fomo-coupon-tear 0.9s cubic-bezier(0.55, 0, 0.8, 0.4) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

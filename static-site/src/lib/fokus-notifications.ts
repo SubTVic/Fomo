@@ -6,7 +6,8 @@
  * Tiers unlock the longer you survive, so long runs keep showing new
  * messages: 0 from the start, 1 after 15 s, 2 after 40 s, 3 ("legendary")
  * after 70 s and only now and then. Unseen messages are preferred.
- * Keep it light: student life, no real people, nothing mean-spirited.
+ * Keep it light: student life in Dresden, nothing mean-spirited. Lines
+ * marked "topical" refer to autumn 2026 and should be swapped later.
  */
 
 export type Tier = 0 | 1 | 2 | 3;
@@ -31,6 +32,7 @@ export const VIA = {
   DVB: "#f5a300",
   Mensa: "#e65100",
   Bank: "#455a64",
+  Dynamo: "#d4af00",
   FOKUS: "#182078",
 } as const;
 
@@ -51,6 +53,9 @@ export const DISTRACTIONS: Distraction[] = [
   d(0, "BeReal", t("BeReal", "BeReal"), t("⚠️ Zeit für dein BeReal!", "⚠️ Time to BeReal!")),
   d(0, "YouTube", t("YouTube", "YouTube"), t("Neu: „10 Hacks fürs Studium“", "New: “10 study hacks”")),
   d(0, "Snapchat", t("Snapchat", "Snapchat"), t("3 neue Snaps", "3 new snaps")),
+  d(0, "WhatsApp", t("Ex", "Ex"), t("ich vermiss dich 🥺", "i miss you 🥺")),
+  d(0, "DVB", t("DVB", "DVB"), t("Linie 3: Verspätung ca. 12 Min.", "Tram 3: delayed approx. 12 min")),
+  d(0, "YouTube", t("YouTube", "YouTube"), t("DorFuchs hat ein neues Video hochgeladen 🎵", "DorFuchs uploaded a new video 🎵")),
 
   // tier 1 — after 15 s
   d(1, "WhatsApp", t("Kommilitone", "Coursemate"), t("Kannst du mir deine Mitschrift schicken? 🙏", "Can you send me your notes? 🙏")),
@@ -66,6 +71,12 @@ export const DISTRACTIONS: Distraction[] = [
   d(1, "Tinder", t("Tinder", "Tinder"), t("Neues Match! Es ist … dein Tutor.", "New match! It's … your tutor.")),
   d(1, "Spotify", t("Spotify", "Spotify"), t("Dein Rückblick: 14 h Lo-Fi zum „Lernen“", "Your recap: 14 h of lo-fi “to study”")),
   d(1, "WhatsApp", t("Papa", "Dad"), t("Hast du den Brief vom Amt gesehen?", "Did you see the letter from the council?")),
+  d(1, "WhatsApp", t("Ex", "Ex"), t("weißt du noch, unser erstes Date an der Elbe?", "remember our first date by the Elbe?")),
+  d(1, "WhatsApp", t("Neustadt-Crew", "Neustadt crew"), t("Elbwiesen, 18 Uhr, Sonnenuntergang? 🌅", "Elbe meadows, 6 pm, sunset? 🌅")),
+  d(1, "Dynamo", t("Dynamo-Fanclub", "Dynamo fan club"), t("Pokal gegen Schalke, Mi 18 Uhr. Bist du dabei? ⚽", "Cup vs Schalke, Wed 6 pm. You in? ⚽")), // topical
+  d(1, "Mensa", t("Mensa Zeltschlösschen", "Zeltschlösschen canteen"), t("Heute: Pizza-Tag. Schlange bis zur Tür.", "Today: pizza day. Queue to the door.")),
+  d(1, "SLUB", t("SLUB", "SLUB library"), t("Alle Arbeitsplätze belegt. Viel Glück.", "All study desks taken. Good luck.")),
+  d(1, "WhatsApp", t("Kommilitone", "Coursemate"), t("HSZ 03 ist voll, ich sitz auf der Treppe", "HSZ 03 is full, I'm sitting on the stairs")),
 
   // tier 2 — after 40 s
   d(2, "WhatsApp", t("Ex", "Ex"), t("hab noch deinen Hoodie. willst du den zurück?", "still have your hoodie. want it back?")),
@@ -81,6 +92,12 @@ export const DISTRACTIONS: Distraction[] = [
   d(2, "Duolingo", t("Duolingo 🦉", "Duolingo 🦉"), t("Die Eule ist enttäuscht.", "The owl is disappointed.")),
   d(2, "WhatsApp", t("Mama", "Mum"), t("Papa hat Facebook entdeckt.", "Dad discovered Facebook.")),
   d(2, "WhatsApp", t("WG-Chat", "Flat chat"), t("Hat jemand den Neuen schon mal gesehen?", "Has anyone actually seen the new flatmate?")),
+  d(2, "WhatsApp", t("Ex", "Ex"), t("sorry, die war nicht für dich 😅", "sorry, that wasn't meant for you 😅")),
+  d(2, "WhatsApp", t("Mitbewohni", "Flatmate"), t("Dein Fahrrad ist weg. Das Schloss ist noch da.", "Your bike is gone. The lock is still there.")),
+  d(2, "DVB", t("DVB", "DVB"), t("Marathon am Sonntag: Dein Bus fährt nicht.", "Marathon on Sunday: your bus isn't running.")), // topical
+  d(2, "Instagram", t("Dresden Monarchs", "Dresden Monarchs"), t("Deutscher Meister! 🏈 Party heute Abend?", "German champions! 🏈 Party tonight?")), // topical
+  d(2, "WhatsApp", t("Oma aus Pirna", "Grandma from Pirna"), t("Nu, wie isses? Kommste Sonntag zum Kuchen?", "So, how are you? Coming for cake on Sunday?")),
+  d(2, "WhatsApp", t("WG-Chat", "Flat chat"), t("Wer hat die Fettbemme im Kühlschrank vergessen?", "Who left the lard sandwich in the fridge?")),
 
   // tier 3 — legendary, after 70 s and rare
   d(3, "WhatsApp", t("Crush 💘", "Crush 💘"), t("lustig, dein Ex ist mein Cousin 😳", "funny, your ex is my cousin 😳")),
@@ -91,6 +108,9 @@ export const DISTRACTIONS: Distraction[] = [
   d(3, "WhatsApp", t("Oma", "Grandma"), t("WIE MACHT MAN HIER KLEINE BUCHSTABEN", "HOW DO I DO SMALL LETTERS")),
   d(3, "Mail", t("BAföG-Amt", "Student finance"), t("Ihr Antrag ist … unvollständig.", "Your application is … incomplete.")),
   d(3, "WhatsApp", t("Ex", "Ex"), t("bin übrigens auch in deiner Hochschulgruppe 🙂", "btw I joined your student group too 🙂")),
+  d(3, "WhatsApp", t("Ex", "Ex"), t("hab gehört, du bist jetzt im K-Block?? seit wann magst du Fußball", "heard you're in the Dynamo end now?? since when do you like football")),
+  d(3, "Mail", t("Stadt Dresden", "City of Dresden"), t("Fernsehturm: Wiedereröffnung verschoben. Auf 2030.", "TV tower: reopening postponed. To 2030.")),
+  d(3, "WhatsApp", t("Crush 💘", "Crush 💘"), t("Striezelmarkt nächste Woche? Glühwein geht auf mich", "Striezelmarkt next week? Mulled wine's on me")),
   d(3, "FOKUS", t("FOKUS", "FOKUS"), t("Psst. Mit mir wär das nicht passiert. 😌", "Psst. This wouldn't happen with me. 😌")),
 ];
 

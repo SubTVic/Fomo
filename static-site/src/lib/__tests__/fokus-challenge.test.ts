@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from "vitest";
-import { CHARGE_FULL, elapsed, initial, reducer, spawnGap } from "@/components/quiz/FokusChallenge";
+import { CHARGE_FULL, CHARGE_STEP, chargeNeeded, elapsed, initial, reducer, spawnGap } from "@/components/quiz/FokusChallenge";
 import { DISTRACTIONS, pickDistraction } from "@/lib/fokus-notifications";
 
 const tick = (s: ReturnType<typeof reducer>, now: number) => reducer(s, { type: "tick", now, r1: 0.9, r2: 0.5, r3: 0.3, r4: 0.7 });
@@ -100,13 +100,8 @@ describe("Fokus mini game", () => {
 
   it("is lost when a notification has no free slot", () => {
     let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
-    // first overflow → quick-time event (the once-per-round rescue) …
     for (let t = 100; t <= 8_000 && s.phase === "playing"; t += 100) s = tick(s, t);
-    expect(s.phase).toBe("qte");
-    // … ignored → distracted
-    const qteAt = s.now;
-    s = tick(s, qteAt + 2_100);
-    expect(s.phase).toBe("lost");
+    expect(s.phase).toBe("lost"); // full screen ends the round, no rescue
     expect(s.survivedMs).toBeGreaterThan(0);
   });
 
@@ -136,38 +131,15 @@ describe("Fokus mini game", () => {
     expect(s.score).toBe(1 + 2 * 2); // two left on screen, ×2
   });
 
-  it("full screen with a charged tag: one tap in the quick-time event saves you", () => {
-    const full = (charge: number, rescueUsed = false) => ({
-      ...reducer(initial, { type: "boot", now: 0, tutorial: false }),
-      charge,
-      rescueUsed,
-      nextSpawnAt: 0,
-      notes: [0, 1, 2, 3, 4].map((slot) => ({ id: slot + 1, kind: "bad" as const, idx: 0, born: 0, slot })),
-    });
-    let s = tick(full(CHARGE_FULL), 1_000);
-    expect(s.phase).toBe("qte");
-    expect(s.qteNeed).toBe(1);
-    expect(elapsed(s, 1_800)).toBe(elapsed(s, 1_000)); // clock frozen during the event
-    s = reducer(s, { type: "tag", now: 1_500 });
-    expect(s.phase).toBe("playing");
-    expect(s.notes.filter((n) => n.leftAt === undefined).length).toBe(0);
-    expect(s.score).toBe(10); // 5 cleared ×2
-  });
-
-  it("uncharged: 8 taps rescue you once per round, the second time you lose", () => {
-    const full = (rescueUsed: boolean) => ({
-      ...reducer(initial, { type: "boot", now: 0, tutorial: false }),
-      rescueUsed,
-      nextSpawnAt: 0,
-      notes: [0, 1, 2, 3, 4].map((slot) => ({ id: slot + 1, kind: "bad" as const, idx: 0, born: 0, slot })),
-    });
-    let s = tick(full(false), 1_000);
-    expect(s.qteNeed).toBe(8);
-    for (let i = 0; i < 7; i++) s = reducer(s, { type: "tag", now: 1_100 + i * 100 });
-    expect(s.phase).toBe("qte");
-    s = reducer(s, { type: "tag", now: 1_900 });
-    expect(s.phase).toBe("playing");
-    expect(s.rescueUsed).toBe(true);
-    expect(tick(full(true), 1_000).phase).toBe("lost");
+  it("each tag use makes the next charge take longer", () => {
+    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
+    expect(chargeNeeded(s)).toBe(CHARGE_FULL);
+    s = reducer({ ...s, charge: CHARGE_FULL }, { type: "tag", now: 100 });
+    expect(chargeNeeded(s)).toBe(CHARGE_FULL + CHARGE_STEP);
+    // 12 is no longer enough …
+    expect(reducer({ ...s, charge: CHARGE_FULL, calmUntil: 0 }, { type: "tag", now: 20_000 }).tagUses).toBe(1);
+    // … 16 is
+    s = reducer({ ...s, charge: CHARGE_FULL + CHARGE_STEP }, { type: "tag", now: 20_000 });
+    expect(chargeNeeded(s)).toBe(CHARGE_FULL + 2 * CHARGE_STEP);
   });
 });

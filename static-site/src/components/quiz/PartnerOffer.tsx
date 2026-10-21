@@ -169,7 +169,6 @@ export function PartnerCard({ lang }: { lang: Lang }) {
       {/* remounting the demo after the game resets it to its idle state */}
       <FokusTagGame key={mode} lang={lang} onChallenge={mode === "demo" ? () => setMode("challenge") : undefined} />
       {mode === "challenge" && <GameLayer lang={lang} tutorial={!played} onClose={closeGame} />}
-      <p className="max-w-[680px] text-sm leading-relaxed opacity-90 sm:text-base">{t.cardText}</p>
       <PartnerLink
         placement="results-card"
         className="border-2 px-6 py-3 text-center font-heading transition-opacity hover:opacity-90 sm:justify-self-start"

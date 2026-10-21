@@ -14,11 +14,6 @@ describe("partner offer", () => {
     expect(PARTNER_COPY.de.label).toBe("Anzeige");
     expect(PARTNER_COPY.en.label).toBe("Ad");
   });
-
-  it("mentions the same code in the card text it links to", () => {
-    expect(PARTNER_COPY.de.cardText).toContain(PARTNER_OFFER.code);
-    expect(PARTNER_COPY.en.cardText).toContain(PARTNER_OFFER.code);
-  });
 });
 
 describe("partner ad works in English too", () => {

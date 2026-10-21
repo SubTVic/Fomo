@@ -367,7 +367,7 @@ export function FokusChallenge({
   const flashColor = { go: CREAM, oops: CREAM, seen: "#7dffb4", burst: "#ffd34d", tag: "#7dffb4" };
   const tutHint = inTutorial ? [c.tutTap, c.tutGroup, c.tutTag, null][s.tutStep] : null;
   const stunned = running && s.now < s.stunnedUntil;
-  const hint = flashOn && s.flash ? flashText[s.flash.text] : stunned ? c.stunned : calm ? null : tutHint;
+  const hint = flashOn && s.flash ? flashText[s.flash.text] : stunned ? c.stunned : null;
   const hintColor = flashOn && s.flash ? flashColor[s.flash.text] : CREAM;
 
   return (
@@ -501,6 +501,18 @@ export function FokusChallenge({
               </p>
             )}
           </div>
+        )}
+
+        {/* tutorial hint, big in the middle of the screen where the eyes are;
+            taps go through to the notification underneath */}
+        {tutHint && !calm && (
+          <p
+            key={s.tutStep}
+            className={`animate-stamp pointer-events-none absolute inset-x-4 z-20 -translate-y-1/2 ${s.tutStep === 2 ? "top-[71%]" : "top-[56%]"} rounded-2xl px-4 py-3 text-center font-heading text-xl leading-tight shadow-[0_8px_24px_rgba(0,0,0,0.45)]`}
+            style={{ backgroundColor: CREAM, color: BLUE }}
+          >
+            {tutHint}
+          </p>
         )}
 
         {/* the device pressed onto the screen when used */}

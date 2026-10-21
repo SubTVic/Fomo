@@ -35,8 +35,6 @@ export const PARTNER_COPY = {
     focusOn: "Fokus-Modus an",
     blocked: "Ablenkungen geblockt",
     again: "Nochmal",
-    cardText:
-      "Der FOKUS-Tag sperrt ablenkende Apps wie TikTok oder Instagram, bis du ihn an dein iPhone hältst. Mit Code FOMO26 bekommst du Rabatt.",
     cardCta: "Zum Rabatt",
   },
   en: {
@@ -50,8 +48,6 @@ export const PARTNER_COPY = {
     focusOn: "Focus mode on",
     blocked: "distractions blocked",
     again: "Again",
-    cardText:
-      "The FOKUS tag blocks distracting apps like TikTok or Instagram until you hold it to your iPhone. Code FOMO26 gets you a discount.",
     cardCta: "Get the discount",
   },
 } as const;

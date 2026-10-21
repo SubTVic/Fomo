@@ -68,72 +68,7 @@ h3 {
   animation: fomo-fade-up 0.3s ease-out both;
 }
 
-/* Coupon stub tearing off along the perforation, then falling away. */
-@keyframes fomo-coupon-tear {
-  0% {
-    transform: none;
-    opacity: 1;
-  }
-  12% {
-    transform: rotate(-3deg);
-  }
-  28% {
-    transform: rotate(7deg) translateX(4px);
-  }
-  100% {
-    transform: translateY(260px) rotate(38deg);
-    opacity: 0;
-  }
-}
-
-@utility animate-coupon-tear {
-  transform-origin: top left;
-  animation: fomo-coupon-tear 0.9s cubic-bezier(0.55, 0, 0.8, 0.4) both;
-}
-
-/* --- Partner ad mini games ------------------------------------------- */
-
-/* Stub of the coupon nudges itself every few seconds: "tear me". */
-@keyframes fomo-coupon-wiggle {
-  0%,
-  84%,
-  100% {
-    transform: none;
-  }
-  87% {
-    transform: rotate(-7deg);
-  }
-  90% {
-    transform: rotate(6deg);
-  }
-  93% {
-    transform: rotate(-4deg);
-  }
-  96% {
-    transform: rotate(2deg);
-  }
-}
-
-@utility animate-coupon-wiggle {
-  transform-origin: top left;
-  animation: fomo-coupon-wiggle 3.4s ease-in-out 1s infinite;
-}
-
-/* Paper scraps flying off the perforation. Direction via --dx/--dy/--rot. */
-@keyframes fomo-scrap {
-  from {
-    transform: translate(0, 0) rotate(0);
-    opacity: 1;
-  }
-  to {
-    transform: translate(var(--dx), var(--dy)) rotate(var(--rot));
-    opacity: 0;
-  }
-}
-
-@utility animate-scrap {
-  animation: fomo-scrap 0.85s cubic-bezier(0.2, 0.7, 0.3, 1) both;
-}
+/* --- Partner ad mini game -------------------------------------------- */
 
 /* Something slammed down like a rubber stamp. */
 @keyframes fomo-stamp {

@@ -66,9 +66,8 @@ export const EVENTS = {
   // labels only) — pageviews drop query strings, so this is the only record.
   campaignVisit: "campaign-visit",
   // Paid partner placement on the results page (see lib/partner.ts): outbound
-  // click (`placement`) and copying the discount code. Partner id only.
+  // click (`placement`). Partner id only.
   partnerClick: "partner-click",
-  partnerCodeCopy: "partner-code-copy",
   // Mini game in the partner ad: tag held to the phone (`method` drag|tap) or replay.
   partnerPlay: "partner-play",
 } as const;

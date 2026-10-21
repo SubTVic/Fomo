@@ -10,7 +10,7 @@
  * - Never touches matching or ranking — it is rendered after the list.
  *
  * To end the campaign set `enabled: false` (or delete this file and the
- * <PartnerCard>/<PartnerCoupon> usages in ResultsScreen).
+ * <PartnerCard> usage in ResultsScreen).
  */
 export const PARTNER_OFFER = {
   enabled: true,
@@ -21,7 +21,7 @@ export const PARTNER_OFFER = {
   code: "FOMO26",
 } as const;
 
-export type PartnerPlacement = "results-card" | "results-coupon";
+export type PartnerPlacement = "results-card";
 
 export const PARTNER_COPY = {
   de: {
@@ -38,15 +38,6 @@ export const PARTNER_COPY = {
     cardText:
       "Der FOKUS-Tag sperrt ablenkende Apps wie TikTok oder Instagram, bis du ihn an dein iPhone hältst. Mit Code FOMO26 bekommst du Rabatt.",
     cardCta: "Zum Rabatt",
-    couponTitle: "Rabatt-Code für den FOKUS-Tag",
-    couponText: "Reiß den Gutschein ab, dann ist dein Code kopiert.",
-    tear: "Abreißen",
-    tearAria: "Gutschein abreißen und Rabatt-Code kopieren",
-    torn: "Code kopiert. Im FOKUS-Shop einfügen.",
-    tornNoClipboard: "Im FOKUS-Shop einfügen.",
-    copy: "Nochmal kopieren",
-    copied: "Kopiert",
-    couponCta: "Zum Shop",
   },
   en: {
     label: "Ad",
@@ -62,15 +53,6 @@ export const PARTNER_COPY = {
     cardText:
       "The FOKUS tag blocks distracting apps like TikTok or Instagram until you hold it to your iPhone. Code FOMO26 gets you a discount.",
     cardCta: "Get the discount",
-    couponTitle: "Discount code for the FOKUS tag",
-    couponText: "Tear off the coupon and your code is copied.",
-    tear: "Tear off",
-    tearAria: "Tear off the coupon and copy the discount code",
-    torn: "Code copied. Paste it in the FOKUS shop.",
-    tornNoClipboard: "Enter it in the FOKUS shop.",
-    copy: "Copy again",
-    copied: "Copied",
-    couponCta: "Go to shop",
   },
 } as const;
 

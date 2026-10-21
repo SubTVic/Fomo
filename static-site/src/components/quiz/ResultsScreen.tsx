@@ -11,7 +11,7 @@ import { withUtm, fomoMailto } from "@/lib/utm";
 import { ShareButton } from "./ShareButton";
 import { QrShare } from "./QrShare";
 import { CompareGroups } from "./CompareGroups";
-import { PartnerCard, PartnerCoupon } from "./PartnerOffer";
+import { PartnerCard } from "./PartnerOffer";
 
 interface ResultsScreenProps {
   matches: MatchResult[];
@@ -273,7 +273,6 @@ export function ResultsScreen({
         </Link>
       </p>
 
-      <PartnerCoupon lang={lang} />
       <ResultsFeedback lang={lang} r={resultsParam} />
       <SelfRecognition matches={matches} lang={lang} r={resultsParam} />
     </div>

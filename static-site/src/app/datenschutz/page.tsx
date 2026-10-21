@@ -93,8 +93,7 @@ E-Mail: fomo@yeti-dresden.org`}
             werden (aus dem Browsen, den Ergebnissen oder von Profilseiten), Bedienelemente wie die
             Vergleichs-Ansicht, Sprachumschaltung, ob du über einen Kampagnen-Link (z. B. eine
             Anzeige) gekommen bist und über welchen, der Klick auf „Gruppe registrieren“, Klicks auf
-            eine Partner-Anzeige auf der Ergebnisseite (auch das Mini-Spiel darin und das Kopieren ihres
-            Rabatt-Codes) oder das
+            eine Partner-Anzeige auf der Ergebnisseite (auch das Mini-Spiel darin) oder das
             optionale 👍/👎-Feedback, die freiwillige
             Angabe, ob du bereits Mitglied einer Hochschulgruppe bist (und welcher), und – zur
             Verbesserung des Frage- und Matching-Konzepts – die{" "}

@@ -5,6 +5,7 @@ import { useEffect, useReducer, useRef } from "react";
 import { track, EVENTS } from "@/lib/analytics";
 import { DISTRACTIONS, GROUP_MESSAGES, VIA, pickDistraction } from "@/lib/fokus-notifications";
 import { CHALLENGE_COPY, PARTNER_OFFER } from "@/lib/partner";
+import { FokusDevice } from "./FokusDevice";
 
 type Lang = "de" | "en";
 
@@ -13,8 +14,11 @@ const CREAM = "#fefaf3";
 const GOOD_GREEN = "#10c463";
 
 const SLOTS = 5; // fixed places on the screen; no free slot when spawning = distracted
-const CHARGE_FULL = 5; // blocks needed to charge the tag
-const CALM_MS = 2_500; // full pause after using the tag: clock, speed and bursts freeze
+/** The tag is the big joker: slow to charge, but it clears the screen for
+ *  double points, pauses everything for 4 s and even breaks a stun. */
+export const CHARGE_FULL = 12; // blocks needed to charge the tag
+const CALM_MS = 4_000; // full pause after using the tag: clock, speed and bursts freeze
+const TAG_MULTIPLIER = 2;
 const GOOD_TTL = 2_400; // a group message disappears on its own after this
 const GOOD_TTL_TUTORIAL = 3_000;
 const GROUP_PENALTY = 5; // tapping your own group has to hurt …
@@ -42,8 +46,9 @@ export function spawnGap(elapsed: number): number {
 /** Notifications keep a fixed slot so nothing jumps while you aim at it. */
 type Note = { id: number; kind: "bad" | "good"; idx: number; born: number; slot: number; leftAt?: number };
 type Phase = "tutorial" | "playing" | "lost";
-/** Hands-on tutorial, two words of text each: 0 block one · 1 leave the group message · 2 use the tag */
-type TutStep = 0 | 1 | 2;
+/** Hands-on tutorial with one short line each: 0 block one · 1 leave the group
+ *  message · 2 use the tag · 3 let the tag effect play, then the round starts */
+type TutStep = 0 | 1 | 2 | 3;
 
 interface State {
   phase: Phase;
@@ -59,7 +64,7 @@ interface State {
   charge: number;
   calmUntil: number;
   nextId: number;
-  flash: { text: "go" | "oops" | "seen" | "burst"; at: number } | null;
+  flash: { text: "go" | "oops" | "seen" | "burst" | "tag"; at: number; n?: number } | null;
   ripples: number; // bumps on each tag use → re-keys the ripple
   stunnedUntil: number;
   pausedMs: number; // total focus-mode time, excluded from the round clock
@@ -167,8 +172,9 @@ export function reducer(s: State, a: Action): State {
       let next: State = { ...s, now, notes, score, flash };
 
       if (s.phase === "tutorial") {
+        if (s.tutStep === 3) return now - (s.flash?.at ?? 0) > 1_400 ? startRound(next, now) : next; // "Los! 🔥"
         if (s.tutSpawned && !notes.some(active)) {
-          if (s.tutStep === 2) return startRound(next, now); // "Los! 🔥"
+          if (s.tutStep === 2) return { ...next, tutStep: 3 };
           return { ...next, tutStep: (s.tutStep + 1) as TutStep, tutSpawned: false, nextSpawnAt: now + 600 };
         }
         if (!s.tutSpawned && now >= s.nextSpawnAt) {
@@ -237,15 +243,18 @@ export function reducer(s: State, a: Action): State {
     }
 
     case "tag": {
-      if ((s.phase !== "playing" && s.phase !== "tutorial") || s.charge < CHARGE_FULL || a.now < s.stunnedUntil) return s;
+      // usable while stunned on purpose: the tag is the way out
+      if ((s.phase !== "playing" && s.phase !== "tutorial") || s.charge < CHARGE_FULL) return s;
       const hit = s.notes.filter((n) => active(n) && n.kind === "bad").length;
       const notes = s.notes.map((n) => (active(n) && n.kind === "bad" ? { ...n, leftAt: a.now } : n));
       const calmUntil = a.now + CALM_MS;
       return {
         ...s,
         notes,
-        score: s.score + hit,
+        score: s.score + hit * TAG_MULTIPLIER,
         blocked: s.blocked + hit,
+        stunnedUntil: 0,
+        flash: { text: "tag", at: a.now, n: hit * TAG_MULTIPLIER },
         charge: 0,
         calmUntil,
         pausedMs: s.pausedMs + CALM_MS,
@@ -325,9 +334,15 @@ export function FokusChallenge({
   const survived = s.phase === "lost" ? s.survivedMs : inTutorial ? 0 : elapsed(s, s.now);
   const ready = s.charge >= CHARGE_FULL;
   const flashOn = s.flash !== null && s.now - s.flash.at < 900;
-  const flashText = { go: c.go, oops: c.oops, seen: c.seen, burst: c.burst };
-  const flashColor = { go: CREAM, oops: CREAM, seen: "#7dffb4", burst: "#ffd34d" };
-  const tutHint = inTutorial ? [c.tutTap, c.tutGroup, c.tutTag][s.tutStep] : null;
+  const flashText = {
+    go: c.go,
+    oops: c.oops,
+    seen: c.seen,
+    burst: c.burst,
+    tag: c.tagged.replace("{n}", String(s.flash?.n ?? 0)),
+  };
+  const flashColor = { go: CREAM, oops: CREAM, seen: "#7dffb4", burst: "#ffd34d", tag: "#7dffb4" };
+  const tutHint = inTutorial ? [c.tutTap, c.tutGroup, c.tutTag, null][s.tutStep] : null;
   const stunned = running && s.now < s.stunnedUntil;
   const hint = flashOn && s.flash ? flashText[s.flash.text] : stunned ? c.stunned : calm ? `🔒 ${c.calm}` : tutHint;
   const hintColor = flashOn && s.flash ? flashColor[s.flash.text] : CREAM;
@@ -433,15 +448,6 @@ export function FokusChallenge({
           })}
         </div>
 
-        {hint && (
-          <p
-            key={`${hint}-${s.flash?.at ?? 0}`}
-            className="animate-stamp pointer-events-none absolute inset-x-2 bottom-[70px] z-20 text-center font-heading text-sm leading-tight"
-            style={{ color: hintColor }}
-          >
-            {hint}
-          </p>
-        )}
         {stunned && (
           <div key={s.stunnedUntil} aria-hidden className="pointer-events-none absolute inset-0 z-10">
             <div className="animate-stun-flash absolute inset-0 bg-[#ff3b3b]" />
@@ -452,33 +458,32 @@ export function FokusChallenge({
             />
           </div>
         )}
-        {/* tag dock: charge bar, then a big tag button inside the screen */}
-        <div className="absolute inset-x-2.5 bottom-2.5 h-[52px]">
-          {ready && running && !stunned ? (
-            <button
-              type="button"
-              aria-label={c.tagAria}
-              onPointerDown={() => dispatch({ type: "tag", now: performance.now() })}
-              onClick={() => dispatch({ type: "tag", now: performance.now() })}
-              className="animate-stamp relative flex h-full w-full touch-manipulation items-center justify-center gap-2 rounded-full font-heading text-sm uppercase"
-              style={{ backgroundColor: CREAM, color: BLUE, boxShadow: `inset 0 0 0 4px ${CREAM}, inset 0 0 0 7px ${BLUE}` }}
-            >
-              <span aria-hidden className="motion-safe:animate-pulse-ring absolute inset-0 rounded-full border-4" style={{ borderColor: CREAM }} />
-              {c.tagCta}
-            </button>
-          ) : (
-            <div className="grid h-full content-center gap-1 px-1">
-              <div className="h-2.5 overflow-hidden rounded-full bg-white/15">
-                <div
-                  className="h-full rounded-full transition-[width] duration-200"
-                  style={{ width: `${(s.charge / CHARGE_FULL) * 100}%`, backgroundColor: CREAM }}
-                />
-              </div>
-              <p className="text-center text-[10px] font-bold uppercase tracking-wider opacity-80">
-                {c.tagCharging} {s.charge}/{CHARGE_FULL}
-              </p>
-            </div>
-          )}
+        {/* the device pressed onto the screen when used */}
+        {flashOn && s.flash?.text === "tag" && (
+          <div key={s.flash.at} aria-hidden className="animate-stamp pointer-events-none absolute left-1/2 top-[42%] z-20 -translate-x-1/2 -translate-y-1/2">
+            <FokusDevice size={112} />
+          </div>
+        )}
+
+        {/* tag dock, where the thumb is: the FOKUS device + one line of feedback */}
+        <div className="absolute inset-x-2.5 bottom-2 z-20 flex h-[76px] items-center gap-3">
+          <button
+            type="button"
+            aria-label={c.tagAria}
+            disabled={!running || !ready}
+            onPointerDown={() => dispatch({ type: "tag", now: performance.now() })}
+            onClick={() => dispatch({ type: "tag", now: performance.now() })}
+            className={`shrink-0 touch-manipulation disabled:cursor-default ${ready && running ? "motion-safe:animate-pulse" : "opacity-90"}`}
+          >
+            <FokusDevice size={68} charge={s.charge / CHARGE_FULL} ready={ready && running} />
+          </button>
+          <p
+            key={`${hint ?? ""}-${s.flash?.at ?? 0}`}
+            className={`min-w-0 font-heading text-[13px] leading-tight ${hint ? "animate-stamp" : "opacity-80"}`}
+            style={{ color: hint ? hintColor : CREAM }}
+          >
+            {hint ?? (ready && running ? c.tagReady : `${c.tagCharging} ${s.charge}/${CHARGE_FULL}`)}
+          </p>
         </div>
 
         {s.ripples > 0 &&

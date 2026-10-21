@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from "react";
 import { track, EVENTS } from "@/lib/analytics";
 import { GAME_NOTIFICATIONS, PARTNER_COPY, PARTNER_OFFER } from "@/lib/partner";
+import { FokusDevice } from "./FokusDevice";
 
 type Lang = "de" | "en";
 type Stage = "idle" | "flying" | "blocked";
@@ -277,7 +278,7 @@ export function FokusTagGame({ lang, onChallenge }: { lang: Lang; onChallenge?: 
         )}
         <div className="relative h-16 w-16">
           {stage === "idle" && !dragging && (
-            <span aria-hidden className="motion-safe:animate-pulse-ring absolute inset-0 rounded-full border-4" style={{ borderColor: CREAM }} />
+            <span aria-hidden className="motion-safe:animate-pulse-ring absolute inset-0 rounded-full border-4 opacity-60" style={{ borderColor: CREAM }} />
           )}
           {stage === "idle" && !touched && hint && (
             <span
@@ -285,7 +286,9 @@ export function FokusTagGame({ lang, onChallenge }: { lang: Lang; onChallenge?: 
               className="animate-drag-hint pointer-events-none absolute inset-0 z-30"
               style={{ "--hx": `${hint.x}px`, "--hy": `${hint.y}px` } as React.CSSProperties}
             >
-              <span className="absolute inset-0 rounded-full border-[3px] border-dashed" style={{ borderColor: CREAM }} />
+              <span className="absolute inset-0 opacity-50">
+                <FokusDevice size={64} />
+              </span>
               <span className="absolute -bottom-3 -right-2 text-3xl leading-none drop-shadow">👆</span>
             </span>
           )}
@@ -299,17 +302,14 @@ export function FokusTagGame({ lang, onChallenge }: { lang: Lang; onChallenge?: 
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
             onClick={onClick}
-            className="relative z-20 flex h-16 w-16 cursor-grab touch-none select-none items-center justify-center rounded-full font-heading text-[10px] uppercase tracking-widest shadow-[0_4px_0_rgba(0,0,0,0.35)] active:cursor-grabbing disabled:cursor-default"
+            className="relative z-20 h-16 w-16 cursor-grab touch-none select-none drop-shadow-[0_6px_6px_rgba(0,0,0,0.45)] active:cursor-grabbing disabled:cursor-default"
             style={{
-              backgroundColor: CREAM,
-              color: BLUE,
-              boxShadow: `inset 0 0 0 5px ${CREAM}, inset 0 0 0 8px ${BLUE}`,
               transform: `translate(${offset.x}px, ${offset.y}px) scale(${stage === "idle" ? (dragging ? 1.12 : 1) : 0.7})`,
               transition: dragging ? "none" : "transform 0.38s cubic-bezier(0.3, 1.3, 0.5, 1)",
               opacity: blocked ? 0.85 : 1,
             }}
           >
-            {t.gameTag}
+            <FokusDevice size={64} />
           </button>
         </div>
       </div>

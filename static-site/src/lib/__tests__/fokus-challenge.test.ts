@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from "vitest";
-import { elapsed, initial, reducer, spawnGap } from "@/components/quiz/FokusChallenge";
+import { CHARGE_FULL, elapsed, initial, reducer, spawnGap } from "@/components/quiz/FokusChallenge";
 import { DISTRACTIONS, pickDistraction } from "@/lib/fokus-notifications";
 
 const tick = (s: ReturnType<typeof reducer>, now: number) => reducer(s, { type: "tick", now, r1: 0.9, r2: 0.5, r3: 0.3, r4: 0.7 });
@@ -9,17 +9,17 @@ describe("Fokus mini game", () => {
   it("freezes the round clock while focus mode runs", () => {
     let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
     s = tick(s, 4_000);
-    s = reducer({ ...s, charge: 5 }, { type: "tag", now: 4_000 });
+    s = reducer({ ...s, charge: CHARGE_FULL }, { type: "tag", now: 4_000 });
     expect(elapsed(s, 4_000)).toBe(4_000);
     expect(elapsed(s, 5_500)).toBe(4_000); // still paused
-    expect(elapsed(s, 7_500)).toBe(5_000); // 2.5 s pause excluded
+    expect(elapsed(s, 9_000)).toBe(5_000); // 4 s pause excluded
   });
 
   it("does not spawn during focus mode", () => {
     let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
-    s = reducer({ ...s, charge: 5 }, { type: "tag", now: 1_000 });
+    s = reducer({ ...s, charge: CHARGE_FULL }, { type: "tag", now: 1_000 });
     const before = s.notes.length;
-    for (let t = 1_100; t < 3_400; t += 100) s = tick(s, t);
+    for (let t = 1_100; t < 5_000; t += 100) s = tick(s, t);
     expect(s.notes.filter((n) => n.leftAt === undefined).length).toBe(before);
   });
 
@@ -56,11 +56,11 @@ describe("Fokus mini game", () => {
     expect(s.score).toBe(5);
   });
 
-  it("paralyses you after tapping your group: no taps or tag, spawns go on", () => {
+  it("paralyses you after tapping your group: no taps, spawns go on", () => {
     let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
     s = {
       ...s,
-      charge: 5,
+      charge: CHARGE_FULL,
       notes: [
         { id: 1, kind: "good", idx: 0, born: 0, slot: 0 },
         { id: 2, kind: "bad", idx: 0, born: 0, slot: 1 },
@@ -69,7 +69,10 @@ describe("Fokus mini game", () => {
     s = reducer(s, { type: "tap", id: 1, now: 1_000 });
     const stunned = reducer(s, { type: "tap", id: 2, now: 1_400 });
     expect(stunned.blocked).toBe(0); // tap ignored
-    expect(reducer(s, { type: "tag", now: 1_400 }).charge).toBe(5); // tag ignored
+    // the charged tag is the way out: it works while stunned and ends the stun
+    const rescued = reducer(s, { type: "tag", now: 1_400 });
+    expect(rescued.charge).toBe(0);
+    expect(rescued.stunnedUntil).toBe(0);
     const later = tick(s, 2_000);
     expect(later.notes.filter((n) => n.leftAt === undefined).length).toBeGreaterThan(1); // spawning continues
     expect(reducer(s, { type: "tap", id: 2, now: 2_600 }).blocked).toBe(1); // works again after 1.5 s
@@ -85,10 +88,12 @@ describe("Fokus mini game", () => {
     expect(s.notes.some((n) => n.kind === "good" && n.leftAt === undefined)).toBe(true);
     for (let t = 1_600; t <= 5_000; t += 100) s = tick(s, t); // … and is left alone (+2)
     for (let t = 5_100; t <= 6_000 && s.tutStep === 2 && !s.tutSpawned; t += 100) s = tick(s, t);
-    expect(s.charge).toBe(5); // step 2: tag is charged for the three notes
+    expect(s.charge).toBe(CHARGE_FULL); // step 2: tag is charged for the three notes
     s = reducer(s, { type: "tag", now: 6_100 });
     s = tick(s, 6_200);
-    expect(s.phase).toBe("playing");
+    expect(s.phase).toBe("tutorial"); // the tag effect gets a moment …
+    s = tick(s, 7_600);
+    expect(s.phase).toBe("playing"); // … then the round starts
   });
 
   it("is lost when a notification has no free slot", () => {
@@ -109,5 +114,18 @@ describe("Fokus mini game", () => {
     const tier0 = DISTRACTIONS.map((_, i) => i).filter((i) => DISTRACTIONS[i].tier === 0);
     const seen = tier0.slice(0, -1);
     expect(pickDistraction(1_000, seen, 0, 0.99)).toBe(tier0[tier0.length - 1]);
+  });
+
+  it("the tag charges slowly but clears for double points", () => {
+    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
+    s = {
+      ...s,
+      charge: CHARGE_FULL - 1,
+      notes: [0, 1, 2].map((slot) => ({ id: slot + 1, kind: "bad" as const, idx: 0, born: 0, slot })),
+    };
+    expect(reducer(s, { type: "tag", now: 100 }).score).toBe(0); // not charged yet
+    s = reducer(s, { type: "tap", id: 1, now: 100 }); // +1, now charged
+    s = reducer(s, { type: "tag", now: 200 });
+    expect(s.score).toBe(1 + 2 * 2); // two left on screen, ×2
   });
 });

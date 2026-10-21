@@ -16,7 +16,8 @@ const CHARGE_FULL = 5; // blocks needed to charge the tag
 const CALM_MS = 2_500; // full pause after using the tag: clock, speed and bursts freeze
 const GOOD_TTL = 2_400; // a group message disappears on its own after this
 const GOOD_TTL_TUTORIAL = 3_000;
-const GROUP_PENALTY = 5; // tapping your own group has to hurt
+const GROUP_PENALTY = 5; // tapping your own group has to hurt …
+const STUN_MS = 1_500; // … and paralyses you: no taps, no tag, while notifications keep coming
 const GOOD_SHARE = 0.18;
 const LEAVE_MS = 320; // zap animation length
 const TICK_MS = 100;
@@ -59,6 +60,7 @@ interface State {
   nextId: number;
   flash: { text: "go" | "oops" | "seen" | "burst"; at: number } | null;
   ripples: number; // bumps on each tag use → re-keys the ripple
+  stunnedUntil: number;
   pausedMs: number; // total focus-mode time, excluded from the round clock
   burstsDone: number;
   survivedMs: number; // set when the round ends
@@ -87,6 +89,7 @@ export const initial: State = {
   nextId: 1,
   flash: null,
   ripples: 0,
+  stunnedUntil: 0,
   pausedMs: 0,
   burstsDone: 0,
   survivedMs: 0,
@@ -210,18 +213,24 @@ export function reducer(s: State, a: Action): State {
     }
 
     case "tap": {
-      if (s.phase !== "playing" && s.phase !== "tutorial") return s;
+      if ((s.phase !== "playing" && s.phase !== "tutorial") || a.now < s.stunnedUntil) return s;
       const note = s.notes.find((n) => n.id === a.id);
       if (!note || !active(note)) return s;
       const notes = s.notes.map((n) => (n.id === a.id ? { ...n, leftAt: a.now } : n));
       if (note.kind === "good") {
-        return { ...s, notes, score: Math.max(0, s.score - GROUP_PENALTY), flash: { text: "oops", at: a.now } };
+        return {
+          ...s,
+          notes,
+          score: Math.max(0, s.score - GROUP_PENALTY),
+          flash: { text: "oops", at: a.now },
+          stunnedUntil: a.now + STUN_MS,
+        };
       }
       return { ...s, notes, score: s.score + 1, blocked: s.blocked + 1, charge: Math.min(CHARGE_FULL, s.charge + 1) };
     }
 
     case "tag": {
-      if ((s.phase !== "playing" && s.phase !== "tutorial") || s.charge < CHARGE_FULL) return s;
+      if ((s.phase !== "playing" && s.phase !== "tutorial") || s.charge < CHARGE_FULL || a.now < s.stunnedUntil) return s;
       const hit = s.notes.filter((n) => active(n) && n.kind === "bad").length;
       const notes = s.notes.map((n) => (active(n) && n.kind === "bad" ? { ...n, leftAt: a.now } : n));
       const calmUntil = a.now + CALM_MS;
@@ -264,6 +273,16 @@ export function FokusChallenge({
   const [s, dispatch] = useReducer(reducer, initial);
   const reportedStart = useRef(0);
   const reportedEnd = useRef(0);
+  const phoneRef = useRef<HTMLDivElement>(null);
+
+  // Stun: shake the phone (the red flash and countdown bar are rendered below).
+  useEffect(() => {
+    if (!s.stunnedUntil || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    phoneRef.current?.animate(
+      [0, -10, 9, -7, 6, -3, 0].map((x) => ({ transform: `translateX(${x}px)` })),
+      { duration: 420, easing: "ease-out" },
+    );
+  }, [s.stunnedUntil]);
 
   useEffect(() => {
     dispatch({ type: "boot", now: performance.now(), tutorial });
@@ -302,9 +321,10 @@ export function FokusChallenge({
   const ready = s.charge >= CHARGE_FULL;
   const flashOn = s.flash !== null && s.now - s.flash.at < 900;
   const flashText = { go: c.go, oops: c.oops, seen: c.seen, burst: c.burst };
-  const flashColor = { go: CREAM, oops: "#ff8a8a", seen: "#7dffb4", burst: "#ffd34d" };
+  const flashColor = { go: CREAM, oops: CREAM, seen: "#7dffb4", burst: "#ffd34d" };
   const tutHint = inTutorial ? [c.tutTap, c.tutGroup, c.tutTag][s.tutStep] : null;
-  const hint = flashOn && s.flash ? flashText[s.flash.text] : calm ? `🔒 ${c.calm}` : tutHint;
+  const stunned = running && s.now < s.stunnedUntil;
+  const hint = flashOn && s.flash ? flashText[s.flash.text] : stunned ? c.stunned : calm ? `🔒 ${c.calm}` : tutHint;
   const hintColor = flashOn && s.flash ? flashColor[s.flash.text] : CREAM;
 
   return (
@@ -338,6 +358,7 @@ export function FokusChallenge({
 
       {/* phone: fixed slots; hint line + tag dock at the bottom, where the thumb already is */}
       <div
+        ref={phoneRef}
         // While playing, gestures on the phone belong to the game: no page
         // scrolling, and a swipe across notifications blocks each one it
         // touches (people instinctively swipe notifications away).
@@ -348,7 +369,7 @@ export function FokusChallenge({
           if (hit) dispatch({ type: "tap", id: Number(hit.dataset.noteId), now: performance.now() });
         }}
         style={{
-          borderColor: live >= SLOTS ? "#ff5a5a" : "#0b0f3a",
+          borderColor: live >= SLOTS || stunned ? "#ff5a5a" : "#0b0f3a",
           background: calm ? "linear-gradient(180deg,#2b3aa8,#182078)" : "#0b0f3a",
           transition: "background 0.3s, border-color 0.2s",
         }}
@@ -410,15 +431,25 @@ export function FokusChallenge({
         {hint && (
           <p
             key={`${hint}-${s.flash?.at ?? 0}`}
-            className="animate-stamp pointer-events-none absolute inset-x-2 bottom-[70px] text-center font-heading text-sm leading-tight"
+            className="animate-stamp pointer-events-none absolute inset-x-2 bottom-[70px] z-20 text-center font-heading text-sm leading-tight"
             style={{ color: hintColor }}
           >
             {hint}
           </p>
         )}
+        {stunned && (
+          <div key={s.stunnedUntil} aria-hidden className="pointer-events-none absolute inset-0 z-10">
+            <div className="animate-stun-flash absolute inset-0 bg-[#ff3b3b]" />
+            <div className="absolute inset-0 bg-[#3a0610]/45" />
+            <div
+              className="animate-stun-bar absolute left-0 top-0 h-1.5 w-full origin-left bg-[#ff5a5a]"
+              style={{ animationDuration: `${STUN_MS}ms` }}
+            />
+          </div>
+        )}
         {/* tag dock: charge bar, then a big tag button inside the screen */}
         <div className="absolute inset-x-2.5 bottom-2.5 h-[52px]">
-          {ready && running ? (
+          {ready && running && !stunned ? (
             <button
               type="button"
               aria-label={c.tagAria}

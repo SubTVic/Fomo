@@ -55,6 +55,25 @@ describe("Fokus mini game", () => {
     expect(s.score).toBe(5);
   });
 
+  it("paralyses you after tapping your group: no taps or tag, spawns go on", () => {
+    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
+    s = {
+      ...s,
+      charge: 5,
+      notes: [
+        { id: 1, kind: "good", idx: 0, born: 0, slot: 0 },
+        { id: 2, kind: "bad", idx: 0, born: 0, slot: 1 },
+      ],
+    };
+    s = reducer(s, { type: "tap", id: 1, now: 1_000 });
+    const stunned = reducer(s, { type: "tap", id: 2, now: 1_400 });
+    expect(stunned.blocked).toBe(0); // tap ignored
+    expect(reducer(s, { type: "tag", now: 1_400 }).charge).toBe(5); // tag ignored
+    const later = tick(s, 2_000);
+    expect(later.notes.filter((n) => n.leftAt === undefined).length).toBeGreaterThan(1); // spawning continues
+    expect(reducer(s, { type: "tap", id: 2, now: 2_600 }).blocked).toBe(1); // works again after 1.5 s
+  });
+
   it("runs the hands-on tutorial, then starts the round", () => {
     let s = reducer(initial, { type: "boot", now: 0, tutorial: true });
     s = tick(s, 600);

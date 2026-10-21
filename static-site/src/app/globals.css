@@ -162,21 +162,31 @@ h3 {
   animation: fomo-drag-hint 2.8s ease-in-out 0.8s infinite;
 }
 
-/* Focus pause: a slow breathing circle. */
-@keyframes fomo-breathe {
-  0%,
-  100% {
-    transform: scale(0.75);
-    opacity: 0.6;
+/* Focus pause: one guided breath — grow while breathing in, shrink out. */
+@keyframes fomo-inhale {
+  from {
+    transform: scale(0.55);
   }
-  50% {
-    transform: scale(1.2);
-    opacity: 1;
+  to {
+    transform: scale(1.25);
   }
 }
 
-@utility animate-breathe {
-  animation: fomo-breathe 2s ease-in-out infinite;
+@keyframes fomo-exhale {
+  from {
+    transform: scale(1.25);
+  }
+  to {
+    transform: scale(0.55);
+  }
+}
+
+@utility animate-inhale {
+  animation: fomo-inhale 3s ease-in-out both;
+}
+
+@utility animate-exhale {
+  animation: fomo-exhale 3s ease-in-out both;
 }
 
 /* Stunned after tapping your own group: red flash + draining bar. */

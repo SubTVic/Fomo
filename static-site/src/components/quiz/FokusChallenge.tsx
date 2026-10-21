@@ -18,10 +18,11 @@ const SLOTS = 5; // fixed places on the screen; no free slot when spawning = dis
  *  double points, pauses everything for 4 s and even breaks a stun. */
 export const CHARGE_FULL = 12; // blocks needed to charge the tag
 /** Full pause after using the tag (clock, speed and bursts freeze):
- *  0.8 s effect · 1.4 s "breathe" · 0.8 s "focus" · 3-2-1 countdown. */
-const CALM_MS = 6_000;
+ *  0.8 s effect · one real breath (3 s in, 3 s out) · 3-2-1 countdown. */
+const BREATH_MS = 3_000;
+const CALM_MS = 800 + 2 * BREATH_MS + 3_000;
 /** Quick-time event when the screen is full: tap the tag before the bar runs out. */
-const QTE_MS = 2_500;
+const QTE_MS = 2_000;
 const QTE_TAPS_UNCHARGED = 8; // without charge: tap 8×, once per round
 const TAG_MULTIPLIER = 2;
 const GOOD_TTL = 2_400; // a group message disappears on its own after this
@@ -390,7 +391,7 @@ export function FokusChallenge({
   const flashColor = { go: CREAM, oops: CREAM, seen: "#7dffb4", burst: "#ffd34d", tag: "#7dffb4" };
   const tutHint = inTutorial ? [c.tutTap, c.tutGroup, c.tutTag, null][s.tutStep] : null;
   const stunned = running && s.now < s.stunnedUntil;
-  const hint = flashOn && s.flash ? flashText[s.flash.text] : stunned ? c.stunned : qte ? null : calm ? `🔒 ${c.calm}` : tutHint;
+  const hint = flashOn && s.flash ? flashText[s.flash.text] : stunned ? c.stunned : qte ? null : calm ? null : tutHint;
   const hintColor = flashOn && s.flash ? flashColor[s.flash.text] : CREAM;
 
   return (
@@ -508,19 +509,24 @@ export function FokusChallenge({
         {calm && calmLeft < CALM_MS - 800 && (
           <div aria-live="polite" className="pointer-events-none absolute inset-0 z-20 grid place-content-center justify-items-center gap-3 text-center" style={{ color: CREAM }}>
             {calmLeft > 3_000 ? (
-              <>
-                <span className="motion-safe:animate-breathe h-20 w-20 rounded-full border-4" style={{ borderColor: CREAM, backgroundColor: "rgba(254,250,243,0.12)" }} />
-                <p key={calmLeft > 3_800 ? "a" : "b"} className="animate-stamp font-heading text-lg">
-                  {calmLeft > 3_800 ? c.breathe : c.focus}
-                </p>
-              </>
+              (() => {
+                const inhale = calmLeft > 3_000 + BREATH_MS;
+                return (
+                  <>
+                    {/* the circle grows while breathing in and shrinks while breathing out */}
+                    <span
+                      key={inhale ? "in" : "out"}
+                      className={`h-28 w-28 rounded-full border-4 ${inhale ? "motion-safe:animate-inhale" : "motion-safe:animate-exhale"}`}
+                      style={{ borderColor: CREAM, backgroundColor: "rgba(254,250,243,0.12)", animationDuration: `${BREATH_MS}ms` }}
+                    />
+                    <p className="font-heading text-base lowercase opacity-90">{inhale ? c.breatheIn : c.breatheOut}</p>
+                  </>
+                );
+              })()
             ) : (
-              <>
-                <p key={Math.ceil(calmLeft / 1000)} className="animate-stamp font-heading text-7xl leading-none tabular-nums">
-                  {Math.ceil(calmLeft / 1000)}
-                </p>
-                <p className="text-xs font-bold uppercase tracking-widest opacity-80">{c.resume}</p>
-              </>
+              <p key={Math.ceil(calmLeft / 1000)} className="animate-stamp font-heading text-7xl leading-none tabular-nums">
+                {Math.ceil(calmLeft / 1000)}
+              </p>
             )}
           </div>
         )}
@@ -577,7 +583,7 @@ export function FokusChallenge({
             className={`min-w-0 font-heading text-[13px] leading-tight ${hint ? "animate-stamp" : "opacity-80"}`}
             style={{ color: hint ? hintColor : CREAM }}
           >
-            {hint ?? (ready && running ? c.tagReady : `${c.tagCharging} ${s.charge}/${CHARGE_FULL}`)}
+            {hint ?? (ready && running ? c.tagReady : `${s.charge}/${CHARGE_FULL}`)}
           </p>
         </div>
 
@@ -598,10 +604,9 @@ export function FokusChallenge({
               {c.lostAfter} {clock(s.survivedMs)}! 📱
             </p>
             <p className="font-heading text-4xl tabular-nums">{s.score}</p>
-            <p className="text-xs">
-              {c.points} · {s.blocked} {c.blocked} · {c.best}: {s.best}
+            <p className="text-xs opacity-80">
+              {c.best}: {s.best}
             </p>
-            <p className="text-xs opacity-80">{c.endLine}</p>
             {endCta}
             <button
               type="button"

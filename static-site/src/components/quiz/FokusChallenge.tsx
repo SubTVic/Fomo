@@ -18,10 +18,10 @@ const SLOTS = 5; // fixed places on the screen; no free slot when spawning = dis
  *  double points, pauses everything for 4 s and even breaks a stun. */
 export const CHARGE_FULL = 12; // blocks needed to charge the tag
 /** Full pause after using the tag (clock, speed and bursts freeze):
- *  ~1 s effect, ~1 s "breathe … focus", then a 3-2-1 countdown. */
-const CALM_MS = 5_000;
+ *  0.8 s effect · 1.4 s "breathe" · 0.8 s "focus" · 3-2-1 countdown. */
+const CALM_MS = 6_000;
 /** Quick-time event when the screen is full: tap the tag before the bar runs out. */
-const QTE_MS = 2_000;
+const QTE_MS = 2_500;
 const QTE_TAPS_UNCHARGED = 8; // without charge: tap 8×, once per round
 const TAG_MULTIPLIER = 2;
 const GOOD_TTL = 2_400; // a group message disappears on its own after this
@@ -52,7 +52,7 @@ export function spawnGap(elapsed: number): number {
 type Note = { id: number; kind: "bad" | "good"; idx: number; born: number; slot: number; leftAt?: number };
 type Phase = "tutorial" | "playing" | "qte" | "lost";
 /** Hands-on tutorial with one short line each: 0 block one · 1 leave the group
- *  message · 2 use the tag · 3 let the tag effect play, then the round starts */
+ *  message · 2 use the tag · 3 the tag's focus pause plays, then the round starts */
 type TutStep = 0 | 1 | 2 | 3;
 
 interface State {
@@ -215,7 +215,8 @@ export function reducer(s: State, a: Action): State {
       let next: State = { ...s, now, notes, score, flash };
 
       if (s.phase === "tutorial") {
-        if (s.tutStep === 3) return now - (s.flash?.at ?? 0) > 1_400 ? startRound(next, now) : next; // "Los! 🔥"
+        // step 3: the tag's focus pause (breathe, 3-2-1) plays, then the round starts
+        if (s.tutStep === 3) return now >= s.calmUntil ? startRound(next, now) : next;
         if (s.tutSpawned && !notes.some(active)) {
           if (s.tutStep === 2) return { ...next, tutStep: 3 };
           return { ...next, tutStep: (s.tutStep + 1) as TutStep, tutSpawned: false, nextSpawnAt: now + 600 };
@@ -370,14 +371,15 @@ export function FokusChallenge({
     }
   }, [s.phase, s.startedAt, s.score, s.survivedMs]);
 
-  const calm = s.phase === "playing" && s.now < s.calmUntil;
+  const calm = (s.phase === "playing" || s.phase === "tutorial") && s.now < s.calmUntil;
   const calmLeft = calm ? s.calmUntil - s.now : 0; // counts down from CALM_MS
   const qte = s.phase === "qte";
   const live = s.notes.filter(active).length;
   const inTutorial = s.phase === "tutorial";
   const survived = s.phase === "lost" ? s.survivedMs : inTutorial ? 0 : elapsed(s, s.now);
   const ready = s.charge >= CHARGE_FULL;
-  const flashOn = s.flash !== null && s.now - s.flash.at < 900;
+  // the start hint ("Los! … Handy voll? …") stays longer so it can be read
+  const flashOn = s.flash !== null && s.now - s.flash.at < (s.flash.text === "go" ? 2_200 : 900);
   const flashText = {
     go: c.go,
     oops: c.oops,
@@ -503,13 +505,13 @@ export function FokusChallenge({
           </div>
         )}
         {/* focus pause: breathe, then 3-2-1 */}
-        {calm && calmLeft < CALM_MS - 1_000 && (
+        {calm && calmLeft < CALM_MS - 800 && (
           <div aria-live="polite" className="pointer-events-none absolute inset-0 z-20 grid place-content-center justify-items-center gap-3 text-center" style={{ color: CREAM }}>
             {calmLeft > 3_000 ? (
               <>
                 <span className="motion-safe:animate-breathe h-20 w-20 rounded-full border-4" style={{ borderColor: CREAM, backgroundColor: "rgba(254,250,243,0.12)" }} />
-                <p key={calmLeft > 3_500 ? "a" : "b"} className="animate-stamp font-heading text-lg">
-                  {calmLeft > 3_500 ? c.breathe : c.focus}
+                <p key={calmLeft > 3_800 ? "a" : "b"} className="animate-stamp font-heading text-lg">
+                  {calmLeft > 3_800 ? c.breathe : c.focus}
                 </p>
               </>
             ) : (
@@ -552,7 +554,7 @@ export function FokusChallenge({
         )}
 
         {/* the device pressed onto the screen when used */}
-        {flashOn && s.flash?.text === "tag" && (
+        {flashOn && s.flash?.text === "tag" && s.now - s.flash.at < 800 && (
           <div key={s.flash.at} aria-hidden className="animate-stamp pointer-events-none absolute left-1/2 top-[42%] z-20 -translate-x-1/2 -translate-y-1/2">
             <FokusDevice size={112} />
           </div>
@@ -590,7 +592,8 @@ export function FokusChallenge({
 
         {/* result overlay */}
         {s.phase === "lost" && (
-          <div className="absolute inset-0 grid content-center gap-3 bg-[#0b0f3a]/95 p-4 text-center animate-fade-up" style={{ color: CREAM }}>
+          // z-40: above the tag dock (z-20) and the quick-time layer (z-30)
+          <div className="absolute inset-0 z-40 grid content-center gap-3 bg-[#0b0f3a] p-4 text-center animate-fade-up" style={{ color: CREAM }}>
             <p className="animate-stamp font-heading text-2xl">
               {c.lostAfter} {clock(s.survivedMs)}! 📱
             </p>

@@ -12,14 +12,14 @@ describe("Fokus mini game", () => {
     s = reducer({ ...s, charge: CHARGE_FULL }, { type: "tag", now: 4_000 });
     expect(elapsed(s, 4_000)).toBe(4_000);
     expect(elapsed(s, 5_500)).toBe(4_000); // still paused
-    expect(elapsed(s, 10_000)).toBe(5_000); // 5 s pause excluded
+    expect(elapsed(s, 11_000)).toBe(5_000); // 6 s pause excluded
   });
 
   it("does not spawn during focus mode", () => {
     let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
     s = reducer({ ...s, charge: CHARGE_FULL }, { type: "tag", now: 1_000 });
     const before = s.notes.length;
-    for (let t = 1_100; t < 6_000; t += 100) s = tick(s, t);
+    for (let t = 1_100; t < 7_000; t += 100) s = tick(s, t);
     expect(s.notes.filter((n) => n.leftAt === undefined).length).toBe(before);
   });
 
@@ -91,8 +91,10 @@ describe("Fokus mini game", () => {
     expect(s.charge).toBe(CHARGE_FULL); // step 2: tag is charged for the three notes
     s = reducer(s, { type: "tag", now: 6_100 });
     s = tick(s, 6_200);
-    expect(s.phase).toBe("tutorial"); // the tag effect gets a moment …
-    s = tick(s, 7_600);
+    expect(s.phase).toBe("tutorial"); // the focus pause (breathe, 3-2-1) plays …
+    s = tick(s, 9_000);
+    expect(s.phase).toBe("tutorial");
+    s = tick(s, 12_200);
     expect(s.phase).toBe("playing"); // … then the round starts
   });
 
@@ -103,7 +105,7 @@ describe("Fokus mini game", () => {
     expect(s.phase).toBe("qte");
     // … ignored → distracted
     const qteAt = s.now;
-    s = tick(s, qteAt + 2_100);
+    s = tick(s, qteAt + 2_600);
     expect(s.phase).toBe("lost");
     expect(s.survivedMs).toBeGreaterThan(0);
   });

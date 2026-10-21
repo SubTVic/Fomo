@@ -84,7 +84,7 @@ export const GAME_NOTIFICATIONS: Record<"de" | "en", Array<{ app: string; color:
 export const CHALLENGE_COPY = {
   de: {
     title: "Fokus-Minispiel",
-    go: "Los! Mehr als 5 = abgelenkt 🔥",
+    go: "Los! 🔥 Handy voll? Schnell den FOKUS-Tag!",
     practice: "Übung",
     tutTap: "👆 Tipp oder wisch Ablenkungen weg – bevor dein Handy voll ist.",
     tutGroup: "★ Das ist deine Gruppe – stehen lassen! Wegtippen lähmt dich.",
@@ -116,7 +116,7 @@ export const CHALLENGE_COPY = {
   },
   en: {
     title: "Focus mini game",
-    go: "Go! More than 5 = distracted 🔥",
+    go: "Go! 🔥 Phone full? Quick, the FOKUS tag!",
     practice: "Practice",
     tutTap: "👆 Tap or swipe distractions away – before your phone fills up.",
     tutGroup: "★ That's your group – leave it! Tapping it stuns you.",

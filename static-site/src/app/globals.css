@@ -91,6 +91,130 @@ h3 {
   animation: fomo-coupon-tear 0.9s cubic-bezier(0.55, 0, 0.8, 0.4) both;
 }
 
+/* --- Partner ad mini games ------------------------------------------- */
+
+/* Stub of the coupon nudges itself every few seconds: "tear me". */
+@keyframes fomo-coupon-wiggle {
+  0%,
+  84%,
+  100% {
+    transform: none;
+  }
+  87% {
+    transform: rotate(-7deg);
+  }
+  90% {
+    transform: rotate(6deg);
+  }
+  93% {
+    transform: rotate(-4deg);
+  }
+  96% {
+    transform: rotate(2deg);
+  }
+}
+
+@utility animate-coupon-wiggle {
+  transform-origin: top left;
+  animation: fomo-coupon-wiggle 3.4s ease-in-out 1s infinite;
+}
+
+/* Paper scraps flying off the perforation. Direction via --dx/--dy/--rot. */
+@keyframes fomo-scrap {
+  from {
+    transform: translate(0, 0) rotate(0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot));
+    opacity: 0;
+  }
+}
+
+@utility animate-scrap {
+  animation: fomo-scrap 0.85s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+/* Something slammed down like a rubber stamp. */
+@keyframes fomo-stamp {
+  0% {
+    transform: scale(1.9) rotate(-12deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(0.92) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(-2deg);
+    opacity: 1;
+  }
+}
+
+@utility animate-stamp {
+  animation: fomo-stamp 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
+/* Notification sliding onto the fake lock screen. */
+@keyframes fomo-notif-in {
+  from {
+    transform: translateY(-10px) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@utility animate-notif-in {
+  animation: fomo-notif-in 0.28s ease-out both;
+}
+
+/* Notification zapped away by the tag. */
+@keyframes fomo-zap {
+  to {
+    transform: scale(0.1) rotate(-25deg);
+    opacity: 0;
+  }
+}
+
+@utility animate-zap {
+  animation: fomo-zap 0.35s ease-in both;
+}
+
+/* NFC radio wave from the phone. */
+@keyframes fomo-ripple {
+  from {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 0.9;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(3);
+    opacity: 0;
+  }
+}
+
+@utility animate-ripple {
+  animation: fomo-ripple 0.9s ease-out both;
+}
+
+/* "Pick me up" ring around the draggable tag. */
+@keyframes fomo-pulse-ring {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@utility animate-pulse-ring {
+  animation: fomo-pulse-ring 1.6s ease-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

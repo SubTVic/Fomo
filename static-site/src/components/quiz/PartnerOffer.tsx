@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { track, EVENTS } from "@/lib/analytics";
 import { PARTNER_COPY, PARTNER_OFFER, type PartnerPlacement } from "@/lib/partner";
+import { FokusTagGame } from "./FokusTagGame";
 
 type Lang = "de" | "en";
 
@@ -64,12 +65,17 @@ export function PartnerCard({ lang }: { lang: Lang }) {
   if (!PARTNER_OFFER.enabled) return null;
   const t = PARTNER_COPY[lang];
   return (
-    <aside aria-label={t.label} className="mt-5 grid gap-4 border-poster p-5 sm:p-6" style={{ backgroundColor: BLUE, color: CREAM }}>
+    <aside
+      aria-label={t.label}
+      className="mt-5 grid gap-4 overflow-hidden border-poster p-5 sm:p-6"
+      style={{ backgroundColor: BLUE, color: CREAM }}
+    >
       <div className="flex items-center justify-between gap-3">
         <Logo variant="cream" className="h-5 sm:h-6" />
         <AdLabel lang={lang} className="opacity-80" />
       </div>
       <p className="font-heading text-lg leading-tight sm:text-xl">{t.cardTitle}</p>
+      <FokusTagGame lang={lang} />
       <p className="max-w-[680px] text-sm leading-relaxed opacity-90 sm:text-base">{t.cardText}</p>
       <PartnerLink
         placement="results-card"
@@ -90,6 +96,7 @@ export function PartnerCoupon({ lang }: { lang: Lang }) {
   const [stage, setStage] = useState<"intact" | "tearing" | "torn">("intact");
   const [clipboardOk, setClipboardOk] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [scraps, setScraps] = useState<Array<{ dx: number; dy: number; rot: number; w: number; dark: boolean }>>([]);
   if (!PARTNER_OFFER.enabled) return null;
   const t = PARTNER_COPY[lang];
 
@@ -106,6 +113,17 @@ export function PartnerCoupon({ lang }: { lang: Lang }) {
     if (stage !== "intact") return;
     track(EVENTS.partnerCodeCopy, { partner: PARTNER_OFFER.id, method: "tear" });
     setStage("tearing");
+    // paper scraps burst out of the perforation (mostly left/up/down so they
+    // never push the page wider on phones)
+    setScraps(
+      Array.from({ length: 16 }, () => ({
+        dx: -130 + Math.random() * 150,
+        dy: -90 + Math.random() * 180,
+        rot: -360 + Math.random() * 720,
+        w: 5 + Math.random() * 7,
+        dark: Math.random() < 0.5,
+      })),
+    );
     // Fallback in case animationend never fires (animations disabled).
     setTimeout(() => setStage("torn"), 1200);
     // Started inside the click handler so mobile browsers allow the write.
@@ -123,7 +141,7 @@ export function PartnerCoupon({ lang }: { lang: Lang }) {
   const torn = stage === "torn";
 
   return (
-    <aside aria-label={t.label} className="mt-8 flex" style={{ color: BLUE }}>
+    <aside aria-label={t.label} className="relative mt-8 flex" style={{ color: BLUE }}>
       <div
         className="relative grid min-w-0 flex-1 content-start gap-2 border-4 border-navy p-5"
         style={{ backgroundColor: CREAM, borderRight: `3px dashed ${BLUE}` }}
@@ -137,8 +155,8 @@ export function PartnerCoupon({ lang }: { lang: Lang }) {
           <div className="grid gap-2 animate-fade-up" aria-live="polite">
             <div className="flex flex-wrap items-center gap-2">
               <span
-                className="select-all border-2 border-dashed px-3 py-1.5 font-mono text-lg font-bold tracking-wider"
-                style={{ borderColor: BLUE }}
+                className="animate-stamp select-all border-2 border-dashed px-3 py-1.5 font-mono text-lg font-bold tracking-wider"
+                style={{ borderColor: BLUE, backgroundColor: "#ffe14d" }}
               >
                 {PARTNER_OFFER.code}
               </span>
@@ -171,6 +189,25 @@ export function PartnerCoupon({ lang }: { lang: Lang }) {
           </>
         )}
       </div>
+      {stage !== "intact" &&
+        scraps.map((p, i) => (
+          <span
+            key={i}
+            aria-hidden
+            className="animate-scrap pointer-events-none absolute right-24 top-1/2 z-30"
+            style={
+              {
+                width: p.w,
+                height: p.w * 0.7,
+                backgroundColor: p.dark ? BLUE : "#ffe14d",
+                animationDelay: `${i * 12}ms`,
+                "--dx": `${p.dx}px`,
+                "--dy": `${p.dy}px`,
+                "--rot": `${p.rot}deg`,
+              } as React.CSSProperties
+            }
+          />
+        ))}
       {/* the slot keeps its width while the stub falls, then collapses */}
       <div className={`shrink-0 transition-[width] duration-300 ${torn ? "w-0" : "w-24"}`}>
         {!torn && (
@@ -181,7 +218,7 @@ export function PartnerCoupon({ lang }: { lang: Lang }) {
             aria-label={t.tearAria}
             disabled={stage === "tearing"}
             className={`relative z-20 flex h-full w-full flex-col items-center justify-center gap-1 border-4 border-l-0 border-navy px-2 py-4 text-center transition-colors ${
-              stage === "tearing" ? "animate-coupon-tear" : "hover:brightness-125"
+              stage === "tearing" ? "animate-coupon-tear" : "motion-safe:animate-coupon-wiggle hover:brightness-125"
             }`}
             style={{ backgroundColor: BLUE, color: CREAM }}
           >

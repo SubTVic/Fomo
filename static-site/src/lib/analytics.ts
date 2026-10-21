@@ -69,4 +69,6 @@ export const EVENTS = {
   // click (`placement`) and copying the discount code. Partner id only.
   partnerClick: "partner-click",
   partnerCodeCopy: "partner-code-copy",
+  // Mini game in the partner ad: tag held to the phone (`method` drag|tap) or replay.
+  partnerPlay: "partner-play",
 } as const;

@@ -27,6 +27,12 @@ export const PARTNER_COPY = {
   de: {
     label: "Anzeige",
     cardTitle: "Gruppe gefunden. Jetzt noch den Kopf frei fürs Semester.",
+    gameHint: "Zieh den Tag aufs Handy oder tipp ihn an.",
+    gameTag: "Tag",
+    gameTagAria: "FOKUS-Tag ans Handy halten",
+    focusOn: "Fokus-Modus an",
+    blocked: "Ablenkungen geblockt",
+    again: "Nochmal",
     cardText:
       "Der FOKUS-Tag sperrt ablenkende Apps wie TikTok oder Instagram, bis du ihn an dein iPhone hältst. Mit Code FOMO26 bekommst du Rabatt.",
     cardCta: "Zum Rabatt",
@@ -43,6 +49,12 @@ export const PARTNER_COPY = {
   en: {
     label: "Ad",
     cardTitle: "Found your group. Now clear your head for the semester.",
+    gameHint: "Drag the tag onto the phone or tap it.",
+    gameTag: "Tag",
+    gameTagAria: "Hold the FOKUS tag to the phone",
+    focusOn: "Focus mode on",
+    blocked: "distractions blocked",
+    again: "Again",
     cardText:
       "The FOKUS tag blocks distracting apps like TikTok or Instagram until you hold it to your iPhone. Code FOMO26 gets you a discount.",
     cardCta: "Get the discount",
@@ -57,3 +69,27 @@ export const PARTNER_COPY = {
     couponCta: "Go to shop",
   },
 } as const;
+
+/** Fake notifications for the mini game in the results ad (cycled in order). */
+export const GAME_NOTIFICATIONS: Record<"de" | "en", Array<{ app: string; color: string; text: string }>> = {
+  de: [
+    { app: "TikTok", color: "#111111", text: "12 neue Videos für dich" },
+    { app: "WhatsApp", color: "#25d366", text: "47 Nachrichten in „Erstis 2026“" },
+    { app: "Instagram", color: "#e1306c", text: "@lena hat eine Story gepostet" },
+    { app: "YouTube", color: "#ff0000", text: "Neues Video: „10 Hacks fürs Studium“" },
+    { app: "Snapchat", color: "#f5c400", text: "3 neue Snaps" },
+    { app: "BeReal", color: "#333333", text: "Zeit für dein BeReal!" },
+    { app: "Instagram", color: "#e1306c", text: "Das könnte dir gefallen …" },
+    { app: "WhatsApp", color: "#25d366", text: "Mama: Hast du schon gegessen?" },
+  ],
+  en: [
+    { app: "TikTok", color: "#111111", text: "12 new videos for you" },
+    { app: "WhatsApp", color: "#25d366", text: "47 messages in “Freshers 2026”" },
+    { app: "Instagram", color: "#e1306c", text: "@lena posted a story" },
+    { app: "YouTube", color: "#ff0000", text: "New video: “10 study hacks”" },
+    { app: "Snapchat", color: "#f5c400", text: "3 new snaps" },
+    { app: "BeReal", color: "#333333", text: "Time to BeReal!" },
+    { app: "Instagram", color: "#e1306c", text: "You might like this …" },
+    { app: "WhatsApp", color: "#25d366", text: "Mum: Have you eaten yet?" },
+  ],
+};

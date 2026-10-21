@@ -24,7 +24,7 @@ const BREATH_MS = 3_000;
 const CALM_MS = 800 + 2 * BREATH_MS + 3_000;
 const TAG_MULTIPLIER = 2;
 const GOOD_TTL = 2_400; // a group message disappears on its own after this
-const GOOD_TTL_TUTORIAL = 3_000;
+const GOOD_TTL_TUTORIAL = 4_500; // time to read the tip next to it
 const GROUP_PENALTY = 5; // tapping your own group has to hurt …
 const STUN_MS = 1_500; // … and paralyses you: no taps, no tag, while notifications keep coming
 const GOOD_SHARE = 0.18;
@@ -49,7 +49,9 @@ export function spawnGap(elapsed: number): number {
 
 /** Notifications keep a fixed slot so nothing jumps while you aim at it.
  *  `charged`: blocked by hand → sends a ⚡ spark to the tag. */
-type Note = { id: number; kind: "bad" | "good"; idx: number; born: number; slot: number; leftAt?: number; charged?: boolean };
+type Tip = "tutTap" | "tutGroup" | "tutCharge" | "tutTag";
+/** `tip`: a tutorial message from FOKUS — dismissed like any distraction. */
+type Note = { id: number; kind: "bad" | "good"; idx: number; born: number; slot: number; leftAt?: number; charged?: boolean; tip?: Tip };
 type Phase = "tutorial" | "playing" | "lost";
 /** Hands-on tutorial with one short line each: 0 block one · 1 leave the group
  *  message · 2 use the tag · 3 the tag's focus pause plays, then the round starts */
@@ -214,17 +216,26 @@ export function reducer(s: State, a: Action): State {
           return { ...next, tutStep: (s.tutStep + 1) as TutStep, tutSpawned: false, nextSpawnAt: now + 600 };
         }
         if (!s.tutSpawned && now >= s.nextSpawnAt) {
+          // The tutorial *is* notifications: tips from FOKUS that you swipe away
+          // like everything else, so the first thing you learn is the gesture.
           let id = s.nextId;
-          if (s.tutStep === 0) notes = place(notes, { id: id++, kind: "bad", idx: 0, born: now, slot: 1 });
-          if (s.tutStep === 1) notes = place(notes, { id: id++, kind: "good", idx: 0, born: now, slot: 1 });
-          // step 2: blocking charges the tag (big chunks here, so it fills visibly)
-          // step 3: tag is full — clear these three with it
-          if (s.tutStep === 2 || s.tutStep === 3) {
-            const base = s.tutStep === 2 ? 1 : 4;
-            for (const [slot, k] of [[0, 0], [1, 1], [2, 2]]) {
-              notes = place(notes, { id: id++, kind: "bad", idx: base + k, born: now, slot });
-            }
-            if (s.tutStep === 3) next = { ...next, charge: chargeNeeded(s) };
+          const tip = (t: Tip, slot: number) => (notes = place(notes, { id: id++, kind: "bad", idx: 0, born: now, slot, tip: t }));
+          const bad = (idx: number, slot: number) => (notes = place(notes, { id: id++, kind: "bad", idx, born: now, slot }));
+          if (s.tutStep === 0) tip("tutTap", 1);
+          if (s.tutStep === 1) {
+            tip("tutGroup", 0);
+            notes = place(notes, { id: id++, kind: "good", idx: 0, born: now, slot: 1 });
+          }
+          if (s.tutStep === 2) {
+            tip("tutCharge", 0);
+            bad(1, 1);
+            bad(2, 2);
+          }
+          if (s.tutStep === 3) {
+            tip("tutTag", 0);
+            bad(4, 1);
+            bad(5, 2);
+            next = { ...next, charge: chargeNeeded(s) };
           }
           return { ...next, notes, nextId: id, tutSpawned: true };
         }
@@ -371,7 +382,6 @@ export function FokusChallenge({
     tag: c.tagged.replace("{n}", String(s.flash?.n ?? 0)),
   };
   const flashColor = { go: CREAM, oops: CREAM, seen: "#7dffb4", burst: "#ffd34d", tag: "#7dffb4" };
-  const tutHint = inTutorial ? [c.tutTap, c.tutGroup, c.tutCharge, c.tutTag, null][s.tutStep] : null;
   const stunned = running && s.now < s.stunnedUntil;
   const hint = flashOn && s.flash ? flashText[s.flash.text] : stunned ? c.stunned : null;
   const hintColor = flashOn && s.flash ? flashColor[s.flash.text] : CREAM;
@@ -435,11 +445,21 @@ export function FokusChallenge({
                     onPointerDown={() => dispatch({ type: "tap", id: n.id, now: performance.now() })}
                     onClick={() => dispatch({ type: "tap", id: n.id, now: performance.now() })}
                     className={`flex h-full w-full touch-manipulation items-center gap-2 rounded-xl px-2.5 text-left ${
-                      n.kind === "good" ? "border-[3px] bg-white" : "bg-white/95"
+                      n.kind === "good" ? "border-[3px] bg-white" : n.tip ? "border-[3px] border-[#182078] bg-[#fefaf3]" : "bg-white/95"
                     } ${active(n) ? "animate-notif-in" : "animate-zap"}`}
                     style={n.kind === "good" ? { borderColor: GOOD_GREEN } : undefined}
                   >
-                    {n.kind === "good" ? (
+                    {n.tip ? (
+                      <>
+                        <span className="shrink-0">
+                          <FokusDevice size={26} />
+                        </span>
+                        <span className="min-w-0 text-[11px] leading-[1.2] text-navy">
+                          <b className="block">FOKUS</b>
+                          <span className="line-clamp-2">{c[n.tip]}</span>
+                        </span>
+                      </>
+                    ) : n.kind === "good" ? (
                       <>
                         <span
                           className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold text-white"
@@ -507,18 +527,6 @@ export function FokusChallenge({
               </p>
             )}
           </div>
-        )}
-
-        {/* tutorial hint, big in the middle of the screen where the eyes are;
-            taps go through to the notification underneath */}
-        {tutHint && !calm && (
-          <p
-            key={s.tutStep}
-            className={`animate-stamp pointer-events-none absolute inset-x-4 z-20 -translate-y-1/2 ${s.tutStep >= 2 ? "top-[71%]" : "top-[56%]"} rounded-2xl px-4 py-3 text-center font-heading text-xl leading-tight shadow-[0_8px_24px_rgba(0,0,0,0.45)]`}
-            style={{ backgroundColor: CREAM, color: BLUE }}
-          >
-            {tutHint}
-          </p>
         )}
 
         {/* ⚡ from every hand-blocked distraction to the tag: blocking charges it */}

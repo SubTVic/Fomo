@@ -80,11 +80,11 @@ export const GAME_NOTIFICATIONS: Record<"de" | "en", Array<{ app: string; color:
   ],
 };
 
-/** Copy for the 30-second "Fokus-Challenge" round inside the ad. */
+/** Copy for the 30-second "Fokus-Minispiel" round inside the ad. */
 export const CHALLENGE_COPY = {
   de: {
-    cta: "▶ Fokus-Challenge",
-    title: "Fokus-Challenge",
+    cta: "▶ Fokus-Minispiel starten",
+    title: "Fokus-Minispiel",
     rules: [
       "👆 Tipp Ablenkungen weg, bevor dein Handy überläuft.",
       "★ Nachrichten deiner Gruppe stehen lassen – die zählen extra.",
@@ -108,8 +108,8 @@ export const CHALLENGE_COPY = {
     exit: "✕ Spiel beenden",
   },
   en: {
-    cta: "▶ Focus challenge",
-    title: "Focus challenge",
+    cta: "▶ Play the focus mini game",
+    title: "Focus mini game",
     rules: [
       "👆 Tap distractions away before your phone overflows.",
       "★ Leave messages from your group – they score extra.",

@@ -199,6 +199,34 @@ h3 {
   animation: fomo-ripple 0.9s ease-out both;
 }
 
+/* Ghost hand showing the drag: press on the tag, carry it to the phone, fade.
+   Distance via --hx/--hy (measured in JS). */
+@keyframes fomo-drag-hint {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.9;
+  }
+  16% {
+    transform: translate(0, 0) scale(0.88);
+  }
+  62% {
+    transform: translate(var(--hx), var(--hy)) scale(0.88);
+    opacity: 0.9;
+  }
+  76%,
+  100% {
+    transform: translate(var(--hx), var(--hy)) scale(0.88);
+    opacity: 0;
+  }
+}
+
+@utility animate-drag-hint {
+  animation: fomo-drag-hint 2.8s ease-in-out 0.8s infinite;
+}
+
 /* "Pick me up" ring around the draggable tag. */
 @keyframes fomo-pulse-ring {
   from {

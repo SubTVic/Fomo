@@ -82,7 +82,7 @@ export function PartnerCard({ lang }: { lang: Lang }) {
         className="border-2 px-6 py-3 text-center font-heading transition-opacity hover:opacity-90 sm:justify-self-start"
         style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
       >
-        {t.cardCta} →
+        {t.cardCta} ↗
       </PartnerLink>
     </aside>
   );
@@ -173,7 +173,7 @@ export function PartnerCoupon({ lang }: { lang: Lang }) {
                 className="border-2 px-3 py-2 text-sm font-semibold transition-opacity hover:opacity-90"
                 style={{ backgroundColor: BLUE, color: CREAM, borderColor: BLUE }}
               >
-                {t.couponCta} →
+                {t.couponCta} ↗
               </PartnerLink>
             </div>
             <p className="text-sm">{clipboardOk ? t.torn : t.tornNoClipboard}</p>

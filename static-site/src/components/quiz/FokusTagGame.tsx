@@ -39,6 +39,26 @@ export function FokusTagGame({ lang }: { lang: Lang }) {
   const [shown, setShown] = useState(0); // animated counter value
   const drag = useRef<{ x: number; y: number; baseX: number; baseY: number; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
+  // Until the tag is touched once, a ghost hand demonstrates the drag —
+  // a user test showed people assumed tapping the ad would open the shop.
+  const [touched, setTouched] = useState(false);
+  const [hint, setHint] = useState<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    if (touched || stage !== "idle" || !inView) return;
+    const measure = () => {
+      const phone = phoneRef.current?.getBoundingClientRect();
+      const tag = tagRef.current?.getBoundingClientRect();
+      if (!phone || !tag) return;
+      setHint({
+        x: phone.left + phone.width / 2 - (tag.left + tag.width / 2),
+        y: phone.top + phone.height * 0.62 - (tag.top + tag.height / 2),
+      });
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [touched, stage, inView]);
 
   // Only buzz while the ad is on screen.
   useEffect(() => {
@@ -126,6 +146,7 @@ export function FokusTagGame({ lang }: { lang: Lang }) {
   function onPointerDown(e: React.PointerEvent<HTMLButtonElement>) {
     if (stage !== "idle") return;
     e.currentTarget.setPointerCapture(e.pointerId);
+    setTouched(true);
     drag.current = { x: e.clientX, y: e.clientY, baseX: offset.x, baseY: offset.y, moved: false };
     setDragging(true);
   }
@@ -154,6 +175,7 @@ export function FokusTagGame({ lang }: { lang: Lang }) {
       suppressClick.current = false;
       return;
     }
+    setTouched(true);
     activate("tap");
   }
 
@@ -195,10 +217,21 @@ export function FokusTagGame({ lang }: { lang: Lang }) {
             );
           })}
         </div>
+        {stage === "idle" && (!touched || dragging) && (
+          <div className="pointer-events-none absolute left-1/2 top-[62%] z-10 grid -translate-x-1/2 -translate-y-1/2 justify-items-center gap-1">
+            <span
+              className="motion-safe:animate-pulse h-14 w-14 rounded-full border-[3px] border-dashed"
+              style={{ borderColor: CREAM, backgroundColor: "rgba(24,32,120,0.9)" }}
+            />
+            <span className="whitespace-nowrap rounded px-1.5 font-heading text-[10px] uppercase" style={{ color: CREAM, backgroundColor: BLUE }}>
+              {t.gameDrop}
+            </span>
+          </div>
+        )}
         {blocked && (
-          <div className="absolute inset-0 grid place-content-center justify-items-center gap-1 px-2 text-center">
+          <div className="absolute inset-x-0 top-12 grid justify-items-center gap-1 px-1 text-center">
             <span className="animate-stamp text-4xl leading-none">🔒</span>
-            <span className="animate-stamp font-heading text-sm" style={{ color: CREAM, animationDelay: "120ms" }}>
+            <span className="animate-stamp whitespace-nowrap font-heading text-xs" style={{ color: CREAM, animationDelay: "120ms" }}>
               {t.focusOn}
             </span>
           </div>
@@ -229,11 +262,24 @@ export function FokusTagGame({ lang }: { lang: Lang }) {
             </button>
           </>
         ) : (
-          <p className="text-sm leading-snug opacity-90">{t.gameHint}</p>
+          <div className="grid gap-1">
+            <p className="font-heading text-sm leading-snug">{t.gameHint}</p>
+            <p className="text-xs leading-snug opacity-80">{t.gameSafe}</p>
+          </div>
         )}
         <div className="relative h-16 w-16">
           {stage === "idle" && !dragging && (
             <span aria-hidden className="motion-safe:animate-pulse-ring absolute inset-0 rounded-full border-4" style={{ borderColor: CREAM }} />
+          )}
+          {stage === "idle" && !touched && hint && (
+            <span
+              aria-hidden
+              className="animate-drag-hint pointer-events-none absolute inset-0 z-30"
+              style={{ "--hx": `${hint.x}px`, "--hy": `${hint.y}px` } as React.CSSProperties}
+            >
+              <span className="absolute inset-0 rounded-full border-[3px] border-dashed" style={{ borderColor: CREAM }} />
+              <span className="absolute -bottom-3 -right-2 text-3xl leading-none drop-shadow">👆</span>
+            </span>
           )}
           <button
             ref={tagRef}

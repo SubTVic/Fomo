@@ -27,7 +27,9 @@ export const PARTNER_COPY = {
   de: {
     label: "Anzeige",
     cardTitle: "Gruppe gefunden. Jetzt noch den Kopf frei fürs Semester.",
-    gameHint: "Zieh den Tag aufs Handy oder tipp ihn an.",
+    gameHint: "Zieh den Tag aufs Handy.",
+    gameSafe: "Nur ein Spiel, hier öffnet sich nichts.",
+    gameDrop: "hier hin",
     gameTag: "Tag",
     gameTagAria: "FOKUS-Tag ans Handy halten",
     focusOn: "Fokus-Modus an",
@@ -49,7 +51,9 @@ export const PARTNER_COPY = {
   en: {
     label: "Ad",
     cardTitle: "Found your group. Now clear your head for the semester.",
-    gameHint: "Drag the tag onto the phone or tap it.",
+    gameHint: "Drag the tag onto the phone.",
+    gameSafe: "Just a game, nothing opens here.",
+    gameDrop: "drop here",
     gameTag: "Tag",
     gameTagAria: "Hold the FOKUS tag to the phone",
     focusOn: "Focus mode on",

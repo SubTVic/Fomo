@@ -6,7 +6,7 @@ const tick = (s: ReturnType<typeof reducer>, now: number) => reducer(s, { type: 
 
 describe("Fokus mini game", () => {
   it("freezes the round clock while focus mode runs", () => {
-    let s = reducer(initial, { type: "boot", now: 0 });
+    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
     s = tick(s, 4_000);
     s = reducer({ ...s, charge: 5 }, { type: "tag", now: 4_000 });
     expect(elapsed(s, 4_000)).toBe(4_000);
@@ -15,7 +15,7 @@ describe("Fokus mini game", () => {
   });
 
   it("does not spawn during focus mode", () => {
-    let s = reducer(initial, { type: "boot", now: 0 });
+    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
     s = reducer({ ...s, charge: 5 }, { type: "tag", now: 1_000 });
     const before = s.notes.length;
     for (let t = 1_100; t < 3_400; t += 100) s = tick(s, t);
@@ -23,7 +23,7 @@ describe("Fokus mini game", () => {
   });
 
   it("fires a burst of several notifications at once", () => {
-    let s = reducer(initial, { type: "boot", now: 0 });
+    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
     // keep the screen empty so only the burst counts
     for (let t = 100; t < 8_000; t += 100) s = { ...tick(s, t), notes: [] };
     s = tick(s, 8_000);
@@ -32,7 +32,7 @@ describe("Fokus mini game", () => {
   });
 
   it("has no time limit: survives past 30 s while the screen is kept clear", () => {
-    let s = reducer(initial, { type: "boot", now: 0 });
+    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
     for (let t = 100; t <= 60_000; t += 100) s = { ...tick(s, t), notes: [] };
     expect(s.phase).toBe("playing");
     expect(s.burstsDone).toBe(7); // one every 8 s
@@ -48,8 +48,31 @@ describe("Fokus mini game", () => {
     for (let t = 0; t < 600_000; t += 1_000) expect(spawnGap(t + 1_000)).toBeLessThanOrEqual(spawnGap(t));
   });
 
+  it("costs 5 points to tap away your own group", () => {
+    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
+    s = { ...s, score: 10, notes: [{ id: 99, kind: "good", idx: 0, born: 0, slot: 0 }] };
+    s = reducer(s, { type: "tap", id: 99, now: 100 });
+    expect(s.score).toBe(5);
+  });
+
+  it("runs the hands-on tutorial, then starts the round", () => {
+    let s = reducer(initial, { type: "boot", now: 0, tutorial: true });
+    s = tick(s, 600);
+    expect(s.phase).toBe("tutorial");
+    s = reducer(s, { type: "tap", id: s.notes[0].id, now: 700 }); // step 0: block it
+    s = tick(s, 800);
+    s = tick(s, 1_500); // step 1: group message appears …
+    expect(s.notes.some((n) => n.kind === "good" && n.leftAt === undefined)).toBe(true);
+    for (let t = 1_600; t <= 5_000; t += 100) s = tick(s, t); // … and is left alone (+2)
+    for (let t = 5_100; t <= 6_000 && s.tutStep === 2 && !s.tutSpawned; t += 100) s = tick(s, t);
+    expect(s.charge).toBe(5); // step 2: tag is charged for the three notes
+    s = reducer(s, { type: "tag", now: 6_100 });
+    s = tick(s, 6_200);
+    expect(s.phase).toBe("playing");
+  });
+
   it("is lost when a notification has no free slot", () => {
-    let s = reducer(initial, { type: "boot", now: 0 });
+    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
     for (let t = 100; t <= 8_000 && s.phase === "playing"; t += 100) s = tick(s, t);
     expect(s.phase).toBe("lost");
     expect(s.survivedMs).toBeGreaterThan(0);

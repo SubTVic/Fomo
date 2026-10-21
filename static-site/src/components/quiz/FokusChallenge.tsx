@@ -15,6 +15,8 @@ const SLOTS = 5; // fixed places on the screen; no free slot when spawning = dis
 const CHARGE_FULL = 5; // blocks needed to charge the tag
 const CALM_MS = 2_500; // full pause after using the tag: clock, speed and bursts freeze
 const GOOD_TTL = 2_400; // a group message disappears on its own after this
+const GOOD_TTL_TUTORIAL = 3_000;
+const GROUP_PENALTY = 5; // tapping your own group has to hurt
 const GOOD_SHARE = 0.18;
 const LEAVE_MS = 320; // zap animation length
 const TICK_MS = 100;
@@ -37,10 +39,14 @@ export function spawnGap(elapsed: number): number {
 
 /** Notifications keep a fixed slot so nothing jumps while you aim at it. */
 type Note = { id: number; kind: "bad" | "good"; idx: number; born: number; slot: number; leftAt?: number };
-type Phase = "playing" | "lost";
+type Phase = "tutorial" | "playing" | "lost";
+/** Hands-on tutorial, two words of text each: 0 block one · 1 leave the group message · 2 use the tag */
+type TutStep = 0 | 1 | 2;
 
 interface State {
   phase: Phase;
+  tutStep: TutStep;
+  tutSpawned: boolean;
   notes: Note[];
   score: number;
   blocked: number;
@@ -59,7 +65,7 @@ interface State {
 }
 
 type Action =
-  | { type: "boot"; now: number }
+  | { type: "boot"; now: number; tutorial: boolean }
   | { type: "restart"; now: number }
   | { type: "tick"; now: number; r1: number; r2: number }
   | { type: "tap"; id: number; now: number }
@@ -67,6 +73,8 @@ type Action =
 
 export const initial: State = {
   phase: "playing",
+  tutStep: 0,
+  tutSpawned: false,
   notes: [],
   score: 0,
   blocked: 0,
@@ -127,7 +135,9 @@ function finish(s: State, now: number): State {
 export function reducer(s: State, a: Action): State {
   switch (a.type) {
     case "boot":
-      return startRound(initial, a.now);
+      return a.tutorial
+        ? { ...initial, phase: "tutorial", now: a.now, nextSpawnAt: a.now + 500 }
+        : startRound(initial, a.now);
 
     case "restart":
       return startRound(s, a.now);
@@ -141,7 +151,7 @@ export function reducer(s: State, a: Action): State {
       let notes = s.notes
         .filter((n) => active(n) || now - (n.leftAt ?? 0) < LEAVE_MS)
         .map((n) => {
-          if (active(n) && n.kind === "good" && now - n.born > GOOD_TTL) {
+          if (active(n) && n.kind === "good" && now - n.born > (s.phase === "tutorial" ? GOOD_TTL_TUTORIAL : GOOD_TTL)) {
             score += 2;
             flash = { text: "seen", at: now };
             return { ...n, leftAt: now };
@@ -149,6 +159,26 @@ export function reducer(s: State, a: Action): State {
           return n;
         });
       let next: State = { ...s, now, notes, score, flash };
+
+      if (s.phase === "tutorial") {
+        if (s.tutSpawned && !notes.some(active)) {
+          if (s.tutStep === 2) return startRound(next, now); // "Los! 🔥"
+          return { ...next, tutStep: (s.tutStep + 1) as TutStep, tutSpawned: false, nextSpawnAt: now + 600 };
+        }
+        if (!s.tutSpawned && now >= s.nextSpawnAt) {
+          let id = s.nextId;
+          if (s.tutStep === 0) notes = place(notes, { id: id++, kind: "bad", idx: 0, born: now, slot: 1 });
+          if (s.tutStep === 1) notes = place(notes, { id: id++, kind: "good", idx: 0, born: now, slot: 1 });
+          if (s.tutStep === 2) {
+            for (const [slot, idx] of [[0, 1], [2, 2], [3, 3]]) {
+              notes = place(notes, { id: id++, kind: "bad", idx, born: now, slot });
+            }
+            next = { ...next, charge: CHARGE_FULL };
+          }
+          return { ...next, notes, nextId: id, tutSpawned: true };
+        }
+        return next;
+      }
       const t = elapsed(s, now);
       if (t >= (s.burstsDone + 1) * BURST_EVERY_MS && now >= s.calmUntil) {
         const free = freeSlots(notes);
@@ -180,18 +210,18 @@ export function reducer(s: State, a: Action): State {
     }
 
     case "tap": {
-      if (s.phase !== "playing") return s;
+      if (s.phase !== "playing" && s.phase !== "tutorial") return s;
       const note = s.notes.find((n) => n.id === a.id);
       if (!note || !active(note)) return s;
       const notes = s.notes.map((n) => (n.id === a.id ? { ...n, leftAt: a.now } : n));
       if (note.kind === "good") {
-        return { ...s, notes, score: Math.max(0, s.score - 2), flash: { text: "oops", at: a.now } };
+        return { ...s, notes, score: Math.max(0, s.score - GROUP_PENALTY), flash: { text: "oops", at: a.now } };
       }
       return { ...s, notes, score: s.score + 1, blocked: s.blocked + 1, charge: Math.min(CHARGE_FULL, s.charge + 1) };
     }
 
     case "tag": {
-      if (s.phase !== "playing" || s.charge < CHARGE_FULL) return s;
+      if ((s.phase !== "playing" && s.phase !== "tutorial") || s.charge < CHARGE_FULL) return s;
       const hit = s.notes.filter((n) => active(n) && n.kind === "bad").length;
       const notes = s.notes.map((n) => (active(n) && n.kind === "bad" ? { ...n, leftAt: a.now } : n));
       const calmUntil = a.now + CALM_MS;
@@ -211,17 +241,19 @@ export function reducer(s: State, a: Action): State {
 }
 
 /**
- * Endless arcade round inside the FOKUS ad (play until distracted). No
- * tutorial on purpose: tapping/swiping, the group messages and the tag are
- * left to discover; short feedback flashes explain them in the moment.
+ * Endless arcade round inside the FOKUS ad (play until distracted). The
+ * first round opens with a hands-on tutorial (block one, leave the group
+ * message, use the tag) with two-word hints — no rules text.
  * Score and best live in component state only.
  */
 export function FokusChallenge({
   lang,
+  tutorial,
   onExit,
   endCta,
 }: {
   lang: Lang;
+  tutorial: boolean;
   onExit: () => void;
   /** Shown on the result screen (the ad's link). */
   endCta?: React.ReactNode;
@@ -234,10 +266,10 @@ export function FokusChallenge({
   const reportedEnd = useRef(0);
 
   useEffect(() => {
-    dispatch({ type: "boot", now: performance.now() });
-  }, []);
+    dispatch({ type: "boot", now: performance.now(), tutorial });
+  }, [tutorial]);
 
-  const running = s.phase === "playing";
+  const running = s.phase === "playing" || s.phase === "tutorial";
   useEffect(() => {
     if (!running) return;
     const id = setInterval(
@@ -265,12 +297,14 @@ export function FokusChallenge({
 
   const calm = s.phase === "playing" && s.now < s.calmUntil;
   const live = s.notes.filter(active).length;
-  const survived = s.phase === "lost" ? s.survivedMs : elapsed(s, s.now);
+  const inTutorial = s.phase === "tutorial";
+  const survived = s.phase === "lost" ? s.survivedMs : inTutorial ? 0 : elapsed(s, s.now);
   const ready = s.charge >= CHARGE_FULL;
   const flashOn = s.flash !== null && s.now - s.flash.at < 900;
   const flashText = { go: c.go, oops: c.oops, seen: c.seen, burst: c.burst };
   const flashColor = { go: CREAM, oops: "#ff8a8a", seen: "#7dffb4", burst: "#ffd34d" };
-  const hint = flashOn && s.flash ? flashText[s.flash.text] : calm ? `🔒 ${c.calm}` : null;
+  const tutHint = inTutorial ? [c.tutTap, c.tutGroup, c.tutTag][s.tutStep] : null;
+  const hint = flashOn && s.flash ? flashText[s.flash.text] : calm ? `🔒 ${c.calm}` : tutHint;
   const hintColor = flashOn && s.flash ? flashColor[s.flash.text] : CREAM;
 
   return (
@@ -278,7 +312,7 @@ export function FokusChallenge({
       {/* HUD */}
       <div className="grid grid-cols-3 items-end gap-2 text-center">
         <div>
-          <p className="font-heading text-2xl leading-none tabular-nums">{clock(survived)}</p>
+          <p className="font-heading text-2xl leading-none tabular-nums">{inTutorial ? c.practice : clock(survived)}</p>
           <p className="mt-1 text-[10px] font-bold uppercase tracking-wider opacity-80">{c.survived}</p>
         </div>
         <div>

@@ -68,7 +68,7 @@ function PartnerLink({
  * Rendered via a portal — an animated ancestor would otherwise trap
  * `position: fixed`. Still clearly labelled as an ad; ✕ or Esc closes it.
  */
-function GameLayer({ lang, onClose }: { lang: Lang; onClose: () => void }) {
+function GameLayer({ lang, tutorial, onClose }: { lang: Lang; tutorial: boolean; onClose: () => void }) {
   const c = CHALLENGE_COPY[lang];
   const t = PARTNER_COPY[lang];
   const layerRef = useRef<HTMLDivElement>(null);
@@ -127,6 +127,7 @@ function GameLayer({ lang, onClose }: { lang: Lang; onClose: () => void }) {
         </div>
         <FokusChallenge
           lang={lang}
+          tutorial={tutorial}
           onExit={onClose}
           endCta={
             <PartnerLink
@@ -147,7 +148,11 @@ function GameLayer({ lang, onClose }: { lang: Lang; onClose: () => void }) {
 /** Ad card shown directly below the result list (variant 1). */
 export function PartnerCard({ lang }: { lang: Lang }) {
   const [mode, setMode] = useState<"demo" | "challenge">("demo");
-  const closeGame = useCallback(() => setMode("demo"), []);
+  const [played, setPlayed] = useState(false); // tutorial only in the first game
+  const closeGame = useCallback(() => {
+    setPlayed(true);
+    setMode("demo");
+  }, []);
   if (!PARTNER_OFFER.enabled) return null;
   const t = PARTNER_COPY[lang];
   return (
@@ -163,7 +168,7 @@ export function PartnerCard({ lang }: { lang: Lang }) {
       <p className="font-heading text-lg leading-tight sm:text-xl">{t.cardTitle}</p>
       {/* remounting the demo after the game resets it to its idle state */}
       <FokusTagGame key={mode} lang={lang} onChallenge={mode === "demo" ? () => setMode("challenge") : undefined} />
-      {mode === "challenge" && <GameLayer lang={lang} onClose={closeGame} />}
+      {mode === "challenge" && <GameLayer lang={lang} tutorial={!played} onClose={closeGame} />}
       <p className="max-w-[680px] text-sm leading-relaxed opacity-90 sm:text-base">{t.cardText}</p>
       <PartnerLink
         placement="results-card"

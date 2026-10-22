@@ -1,10 +1,10 @@
 {
   "_meta": {
-    "source": "backup: fomo-backup-2026-10-22-13-14-39.json",
-    "generatedAt": "2026-10-22T13:17:19.283Z",
+    "source": "backup: fomo-backup-2026-10-22-13-19-10.json",
+    "generatedAt": "2026-10-22T13:19:54.310Z",
     "groupCount": 97,
-    "verifiedCount": 55,
-    "derivedCount": 42,
+    "verifiedCount": 56,
+    "derivedCount": 41,
     "note": "All active groups. Verified have real selfRatings; unverified use naive-derived ratings flagged derived:true (excluded from quiz matching)."
   },
   "groups": [
@@ -988,24 +988,24 @@
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
+        "raterCount": 1,
+        "derived": false,
         "filterSelections": [
-          "handsOn",
-          "outdoor"
+          "arts",
+          "party"
         ],
         "answers": [
           {
             "itemId": "WS2-01",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-02",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-03",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-04",
@@ -1013,31 +1013,31 @@
           },
           {
             "itemId": "WS2-05",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-06",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-07",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-08",
-            "value": 0
+            "value": 1
           },
           {
             "itemId": "WS2-09",
-            "value": 0
+            "value": -1
           },
           {
             "itemId": "WS2-10",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-11",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-12",
@@ -1053,11 +1053,11 @@
           },
           {
             "itemId": "WS2-15",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-16",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-17",
@@ -1073,11 +1073,11 @@
           },
           {
             "itemId": "WS2-20",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-21",
-            "value": 0
+            "value": 1
           }
         ]
       }

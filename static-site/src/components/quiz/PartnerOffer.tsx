@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { track, EVENTS } from "@/lib/analytics";
 import { CHALLENGE_COPY, PARTNER_COPY, PARTNER_OFFER, type PartnerPlacement } from "@/lib/partner";
+import { DISTRACTIONS } from "@/lib/fokus-notifications";
 import { FokusChallenge } from "./FokusChallenge";
 import { FokusTagGame } from "./FokusTagGame";
 
@@ -68,10 +69,22 @@ function PartnerLink({
  * Rendered via a portal — an animated ancestor would otherwise trap
  * `position: fixed`. Still clearly labelled as an ad; ✕ or Esc closes it.
  */
-function GameLayer({ lang, tutorial, onClose }: { lang: Lang; tutorial: boolean; onClose: () => void }) {
+function GameLayer({
+  lang,
+  tutorial,
+  discovered,
+  onClose,
+}: {
+  lang: Lang;
+  tutorial: boolean;
+  discovered: Set<number>;
+  onClose: () => void;
+}) {
   const c = CHALLENGE_COPY[lang];
   const t = PARTNER_COPY[lang];
   const layerRef = useRef<HTMLDivElement>(null);
+  // first open: a start screen that says "this is a game" before anything moves
+  const [intro, setIntro] = useState(tutorial);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -125,20 +138,40 @@ function GameLayer({ lang, tutorial, onClose }: { lang: Lang; tutorial: boolean;
             </button>
           </div>
         </div>
-        <FokusChallenge
-          lang={lang}
-          tutorial={tutorial}
-          onExit={onClose}
-          endCta={
-            <PartnerLink
-              placement="results-card"
-              className="justify-self-center border-2 px-5 py-2.5 font-heading text-sm"
-              style={{ backgroundColor: "transparent", color: CREAM, borderColor: CREAM }}
+        {intro ? (
+          <div className="grid content-center gap-5 py-6 text-center animate-fade-up">
+            <p className="font-heading text-3xl leading-tight">{c.introTitle}</p>
+            <ul className="grid gap-3 text-base leading-snug">
+              <li>{c.introGoal}</li>
+              <li className="font-heading">{c.introFind.replace("{n}", String(DISTRACTIONS.length))}</li>
+              <li>{c.introFunny}</li>
+            </ul>
+            <button
+              type="button"
+              onClick={() => setIntro(false)}
+              className="justify-self-center border-2 px-8 py-3 font-heading text-lg"
+              style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
             >
-              {t.cardCta} ↗
-            </PartnerLink>
-          }
-        />
+              {c.introGo}
+            </button>
+          </div>
+        ) : (
+          <FokusChallenge
+            lang={lang}
+            tutorial={tutorial}
+            discovered={discovered}
+            onExit={onClose}
+            endCta={
+              <PartnerLink
+                placement="results-card"
+                className="justify-self-center border-2 px-5 py-2.5 font-heading text-sm"
+                style={{ backgroundColor: "transparent", color: CREAM, borderColor: CREAM }}
+              >
+                {t.cardCta} ↗
+              </PartnerLink>
+            }
+          />
+        )}
       </div>
     </div>,
     document.body,
@@ -149,6 +182,7 @@ function GameLayer({ lang, tutorial, onClose }: { lang: Lang; tutorial: boolean;
 export function PartnerCard({ lang }: { lang: Lang }) {
   const [mode, setMode] = useState<"demo" | "challenge">("demo");
   const [played, setPlayed] = useState(false); // tutorial only in the first game
+  const [discovered] = useState(() => new Set<number>()); // collection across rounds, page only
   const closeGame = useCallback(() => {
     setPlayed(true);
     setMode("demo");
@@ -174,7 +208,7 @@ export function PartnerCard({ lang }: { lang: Lang }) {
       <p className="font-heading text-base leading-tight sm:text-lg">{t.cardTitle}</p>
       {/* remounting the demo after the game resets it to its idle state */}
       <FokusTagGame key={mode} lang={lang} onChallenge={mode === "demo" ? () => setMode("challenge") : undefined} />
-      {mode === "challenge" && <GameLayer lang={lang} tutorial={!played} onClose={closeGame} />}
+      {mode === "challenge" && <GameLayer lang={lang} tutorial={!played} discovered={discovered} onClose={closeGame} />}
       <button
         type="button"
         onClick={() => setMode("challenge")}

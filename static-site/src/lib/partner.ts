@@ -62,6 +62,12 @@ export const PARTNER_COPY = {
 export const CHALLENGE_COPY = {
   de: {
     title: "Fokus-Minispiel",
+    introTitle: "🎮 Das ist ein Spiel!",
+    introGoal: "Ziel: Wisch alle Benachrichtigungen weg und knack den Highscore.",
+    introFind: "Findest du alle {n} Benachrichtigungen? 🔍",
+    introFunny: "Welche ist die lustigste? 😂",
+    introGo: "Los geht’s ▶",
+    discovered: "Entdeckt: {x}/{n} 🔍",
     go: "Los! 🔥",
     practice: "Übung",
     tutTap: "👆 Tippe, um die Benachrichtigung zu entfernen.",
@@ -88,6 +94,12 @@ export const CHALLENGE_COPY = {
   },
   en: {
     title: "Focus mini game",
+    introTitle: "🎮 It's a game!",
+    introGoal: "Goal: swipe away every notification and beat the high score.",
+    introFind: "Can you find all {n} notifications? 🔍",
+    introFunny: "Which one is the funniest? 😂",
+    introGo: "Let's go ▶",
+    discovered: "Found: {x}/{n} 🔍",
     go: "Go! 🔥",
     practice: "Practice",
     tutTap: "👆 Tap to remove the notification.",

@@ -328,15 +328,21 @@ export function FokusChallenge({
   tutorial,
   onExit,
   endCta,
+  discovered,
 }: {
   lang: Lang;
   tutorial: boolean;
   onExit: () => void;
   /** Shown on the result screen (the ad's link). */
   endCta?: React.ReactNode;
+  /** Distractions seen across all rounds while the page is open (collection). */
+  discovered?: Set<number>;
 }) {
   const c = CHALLENGE_COPY[lang];
   const [s, dispatch] = useReducer(reducer, initial);
+  useEffect(() => {
+    for (const i of s.seen) discovered?.add(i);
+  }, [s.seen, discovered]);
   const reportedStart = useRef(0);
   const reportedEnd = useRef(0);
   const phoneRef = useRef<HTMLDivElement>(null);
@@ -635,6 +641,11 @@ export function FokusChallenge({
             <p className="text-xs opacity-80">
               {c.best}: {s.best}
             </p>
+            {discovered && (
+              <p className="font-heading text-sm">
+                {c.discovered.replace("{x}", String(discovered.size)).replace("{n}", String(DISTRACTIONS.length))}
+              </p>
+            )}
             {endCta}
             <button
               type="button"

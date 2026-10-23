@@ -8,7 +8,7 @@ import { CHALLENGE_COPY, PARTNER_COPY, PARTNER_OFFER, TASK_COPY, type PartnerPla
 import { DISTRACTIONS } from "@/lib/fokus-notifications";
 import { FokusChallenge } from "./FokusChallenge";
 import { FokusTaskGame, TARGET } from "./FokusTaskGame";
-import { FokusTagGame } from "./FokusTagGame";
+import { FokusDevice } from "./FokusDevice";
 
 type Lang = "de" | "en";
 
@@ -241,14 +241,18 @@ function GameLayer({
   );
 }
 
-/** Ad card shown directly below the result list (variant 1). */
+/**
+ * Ad card shown directly below the result list. Deliberately calm: user
+ * tests found the buzzing phone and the ghost hand pushy, almost scammy —
+ * so no motion here; the game only starts when someone asks for it.
+ */
 export function PartnerCard({ lang }: { lang: Lang }) {
-  const [mode, setMode] = useState<"demo" | "challenge">("demo");
+  const [open, setOpen] = useState(false);
   const [played, setPlayed] = useState(false); // tutorial only in the first game
   const [discovered] = useState(() => new Set<number>()); // collection across rounds, page only
   const closeGame = useCallback(() => {
     setPlayed(true);
-    setMode("demo");
+    setOpen(false);
   }, []);
   if (!PARTNER_OFFER.enabled) return null;
   const t = PARTNER_COPY[lang];
@@ -259,34 +263,39 @@ export function PartnerCard({ lang }: { lang: Lang }) {
       style={{ backgroundColor: BLUE, color: CREAM }}
     >
       <div className="flex items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-2">
-          <Logo variant="cream" className="h-4 sm:h-5" />
-          {/* user test: people took the card for a plain ad — say it's a game */}
-          <span className="whitespace-nowrap rounded-full px-2 py-0.5 font-heading text-[10px] uppercase tracking-wider" style={{ backgroundColor: "#ffd34d", color: BLUE }}>
-            {t.gameBadge}
-          </span>
-        </div>
+        <Logo variant="cream" className="h-4 sm:h-5" />
         <AdLabel lang={lang} className="opacity-80" />
       </div>
-      <p className="font-heading text-base leading-tight sm:text-lg">{t.cardTitle}</p>
-      {/* remounting the demo after the game resets it to its idle state */}
-      <FokusTagGame key={mode} lang={lang} onChallenge={mode === "demo" ? () => setMode("challenge") : undefined} />
-      {mode === "challenge" && <GameLayer lang={lang} tutorial={!played} discovered={discovered} onClose={closeGame} />}
-      <button
-        type="button"
-        onClick={() => setMode("challenge")}
-        className="border-2 px-5 py-3 text-center font-heading text-base transition-opacity hover:opacity-90"
-        style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
-      >
-        {t.startGame}
-      </button>
-      <PartnerLink
-        placement="results-card"
-        className="border-2 px-5 py-2 text-center font-heading text-xs transition-opacity hover:opacity-90 sm:justify-self-start"
-        style={{ backgroundColor: "transparent", color: CREAM, borderColor: CREAM }}
-      >
-        {t.cardCta} ↗
-      </PartnerLink>
+      <div className="flex items-center gap-3">
+        <span className="shrink-0">
+          <FokusDevice size={56} />
+        </span>
+        <div className="grid min-w-0 gap-1">
+          <p className="font-heading text-base leading-tight sm:text-lg">{t.cardTitle}</p>
+          <p className="text-sm leading-snug opacity-85">{t.gamePitch}</p>
+        </div>
+      </div>
+      {open && <GameLayer lang={lang} tutorial={!played} discovered={discovered} onClose={closeGame} />}
+      <div className="grid gap-2 sm:flex sm:items-center">
+        <button
+          type="button"
+          onClick={() => {
+            track(EVENTS.partnerPlay, { partner: PARTNER_OFFER.id, action: "open" });
+            setOpen(true);
+          }}
+          className="border-2 px-5 py-3 text-center font-heading text-base transition-opacity hover:opacity-90"
+          style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
+        >
+          {t.startGame}
+        </button>
+        <PartnerLink
+          placement="results-card"
+          className="border-2 px-5 py-2.5 text-center font-heading text-sm transition-opacity hover:opacity-90"
+          style={{ backgroundColor: "transparent", color: CREAM, borderColor: CREAM }}
+        >
+          {t.cardCta} ↗
+        </PartnerLink>
+      </div>
     </aside>
   );
 }

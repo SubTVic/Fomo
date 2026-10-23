@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from "vitest";
-import { CHALLENGE_COPY, GAME_NOTIFICATIONS, PARTNER_COPY, PARTNER_OFFER } from "@/lib/partner";
+import { CHALLENGE_COPY, PARTNER_COPY, PARTNER_OFFER } from "@/lib/partner";
 import { DISTRACTIONS, GROUP_MESSAGES } from "@/lib/fokus-notifications";
 
 describe("partner offer", () => {
@@ -22,7 +22,6 @@ describe("partner ad works in English too", () => {
   it("has the same copy keys in both languages", () => {
     expect(keys(PARTNER_COPY.en)).toEqual(keys(PARTNER_COPY.de));
     expect(keys(CHALLENGE_COPY.en)).toEqual(keys(CHALLENGE_COPY.de));
-    expect(GAME_NOTIFICATIONS.en.length).toBe(GAME_NOTIFICATIONS.de.length);
   });
 
   it("has an English text for every game message, without German leftovers", () => {

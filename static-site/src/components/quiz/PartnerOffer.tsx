@@ -64,6 +64,32 @@ function PartnerLink({
   );
 }
 
+/** Rules of the task game: before the first round, and again on demand. */
+function TaskIntro({ lang, cta, onGo }: { lang: Lang; cta: string; onGo: () => void }) {
+  const c = TASK_COPY[lang];
+  return (
+    <div className="grid content-center gap-5 py-6 text-center animate-fade-up">
+      <p className="font-heading text-3xl leading-tight">{c.introTitle}</p>
+      <ul className="grid gap-3 text-base leading-snug">
+        <li className="font-heading">{c.introTask.replace("{n}", String(TARGET))}</li>
+        <li>{c.introDistract}</li>
+        <li>{c.introFokus}</li>
+        <li className="font-heading text-sm" style={{ color: "#ffd34d" }}>
+          {c.introCollect}
+        </li>
+      </ul>
+      <button
+        type="button"
+        onClick={onGo}
+        className="justify-self-center border-2 px-8 py-3 font-heading text-lg"
+        style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
+      >
+        {cta}
+      </button>
+    </div>
+  );
+}
+
 /**
  * Full-screen layer for the mini game: the page behind is locked so swipes
  * never scroll it (real Fullscreen API is not available on iPhone Safari).
@@ -86,6 +112,7 @@ function GameLayer({
   const layerRef = useRef<HTMLDivElement>(null);
   // first open: a start screen that says "this is a game" before anything moves
   const [intro, setIntro] = useState(tutorial);
+  const [help, setHelp] = useState(false); // tutorial reopened mid-game
 
   useEffect(() => {
     const html = document.documentElement;
@@ -123,7 +150,7 @@ function GameLayer({
         paddingRight: "max(16px, env(safe-area-inset-right))",
       }}
     >
-      <div className="mx-auto grid h-full max-w-[420px] content-start gap-3">
+      <div className="relative mx-auto grid h-full max-w-[420px] content-start gap-3">
         <div className="flex items-center justify-between gap-3">
           <Logo variant="cream" className="h-5" />
           <div className="flex items-center gap-3">
@@ -140,23 +167,7 @@ function GameLayer({
           </div>
         </div>
         {intro && PARTNER_OFFER.game === "task" ? (
-          <div className="grid content-center gap-5 py-6 text-center animate-fade-up">
-            <p className="font-heading text-3xl leading-tight">{TASK_COPY[lang].introTitle}</p>
-            <ul className="grid gap-3 text-base leading-snug">
-              <li className="font-heading">{TASK_COPY[lang].introTask.replace("{n}", String(TARGET))}</li>
-              <li>{TASK_COPY[lang].introDistract}</li>
-              <li>{TASK_COPY[lang].introFokus}</li>
-              <li className="font-heading text-sm" style={{ color: "#ffd34d" }}>{TASK_COPY[lang].introCollect}</li>
-            </ul>
-            <button
-              type="button"
-              onClick={() => setIntro(false)}
-              className="justify-self-center border-2 px-8 py-3 font-heading text-lg"
-              style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
-            >
-              {TASK_COPY[lang].introGo}
-            </button>
-          </div>
+          <TaskIntro lang={lang} cta={TASK_COPY[lang].introGo} onGo={() => setIntro(false)} />
         ) : intro ? (
           <div className="grid content-center gap-5 py-6 text-center animate-fade-up">
             <p className="font-heading text-3xl leading-tight">{c.introTitle}</p>
@@ -175,20 +186,38 @@ function GameLayer({
             </button>
           </div>
         ) : PARTNER_OFFER.game === "task" ? (
-          <FokusTaskGame
-            lang={lang}
-            discovered={discovered}
-            onExit={onClose}
-            endCta={
-              <PartnerLink
-                placement="results-card"
-                className="justify-self-center border-2 px-5 py-2.5 font-heading text-sm"
-                style={{ backgroundColor: "transparent", color: CREAM, borderColor: CREAM }}
-              >
-                {t.cardCta} ↗
-              </PartnerLink>
-            }
-          />
+          <>
+            {/* user tests: people skip the intro, then don't know what's going on */}
+            <button
+              type="button"
+              onClick={() => setHelp(true)}
+              className="justify-self-start rounded-full border-2 px-3 py-1 text-xs font-bold"
+              style={{ borderColor: "#ffd34d", color: "#ffd34d" }}
+            >
+              {TASK_COPY[lang].help}
+            </button>
+            {help && (
+              // over the paused game, which keeps its state underneath
+              <div className="absolute inset-x-0 bottom-0 top-11 z-50" style={{ backgroundColor: BLUE }}>
+                <TaskIntro lang={lang} cta={TASK_COPY[lang].helpResume} onGo={() => setHelp(false)} />
+              </div>
+            )}
+            <FokusTaskGame
+              lang={lang}
+              paused={help}
+              discovered={discovered}
+              onExit={onClose}
+              endCta={
+                <PartnerLink
+                  placement="results-card"
+                  className="justify-self-center border-2 px-5 py-2.5 font-heading text-sm"
+                  style={{ backgroundColor: "transparent", color: CREAM, borderColor: CREAM }}
+                >
+                  {t.cardCta} ↗
+                </PartnerLink>
+              }
+            />
+          </>
         ) : (
           <FokusChallenge
             lang={lang}

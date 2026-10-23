@@ -67,7 +67,8 @@ type Action =
   | { type: "tick"; now: number; r1: number; r2: number; r3: number }
   | { type: "cell"; cell: number; now: number }
   | { type: "dismiss"; id: number; now: number }
-  | { type: "tag"; now: number };
+  | { type: "tag"; now: number }
+  | { type: "resume"; pausedMs: number }; // after the tutorial was reopened mid-game
 
 export const taskInitial: TaskState = {
   phase: "playing",
@@ -160,6 +161,22 @@ export function taskReducer(s: TaskState, a: Action): TaskState {
       };
     }
 
+    case "resume": {
+      // move every timestamp forward: the pause never happened
+      const by = a.pausedMs;
+      return {
+        ...s,
+        now: s.now + by,
+        startedAt: s.startedAt + by,
+        nextSpawnAt: s.nextSpawnAt + by,
+        focusUntil: s.focusUntil + by,
+        readyAt: s.readyAt + by,
+        notes: s.notes.map((n) => (n.leftAt === undefined ? n : { ...n, leftAt: n.leftAt + by })),
+        unlocked: s.unlocked.map((u) => ({ ...u, at: u.at + by })),
+        wrong: s.wrong && { ...s.wrong, at: s.wrong.at + by },
+      };
+    }
+
     case "tag": {
       if (s.phase !== "playing" || a.now < s.readyAt) return s;
       const focusUntil = a.now + FOCUS_MS;
@@ -191,8 +208,10 @@ export function FokusTaskGame({
   onExit,
   endCta,
   discovered,
+  paused = false,
 }: {
   lang: Lang;
+  paused?: boolean;
   onExit: () => void;
   endCta?: React.ReactNode;
   discovered?: Set<number>;
@@ -218,14 +237,21 @@ export function FokusTaskGame({
     startRound(discovered);
   };
 
+  // paused (tutorial reopened): stop the clock, then shift all timers on resume
   useEffect(() => {
-    if (s.phase !== "playing") return;
+    if (!paused) return;
+    const at = performance.now();
+    return () => dispatch({ type: "resume", pausedMs: performance.now() - at });
+  }, [paused]);
+
+  useEffect(() => {
+    if (s.phase !== "playing" || paused) return;
     const id = setInterval(
       () => dispatch({ type: "tick", now: performance.now(), r1: Math.random(), r2: Math.random(), r3: Math.random() }),
       TICK_MS,
     );
     return () => clearInterval(id);
-  }, [s.phase]);
+  }, [s.phase, paused]);
 
   useEffect(() => {
     for (const i of s.seen) discovered?.add(i);

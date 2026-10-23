@@ -14,7 +14,15 @@ export type Tier = 0 | 1 | 2 | 3;
 type Text = { de: string; en: string };
 /** `generic`: plain app noise ("12 new videos") — left out of the task game,
  *  which only uses the funny, personal ones you actually want to read. */
-export type Distraction = { from: Text; via: keyof typeof VIA; tier: Tier; text: Text; generic?: boolean };
+export type Distraction = {
+  from: Text;
+  via: keyof typeof VIA;
+  tier: Tier;
+  text: Text;
+  generic?: boolean;
+  /** extra collections besides the sender's one (see COLLECTIONS) */
+  also?: CollectionId[];
+};
 
 /** App that delivers the message → icon letter and colour. */
 export const VIA = {
@@ -41,6 +49,7 @@ export const VIA = {
 const t = (de: string, en: string): Text => ({ de, en });
 const d = (tier: Tier, via: keyof typeof VIA, from: Text, text: Text): Distraction => ({ tier, via, from, text });
 const generic = (x: Distraction): Distraction => ({ ...x, generic: true });
+const also = (x: Distraction, ...ids: CollectionId[]): Distraction => ({ ...x, also: ids });
 
 export const DISTRACTIONS: Distraction[] = [
   // tier 0 — everyday noise
@@ -58,6 +67,7 @@ export const DISTRACTIONS: Distraction[] = [
   generic(d(0, "Snapchat", t("Snapchat", "Snapchat"), t("3 neue Snaps", "3 new snaps"))),
   d(0, "WhatsApp", t("Ex", "Ex"), t("ich vermiss dich 🥺", "i miss you 🥺")),
   d(0, "DVB", t("DVB", "DVB"), t("Linie 3: Verspätung ca. 12 Min.", "Tram 3: delayed approx. 12 min")),
+  also(d(0, "WhatsApp", t("Papa", "Dad"), t("Dynamo hat gewonnen!!! Ruf mal an", "Dynamo won!!! Give me a call")), "dynamo"),
   d(0, "YouTube", t("YouTube", "YouTube"), t("DorFuchs hat ein neues Video hochgeladen 🎵", "DorFuchs uploaded a new video 🎵")),
 
   // tier 1 — after 15 s
@@ -77,6 +87,7 @@ export const DISTRACTIONS: Distraction[] = [
   d(1, "WhatsApp", t("Ex", "Ex"), t("weißt du noch, unser erstes Date an der Elbe?", "remember our first date by the Elbe?")),
   d(1, "WhatsApp", t("Neustadt-Crew", "Neustadt crew"), t("Elbwiesen, 18 Uhr, Sonnenuntergang? 🌅", "Elbe meadows, 6 pm, sunset? 🌅")),
   d(1, "Dynamo", t("Dynamo-Fanclub", "Dynamo fan club"), t("Pokal gegen Schalke, Mi 18 Uhr. Bist du dabei? ⚽", "Cup vs Schalke, Wed 6 pm. You in? ⚽")), // topical
+  d(1, "Dynamo", t("Dynamo-Fanclub", "Dynamo fan club"), t("Auswärtsfahrt nach Aue: Bus fährt 6 Uhr. Wer kommt mit?", "Away trip to Aue: bus leaves at 6 am. Who's in?")),
   d(1, "Mensa", t("Mensa Zeltschlösschen", "Zeltschlösschen canteen"), t("Heute: Pizza-Tag. Schlange bis zur Tür.", "Today: pizza day. Queue to the door.")),
   d(1, "SLUB", t("SLUB", "SLUB library"), t("Alle Arbeitsplätze belegt. Viel Glück.", "All study desks taken. Good luck.")),
   d(1, "WhatsApp", t("Kommilitone", "Coursemate"), t("HSZ 03 ist voll, ich sitz auf der Treppe", "HSZ 03 is full, I'm sitting on the stairs")),
@@ -99,6 +110,7 @@ export const DISTRACTIONS: Distraction[] = [
   d(2, "WhatsApp", t("Mitbewohni", "Flatmate"), t("Dein Fahrrad ist weg. Das Schloss ist noch da.", "Your bike is gone. The lock is still there.")),
   d(2, "DVB", t("DVB", "DVB"), t("Marathon am Sonntag: Dein Bus fährt nicht.", "Marathon on Sunday: your bus isn't running.")), // topical
   d(2, "Instagram", t("Dresden Monarchs", "Dresden Monarchs"), t("Deutscher Meister! 🏈 Party heute Abend?", "German champions! 🏈 Party tonight?")), // topical
+  d(2, "WhatsApp", t("Kumpel", "Mate"), t("Hab 2 Karten für Dynamo. Die Vorlesung ist eh langweilig 👀", "Got 2 Dynamo tickets. The lecture's boring anyway 👀")),
   d(2, "WhatsApp", t("Oma aus Pirna", "Grandma from Pirna"), t("Nu, wie isses? Kommste Sonntag zum Kuchen?", "So, how are you? Coming for cake on Sunday?")),
   d(2, "WhatsApp", t("WG-Chat", "Flat chat"), t("Wer hat die Fettbemme im Kühlschrank vergessen?", "Who left the lard sandwich in the fridge?")),
 
@@ -111,11 +123,61 @@ export const DISTRACTIONS: Distraction[] = [
   d(3, "WhatsApp", t("Oma", "Grandma"), t("WIE MACHT MAN HIER KLEINE BUCHSTABEN", "HOW DO I DO SMALL LETTERS")),
   d(3, "Mail", t("BAföG-Amt", "Student finance"), t("Ihr Antrag ist … unvollständig.", "Your application is … incomplete.")),
   d(3, "WhatsApp", t("Ex", "Ex"), t("bin übrigens auch in deiner Hochschulgruppe 🙂", "btw I joined your student group too 🙂")),
-  d(3, "WhatsApp", t("Ex", "Ex"), t("hab gehört, du bist jetzt im K-Block?? seit wann magst du Fußball", "heard you're in the Dynamo end now?? since when do you like football")),
+  also(d(3, "WhatsApp", t("Ex", "Ex"), t("hab gehört, du bist jetzt im K-Block?? seit wann magst du Fußball", "heard you're in the Dynamo end now?? since when do you like football")), "dynamo"),
+  d(3, "Dynamo", t("Dynamo Dresden", "Dynamo Dresden"), t("Heimspiel ausverkauft. Warteliste: Platz 4.812", "Home game sold out. Waiting list: no. 4,812")),
   d(3, "Mail", t("Stadt Dresden", "City of Dresden"), t("Fernsehturm: Wiedereröffnung verschoben. Auf 2030.", "TV tower: reopening postponed. To 2030.")),
   d(3, "WhatsApp", t("Crush 💘", "Crush 💘"), t("Striezelmarkt nächste Woche? Glühwein geht auf mich", "Striezelmarkt next week? Mulled wine's on me")),
   d(3, "FOKUS", t("FOKUS", "FOKUS"), t("Psst. Mit mir wär das nicht passiert. 😌", "Psst. This wouldn't happen with me. 😌")),
 ];
+
+/**
+ * Collections for the task game: find every message of a kind ("all from
+ * your ex"). Membership is by sender (German name) plus a message's `also`.
+ * Only the special messages count; a test checks each belongs somewhere.
+ */
+export const COLLECTIONS = [
+  { id: "ex", emoji: "💔", name: t("Der Ex", "The ex"), senders: ["Ex"] },
+  { id: "crush", emoji: "💘", name: t("Crush", "Crush"), senders: ["Crush 💘"] },
+  { id: "situationship", emoji: "🫠", name: t("Situationship", "Situationship"), senders: ["Situationship"] },
+  { id: "dynamo", emoji: "⚽", name: t("Dynamo", "Dynamo"), senders: ["Dynamo-Fanclub", "Dynamo Dresden", "Kumpel"] },
+  { id: "wg", emoji: "🧽", name: t("WG-Leben", "Flat life"), senders: ["WG-Chat", "Mitbewohni"] },
+  { id: "family", emoji: "👵", name: t("Familie", "Family"), senders: ["Mama", "Papa", "Oma", "Oma aus Pirna"] },
+  {
+    id: "uni",
+    emoji: "📚",
+    name: t("Uni-Stress", "Uni stress"),
+    senders: ["Gruppenprojekt", "Kommilitone", "OPAL", "SLUB", "Prof. Krause", "Selma", "BAföG-Amt"],
+  },
+  {
+    id: "dresden",
+    emoji: "🏰",
+    name: t("Typisch Dresden", "Classic Dresden"),
+    senders: ["DVB", "YouTube", "Mensa", "Mensa Zeltschlösschen", "Neustadt-Crew", "Dresden Monarchs", "Stadt Dresden"],
+  },
+  { id: "apps", emoji: "📱", name: t("App-Chaos", "App chaos"), senders: ["Tinder", "Spotify", "Duolingo 🦉", "Bank", "FOKUS"] },
+] as const;
+
+export type CollectionId = (typeof COLLECTIONS)[number]["id"];
+
+/** Message indices per collection (special messages only). */
+export const COLLECTION_MEMBERS = Object.fromEntries(
+  COLLECTIONS.map((c) => [
+    c.id,
+    DISTRACTIONS.map((_, i) => i).filter((i) => {
+      const m = DISTRACTIONS[i];
+      return !m.generic && ((c.senders as readonly string[]).includes(m.from.de) || !!m.also?.includes(c.id));
+    }),
+  ]),
+) as Record<CollectionId, number[]>;
+
+/** Collections completed by adding `idx` to the already found messages. */
+export function completedBy(found: readonly number[], idx: number): CollectionId[] {
+  if (found.includes(idx)) return [];
+  return COLLECTIONS.filter((c) => {
+    const members = COLLECTION_MEMBERS[c.id];
+    return members.includes(idx) && members.every((m) => m === idx || found.includes(m));
+  }).map((c) => c.id);
+}
 
 /** Messages from your own student group: leave them, don't tap them. */
 export const GROUP_MESSAGES: Text[] = [

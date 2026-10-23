@@ -1,9 +1,18 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { track, EVENTS } from "@/lib/analytics";
-import { DISTRACTIONS, VIA, pickSpecial } from "@/lib/fokus-notifications";
+import {
+  COLLECTIONS,
+  COLLECTION_MEMBERS,
+  DISTRACTIONS,
+  SPECIAL,
+  VIA,
+  completedBy,
+  pickSpecial,
+  type CollectionId,
+} from "@/lib/fokus-notifications";
 import { PARTNER_OFFER, TASK_COPY } from "@/lib/partner";
 import { FokusDevice } from "./FokusDevice";
 
@@ -22,13 +31,15 @@ const MAX_NOTES = 4;
 const TICK_MS = 100;
 const LEAVE_MS = 300;
 const WRONG_MS = 400;
+const UNLOCK_SHOW_MS = 2_600; // "collection complete" banner
 
 /** Distractions get faster the further you get (progress 0…1). */
 export function taskSpawnGap(progress: number): number {
   return 1_500 - 850 * progress;
 }
 
-type Note = { id: number; idx: number; top: number; leftAt?: number };
+/** `fresh`: never seen before (this visit) → gets a "new" badge. */
+type Note = { id: number; idx: number; top: number; fresh: boolean; leftAt?: number };
 type Phase = "playing" | "won";
 
 export interface TaskState {
@@ -44,14 +55,15 @@ export interface TaskState {
   readyAt: number; // tag usable from here on
   focusUses: number;
   dismissed: number; // notifications swiped away by hand — the punchline at the end
-  seen: number[];
+  seen: number[]; // all found messages, seeded with earlier rounds (collection)
+  unlocked: { id: CollectionId; at: number }[]; // collections completed this round
   wrong: { cell: number; at: number } | null;
   timeMs: number;
   best: number; // ms, 0 = none yet
 }
 
 type Action =
-  | { type: "start"; now: number; shuffle: number[] }
+  | { type: "start"; now: number; shuffle: number[]; found?: number[] }
   | { type: "tick"; now: number; r1: number; r2: number; r3: number }
   | { type: "cell"; cell: number; now: number }
   | { type: "dismiss"; id: number; now: number }
@@ -71,6 +83,7 @@ export const taskInitial: TaskState = {
   focusUses: 0,
   dismissed: 0,
   seen: [],
+  unlocked: [],
   wrong: null,
   timeMs: 0,
   best: 0,
@@ -96,6 +109,7 @@ export function taskReducer(s: TaskState, a: Action): TaskState {
         best: s.best,
         nextId: s.nextId,
         grid: shuffled(a.shuffle),
+        seen: [...(a.found ?? [])],
         startedAt: a.now,
         now: a.now,
         nextSpawnAt: a.now + 1_800, // a calm first moment to see the task
@@ -110,10 +124,13 @@ export function taskReducer(s: TaskState, a: Action): TaskState {
       if (!focused && now >= s.nextSpawnAt) {
         const live = notes.filter(active).length;
         if (live < MAX_NOTES) {
+          // unseen first, across rounds too: every round adds to the collection
           const idx = pickSpecial(s.seen, a.r1);
+          const fresh = !s.seen.includes(idx);
+          const unlocked = [...s.unlocked, ...completedBy(s.seen, idx).map((id) => ({ id, at: now }))];
           // somewhere over the grid (0 … 55 % from the top), never over the tag dock
-          notes = [...notes, { id: s.nextId, idx, top: Math.round(a.r3 * 55) }];
-          next = { ...next, notes, nextId: s.nextId + 1, seen: [...s.seen, idx] };
+          notes = [...notes, { id: s.nextId, idx, top: Math.round(a.r3 * 55), fresh }];
+          next = { ...next, notes, nextId: s.nextId + 1, seen: fresh ? [...s.seen, idx] : s.seen, unlocked };
         }
         next = { ...next, nextSpawnAt: now + taskSpawnGap((s.next - 1) / TARGET) };
       }
@@ -182,16 +199,24 @@ export function FokusTaskGame({
 }) {
   const c = TASK_COPY[lang];
   const [s, dispatch] = useReducer(taskReducer, taskInitial);
+  const [album, setAlbum] = useState(false);
+  const startRound = (found?: Set<number>) => {
+    track(EVENTS.partnerPlay, { partner: PARTNER_OFFER.id, action: "task-start" });
+    dispatch({
+      type: "start",
+      now: performance.now(),
+      shuffle: Array.from({ length: TARGET }, () => Math.random()),
+      found: [...(found ?? [])],
+    });
+  };
   const reported = useRef(0);
 
+  // `discovered` is one Set per page visit → this runs once, on mount
+  useEffect(() => startRound(discovered), [discovered]);
   const restart = () => {
-    track(EVENTS.partnerPlay, { partner: PARTNER_OFFER.id, action: "task-start" });
-    dispatch({ type: "start", now: performance.now(), shuffle: Array.from({ length: TARGET }, () => Math.random()) });
+    setAlbum(false);
+    startRound(discovered);
   };
-
-  useEffect(() => {
-    restart();
-  }, []);
 
   useEffect(() => {
     if (s.phase !== "playing") return;
@@ -224,6 +249,9 @@ export function FokusTaskGame({
   const charge = ready ? 1 : focused ? (s.focusUntil - s.now) / FOCUS_MS : 1 - (s.readyAt - s.now) / RECHARGE_MS;
   const live = s.notes.filter(active);
   const elapsed = playing ? s.now - s.startedAt : s.timeMs;
+  const banner = [...s.unlocked].reverse().find((u) => s.now - u.at < UNLOCK_SHOW_MS);
+  const found = s.seen.filter((i) => SPECIAL.includes(i)).length;
+  const set = (id: CollectionId) => COLLECTIONS.find((x) => x.id === id)!;
 
   return (
     <div className="grid gap-3">
@@ -302,12 +330,27 @@ export function FokusTaskGame({
                 {d.via[0]}
               </span>
               <span className="min-w-0 text-[11px] leading-[1.2] text-navy">
-                <b className="block truncate">{d.from[lang]}</b>
+                <b className="flex items-center gap-1">
+                  <span className="truncate">{d.from[lang]}</span>
+                  {n.fresh && (
+                    <span className="shrink-0 rounded-full bg-[#ffd34d] px-1.5 text-[9px] uppercase leading-[14px] text-navy">{c.isNew}</span>
+                  )}
+                </b>
                 <span className="line-clamp-2">{d.text[lang]}</span>
               </span>
             </button>
           );
         })}
+
+        {/* a collection was just completed */}
+        {playing && banner && (
+          <div
+            key={banner.id}
+            className="pointer-events-none absolute inset-x-6 top-[38%] z-30 animate-stamp rounded-2xl bg-[#ffd34d] px-3 py-2 text-center font-heading text-sm leading-tight text-navy shadow-[0_6px_18px_rgba(0,0,0,0.45)]"
+          >
+            {set(banner.id).emoji} {c.setDone} {set(banner.id).name[lang]}!
+          </div>
+        )}
 
         {/* tag dock */}
         <div className="absolute inset-x-2.5 bottom-2 z-20 flex h-[76px] items-center gap-3">
@@ -328,7 +371,7 @@ export function FokusTaskGame({
 
         {/* win */}
         {s.phase === "won" && (
-          <div className="absolute inset-0 z-40 grid content-center gap-2 bg-[#0b0f3a] p-4 text-center animate-fade-up" style={{ color: CREAM }}>
+          <div className="absolute inset-0 z-40 grid content-center gap-2 rounded-[22px] bg-[#0b0f3a] p-4 text-center animate-fade-up" style={{ color: CREAM }}>
             <p className="animate-stamp font-heading text-xl leading-tight">{c.won}</p>
             <p className="font-heading text-3xl leading-none tabular-nums">{clock(s.timeMs)}</p>
             <p className="text-xs opacity-80">
@@ -343,18 +386,89 @@ export function FokusTaskGame({
               </p>
               <p className="font-heading text-base leading-tight">{c.wonPunch}</p>
             </div>
+            {s.unlocked.length > 0 && (
+              <p className="font-heading text-xs" style={{ color: "#ffd34d" }}>
+                {c.unlocked} {s.unlocked.map((u) => `${set(u.id).emoji} ${set(u.id).name[lang]}`).join(" · ")}
+              </p>
+            )}
             {endCta}
-            <button
-              type="button"
-              onClick={restart}
-              className="justify-self-center border-2 px-5 py-2.5 font-heading text-sm"
-              style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
-            >
-              {c.again}
-            </button>
+            <div className="flex justify-center gap-2">
+              <button
+                type="button"
+                onClick={restart}
+                className="border-2 px-4 py-2.5 font-heading text-sm"
+                style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
+              >
+                {c.again}
+              </button>
+              <button
+                type="button"
+                onClick={() => setAlbum(true)}
+                className="border-2 px-3 py-2.5 font-heading text-sm"
+                style={{ borderColor: CREAM }}
+              >
+                {c.collection.replace("{x}", String(found)).replace("{n}", String(SPECIAL.length))}
+              </button>
+            </div>
             <button type="button" onClick={onExit} className="justify-self-center text-xs underline underline-offset-4 opacity-80">
               {c.exit}
             </button>
+          </div>
+        )}
+
+        {/* the collection: found messages per kind, the rest locked */}
+        {s.phase === "won" && album && (
+          // own scroll container with pan-y: the game layer blocks touch scrolling otherwise
+          <div className="absolute inset-0 z-50 touch-pan-y overflow-y-auto overscroll-contain rounded-[22px] bg-[#0b0f3a] p-3" style={{ color: CREAM }}>
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-heading text-lg leading-tight">{c.collectionTitle}</p>
+              <button type="button" onClick={() => setAlbum(false)} className="border-2 px-3 py-1.5 font-heading text-xs" style={{ borderColor: CREAM }}>
+                {c.back}
+              </button>
+            </div>
+            <p className="mt-1 text-[11px] opacity-80">{c.collectionNote}</p>
+            <div className="mt-3 grid gap-3">
+              {COLLECTIONS.map((col) => {
+                const members = COLLECTION_MEMBERS[col.id];
+                const have = members.filter((i) => s.seen.includes(i)).length;
+                const complete = have === members.length;
+                return (
+                  <section key={col.id} className="grid gap-1.5">
+                    <p className="flex items-center justify-between font-heading text-sm">
+                      <span>
+                        {col.emoji} {col.name[lang]}
+                      </span>
+                      <span className="tabular-nums" style={{ color: complete ? "#ffd34d" : undefined }}>
+                        {complete ? "★ " : ""}
+                        {have}/{members.length}
+                      </span>
+                    </p>
+                    <div className="h-1.5 overflow-hidden rounded-full bg-white/15">
+                      <div className="h-full rounded-full bg-[#ffd34d]" style={{ width: `${(have / members.length) * 100}%` }} />
+                    </div>
+                    <ul className="grid gap-1">
+                      {members
+                        .filter((i) => s.seen.includes(i))
+                        .map((i) => (
+                          <li key={i} className="rounded-lg bg-white px-2 py-1 text-[11px] leading-[1.25] text-navy">
+                            <b>{DISTRACTIONS[i].from[lang]}:</b> {DISTRACTIONS[i].text[lang]}
+                          </li>
+                        ))}
+                    </ul>
+                    {/* still locked: one small slot each */}
+                    {!complete && (
+                      <p className="flex flex-wrap gap-1" aria-label={`${members.length - have} × ${c.locked}`}>
+                        {Array.from({ length: members.length - have }, (_, k) => (
+                          <span key={k} aria-hidden className="rounded-md border border-dashed border-white/30 px-1.5 text-[11px] opacity-60">
+                            🔒
+                          </span>
+                        ))}
+                      </p>
+                    )}
+                  </section>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>

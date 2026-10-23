@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from "vitest";
-import { CHALLENGE_COPY, PARTNER_COPY, PARTNER_OFFER } from "@/lib/partner";
-import { DISTRACTIONS, GROUP_MESSAGES } from "@/lib/fokus-notifications";
+import { CHALLENGE_COPY, PARTNER_COPY, PARTNER_OFFER, TASK_COPY } from "@/lib/partner";
+import { COLLECTIONS, DISTRACTIONS, GROUP_MESSAGES } from "@/lib/fokus-notifications";
 
 describe("partner offer", () => {
   it("links to an https URL that carries the advertised code", () => {
@@ -22,6 +22,7 @@ describe("partner ad works in English too", () => {
   it("has the same copy keys in both languages", () => {
     expect(keys(PARTNER_COPY.en)).toEqual(keys(PARTNER_COPY.de));
     expect(keys(CHALLENGE_COPY.en)).toEqual(keys(CHALLENGE_COPY.de));
+    expect(keys(TASK_COPY.en)).toEqual(keys(TASK_COPY.de));
   });
 
   it("has an English text for every game message, without German leftovers", () => {
@@ -35,5 +36,7 @@ describe("partner ad works in English too", () => {
     }
     for (const g of GROUP_MESSAGES) expect(german(g.en), g.en).toBe(false);
     for (const v of Object.values(CHALLENGE_COPY.en)) expect(german(String(v)), String(v)).toBe(false);
+    for (const v of Object.values(TASK_COPY.en)) expect(german(String(v)), String(v)).toBe(false);
+    for (const col of COLLECTIONS) expect(german(col.name.en), col.name.en).toBe(false);
   });
 });

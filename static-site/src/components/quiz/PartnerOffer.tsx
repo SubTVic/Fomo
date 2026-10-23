@@ -146,6 +146,7 @@ function GameLayer({
               <li className="font-heading">{TASK_COPY[lang].introTask.replace("{n}", String(TARGET))}</li>
               <li>{TASK_COPY[lang].introDistract}</li>
               <li>{TASK_COPY[lang].introFokus}</li>
+              <li className="font-heading text-sm" style={{ color: "#ffd34d" }}>{TASK_COPY[lang].introCollect}</li>
             </ul>
             <button
               type="button"

@@ -190,7 +190,7 @@ export function FokusTagGame({ lang, onChallenge }: { lang: Lang; onChallenge?: 
           // drop target at the bottom of the screen, clear of the warning sign
           <div className="pointer-events-none absolute left-1/2 top-[80%] z-10 -translate-x-1/2 -translate-y-1/2">
             <span
-              className="motion-safe:animate-pulse flex h-11 w-11 items-center justify-center rounded-full border-[3px] border-dashed font-heading text-[8px] uppercase leading-none"
+              className="motion-safe:animate-pulse flex h-11 w-11 items-center justify-center rounded-full border-[3px] border-dashed text-center font-heading text-[8px] uppercase leading-[1.1]"
               style={{ borderColor: CREAM, backgroundColor: "rgba(24,32,120,0.9)", color: CREAM }}
             >
               {t.gameDrop}

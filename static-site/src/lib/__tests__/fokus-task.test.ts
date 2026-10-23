@@ -41,4 +41,13 @@ describe("FOKUS task game (prototype)", () => {
     expect(taskReducer(s, { type: "tag", now: 6_000 + FOCUS_MS + 1_000 }).focusUses).toBe(1); // still recharging
     expect(taskReducer(s, { type: "tag", now: 6_000 + FOCUS_MS + RECHARGE_MS }).focusUses).toBe(2);
   });
+
+  it("counts the notifications dismissed by hand", () => {
+    let s = start();
+    for (let t = 100; t <= 6_000; t += 100) s = tick(s, t);
+    const live = s.notes.filter((n) => n.leftAt === undefined);
+    for (const n of live) s = taskReducer(s, { type: "dismiss", id: n.id, now: 6_100 });
+    s = taskReducer(s, { type: "dismiss", id: live[0].id, now: 6_200 }); // twice doesn't count
+    expect(s.dismissed).toBe(live.length);
+  });
 });

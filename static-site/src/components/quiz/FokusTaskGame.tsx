@@ -43,6 +43,7 @@ export interface TaskState {
   focusUntil: number;
   readyAt: number; // tag usable from here on
   focusUses: number;
+  dismissed: number; // notifications swiped away by hand — the punchline at the end
   seen: number[];
   wrong: { cell: number; at: number } | null;
   timeMs: number;
@@ -68,6 +69,7 @@ export const taskInitial: TaskState = {
   focusUntil: 0,
   readyAt: 0,
   focusUses: 0,
+  dismissed: 0,
   seen: [],
   wrong: null,
   timeMs: 0,
@@ -131,8 +133,15 @@ export function taskReducer(s: TaskState, a: Action): TaskState {
       return { ...s, next: n, wrong: null };
     }
 
-    case "dismiss":
-      return { ...s, notes: s.notes.map((n) => (n.id === a.id && active(n) ? { ...n, leftAt: a.now } : n)) };
+    case "dismiss": {
+      const note = s.notes.find((n) => n.id === a.id);
+      if (!note || !active(note)) return s;
+      return {
+        ...s,
+        dismissed: s.dismissed + 1,
+        notes: s.notes.map((n) => (n.id === a.id ? { ...n, leftAt: a.now } : n)),
+      };
+    }
 
     case "tag": {
       if (s.phase !== "playing" || a.now < s.readyAt) return s;
@@ -319,13 +328,21 @@ export function FokusTaskGame({
 
         {/* win */}
         {s.phase === "won" && (
-          <div className="absolute inset-0 z-40 grid content-center gap-3 bg-[#0b0f3a] p-4 text-center animate-fade-up" style={{ color: CREAM }}>
-            <p className="animate-stamp font-heading text-2xl">{c.won}</p>
-            <p className="font-heading text-4xl tabular-nums">{clock(s.timeMs)}</p>
+          <div className="absolute inset-0 z-40 grid content-center gap-2 bg-[#0b0f3a] p-4 text-center animate-fade-up" style={{ color: CREAM }}>
+            <p className="animate-stamp font-heading text-xl leading-tight">{c.won}</p>
+            <p className="font-heading text-3xl leading-none tabular-nums">{clock(s.timeMs)}</p>
             <p className="text-xs opacity-80">
               {c.best}: {clock(s.best)} · {c.focusUsed.replace("{n}", String(s.focusUses))}
             </p>
-            <p className="text-sm">{c.wonLine}</p>
+            {/* the point of the whole game, in one box */}
+            <div className="grid gap-1 rounded-2xl px-4 py-3" style={{ backgroundColor: CREAM, color: BLUE }}>
+              <p className="text-sm">
+                {c.wonDismissed.split("{n}")[0]}
+                <b className="font-heading">{s.dismissed}</b>
+                {c.wonDismissed.split("{n}")[1]}
+              </p>
+              <p className="font-heading text-base leading-tight">{c.wonPunch}</p>
+            </div>
             {endCta}
             <button
               type="button"

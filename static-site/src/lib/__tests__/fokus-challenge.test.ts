@@ -96,7 +96,7 @@ describe("Fokus mini game", () => {
     for (const n of active(s)) s = reducer(s, { type: "tap", id: n.id, now: s.now + 10 }); // step 2: 3 swipes charge it
     expect(s.charge).toBe(CHARGE_FULL);
     s = until(s, s.now + 100, (x) => x.tutStep === 3 && x.tutSpawned);
-    expect(active(s).length).toBe(3); // step 3: clear tip + two with the tag
+    expect(active(s).length).toBe(5); // step 3: a full screen — clear it with the tag
     s = reducer(s, { type: "tag", now: s.now + 50 });
     expect(active(s).length).toBe(0);
     s = tick(s, s.now + 100);

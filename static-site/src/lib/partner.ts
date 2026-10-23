@@ -36,6 +36,8 @@ export const PARTNER_COPY = {
     blocked: "Ablenkungen geblockt",
     again: "Nochmal",
     cardCta: "Zum Rabatt",
+    gameBadge: "🎮 Minispiel",
+    startGame: "▶ Minispiel starten",
   },
   en: {
     label: "Ad",
@@ -49,6 +51,8 @@ export const PARTNER_COPY = {
     blocked: "distractions blocked",
     again: "Again",
     cardCta: "Get the discount",
+    gameBadge: "🎮 Mini game",
+    startGame: "▶ Play the mini game",
   },
 } as const;
 
@@ -89,7 +93,8 @@ export const CHALLENGE_COPY = {
     close: "Spiel schließen",
     points: "Punkte",
     best: "Bestwert",
-    tagReady: "Antippen!",
+    tagReady: "⚡ Tag bereit!",
+    tutTagShort: "Tag antippen!",
     tagged: "+{n} 🔒",
     burst: "📢 Gruppenchat!",
     tagAria: "FOKUS-Tag einsetzen und alle Ablenkungen blocken",
@@ -114,7 +119,8 @@ export const CHALLENGE_COPY = {
     close: "Close game",
     points: "points",
     best: "Best",
-    tagReady: "Tap it!",
+    tagReady: "⚡ Tag ready!",
+    tutTagShort: "Tap the tag!",
     tagged: "+{n} 🔒",
     burst: "📢 Group chat!",
     tagAria: "Use the FOKUS tag and block all distractions",

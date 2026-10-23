@@ -165,14 +165,28 @@ export function PartnerCard({ lang }: { lang: Lang }) {
         <Logo variant="cream" className="h-5 sm:h-6" />
         <AdLabel lang={lang} className="opacity-80" />
       </div>
-      <p className="font-heading text-lg leading-tight sm:text-xl">{t.cardTitle}</p>
+      <div className="grid gap-2">
+        {/* user test: people took the card for a plain ad — say it's a game */}
+        <p className="justify-self-start rounded-full px-3 py-1 font-heading text-xs uppercase tracking-wider" style={{ backgroundColor: "#ffd34d", color: BLUE }}>
+          {t.gameBadge}
+        </p>
+        <p className="font-heading text-lg leading-tight sm:text-xl">{t.cardTitle}</p>
+      </div>
       {/* remounting the demo after the game resets it to its idle state */}
       <FokusTagGame key={mode} lang={lang} onChallenge={mode === "demo" ? () => setMode("challenge") : undefined} />
       {mode === "challenge" && <GameLayer lang={lang} tutorial={!played} onClose={closeGame} />}
+      <button
+        type="button"
+        onClick={() => setMode("challenge")}
+        className="border-2 px-6 py-4 text-center font-heading text-lg transition-opacity hover:opacity-90"
+        style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
+      >
+        {t.startGame}
+      </button>
       <PartnerLink
         placement="results-card"
-        className="border-2 px-6 py-3 text-center font-heading transition-opacity hover:opacity-90 sm:justify-self-start"
-        style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
+        className="border-2 px-6 py-2.5 text-center font-heading text-sm transition-opacity hover:opacity-90 sm:justify-self-start"
+        style={{ backgroundColor: "transparent", color: CREAM, borderColor: CREAM }}
       >
         {t.cardCta} ↗
       </PartnerLink>

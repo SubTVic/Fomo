@@ -149,4 +149,18 @@ describe("Fokus mini game", () => {
     s = reducer({ ...s, charge: CHARGE_FULL + CHARGE_STEP }, { type: "tag", now: 20_000 });
     expect(chargeNeeded(s)).toBe(CHARGE_FULL + 2 * CHARGE_STEP);
   });
+
+  it("announces the moment the tag is ready", () => {
+    let s = reducer(initial, { type: "boot", now: 0, tutorial: false });
+    s = { ...s, charge: CHARGE_FULL - 1, notes: [{ id: 1, kind: "bad" as const, idx: 0, born: 0, slot: 0 }] };
+    s = reducer(s, { type: "tap", id: 1, now: 500 });
+    expect(s.flash?.text).toBe("ready");
+  });
+
+  it("tutorial tag step: notifications are locked, only the tag moves on", () => {
+    let s = { ...reducer(initial, { type: "boot", now: 0, tutorial: true }), tutStep: 3 as const, tutSpawned: true };
+    s = { ...s, charge: CHARGE_FULL, notes: [{ id: 1, kind: "bad" as const, idx: 0, born: 0, slot: 0 }] };
+    expect(reducer(s, { type: "tap", id: 1, now: 100 }).notes[0].leftAt).toBeUndefined();
+    expect(reducer(s, { type: "tag", now: 100 }).notes[0].leftAt).toBe(100);
+  });
 });

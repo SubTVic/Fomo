@@ -71,7 +71,7 @@ interface State {
   charge: number;
   calmUntil: number;
   nextId: number;
-  flash: { text: "go" | "oops" | "seen" | "burst" | "tag"; at: number; n?: number } | null;
+  flash: { text: "go" | "oops" | "seen" | "burst" | "tag" | "ready"; at: number; n?: number } | null;
   ripples: number; // bumps on each tag use → re-keys the ripple
   stunnedUntil: number;
   tagUses: number; // each use makes the next charge longer
@@ -277,6 +277,8 @@ export function reducer(s: State, a: Action): State {
 
     case "tap": {
       if ((s.phase !== "playing" && s.phase !== "tutorial") || a.now < s.stunnedUntil) return s;
+      // tutorial tag step: notifications are locked — the only way on is the tag
+      if (s.phase === "tutorial" && s.tutStep === 3) return s;
       const note = s.notes.find((n) => n.id === a.id);
       if (!note || !active(note)) return s;
       const notes = s.notes.map((n) => (n.id === a.id ? { ...n, leftAt: a.now, charged: n.kind === "bad" } : n));
@@ -291,7 +293,17 @@ export function reducer(s: State, a: Action): State {
       }
       // in the tutorial's charge step each block fills a third of the tag
       const gain = s.phase === "tutorial" && s.tutStep === 2 ? Math.ceil(chargeNeeded(s) / 3) : 1;
-      return { ...s, notes, score: s.score + 1, blocked: s.blocked + 1, charge: Math.min(chargeNeeded(s), s.charge + gain) };
+      const charge = Math.min(chargeNeeded(s), s.charge + gain);
+      // the moment the tag becomes ready gets a big "⚡ Tag bereit!" (in the round)
+      const justReady = s.phase === "playing" && s.charge < chargeNeeded(s) && charge >= chargeNeeded(s);
+      return {
+        ...s,
+        notes,
+        score: s.score + 1,
+        blocked: s.blocked + 1,
+        charge,
+        flash: justReady ? { text: "ready", at: a.now } : s.flash,
+      };
     }
 
     case "tag": {
@@ -324,6 +336,10 @@ export function FokusChallenge({
   const [s, dispatch] = useReducer(reducer, initial);
   const reportedStart = useRef(0);
   const reportedEnd = useRef(0);
+  const readyAt = s.flash?.text === "ready" ? s.flash.at : 0;
+  useEffect(() => {
+    if (readyAt) navigator.vibrate?.(60);
+  }, [readyAt]);
   const phoneRef = useRef<HTMLDivElement>(null);
 
   // Stun: shake the phone (the red flash and countdown bar are rendered below).
@@ -373,15 +389,21 @@ export function FokusChallenge({
   const need = chargeNeeded(s);
   const ready = s.charge >= need;
   // the start hint ("Los! … Handy voll? …") stays longer so it can be read
-  const flashOn = s.flash !== null && s.now - s.flash.at < (s.flash.text === "go" ? 2_200 : 900);
+  const flashOn = s.flash !== null && s.now - s.flash.at < (s.flash.text === "go" ? 2_200 : s.flash.text === "ready" ? 1_300 : 900);
   const flashText = {
     go: c.go,
     oops: c.oops,
     seen: c.seen,
     burst: c.burst,
     tag: c.tagged.replace("{n}", String(s.flash?.n ?? 0)),
+    ready: c.tagReady,
   };
-  const flashColor = { go: CREAM, oops: CREAM, seen: "#7dffb4", burst: "#ffd34d", tag: "#7dffb4" };
+  const flashColor = { go: CREAM, oops: CREAM, seen: "#7dffb4", burst: "#ffd34d", tag: "#7dffb4", ready: "#ffd34d" };
+  const tagStep = inTutorial && s.tutStep === 3;
+  // show, don't tell: a hand demonstrates the swipe on the tutorial tip …
+  const tipNote = inTutorial && s.tutStep < 3 ? s.notes.find((n) => n.tip && n.leftAt === undefined) : undefined;
+  // … and points at the tag whenever it is ready (or the tutorial asks for it)
+  const pointAtTag = running && ready && !calm;
   const stunned = running && s.now < s.stunnedUntil;
   const hint = flashOn && s.flash ? flashText[s.flash.text] : stunned ? c.stunned : null;
   const hintColor = flashOn && s.flash ? flashColor[s.flash.text] : CREAM;
@@ -529,6 +551,31 @@ export function FokusChallenge({
           </div>
         )}
 
+        {/* swipe demo over the tutorial tip */}
+        {tipNote && (
+          <span
+            key={`hand-${tipNote.id}`}
+            aria-hidden
+            className="motion-safe:animate-swipe-hint pointer-events-none absolute left-[18%] z-30 text-4xl leading-none drop-shadow"
+            style={{ top: `${44 + tipNote.slot * 58}px` }}
+          >
+            👆
+          </span>
+        )}
+
+        {/* tutorial tag step: everything dimmed and locked except the tag */}
+        {tagStep && <div aria-hidden className="pointer-events-none absolute inset-0 z-10 bg-black/55" />}
+
+        {/* "⚡ Tag bereit!" the moment it fills, so nobody misses the ability */}
+        {flashOn && s.flash?.text === "ready" && (
+          <div key={s.flash.at} aria-hidden className="animate-stamp pointer-events-none absolute inset-x-0 top-[38%] z-30 grid justify-items-center gap-2">
+            <FokusDevice size={96} ready />
+            <p className="font-heading text-2xl" style={{ color: "#ffd34d" }}>
+              {c.tagReady}
+            </p>
+          </div>
+        )}
+
         {/* ⚡ from every hand-blocked distraction to the tag: blocking charges it */}
         {s.notes
           .filter((n) => n.charged && n.leftAt !== undefined && s.now - n.leftAt < LEAVE_MS)
@@ -558,16 +605,21 @@ export function FokusChallenge({
             disabled={!running || !ready}
             onPointerDown={() => dispatch({ type: "tag", now: performance.now() })}
             onClick={() => dispatch({ type: "tag", now: performance.now() })}
-            className={`shrink-0 touch-manipulation disabled:cursor-default ${ready && running ? "motion-safe:animate-pulse" : "opacity-90"}`}
+            className={`relative shrink-0 touch-manipulation disabled:cursor-default ${ready && running ? "motion-safe:animate-pulse" : "opacity-90"}`}
           >
             <FokusDevice size={68} charge={s.charge / need} ready={ready && running} />
+            {pointAtTag && (
+              <span aria-hidden className="motion-safe:animate-bounce pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 text-4xl leading-none drop-shadow">
+                👇
+              </span>
+            )}
           </button>
           <p
             key={`${hint ?? ""}-${s.flash?.at ?? 0}`}
             className={`min-w-0 font-heading text-[13px] leading-tight ${hint ? "animate-stamp" : "opacity-80"}`}
             style={{ color: hint ? hintColor : CREAM }}
           >
-            {hint ?? (ready && running ? c.tagReady : `⚡ ${s.charge}/${need}`)}
+            {hint ?? (tagStep ? c.tutTagShort : ready && running ? c.tagReady : `⚡ ${s.charge}/${need}`)}
           </p>
         </div>
 

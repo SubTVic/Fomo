@@ -3,7 +3,7 @@
 
 import { useEffect, useReducer, useRef } from "react";
 import { track, EVENTS } from "@/lib/analytics";
-import { DISTRACTIONS, VIA, pickDistraction } from "@/lib/fokus-notifications";
+import { DISTRACTIONS, VIA, pickSpecial } from "@/lib/fokus-notifications";
 import { PARTNER_OFFER, TASK_COPY } from "@/lib/partner";
 import { FokusDevice } from "./FokusDevice";
 
@@ -110,7 +110,7 @@ export function taskReducer(s: TaskState, a: Action): TaskState {
       if (!focused && now >= s.nextSpawnAt) {
         const live = notes.filter(active).length;
         if (live < MAX_NOTES) {
-          const idx = pickDistraction(now - s.startedAt, s.seen, a.r1, a.r2);
+          const idx = pickSpecial(s.seen, a.r1);
           // somewhere over the grid (0 … 55 % from the top), never over the tag dock
           notes = [...notes, { id: s.nextId, idx, top: Math.round(a.r3 * 55) }];
           next = { ...next, notes, nextId: s.nextId + 1, seen: [...s.seen, idx] };

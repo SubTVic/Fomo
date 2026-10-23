@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 import { describe, expect, it } from "vitest";
 import { FOCUS_MS, RECHARGE_MS, TARGET, shuffled, taskInitial, taskReducer } from "@/components/quiz/FokusTaskGame";
+import { DISTRACTIONS } from "@/lib/fokus-notifications";
 
 const start = () => taskReducer(taskInitial, { type: "start", now: 0, shuffle: Array.from({ length: TARGET }, (_, i) => (i * 0.37) % 1) });
 const tick = (s: ReturnType<typeof start>, now: number) => taskReducer(s, { type: "tick", now, r1: 0.1, r2: 0.5, r3: 0.4 });
@@ -49,5 +50,18 @@ describe("FOKUS task game (prototype)", () => {
     for (const n of live) s = taskReducer(s, { type: "dismiss", id: n.id, now: 6_100 });
     s = taskReducer(s, { type: "dismiss", id: live[0].id, now: 6_200 }); // twice doesn't count
     expect(s.dismissed).toBe(live.length);
+  });
+
+  it("only uses the special (non-generic) messages, rare ones included", () => {
+    let s = start();
+    const shown = new Set<number>();
+    for (let t = 100; t <= 60_000; t += 100) {
+      const r = Math.abs(Math.sin(t * 12.9898) * 43758.5453) % 1; // well-spread pseudo-random
+      s = taskReducer(s, { type: "tick", now: t, r1: r, r2: 0.5, r3: 0.4 });
+      for (const n of s.notes) shown.add(n.idx);
+      s = { ...s, notes: [] }; // keep room for new ones
+    }
+    expect([...shown].every((i) => !DISTRACTIONS[i].generic)).toBe(true);
+    expect([...shown].some((i) => DISTRACTIONS[i].tier === 3)).toBe(true);
   });
 });

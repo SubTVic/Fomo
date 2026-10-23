@@ -12,7 +12,9 @@
 
 export type Tier = 0 | 1 | 2 | 3;
 type Text = { de: string; en: string };
-export type Distraction = { from: Text; via: keyof typeof VIA; tier: Tier; text: Text };
+/** `generic`: plain app noise ("12 new videos") — left out of the task game,
+ *  which only uses the funny, personal ones you actually want to read. */
+export type Distraction = { from: Text; via: keyof typeof VIA; tier: Tier; text: Text; generic?: boolean };
 
 /** App that delivers the message → icon letter and colour. */
 export const VIA = {
@@ -38,21 +40,22 @@ export const VIA = {
 
 const t = (de: string, en: string): Text => ({ de, en });
 const d = (tier: Tier, via: keyof typeof VIA, from: Text, text: Text): Distraction => ({ tier, via, from, text });
+const generic = (x: Distraction): Distraction => ({ ...x, generic: true });
 
 export const DISTRACTIONS: Distraction[] = [
   // tier 0 — everyday noise
-  d(0, "TikTok", t("TikTok", "TikTok"), t("12 neue Videos für dich", "12 new videos for you")),
-  d(0, "WhatsApp", t("Erstis 2026", "Freshers 2026"), t("47 neue Nachrichten", "47 new messages")),
-  d(0, "Instagram", t("Instagram", "Instagram"), t("@lena hat eine Story gepostet", "@lena posted a story")),
+  generic(d(0, "TikTok", t("TikTok", "TikTok"), t("12 neue Videos für dich", "12 new videos for you"))),
+  generic(d(0, "WhatsApp", t("Erstis 2026", "Freshers 2026"), t("47 neue Nachrichten", "47 new messages"))),
+  generic(d(0, "Instagram", t("Instagram", "Instagram"), t("@lena hat eine Story gepostet", "@lena posted a story"))),
   d(0, "WhatsApp", t("Mama", "Mum"), t("Hast du schon gegessen?", "Have you eaten yet?")),
   d(0, "WhatsApp", t("Crush 💘", "Crush 💘"), t("hast du morgen zeit?", "are you free tomorrow?")),
   d(0, "WhatsApp", t("Situationship", "Situationship"), t("was sind wir eigentlich?", "so what are we?")),
   d(0, "WhatsApp", t("Ex", "Ex"), t("hey… wie gehts dir so", "hey… how are you doing")),
   d(0, "WhatsApp", t("Gruppenprojekt", "Group project"), t("Wer macht eigentlich die Folien?", "So who's doing the slides?")),
   d(0, "WhatsApp", t("WG-Chat", "Flat chat"), t("WER hat meinen Joghurt gegessen", "WHO ate my yoghurt")),
-  d(0, "BeReal", t("BeReal", "BeReal"), t("⚠️ Zeit für dein BeReal!", "⚠️ Time to BeReal!")),
-  d(0, "YouTube", t("YouTube", "YouTube"), t("Neu: „10 Hacks fürs Studium“", "New: “10 study hacks”")),
-  d(0, "Snapchat", t("Snapchat", "Snapchat"), t("3 neue Snaps", "3 new snaps")),
+  generic(d(0, "BeReal", t("BeReal", "BeReal"), t("⚠️ Zeit für dein BeReal!", "⚠️ Time to BeReal!"))),
+  generic(d(0, "YouTube", t("YouTube", "YouTube"), t("Neu: „10 Hacks fürs Studium“", "New: “10 study hacks”"))),
+  generic(d(0, "Snapchat", t("Snapchat", "Snapchat"), t("3 neue Snaps", "3 new snaps"))),
   d(0, "WhatsApp", t("Ex", "Ex"), t("ich vermiss dich 🥺", "i miss you 🥺")),
   d(0, "DVB", t("DVB", "DVB"), t("Linie 3: Verspätung ca. 12 Min.", "Tram 3: delayed approx. 12 min")),
   d(0, "YouTube", t("YouTube", "YouTube"), t("DorFuchs hat ein neues Video hochgeladen 🎵", "DorFuchs uploaded a new video 🎵")),
@@ -134,6 +137,16 @@ const WEIGHT: Record<Tier, number> = { 0: 55, 1: 28, 2: 13, 3: 4 };
  * unlocked ones by weight, then preferably one not seen this round.
  * `r1`, `r2` are random numbers in [0, 1).
  */
+/** Task game: special (non-generic) messages only, all tiers from the start —
+ *  a session is short, so the rare funny ones must be able to show up. */
+export const SPECIAL = DISTRACTIONS.map((_, i) => i).filter((i) => !DISTRACTIONS[i].generic);
+
+export function pickSpecial(seen: readonly number[], r: number): number {
+  const fresh = SPECIAL.filter((i) => !seen.includes(i));
+  const pool = fresh.length ? fresh : SPECIAL;
+  return pool[Math.floor(r * pool.length)];
+}
+
 export function pickDistraction(elapsed: number, seen: readonly number[], r1: number, r2: number): number {
   const tiers = ([0, 1, 2, 3] as Tier[]).filter((tier) => elapsed >= UNLOCK_MS[tier]);
   const total = tiers.reduce<number>((sum, tier) => sum + WEIGHT[tier], 0);

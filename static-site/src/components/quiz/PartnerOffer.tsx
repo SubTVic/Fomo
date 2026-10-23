@@ -4,9 +4,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { track, EVENTS } from "@/lib/analytics";
-import { CHALLENGE_COPY, PARTNER_COPY, PARTNER_OFFER, type PartnerPlacement } from "@/lib/partner";
+import { CHALLENGE_COPY, PARTNER_COPY, PARTNER_OFFER, TASK_COPY, type PartnerPlacement } from "@/lib/partner";
 import { DISTRACTIONS } from "@/lib/fokus-notifications";
 import { FokusChallenge } from "./FokusChallenge";
+import { FokusTaskGame, TARGET } from "./FokusTaskGame";
 import { FokusTagGame } from "./FokusTagGame";
 
 type Lang = "de" | "en";
@@ -138,7 +139,24 @@ function GameLayer({
             </button>
           </div>
         </div>
-        {intro ? (
+        {intro && PARTNER_OFFER.game === "task" ? (
+          <div className="grid content-center gap-5 py-6 text-center animate-fade-up">
+            <p className="font-heading text-3xl leading-tight">{TASK_COPY[lang].introTitle}</p>
+            <ul className="grid gap-3 text-base leading-snug">
+              <li className="font-heading">{TASK_COPY[lang].introTask.replace("{n}", String(TARGET))}</li>
+              <li>{TASK_COPY[lang].introDistract}</li>
+              <li>{TASK_COPY[lang].introFokus}</li>
+            </ul>
+            <button
+              type="button"
+              onClick={() => setIntro(false)}
+              className="justify-self-center border-2 px-8 py-3 font-heading text-lg"
+              style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
+            >
+              {TASK_COPY[lang].introGo}
+            </button>
+          </div>
+        ) : intro ? (
           <div className="grid content-center gap-5 py-6 text-center animate-fade-up">
             <p className="font-heading text-3xl leading-tight">{c.introTitle}</p>
             <ul className="grid gap-3 text-base leading-snug">
@@ -155,6 +173,21 @@ function GameLayer({
               {c.introGo}
             </button>
           </div>
+        ) : PARTNER_OFFER.game === "task" ? (
+          <FokusTaskGame
+            lang={lang}
+            discovered={discovered}
+            onExit={onClose}
+            endCta={
+              <PartnerLink
+                placement="results-card"
+                className="justify-self-center border-2 px-5 py-2.5 font-heading text-sm"
+                style={{ backgroundColor: "transparent", color: CREAM, borderColor: CREAM }}
+              >
+                {t.cardCta} ↗
+              </PartnerLink>
+            }
+          />
         ) : (
           <FokusChallenge
             lang={lang}

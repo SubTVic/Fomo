@@ -19,6 +19,9 @@ export const PARTNER_OFFER = {
   /** Affiliate link; already carries the discount code. */
   url: "https://gofokus.com/discount/FOMO26",
   code: "FOMO26",
+  /** Which mini game the ad opens: "task" (prototype: do a task despite
+   *  distractions, the tag blocks them) or "arcade" (endless swipe-away round). */
+  game: "task" as "task" | "arcade",
 } as const;
 
 export type PartnerPlacement = "results-card";
@@ -121,6 +124,56 @@ export const CHALLENGE_COPY = {
     seen: "★ +2",
     survived: "survived",
     lostAfter: "Distracted after",
+    again: "↺ Again",
+    exit: "✕ End game",
+  },
+} as const;
+
+/** Copy for the "task" prototype: tap 1–20 while notifications get in the way. */
+export const TASK_COPY = {
+  de: {
+    introTitle: "🎮 Deine Lernsession",
+    introTask: "Tippe die Zahlen 1 bis {n} der Reihe nach.",
+    introDistract: "Benachrichtigungen lenken dich ab – wisch sie weg …",
+    introFokus: "… oder tipp deinen FOKUS-Tag: Ruhe, und du kommst voran.",
+    introGo: "Session starten ▶",
+    task: "Aufgabe: 1 bis {n} antippen",
+    time: "Zeit",
+    nextLabel: "nächste",
+    done: "geschafft",
+    focusMode: "Fokus-Modus",
+    focusing: "🔒 Keine Ablenkung – jetzt durchziehen!",
+    tagHint: "FOKUS-Tag: Ablenkungen blockieren",
+    tagHintBusy: "Zu viel los? Tipp deinen FOKUS-Tag!",
+    recharging: "FOKUS-Tag lädt …",
+    tagAria: "FOKUS-Tag antippen: Benachrichtigungen 8 Sekunden blockieren",
+    won: "Lernsession geschafft! 🎉",
+    wonLine: "Mit FOKUS bleiben Ablenkungen draußen – auch im echten Leben.",
+    best: "Bestzeit",
+    focusUsed: "{n}× Fokus-Modus",
+    again: "↺ Nochmal",
+    exit: "✕ Spiel beenden",
+  },
+  en: {
+    introTitle: "🎮 Your study session",
+    introTask: "Tap the numbers 1 to {n} in order.",
+    introDistract: "Notifications get in the way – swipe them off …",
+    introFokus: "… or tap your FOKUS tag: quiet, and you get things done.",
+    introGo: "Start session ▶",
+    task: "Task: tap 1 to {n}",
+    time: "time",
+    nextLabel: "next",
+    done: "done",
+    focusMode: "Focus mode",
+    focusing: "🔒 No distractions – push through now!",
+    tagHint: "FOKUS tag: block distractions",
+    tagHintBusy: "Too much going on? Tap your FOKUS tag!",
+    recharging: "FOKUS tag charging …",
+    tagAria: "Tap the FOKUS tag: block notifications for 8 seconds",
+    won: "Study session done! 🎉",
+    wonLine: "With FOKUS, distractions stay out – in real life too.",
+    best: "Best",
+    focusUsed: "{n}× focus mode",
     again: "↺ Again",
     exit: "✕ End game",
   },

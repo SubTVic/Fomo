@@ -71,6 +71,7 @@ function TaskIntro({ lang, cta, onGo }: { lang: Lang; cta: string; onGo: () => v
     <div className="grid content-center gap-5 py-6 text-center animate-fade-up">
       <p className="font-heading text-3xl leading-tight">{c.introTitle}</p>
       <ul className="grid gap-3 text-base leading-snug">
+        <li className="text-sm opacity-90">{c.introWhat}</li>
         <li className="font-heading">{c.introTask.replace("{n}", String(TARGET))}</li>
         <li>{c.introDistract}</li>
         <li>{c.introFokus}</li>

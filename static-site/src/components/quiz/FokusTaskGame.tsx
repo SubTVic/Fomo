@@ -32,6 +32,16 @@ const TICK_MS = 100;
 const LEAVE_MS = 300;
 const WRONG_MS = 400;
 const UNLOCK_SHOW_MS = 2_600; // "collection complete" banner
+const TUT_FOCUS_MS = 2_800; // the calm moment in the tutorial
+
+/**
+ * Hands-on tutorial before the first round (user tests: nobody reads a rules
+ * screen). Each step waits for the player: 1 tap 1–3 · 2 tap one notification
+ * away · 3 too many → tap the tag · 4 calm (what FOKUS does) · 5 "now for real".
+ * 0 = no tutorial, the real round.
+ */
+export type TutStep = 0 | 1 | 2 | 3 | 4 | 5;
+const TUT_UNTIL = 4; // step 1 ends when the next number to tap is this
 
 /** Distractions get faster the further you get (progress 0…1). */
 export function taskSpawnGap(progress: number): number {
@@ -60,10 +70,11 @@ export interface TaskState {
   wrong: { cell: number; at: number } | null;
   timeMs: number;
   best: number; // ms, 0 = none yet
+  tut: TutStep;
 }
 
 type Action =
-  | { type: "start"; now: number; shuffle: number[]; found?: number[] }
+  | { type: "start"; now: number; shuffle: number[]; found?: number[]; tutorial?: boolean }
   | { type: "tick"; now: number; r1: number; r2: number; r3: number }
   | { type: "cell"; cell: number; now: number }
   | { type: "dismiss"; id: number; now: number }
@@ -88,6 +99,7 @@ export const taskInitial: TaskState = {
   wrong: null,
   timeMs: 0,
   best: 0,
+  tut: 0,
 };
 
 const active = (n: Note) => n.leftAt === undefined;
@@ -102,9 +114,37 @@ export function shuffled(rand: number[]): number[] {
   return a;
 }
 
+/** Add one notification (unseen first, across rounds: it all adds to the collection). */
+function spawn(s: TaskState, now: number, r: number, top: number): TaskState {
+  const idx = pickSpecial(s.seen, r);
+  const fresh = !s.seen.includes(idx);
+  return {
+    ...s,
+    notes: [...s.notes, { id: s.nextId, idx, top, fresh }],
+    nextId: s.nextId + 1,
+    seen: fresh ? [...s.seen, idx] : s.seen,
+    unlocked: [...s.unlocked, ...completedBy(s.seen, idx).map((id) => ({ id, at: now }))],
+  };
+}
+
 export function taskReducer(s: TaskState, a: Action): TaskState {
   switch (a.type) {
     case "start":
+      if (a.tutorial) {
+        // no clock, no random spawns, tag locked until step 3
+        return {
+          ...taskInitial,
+          best: s.best,
+          nextId: s.nextId,
+          grid: shuffled(a.shuffle),
+          seen: [...(a.found ?? [])],
+          startedAt: a.now,
+          now: a.now,
+          nextSpawnAt: Infinity,
+          readyAt: Infinity,
+          tut: 1,
+        };
+      }
       return {
         ...taskInitial,
         best: s.best,
@@ -119,31 +159,27 @@ export function taskReducer(s: TaskState, a: Action): TaskState {
     case "tick": {
       if (s.phase !== "playing") return { ...s, now: a.now };
       const now = a.now;
-      let notes = s.notes.filter((n) => active(n) || now - (n.leftAt ?? 0) < LEAVE_MS);
+      const notes = s.notes.filter((n) => active(n) || now - (n.leftAt ?? 0) < LEAVE_MS);
       let next: TaskState = { ...s, now, notes };
+      if (s.tut) return s.tut === 4 && now >= s.focusUntil ? { ...next, tut: 5 } : next;
       const focused = now < s.focusUntil;
       if (!focused && now >= s.nextSpawnAt) {
-        const live = notes.filter(active).length;
-        if (live < MAX_NOTES) {
-          // unseen first, across rounds too: every round adds to the collection
-          const idx = pickSpecial(s.seen, a.r1);
-          const fresh = !s.seen.includes(idx);
-          const unlocked = [...s.unlocked, ...completedBy(s.seen, idx).map((id) => ({ id, at: now }))];
-          // somewhere over the grid (0 … 55 % from the top), never over the tag dock
-          notes = [...notes, { id: s.nextId, idx, top: Math.round(a.r3 * 55), fresh }];
-          next = { ...next, notes, nextId: s.nextId + 1, seen: fresh ? [...s.seen, idx] : s.seen, unlocked };
-        }
+        // somewhere over the grid (0 … 55 % from the top), never over the tag dock
+        if (notes.filter(active).length < MAX_NOTES) next = spawn(next, now, a.r1, Math.round(a.r3 * 55));
         next = { ...next, nextSpawnAt: now + taskSpawnGap((s.next - 1) / TARGET) };
       }
       return next;
     }
 
     case "cell": {
-      if (s.phase !== "playing") return s;
+      // tutorial: one thing at a time (numbers only in step 1 and in the calm of step 4)
+      if (s.phase !== "playing" || (s.tut > 1 && s.tut !== 4)) return s;
       const value = s.grid[a.cell];
       if (value < s.next) return s; // already done
       if (value !== s.next) return { ...s, wrong: { cell: a.cell, at: a.now } };
       const n = s.next + 1;
+      if (s.tut === 1 && n === TUT_UNTIL) return spawn({ ...s, next: n, wrong: null, tut: 2 }, a.now, 0.5, 20);
+      if (s.tut && n > TARGET) return s; // finishing belongs to the real round
       if (n > TARGET) {
         const timeMs = a.now - s.startedAt;
         return { ...s, next: n, phase: "won", timeMs, best: s.best ? Math.min(s.best, timeMs) : timeMs, notes: [] };
@@ -153,7 +189,14 @@ export function taskReducer(s: TaskState, a: Action): TaskState {
 
     case "dismiss": {
       const note = s.notes.find((n) => n.id === a.id);
-      if (!note || !active(note)) return s;
+      if (!note || !active(note) || s.tut === 3) return s; // step 3: too many, use the tag
+      const left = { ...s, notes: s.notes.map((n) => (n.id === a.id ? { ...n, leftAt: a.now } : n)) };
+      if (s.tut === 2) {
+        // now a pile at once, and the tag is ready
+        let next: TaskState = { ...left, tut: 3, readyAt: 0 };
+        for (const [k, top] of [0, 22, 44].entries()) next = spawn(next, a.now, (k * 0.37 + 0.11) % 1, top);
+        return next;
+      }
       return {
         ...s,
         dismissed: s.dismissed + 1,
@@ -179,6 +222,15 @@ export function taskReducer(s: TaskState, a: Action): TaskState {
 
     case "tag": {
       if (s.phase !== "playing" || a.now < s.readyAt) return s;
+      if (s.tut === 3) {
+        return {
+          ...s,
+          notes: s.notes.map((n) => (active(n) ? { ...n, leftAt: a.now } : n)),
+          focusUntil: a.now + TUT_FOCUS_MS,
+          readyAt: Infinity,
+          tut: 4,
+        };
+      }
       const focusUntil = a.now + FOCUS_MS;
       return {
         ...s,
@@ -209,9 +261,12 @@ export function FokusTaskGame({
   endCta,
   discovered,
   paused = false,
+  tutorial = false,
 }: {
   lang: Lang;
   paused?: boolean;
+  /** first game of the visit: hands-on tutorial before the timed round */
+  tutorial?: boolean;
   onExit: () => void;
   endCta?: React.ReactNode;
   discovered?: Set<number>;
@@ -219,19 +274,20 @@ export function FokusTaskGame({
   const c = TASK_COPY[lang];
   const [s, dispatch] = useReducer(taskReducer, taskInitial);
   const [album, setAlbum] = useState(false);
-  const startRound = (found?: Set<number>) => {
-    track(EVENTS.partnerPlay, { partner: PARTNER_OFFER.id, action: "task-start" });
+  const startRound = (found?: Set<number>, withTutorial = false) => {
+    track(EVENTS.partnerPlay, { partner: PARTNER_OFFER.id, action: withTutorial ? "tutorial-start" : "task-start" });
     dispatch({
       type: "start",
       now: performance.now(),
       shuffle: Array.from({ length: TARGET }, () => Math.random()),
       found: [...(found ?? [])],
+      tutorial: withTutorial,
     });
   };
   const reported = useRef(0);
 
   // `discovered` is one Set per page visit → this runs once, on mount
-  useEffect(() => startRound(discovered), [discovered]);
+  useEffect(() => startRound(discovered, tutorial), [discovered, tutorial]);
   const restart = () => {
     setAlbum(false);
     startRound(discovered);
@@ -272,7 +328,12 @@ export function FokusTaskGame({
   const playing = s.phase === "playing";
   const focused = playing && s.now < s.focusUntil;
   const ready = playing && s.now >= s.readyAt;
-  const charge = ready ? 1 : focused ? (s.focusUntil - s.now) / FOCUS_MS : 1 - (s.readyAt - s.now) / RECHARGE_MS;
+  const charge = ready
+    ? 1
+    : focused
+      ? (s.focusUntil - s.now) / (s.tut ? TUT_FOCUS_MS : FOCUS_MS)
+      : Math.max(0, 1 - (s.readyAt - s.now) / RECHARGE_MS);
+  const coach = s.tut === 1 ? c.tut1 : s.tut === 2 ? c.tut2 : s.tut === 3 ? c.tut3 : s.tut === 4 ? c.tut4 : "";
   const live = s.notes.filter(active);
   const elapsed = playing ? s.now - s.startedAt : s.timeMs;
   const banner = [...s.unlocked].reverse().find((u) => s.now - u.at < UNLOCK_SHOW_MS);
@@ -281,8 +342,15 @@ export function FokusTaskGame({
 
   return (
     <div className="grid gap-3">
+      {/* tutorial: one short instruction at a time, where the HUD will be */}
+      {s.tut > 0 && s.tut < 5 && (
+        <div key={s.tut} className="flex min-h-[52px] items-center gap-3 rounded-xl px-3 py-2 animate-fade-up" style={{ backgroundColor: "#ffd34d", color: BLUE }}>
+          <span className="shrink-0 font-heading text-xs tabular-nums opacity-70">{s.tut}/4</span>
+          <p className="font-heading text-[15px] leading-tight">{coach}</p>
+        </div>
+      )}
       {/* HUD: the task first */}
-      <div className="grid grid-cols-3 items-end gap-2 text-center">
+      <div className={`grid grid-cols-3 items-end gap-2 text-center ${s.tut ? "hidden" : ""}`}>
         <div>
           <p className="font-heading text-2xl leading-none tabular-nums">{clock(elapsed)}</p>
           <p className="mt-1 text-[10px] font-bold uppercase tracking-wider opacity-80">{c.time}</p>
@@ -326,7 +394,7 @@ export function FokusTaskGame({
                 onClick={() => dispatch({ type: "cell", cell, now: performance.now() })}
                 className={`flex h-12 touch-manipulation items-center justify-center rounded-lg font-heading text-lg tabular-nums transition-colors ${
                   done ? "bg-[#10c463]/25 text-[#7dffb4]" : isWrong ? "bg-[#ff5a5a] text-white" : "bg-white/95 text-navy"
-                }`}
+                } ${s.tut === 1 && value === s.next ? "ring-4 ring-[#ffd34d]" : ""}`}
               >
                 {done ? "✓" : value}
               </button>
@@ -346,7 +414,7 @@ export function FokusTaskGame({
               onClick={() => dispatch({ type: "dismiss", id: n.id, now: performance.now() })}
               className={`absolute inset-x-2.5 z-10 flex h-[54px] touch-manipulation items-center gap-2 rounded-xl bg-white px-2.5 text-left shadow-[0_6px_18px_rgba(0,0,0,0.45)] ${
                 active(n) ? "animate-notif-in" : "animate-zap"
-              }`}
+              } ${s.tut === 2 && active(n) ? "ring-4 ring-[#ffd34d]" : ""}`}
               style={{ top: `calc(26px + ${n.top}%)` }}
             >
               <span
@@ -386,14 +454,39 @@ export function FokusTaskGame({
             disabled={!ready}
             onPointerDown={() => dispatch({ type: "tag", now: performance.now() })}
             onClick={() => dispatch({ type: "tag", now: performance.now() })}
-            className={`shrink-0 touch-manipulation disabled:cursor-default ${ready ? "motion-safe:animate-pulse" : ""}`}
+            className={`shrink-0 touch-manipulation disabled:cursor-default ${ready ? "motion-safe:animate-pulse" : ""} ${
+              s.tut === 1 || s.tut === 2 ? "opacity-40" : ""
+            }`}
           >
             <FokusDevice size={68} charge={charge} ready={ready} />
           </button>
           <p className="min-w-0 font-heading text-[13px] leading-tight">
-            {focused ? c.focusing : ready ? (live.length ? c.tagHintBusy : c.tagHint) : c.recharging}
+            {s.tut === 1 || s.tut === 2 ? "" : focused ? c.focusing : ready ? (live.length ? c.tagHintBusy : c.tagHint) : c.recharging}
           </p>
         </div>
+
+        {/* tutorial done: why play, then the real (timed) round */}
+        {s.tut === 5 && (
+          <div className="absolute inset-0 z-40 grid content-center gap-4 rounded-[22px] bg-[#0b0f3a] p-5 text-center animate-fade-up" style={{ color: CREAM }}>
+            <p className="font-heading text-2xl leading-tight">{c.tutDone}</p>
+            <p className="text-sm leading-snug opacity-90">{c.tutPoint}</p>
+            <ul className="grid gap-1.5 font-heading text-base">
+              <li>⏱ {c.tutGoalTime.replace("{n}", String(TARGET))}</li>
+              <li style={{ color: "#ffd34d" }}>🔍 {c.tutGoalCollect.replace("{n}", String(SPECIAL.length))}</li>
+            </ul>
+            <button
+              type="button"
+              onClick={() => {
+                track(EVENTS.partnerPlay, { partner: PARTNER_OFFER.id, action: "tutorial-done" });
+                startRound(discovered);
+              }}
+              className="justify-self-center border-2 px-8 py-3 font-heading text-lg"
+              style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
+            >
+              {c.tutGo}
+            </button>
+          </div>
+        )}
 
         {/* win */}
         {s.phase === "won" && (

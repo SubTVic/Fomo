@@ -109,3 +109,42 @@ describe("notification collections", () => {
     expect(s.unlocked.map((u) => u.id)).toContain("ex");
   });
 });
+
+describe("hands-on tutorial", () => {
+  const cellOf = (s: ReturnType<typeof start>, v: number) => s.grid.indexOf(v);
+
+  it("walks through tap → dismiss → tag → calm → ready, one step at a time", () => {
+    let s = taskReducer(taskInitial, { type: "start", now: 0, shuffle: [], tutorial: true });
+    expect(s.tut).toBe(1);
+    // no random notifications and no tag while learning
+    s = taskReducer(s, { type: "tick", now: 5_000, r1: 0.3, r2: 0, r3: 0 });
+    expect(s.notes).toHaveLength(0);
+    expect(taskReducer(s, { type: "tag", now: 5_000 }).tut).toBe(1);
+
+    for (const v of [1, 2, 3]) s = taskReducer(s, { type: "cell", cell: cellOf(s, v), now: 5_100 });
+    expect(s.tut).toBe(2);
+    expect(s.notes).toHaveLength(1);
+    // numbers wait until the distraction is gone
+    expect(taskReducer(s, { type: "cell", cell: cellOf(s, 4), now: 5_200 }).next).toBe(4);
+
+    s = taskReducer(s, { type: "dismiss", id: s.notes[0].id, now: 5_300 });
+    expect(s.tut).toBe(3);
+    const pile = s.notes.filter((n) => n.leftAt === undefined);
+    expect(pile).toHaveLength(3);
+    // too many: tapping them away does nothing, the tag is the way
+    expect(taskReducer(s, { type: "dismiss", id: pile[0].id, now: 5_400 })).toBe(s);
+
+    s = taskReducer(s, { type: "tag", now: 5_500 });
+    expect(s.tut).toBe(4);
+    expect(s.notes.every((n) => n.leftAt !== undefined)).toBe(true);
+    s = taskReducer(s, { type: "tick", now: 10_000, r1: 0, r2: 0, r3: 0 });
+    expect(s.tut).toBe(5);
+    expect(s.focusUses).toBe(0); // the tutorial doesn't count
+
+    // the real round: clock from zero, tag ready, findings kept
+    const real = taskReducer(s, { type: "start", now: 11_000, shuffle: [], found: s.seen });
+    expect(real.tut).toBe(0);
+    expect(real.readyAt).toBe(0);
+    expect(real.seen).toEqual(s.seen);
+  });
+});

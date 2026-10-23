@@ -166,9 +166,7 @@ function GameLayer({
             </button>
           </div>
         </div>
-        {intro && PARTNER_OFFER.game === "task" ? (
-          <TaskIntro lang={lang} cta={TASK_COPY[lang].introGo} onGo={() => setIntro(false)} />
-        ) : intro ? (
+        {intro && PARTNER_OFFER.game === "arcade" ? (
           <div className="grid content-center gap-5 py-6 text-center animate-fade-up">
             <p className="font-heading text-3xl leading-tight">{c.introTitle}</p>
             <ul className="grid gap-3 text-base leading-snug">
@@ -205,6 +203,7 @@ function GameLayer({
             <FokusTaskGame
               lang={lang}
               paused={help}
+              tutorial={tutorial}
               discovered={discovered}
               onExit={onClose}
               endCta={

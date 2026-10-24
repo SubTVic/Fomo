@@ -11,6 +11,7 @@ import { withUtm, fomoMailto } from "@/lib/utm";
 import { ShareButton } from "./ShareButton";
 import { QrShare } from "./QrShare";
 import { CompareGroups } from "./CompareGroups";
+import { PartnerCard } from "./PartnerOffer";
 
 interface ResultsScreenProps {
   matches: MatchResult[];
@@ -221,6 +222,7 @@ export function ResultsScreen({
               {copy.less}
             </button>
           )}
+          {allMatches.length > 0 && <PartnerCard lang={lang} />}
         </div>
       ) : (
         <div className="mt-5">

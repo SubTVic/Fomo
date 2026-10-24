@@ -211,7 +211,7 @@ function GameLayer({
                 <PartnerLink
                   placement="results-card"
                   className="justify-self-center border-2 px-5 py-2.5 font-heading text-sm"
-                  style={{ backgroundColor: "transparent", color: CREAM, borderColor: CREAM }}
+                  style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
                 >
                   {t.cardCta} ↗
                 </PartnerLink>
@@ -228,7 +228,7 @@ function GameLayer({
               <PartnerLink
                 placement="results-card"
                 className="justify-self-center border-2 px-5 py-2.5 font-heading text-sm"
-                style={{ backgroundColor: "transparent", color: CREAM, borderColor: CREAM }}
+                style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
               >
                 {t.cardCta} ↗
               </PartnerLink>

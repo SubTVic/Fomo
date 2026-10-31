@@ -35,6 +35,17 @@ body {
   overflow-x: hidden;
 }
 
+/* Hide the native disclosure triangle everywhere. WebKit (all iPhone
+   browsers) ignores ::marker here and renders ::-webkit-details-marker as an
+   extra child — inside a grid <summary> it took the first column and pushed
+   the result rows apart. */
+summary {
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+
 h1,
 h2,
 h3 {

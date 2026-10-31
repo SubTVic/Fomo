@@ -205,6 +205,10 @@ export function TransparencyContent({ lang }: { lang: Lang }) {
                   You first see the top 5. Groups tied with number 5 are shown too, up to 10. You can show more at any
                   time.
                 </li>
+                <li>
+                  Ads (marked “Ad”) appear below the list and never change the ranking. No group can pay for a better
+                  place.
+                </li>
               </>
             ) : (
               <>
@@ -222,6 +226,10 @@ export function TransparencyContent({ lang }: { lang: Lang }) {
                 <li>
                   Zuerst siehst du die Top 5. Gruppen, die mit Platz 5 gleichauf liegen, werden mit angezeigt, bis
                   höchstens 10. Weitere kannst du jederzeit einblenden.
+                </li>
+                <li>
+                  Anzeigen (markiert mit „Anzeige“) stehen unter der Liste und ändern das Ranking nie. Keine Gruppe
+                  kann für einen besseren Platz bezahlen.
                 </li>
               </>
             )}

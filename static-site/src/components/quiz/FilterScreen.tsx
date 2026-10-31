@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 "use client";
 
+import Link from "next/link";
 import type { QuizFilters } from "@/lib/types";
 
 interface FilterScreenProps {
@@ -23,6 +24,12 @@ export function FilterScreen({
 
   return (
     <div className="animate-fade-up">
+      <Link
+        href={lang === "en" ? "/en" : "/"}
+        className="mb-5 inline-flex items-center border-2 border-navy bg-card px-3 py-2 text-sm font-semibold uppercase tracking-wide text-navy transition-colors hover:bg-navy hover:text-sky"
+      >
+        {lang === "en" ? "← Back to home" : "← Zur Startseite"}
+      </Link>
       <h1 className="text-2xl text-navy sm:text-3xl">{title}</h1>
       <p className="mt-2 text-sm text-body">
         {lang === "en"

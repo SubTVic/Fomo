@@ -1,11 +1,11 @@
 {
   "_meta": {
-    "source": "backup: 5f988123-fomo-backup-2026-10-08-20-29-38.json",
-    "generatedAt": "2026-10-08T20:36:52.167Z",
-    "groupCount": 96,
-    "verifiedCount": 54,
-    "derivedCount": 42,
-    "note": "All active groups. Verified have real selfRatings; unverified use naive-derived ratings flagged derived:true (excluded from quiz matching). Manual category override for ESG Dresden and IG Börse until the admin DB is corrected."
+    "source": "backup: fomo-backup-2026-10-22-13-19-10.json",
+    "generatedAt": "2026-10-22T13:19:54.310Z",
+    "groupCount": 97,
+    "verifiedCount": 56,
+    "derivedCount": 41,
+    "note": "All active groups. Verified have real selfRatings; unverified use naive-derived ratings flagged derived:true (excluded from quiz matching)."
   },
   "groups": [
     {
@@ -950,22 +950,22 @@
     },
     {
       "id": "cmmwg2zd3000fib04it474m74",
-      "name": "Amnesty International Hochschulgruppe Dresden",
+      "name": "Amnesty International - Hochschulgruppe",
       "slug": "amnesty-international-hochschulgruppe-dresden",
-      "shortDescription": "Die Hochschulgruppe setzt sich ehrenamtlich für Menschenrechte ein, indem sie Petitionen, Eilaktionen, Informationsstände, Workshops und Veranstaltungen organisiert. In themenspezifischen Untergruppen",
-      "longDescription": "Die Hochschulgruppe setzt sich ehrenamtlich für Menschenrechte ein, indem sie Petitionen, Eilaktionen, Informationsstände, Workshops und Veranstaltungen organisiert. In themenspezifischen Untergruppen (z.B. Frauenrechte, Flucht/Antirassismus) arbeiten Studierende aller Fachrichtungen an gesellschaftspolitischen Themen.",
-      "categoryName": "Sonstiges",
-      "categoryColor": "",
-      "categoryIcon": "",
-      "websiteUrl": "https://amnesty-hochschulgruppe-dresden.de/",
-      "instagramUrl": null,
-      "contactEmail": null,
+      "shortDescription": "Amnesty International ist eine weltweite Bewegung, die sich für die Menschenrechte aller Menschen einsetzt und das unabhängig von Regierungen, Parteien und Religionen!",
+      "longDescription": "Amnesty International setzt sich weltweit für die Menschenrechte aller Menschen ein und ist unabhängig von Regierungen, Parteien und Religionen.\n\nWir als Amnesty Hochschulgruppe Dresden treffen uns alle zwei Wochen zum Plenum. Dort besprechen wir aktuelle und dringende Menschenrechtsthemen, planen kommende Veranstaltungen und entwickeln gemeinsam neue Aktionen.\n\nSo setzen wir uns für Menschenrechte ein:\n\n- Menschenrechtsbildung an Schulen: Wir besuchen Schulen, halten Vorträge und kommen mit Schüler*innen über Menschenrechte ins Gespräch.\n- Veranstaltungen und Öffentlichkeitsarbeit: Wir beteiligen uns an Events, betreuen Infostände und informieren über Menschenrechtsverletzungen.\n- Demonstrationen und Kundgebungen: Wir nehmen teil und unterstützen Aktionen, die Menschenrechte sichtbar machen und verteidigen.\n- Briefaktionen und Petitionen: Wir sammeln Unterschriften und setzen uns für Menschen ein, deren Rechte verletzt werden.\n- Eigene Projekte: Wir bringen Ideen ein und gestalten gemeinsam Aktionen zu Themen, die uns bewegen.\n\nBei uns sind grundsätzlich alle willkommen, ob Studierende oder nicht. Du kannst dich sozial engagieren, eigene Ideen einbringen und Verantwortung übernehmen, ohne einer Partei anzugehören. Komm einfach zu einem unserer Treffen vorbei und lerne uns kennen.\n\nMenschenrechte müssen verteidigt werden. Du kannst dabei mithelfen.",
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
+      "websiteUrl": "https://amnesty-hochschulgruppe-dresden.de",
+      "instagramUrl": "https://www.instagram.com/amnesty_hsg_dresden/",
+      "contactEmail": "info@amnesty-hochschulgruppe-dresden.de",
       "memberCount": null,
       "language": "both",
       "eventFrequency": "medium",
       "groupSize": "medium",
       "motto": null,
-      "foundedYear": null,
+      "foundedYear": 1961,
       "logoUrl": null,
       "attributes": {
         "career": false,
@@ -974,31 +974,34 @@
         "party": false,
         "religion": false,
         "sports": false,
-        "networking": false,
+        "networking": true,
         "arts": false,
         "music": false,
         "timeLow": true,
-        "handsOn": false,
-        "outdoor": false,
+        "handsOn": true,
+        "outdoor": true,
         "international": true,
         "beginnerFriendly": true,
         "competitive": false,
         "financialCost": false,
-        "leadershipOpportunities": true
+        "leadershipOpportunities": false
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
-        "filterSelections": [],
+        "raterCount": 1,
+        "derived": false,
+        "filterSelections": [
+          "arts",
+          "party"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-02",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-03",
@@ -1010,7 +1013,7 @@
           },
           {
             "itemId": "WS2-05",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-06",
@@ -1018,23 +1021,23 @@
           },
           {
             "itemId": "WS2-07",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-08",
-            "value": 0
+            "value": 1
           },
           {
             "itemId": "WS2-09",
-            "value": 0
+            "value": -1
           },
           {
             "itemId": "WS2-10",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-11",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-12",
@@ -1050,11 +1053,11 @@
           },
           {
             "itemId": "WS2-15",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-16",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-17",
@@ -1062,7 +1065,7 @@
           },
           {
             "itemId": "WS2-18",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-19",
@@ -1070,11 +1073,11 @@
           },
           {
             "itemId": "WS2-20",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-21",
-            "value": 0
+            "value": 1
           }
         ]
       }
@@ -5480,13 +5483,13 @@
       "slug": "progressiv-am-campus",
       "shortDescription": "Progressiv am Campus vernetzt engagierte Studierende, die Hochschule mitgestalten wollen – in Gremien und darüber hinaus. Gemeinsam machen wir Uni-Politik gerechter, offener und zukunftsfähiger.",
       "longDescription": "Die Hochschulgruppe Progressiv am Campus ist der Zusammenschluss all jener, die den Uni-Alltag mitgestalten wollen - im Senat, in Senatskommissionen, weiteren Hochschulgremien oder einfach mit dem Wunsch, Hochschulpolitik progressiv voranzutreiben. Wir vernetzen engagierte Studierende zwischen den Uni-Wahlen und über die Wahlperiode hinaus, schaffen Räume für den Austausch und entwickeln gemeinsam Konzepte und Forderungen, die die Universität gerechter, offener und zukunftsfähiger machen. Dabei geht es nicht nur um Gremienarbeit, sondern auch um gegenseitige Unterstützung, hochschulpolitische Diskussionen und das gemeinsame Durchatmen inmitten des hochschulpolitischen Trubels.",
-      "categoryName": "Sonstiges",
-      "categoryColor": "",
-      "categoryIcon": "",
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
       "websiteUrl": "https://tud.vote",
       "instagramUrl": "https://www.instagram.com/studis_im_senat?igsh=a3pmYzcxYnIxb3E4",
       "contactEmail": "studis_im_senat@mailbox.tu-dresden.de",
-      "memberCount": 11,
+      "memberCount": 16,
       "language": "german",
       "eventFrequency": "medium",
       "groupSize": "small",
@@ -5514,7 +5517,7 @@
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 3,
+        "raterCount": 2,
         "derived": false,
         "filterSelections": [
           "party"
@@ -10266,6 +10269,142 @@
           {
             "itemId": "WS2-21",
             "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmv3uo1rk0001l806zp3ijo3e",
+      "name": "Studentenclub Wu5",
+      "slug": "studentenclub-wu5",
+      "shortDescription": "Ehrenamtlicher Studiclub in Dresden (August Bebel Str. 12), der regelmäßig Karaoke, Jam Sessions, Konzerte und Partys veranstaltet! Euch erwarten ganz viel Spaß, coole Leute und gute Musik :O",
+      "longDescription": "Wir sind ein sehr geiler Club und immer auf der Suche nach neuen Gästen, Mitgliedern und Bier!",
+      "categoryName": "Kunst & Kultur",
+      "categoryColor": "#9B5DE5",
+      "categoryIcon": "palette",
+      "websiteUrl": "https://wu5.de/",
+      "instagramUrl": "https://www.instagram.com/studentenclubwu5?obrf=dW5seXVtaHZldTFh&utm_source=qr",
+      "contactEmail": "info@wu5.de",
+      "memberCount": 51,
+      "language": "german",
+      "eventFrequency": null,
+      "groupSize": null,
+      "motto": "Wu5 - Widerstand ist zwecklos",
+      "foundedYear": 1973,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "nextEvent": null,
+      "selfRating": {
+        "raterCount": 2,
+        "derived": false,
+        "filterSelections": [
+          "arts",
+          "music",
+          "tech",
+          "handsOn"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-08",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-10",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-12",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-16",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
           }
         ]
       }

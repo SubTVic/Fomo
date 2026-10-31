@@ -4,7 +4,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { track, EVENTS } from "@/lib/analytics";
-import { CHALLENGE_COPY, PARTNER_COPY, PARTNER_OFFER, TASK_COPY, type PartnerPlacement } from "@/lib/partner";
+import {
+  CHALLENGE_COPY,
+  PARTNER_COPY,
+  PARTNER_OFFER,
+  TASK_COPY,
+  type PartnerPlacement,
+} from "@/lib/partner";
 import { DISTRACTIONS } from "@/lib/fokus-notifications";
 import { FokusChallenge } from "./FokusChallenge";
 import { FokusTaskGame, TARGET } from "./FokusTaskGame";
@@ -64,6 +70,15 @@ function PartnerLink({
   );
 }
 
+/** Second line inside every discount button: the code is in the link already. */
+function CodeNote({ lang }: { lang: Lang }) {
+  return (
+    <span className="mt-0.5 block font-body text-[11px] font-normal leading-tight opacity-80">
+      {PARTNER_COPY[lang].codeNote.replace("{code}", PARTNER_OFFER.code)}
+    </span>
+  );
+}
+
 /** Rules of the task game: before the first round, and again on demand. */
 function TaskIntro({ lang, cta, onGo }: { lang: Lang; cta: string; onGo: () => void }) {
   const c = TASK_COPY[lang];
@@ -117,7 +132,11 @@ function GameLayer({
 
   useEffect(() => {
     const html = document.documentElement;
-    const prev = { overflow: html.style.overflow, overscroll: html.style.overscrollBehavior, body: document.body.style.overflow };
+    const prev = {
+      overflow: html.style.overflow,
+      overscroll: html.style.overscrollBehavior,
+      body: document.body.style.overflow,
+    };
     html.style.overflow = "hidden";
     html.style.overscrollBehavior = "none";
     document.body.style.overflow = "hidden";
@@ -172,7 +191,9 @@ function GameLayer({
             <p className="font-heading text-3xl leading-tight">{c.introTitle}</p>
             <ul className="grid gap-3 text-base leading-snug">
               <li>{c.introGoal}</li>
-              <li className="font-heading">{c.introFind.replace("{n}", String(DISTRACTIONS.length))}</li>
+              <li className="font-heading">
+                {c.introFind.replace("{n}", String(DISTRACTIONS.length))}
+              </li>
               <li>{c.introFunny}</li>
             </ul>
             <button
@@ -197,8 +218,15 @@ function GameLayer({
             </button>
             {help && (
               // over the paused game, which keeps its state underneath
-              <div className="absolute inset-x-0 bottom-0 top-11 z-50" style={{ backgroundColor: BLUE }}>
-                <TaskIntro lang={lang} cta={TASK_COPY[lang].helpResume} onGo={() => setHelp(false)} />
+              <div
+                className="absolute inset-x-0 bottom-0 top-11 z-50"
+                style={{ backgroundColor: BLUE }}
+              >
+                <TaskIntro
+                  lang={lang}
+                  cta={TASK_COPY[lang].helpResume}
+                  onGo={() => setHelp(false)}
+                />
               </div>
             )}
             <FokusTaskGame
@@ -214,6 +242,7 @@ function GameLayer({
                   style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
                 >
                   {t.cardCta} ↗
+                  <CodeNote lang={lang} />
                 </PartnerLink>
               }
             />
@@ -231,13 +260,14 @@ function GameLayer({
                 style={{ backgroundColor: CREAM, color: BLUE, borderColor: CREAM }}
               >
                 {t.cardCta} ↗
+                <CodeNote lang={lang} />
               </PartnerLink>
             }
           />
         )}
       </div>
     </div>,
-    document.body,
+    document.body
   );
 }
 
@@ -275,7 +305,9 @@ export function PartnerCard({ lang }: { lang: Lang }) {
           <p className="text-sm leading-snug opacity-85">{t.gamePitch}</p>
         </div>
       </div>
-      {open && <GameLayer lang={lang} tutorial={!played} discovered={discovered} onClose={closeGame} />}
+      {open && (
+        <GameLayer lang={lang} tutorial={!played} discovered={discovered} onClose={closeGame} />
+      )}
       <div className="grid gap-2 sm:flex sm:items-center">
         <button
           type="button"
@@ -294,6 +326,7 @@ export function PartnerCard({ lang }: { lang: Lang }) {
           style={{ backgroundColor: "transparent", color: CREAM, borderColor: CREAM }}
         >
           {t.cardCta} ↗
+          <CodeNote lang={lang} />
         </PartnerLink>
       </div>
     </aside>

@@ -32,6 +32,7 @@ export const PARTNER_COPY = {
     cardTitle: "Gruppe gefunden. Jetzt noch den Kopf frei fürs Semester.",
     gamePitch: "FOKUS ist ein kleiner Tag fürs Handy: einmal dranhalten, und ablenkende Apps sind gesperrt. Probier’s im Minispiel aus.",
     cardCta: "Zum Rabatt",
+    codeNote: "(Rabattcode {code} wird automatisch angewendet)",
     startGame: "▶ Minispiel starten",
   },
   en: {
@@ -39,6 +40,7 @@ export const PARTNER_COPY = {
     cardTitle: "Found your group. Now clear your head for the semester.",
     gamePitch: "FOKUS is a small tag for your phone: hold it there once and distracting apps are blocked. Try it in the mini game.",
     cardCta: "Get the discount",
+    codeNote: "(discount code {code} applied automatically)",
     startGame: "▶ Play the mini game",
   },
 } as const;

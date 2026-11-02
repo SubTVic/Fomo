@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "source": "backup: fomo-backup-2026-10-22-13-19-10.json",
-    "generatedAt": "2026-10-22T13:19:54.310Z",
+    "source": "admin app export API",
+    "generatedAt": "2026-11-02T09:17:54.073Z",
     "groupCount": 97,
     "verifiedCount": 56,
     "derivedCount": 41,
@@ -51,8 +51,8 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "competitive",
-          "tech"
+          "community",
+          "sport"
         ],
         "answers": [
           {
@@ -184,10 +184,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "outdoor",
-          "party"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -319,7 +316,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "party"
+          "engagement"
         ],
         "answers": [
           {
@@ -451,9 +448,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -584,13 +579,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "competitive",
-          "outdoor",
-          "tech",
-          "sports"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -722,7 +711,7 @@
         "raterCount": 3,
         "derived": false,
         "filterSelections": [
-          "party"
+          "projects"
         ],
         "answers": [
           {
@@ -854,12 +843,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "competitive",
-          "outdoor",
-          "tech"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -991,8 +975,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "arts",
-          "party"
+          "engagement"
         ],
         "answers": [
           {
@@ -1125,7 +1108,8 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "outdoor"
+          "engagement",
+          "sport"
         ],
         "answers": [
           {
@@ -1258,7 +1242,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "party"
+          "engagement"
         ],
         "answers": [
           {
@@ -1390,7 +1374,9 @@
       "selfRating": {
         "raterCount": 1,
         "derived": false,
-        "filterSelections": [],
+        "filterSelections": [
+          "engagement"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -1653,9 +1639,7 @@
         "raterCount": 3,
         "derived": false,
         "filterSelections": [
-          "handsOn",
-          "competitive",
-          "arts"
+          "projects"
         ],
         "answers": [
           {
@@ -1788,8 +1772,8 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "party",
-          "tech"
+          "engagement",
+          "projects"
         ],
         "answers": [
           {
@@ -1922,9 +1906,7 @@
         "raterCount": 2,
         "derived": false,
         "filterSelections": [
-          "tech",
-          "party",
-          "arts"
+          "projects"
         ],
         "answers": [
           {
@@ -2187,12 +2169,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "arts",
-          "music",
-          "tech"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -2454,12 +2431,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "music",
-          "outdoor",
-          "party"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -2591,8 +2563,8 @@
         "raterCount": 2,
         "derived": false,
         "filterSelections": [
-          "handsOn",
-          "party"
+          "community",
+          "culture"
         ],
         "answers": [
           {
@@ -2725,12 +2697,7 @@
         "raterCount": 3,
         "derived": false,
         "filterSelections": [
-          "music",
-          "party",
-          "arts",
-          "outdoor",
-          "competitive",
-          "tech"
+          "community"
         ],
         "answers": [
           {
@@ -2862,10 +2829,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "arts",
-          "sports"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -3128,7 +3092,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "party"
+          "engagement"
         ],
         "answers": [
           {
@@ -3261,7 +3225,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "arts"
+          "culture"
         ],
         "answers": [
           {
@@ -3394,7 +3358,7 @@
         "raterCount": 3,
         "derived": false,
         "filterSelections": [
-          "party"
+          "engagement"
         ],
         "answers": [
           {
@@ -3526,7 +3490,9 @@
       "selfRating": {
         "raterCount": 1,
         "derived": false,
-        "filterSelections": [],
+        "filterSelections": [
+          "engagement"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -3657,10 +3623,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "competitive",
-          "party"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -3792,10 +3755,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "handsOn",
-          "competitive",
-          "tech",
-          "arts"
+          "projects"
         ],
         "answers": [
           {
@@ -3928,7 +3888,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "tech"
+          "projects"
         ],
         "answers": [
           {
@@ -4061,7 +4021,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "outdoor"
+          "community"
         ],
         "answers": [
           {
@@ -4193,9 +4153,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "tech"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -4289,14 +4247,14 @@
       "name": "Evangelische Studierendengemeinde (ESG) Dresden",
       "slug": "evangelische-studierendengemeinde-dresden-esg",
       "shortDescription": "Wir als ESG Dresden sind eine offene und tolerante christliche Gemeinschaft junger Erwachsener in Studium und Ausbildung. Wir stellen Fragen und infrage, diskutieren, feiern und glauben gemeinsam.",
-      "longDescription": "Als Evangelische Studierendengemeinde (ESG) Dresden lieben und leben wir ein diverses Verständnis unseres Glaubens und Lebens. Du kannst dich mit deinen Interessen und Meinungen einbringen und wirst gehört. Gemeinsam stellen wir Fragen und infrage, nehmen mit offenem Herzen auf und lernen, mit christlichen Werten zu leben.\n\nBesonders wichtig ist uns der dienstägliche Gemeindeabend um 19 Uhr, zu dem wir Vorträge aus diversen Bereichen von Politik, Wissenschaft, Technik und Kirche hören und diskutieren. Daneben gibt es ein buntes Programm von gemeinsamen Mahlzeiten, Morgenandachten, gemeinsamen Freizeiten und unterschiedlichen Kleingruppen mit ähnlichen Interessen wie z.B. einem Kreativkleinkreis oder Posaunenchor. ",
+      "longDescription": "Als Evangelische Studierendengemeinde (ESG) Dresden lieben und leben wir ein diverses Verständnis unseres Glaubens und Lebens. Du kannst dich mit deinen Interessen und Meinungen einbringen und wirst gehört. Gemeinsam stellen wir Fragen und infrage, nehmen mit offenem Herzen auf und lernen, mit christlichen Werten zu leben.\n\nBesonders wichtig ist uns der dienstägliche Gemeindeabend um 19 Uhr, zu dem wir Vorträge aus diversen Bereichen von Politik, Wissenschaft, Technik und Kirche hören und diskutieren. Daneben gibt es ein buntes Programm von gemeinsamen Mahlzeiten, Morgenandachten, gemeinsamen Freizeiten und unterschiedlichen Kleingruppen mit ähnlichen Interessen wie z.B. einem Kreativkleinkreis oder Posaunenchor.",
       "categoryName": "Glaube & Spiritualität",
       "categoryColor": "",
       "categoryIcon": "",
       "websiteUrl": "https://www.esg-dresden.de",
       "instagramUrl": "https://www.instagram.com/esg_dresden/",
       "contactEmail": "oeffentlichkeit@esg-dresden.de",
-      "memberCount": 26,
+      "memberCount": 56,
       "language": "german",
       "eventFrequency": "high",
       "groupSize": "medium",
@@ -4330,7 +4288,8 @@
           "handsOn",
           "arts",
           "music",
-          "outdoor"
+          "outdoor",
+          "party"
         ],
         "answers": [
           {
@@ -4347,23 +4306,23 @@
           },
           {
             "itemId": "WS2-04",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-05",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-06",
-            "value": 1
-          },
-          {
-            "itemId": "WS2-07",
             "value": 0
           },
           {
+            "itemId": "WS2-05",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-07",
+            "value": -1
+          },
+          {
             "itemId": "WS2-08",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-09",
@@ -4379,11 +4338,11 @@
           },
           {
             "itemId": "WS2-12",
-            "value": 0
+            "value": 1
           },
           {
             "itemId": "WS2-13",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-14",
@@ -4462,7 +4421,9 @@
       "selfRating": {
         "raterCount": 1,
         "derived": false,
-        "filterSelections": [],
+        "filterSelections": [
+          "engagement"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -4594,9 +4555,8 @@
         "raterCount": 3,
         "derived": false,
         "filterSelections": [
-          "arts",
-          "sports",
-          "competitive"
+          "culture",
+          "sport"
         ],
         "answers": [
           {
@@ -4728,10 +4688,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "outdoor"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -4994,7 +4951,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "competitive"
+          "community"
         ],
         "answers": [
           {
@@ -5126,7 +5083,9 @@
       "selfRating": {
         "raterCount": 1,
         "derived": false,
-        "filterSelections": [],
+        "filterSelections": [
+          "community"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -5257,7 +5216,9 @@
       "selfRating": {
         "raterCount": 2,
         "derived": false,
-        "filterSelections": [],
+        "filterSelections": [
+          "community"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -5388,7 +5349,9 @@
       "selfRating": {
         "raterCount": 1,
         "derived": false,
-        "filterSelections": [],
+        "filterSelections": [
+          "engagement"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -5520,7 +5483,7 @@
         "raterCount": 2,
         "derived": false,
         "filterSelections": [
-          "party"
+          "engagement"
         ],
         "answers": [
           {
@@ -5652,9 +5615,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "arts"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -5785,10 +5746,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "tech"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -5920,9 +5878,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "party",
-          "tech",
-          "competitive"
+          "projects"
         ],
         "answers": [
           {
@@ -6055,8 +6011,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "outdoor",
-          "sports"
+          "community"
         ],
         "answers": [
           {
@@ -6189,8 +6144,7 @@
         "raterCount": 2,
         "derived": false,
         "filterSelections": [
-          "outdoor",
-          "party"
+          "community"
         ],
         "answers": [
           {
@@ -6453,10 +6407,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "tech"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -6719,7 +6670,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "music"
+          "culture"
         ],
         "answers": [
           {
@@ -6982,10 +6933,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "music"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -7117,11 +7065,7 @@
         "raterCount": 3,
         "derived": false,
         "filterSelections": [
-          "handsOn",
-          "arts",
-          "music",
-          "outdoor",
-          "sports"
+          "community"
         ],
         "answers": [
           {
@@ -7253,11 +7197,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "music",
-          "party"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -7388,12 +7328,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "arts",
-          "outdoor",
-          "tech"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -7786,9 +7721,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -7919,12 +7852,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "arts",
-          "music",
-          "party"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -8055,7 +7983,10 @@
       "selfRating": {
         "raterCount": 3,
         "derived": false,
-        "filterSelections": [],
+        "filterSelections": [
+          "community",
+          "engagement"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -8187,7 +8118,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "party"
+          "engagement"
         ],
         "answers": [
           {
@@ -8319,9 +8250,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -8452,9 +8381,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -8585,9 +8512,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -8718,7 +8643,9 @@
       "selfRating": {
         "raterCount": 1,
         "derived": false,
-        "filterSelections": [],
+        "filterSelections": [
+          "engagement"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -8850,7 +8777,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "party"
+          "engagement"
         ],
         "answers": [
           {
@@ -9113,7 +9040,9 @@
       "selfRating": {
         "raterCount": 1,
         "derived": false,
-        "filterSelections": [],
+        "filterSelections": [
+          "projects"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -9245,7 +9174,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "arts"
+          "culture"
         ],
         "answers": [
           {
@@ -9378,7 +9307,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "party"
+          "engagement"
         ],
         "answers": [
           {
@@ -9511,7 +9440,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "party"
+          "engagement"
         ],
         "answers": [
           {
@@ -9644,8 +9573,8 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "handsOn",
-          "arts"
+          "community",
+          "engagement"
         ],
         "answers": [
           {
@@ -9778,8 +9707,8 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "handsOn",
-          "outdoor"
+          "community",
+          "engagement"
         ],
         "answers": [
           {
@@ -9912,8 +9841,7 @@
         "raterCount": 2,
         "derived": false,
         "filterSelections": [
-          "sports",
-          "competitive"
+          "sport"
         ],
         "answers": [
           {
@@ -10046,9 +9974,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "handsOn",
-          "competitive",
-          "tech"
+          "projects"
         ],
         "answers": [
           {
@@ -10180,11 +10106,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "arts",
-          "music",
-          "party"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -10316,10 +10238,8 @@
         "raterCount": 2,
         "derived": false,
         "filterSelections": [
-          "arts",
-          "music",
-          "tech",
-          "handsOn"
+          "culture",
+          "community"
         ],
         "answers": [
           {
@@ -10451,12 +10371,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "competitive",
-          "outdoor",
-          "sports"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -10588,7 +10503,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "party"
+          "projects"
         ],
         "answers": [
           {
@@ -10721,7 +10636,8 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "sports"
+          "engagement",
+          "sport"
         ],
         "answers": [
           {
@@ -10854,7 +10770,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "arts"
+          "culture"
         ],
         "answers": [
           {
@@ -10987,7 +10903,7 @@
         "raterCount": 2,
         "derived": false,
         "filterSelections": [
-          "sports"
+          "engagement"
         ],
         "answers": [
           {
@@ -11119,9 +11035,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "outdoor"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -11383,11 +11297,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "music",
-          "party"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -11519,8 +11429,7 @@
         "raterCount": 2,
         "derived": false,
         "filterSelections": [
-          "arts",
-          "music"
+          "culture"
         ],
         "answers": [
           {
@@ -11652,7 +11561,9 @@
       "selfRating": {
         "raterCount": 3,
         "derived": false,
-        "filterSelections": [],
+        "filterSelections": [
+          "engagement"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -11783,12 +11694,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "arts",
-          "music",
-          "party"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -11920,9 +11826,7 @@
         "raterCount": 1,
         "derived": false,
         "filterSelections": [
-          "arts",
-          "competitive",
-          "music"
+          "culture"
         ],
         "answers": [
           {
@@ -12055,9 +11959,7 @@
         "raterCount": 3,
         "derived": false,
         "filterSelections": [
-          "handsOn",
-          "competitive",
-          "tech"
+          "projects"
         ],
         "answers": [
           {
@@ -12190,7 +12092,7 @@
         "raterCount": 3,
         "derived": false,
         "filterSelections": [
-          "party"
+          "engagement"
         ],
         "answers": [
           {
@@ -12322,10 +12224,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "handsOn",
-          "music"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -12456,9 +12355,7 @@
       "selfRating": {
         "raterCount": 0,
         "derived": true,
-        "filterSelections": [
-          "outdoor"
-        ],
+        "filterSelections": [],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -12720,7 +12617,9 @@
       "selfRating": {
         "raterCount": 1,
         "derived": false,
-        "filterSelections": [],
+        "filterSelections": [
+          "projects"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -12852,10 +12751,7 @@
         "raterCount": 2,
         "derived": false,
         "filterSelections": [
-          "handsOn",
-          "arts",
-          "competitive",
-          "tech"
+          "projects"
         ],
         "answers": [
           {

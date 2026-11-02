@@ -20,6 +20,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Link href="/admin/aenderungen" className="hover:underline">
               Änderungen{openChanges > 0 ? ` (${openChanges})` : ""}
             </Link>
+            <Link href="/admin/abgleich" className="hover:underline">Abgleich</Link>
             <Link href="/admin/contacts" className="hover:underline">Kontakte</Link>
             {admin.role === "SUPER_ADMIN" && (
               <Link href="/admin/users" className="hover:underline">Admins</Link>

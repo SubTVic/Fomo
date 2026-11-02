@@ -175,7 +175,7 @@ model GroupContact {
 model GroupChangeLog {
   id              String    @id @default(cuid())
   groupId         String
-  source          String    // "edit-link" | "admin" | "revert"
+  source          String    // "edit-link" | "admin" | "revert" | "website-sync"
   changes         Json
   createdAt       DateTime  @default(now())
   reviewedAt      DateTime?

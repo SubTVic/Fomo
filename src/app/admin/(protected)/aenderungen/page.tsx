@@ -12,6 +12,7 @@ const SOURCE_LABELS: Record<string, string> = {
   "edit-link": "Bearbeitungslink",
   admin: "Admin",
   revert: "Rückgängig",
+  "website-sync": "Abgleich mit Website",
 };
 
 export default async function ChangesPage() {

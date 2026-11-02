@@ -10,7 +10,7 @@
 
 import { Prisma, type PrismaClient } from "@prisma/client";
 
-export type ChangeSource = "edit-link" | "admin" | "revert";
+export type ChangeSource = "edit-link" | "admin" | "revert" | "website-sync";
 export type FieldValue = Prisma.JsonValue;
 export type Snapshot = Record<string, FieldValue>;
 export type Changes = Record<string, { from: FieldValue; to: FieldValue }>;
@@ -225,5 +225,5 @@ const FIELD_LABELS: Record<string, string> = {
   confirmedAttributes: "Bestätigte Attribute (alt)",
   [RATING]: "Selbsteinschätzung vorhanden",
   [RATER_COUNT]: "Anzahl Ausfüllende",
-  [FILTERS]: "Aktivitäts-Filter",
+  [FILTERS]: "Bereiche (bis 11/2026: Aktivitäts-Filter)",
 };

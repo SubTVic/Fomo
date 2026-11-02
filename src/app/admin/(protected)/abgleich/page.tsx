@@ -33,11 +33,24 @@ export default async function WebsiteSyncPage() {
         rückgängig machen. Verifizierung, Aktiv-Status und Links/Tokens werden nie angefasst; Gruppen werden
         weder angelegt noch gelöscht.
       </p>
-      <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-        Faustregel: Steht hier eine Gruppe, hat entweder jemand die Website direkt korrigiert (dann
-        übernehmen) oder die Gruppe hat sich seit dem letzten Daten-Sync geändert (dann <em>nicht</em>{" "}
-        übernehmen — der nächste Daten-Sync bringt die neuen Werte auf die Website).
-      </p>
+      <div className="mt-3 max-w-3xl border-2 border-foreground bg-background p-4 text-sm">
+        <p className="font-semibold">So gehst du pro Gruppe vor:</p>
+        <ul className="mt-1 list-disc space-y-1 pl-5">
+          <li>
+            <strong>Website stimmt</strong> (jemand hat die Website direkt korrigiert) → Felder anhaken →
+            „Website-Werte übernehmen“.
+          </li>
+          <li>
+            <strong>Datenbank stimmt</strong> (die Gruppe hat sich seit dem letzten Daten-Sync selbst
+            geändert, oder die Website ist veraltet) → „Datenbank ist richtig“. Es wird nichts geändert; der
+            nächste Daten-Sync bringt den Datenbank-Stand auf die Website.
+          </li>
+          <li>Gemischt? Nur die richtigen Website-Felder anhaken, Rest bleibt wie in der Datenbank.</li>
+        </ul>
+        <p className="mt-2">
+          Wenn du durch bist: Daten-Sync starten (oder Claude Bescheid geben). Danach ist diese Liste leer.
+        </p>
+      </div>
 
       {loadError && (
         <p className="mt-6 border-2 border-red-500 bg-red-50 px-4 py-3 text-sm text-red-800">

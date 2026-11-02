@@ -317,56 +317,94 @@
   ],
   "filters": {
     "type": "multi-select",
-    "question": "Was möchtest du in deiner Hochschulgruppe vor allem tun?",
+    "question": "In welchem Bereich suchst du eine Gruppe?",
     "subtitle": "",
     "options": [
       {
-        "id": "F-handsOn",
-        "label": "Hands-on bauen & Werkstatt",
+        "id": "F-sport",
+        "label": "Sport & Outdoor",
+        "description": "Training, Wettkampf, Natur, Ausflüge",
+        "attribute": "sport",
+        "legacyAttributes": [
+          "sports",
+          "outdoor"
+        ],
+        "groupCount": 0
+      },
+      {
+        "id": "F-culture",
+        "label": "Kunst, Musik & Kultur",
+        "description": "Theater, Chor, Band, Foto, Film, Schreiben",
+        "attribute": "culture",
+        "legacyAttributes": [
+          "arts",
+          "music"
+        ],
+        "groupCount": 0
+      },
+      {
+        "id": "F-projects",
+        "label": "Technik, Wirtschaft & Projekte",
+        "description": "Bauen, Coding, Forschung, Beratung, Gründen",
+        "attribute": "projects",
+        "legacyAttributes": [
+          "tech",
+          "handsOn"
+        ],
+        "groupCount": 0
+      },
+      {
+        "id": "F-engagement",
+        "label": "Politik & Engagement",
+        "description": "Hochschulpolitik, Ehrenamt, Umwelt, Menschenrechte",
+        "attribute": "engagement",
+        "legacyAttributes": [
+          "party"
+        ],
+        "groupCount": 0
+      },
+      {
+        "id": "F-community",
+        "label": "Gemeinschaft & Begegnung",
+        "description": "Glaube, Studentenclubs, Internationales",
+        "attribute": "community",
+        "legacyAttributes": [],
+        "groupCount": 0
+      }
+    ],
+    "note": "Fünf breite Bereiche (seit 11/2026, vorher 8 Aktivitäten). Der Bereich ist ein harter Filter; die Feinabstimmung übernehmen die Fragen. Gruppen wählen 1–2 Bereiche. legacyOptions = alte Filter in alter Reihenfolge: dekodiert alte ?r=-Links (8 Stellen) und übersetzt alte Gruppenangaben über legacyAttributes.",
+    "legacyOptions": [
+      {
         "attribute": "handsOn",
-        "groupCount": 39
+        "label": "Hands-on bauen & Werkstatt"
       },
       {
-        "id": "F-arts",
-        "label": "Künstlerisch arbeiten (Theater, Film, Schreiben, Design, Foto)",
         "attribute": "arts",
-        "groupCount": 26
+        "label": "Künstlerisch arbeiten (Theater, Film, Schreiben, Design, Foto)"
       },
       {
-        "id": "F-competitive",
-        "label": "An Wettbewerben & Meisterschaften teilnehmen",
         "attribute": "competitive",
-        "groupCount": 24
+        "label": "An Wettbewerben & Meisterschaften teilnehmen"
       },
       {
-        "id": "F-music",
-        "label": "Musik machen",
         "attribute": "music",
-        "groupCount": 23
+        "label": "Musik machen"
       },
       {
-        "id": "F-outdoor",
-        "label": "Outdoor & Natur (Klettern, Wandern, Paddeln)",
         "attribute": "outdoor",
-        "groupCount": 22
+        "label": "Outdoor & Natur (Klettern, Wandern, Paddeln)"
       },
       {
-        "id": "F-tech",
-        "label": "Tech & Digital (Coding, Software, Esports)",
         "attribute": "tech",
-        "groupCount": 21
+        "label": "Tech & Digital (Coding, Software, Esports)"
       },
       {
-        "id": "F-party",
-        "label": "Hochschulpolitik & Mitbestimmung",
         "attribute": "party",
-        "groupCount": 18
+        "label": "Hochschulpolitik & Mitbestimmung"
       },
       {
-        "id": "F-sports",
-        "label": "Sport & Bewegung",
         "attribute": "sports",
-        "groupCount": 10
+        "label": "Sport & Bewegung"
       }
     ]
   }

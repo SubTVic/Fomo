@@ -19,7 +19,11 @@ export interface SelfRatingAnswer {
 
 export interface GroupSelfRating {
   raterCount: number;
-  /** Filter attribute ids the group selected for itself (hard-constraint side). */
+  /**
+   * Area attribute ids of the group (hard-constraint side). In groups.json this
+   * may still hold the 8 pre-11/2026 activity filters; src/lib/data.ts resolves
+   * it to the 5 areas (own choice → data/areas.json → legacy mapping).
+   */
   filterSelections: string[];
   answers: SelfRatingAnswer[];
   /**
@@ -77,12 +81,25 @@ export interface QuizItem {
   }>;
 }
 
-/** One option on the multi-select filter screen. */
+/** One option (area) on the multi-select filter screen. */
 export interface QuizFilterOption {
   id: string;
   label: string;
+  /** Short examples shown under the label. */
+  description?: string;
   attribute: string;
+  /** Pre-11/2026 activity filters that map onto this area. */
+  legacyAttributes?: string[];
   groupCount: number;
+  /** Set at build time when too few verified groups carry the area: the
+   *  option stays in the list (positional ?r= encoding) but is not shown. */
+  hidden?: boolean;
+}
+
+/** One of the 8 activity filters used until 11/2026 (old ?r= links). */
+export interface LegacyFilterOption {
+  attribute: string;
+  label: string;
 }
 
 export interface QuizFilters {
@@ -90,6 +107,8 @@ export interface QuizFilters {
   question: string;
   subtitle: string;
   options: QuizFilterOption[];
+  /** The old filters in their old order — decodes 8-digit ?r= filter parts. */
+  legacyOptions?: LegacyFilterOption[];
 }
 
 export interface QuizData {

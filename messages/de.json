@@ -70,9 +70,9 @@
       "infoOnlyButton": "Nur Gruppeninfos ändern →"
     },
     "filter": {
-      "label": "Aktivitäten",
-      "title": "Welche Aktivitäten stehen bei euch im Vordergrund?",
-      "multi": "Mehrfachauswahl · nicht Pflicht",
+      "label": "Bereiche",
+      "title": "In welchem Bereich ist eure Gruppe vor allem aktiv?",
+      "multi": "1–2 Bereiche · Pflicht",
       "continueButton": "Weiter zu den Fragen →"
     },
     "item": {

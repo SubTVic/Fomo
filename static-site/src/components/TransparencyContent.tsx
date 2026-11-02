@@ -90,8 +90,8 @@ export function TransparencyContent({ lang }: { lang: Lang }) {
           </h2>
           <p className="mt-2">
             {en
-              ? `Each group answers the ${itemCount} statements itself, from the point of view of a typical member, and picks which of the ${filterCount} activities it offers. Only groups that confirmed their profile this way take part in the quiz — currently ${verifiedCount} of ${groupCount}.`
-              : `Jede Gruppe beantwortet die ${itemCount} Aussagen selbst – aus Sicht eines typischen Mitglieds – und wählt, welche der ${filterCount} Aktivitäten sie anbietet. Im Quiz sind nur Gruppen, die ihr Profil so bestätigt haben – aktuell ${verifiedCount} von ${groupCount}.`}
+              ? `Each group answers the ${itemCount} statements itself, from the point of view of a typical member, and picks which of the ${filterCount} areas it belongs to (one or two). Only groups that confirmed their profile this way take part in the quiz — currently ${verifiedCount} of ${groupCount}.`
+              : `Jede Gruppe beantwortet die ${itemCount} Aussagen selbst – aus Sicht eines typischen Mitglieds – und ordnet sich einem oder zwei der ${filterCount} Bereiche zu. Im Quiz sind nur Gruppen, die ihr Profil so bestätigt haben – aktuell ${verifiedCount} von ${groupCount}.`}
           </p>
           <p className="mt-2">
             {en ? (
@@ -115,11 +115,11 @@ export function TransparencyContent({ lang }: { lang: Lang }) {
         </section>
 
         <section>
-          <h2 className="font-heading text-lg text-navy">{en ? "2. Activities as a filter" : "2. Aktivitäten als Filter"}</h2>
+          <h2 className="font-heading text-lg text-navy">{en ? "2. Areas as a filter" : "2. Bereiche als Filter"}</h2>
           <p className="mt-2">
             {en
-              ? "If you pick activities (e.g. music or sports), groups that offer none of them are left out. Groups that have not stated any activities stay in. If you pick nothing, nothing is filtered."
-              : "Wählst du Aktivitäten aus (z. B. Musik oder Sport), fallen Gruppen heraus, die keine davon anbieten. Gruppen ohne Angaben zu Aktivitäten bleiben drin. Wählst du nichts, wird nichts gefiltert."}
+              ? "If you pick areas (e.g. sports & outdoors), groups outside all of them are left out. If you pick nothing, nothing is filtered. The areas are deliberately broad: which groups within them suit you best is decided by the statements."
+              : "Wählst du Bereiche aus (z. B. Sport & Outdoor), fallen Gruppen heraus, die in keinem davon aktiv sind. Wählst du nichts, wird nichts gefiltert. Die Bereiche sind bewusst breit: Welche Gruppen darin am besten zu dir passen, entscheiden die Aussagen."}
           </p>
         </section>
 
@@ -194,7 +194,7 @@ export function TransparencyContent({ lang }: { lang: Lang }) {
               <>
                 <li>Groups are sorted by their exact match, before rounding.</li>
                 <li>
-                  If two groups are exactly tied, a group that shares one of your chosen activities comes first.
+                  If two groups are exactly tied, a group in one of your chosen areas comes first.
                 </li>
                 <li>
                   Remaining ties are broken by a fixed calculation from your answers: the same answers always give the
@@ -214,8 +214,8 @@ export function TransparencyContent({ lang }: { lang: Lang }) {
               <>
                 <li>Sortiert wird nach dem genauen Match, vor dem Runden.</li>
                 <li>
-                  Liegen zwei Gruppen exakt gleichauf, kommt eine Gruppe zuerst, die eine deiner gewählten Aktivitäten
-                  anbietet.
+                  Liegen zwei Gruppen exakt gleichauf, kommt eine Gruppe zuerst, die in einem deiner gewählten Bereiche
+                  aktiv ist.
                 </li>
                 <li>
                   Restliche Gleichstände entscheidet eine feste Rechnung aus deinen Antworten: Gleiche Antworten ergeben
@@ -243,7 +243,7 @@ export function TransparencyContent({ lang }: { lang: Lang }) {
               <>
                 <li>The group profiles are self-assessments. A group may see itself differently than you would.</li>
                 <li>
-                  Only the {itemCount} statements and the activities count — not the descriptions, size or popularity
+                  Only the {itemCount} statements and the areas count — not the descriptions, size or popularity
                   of a group.
                 </li>
                 <li>A match is a suggestion, not a verdict. Best way to find out: visit a group&apos;s meeting.</li>
@@ -252,7 +252,7 @@ export function TransparencyContent({ lang }: { lang: Lang }) {
               <>
                 <li>Die Profile der Gruppen sind Selbsteinschätzungen. Eine Gruppe sieht sich vielleicht anders, als du sie erleben würdest.</li>
                 <li>
-                  Es zählen nur die {itemCount} Aussagen und die Aktivitäten – nicht Beschreibung, Größe oder
+                  Es zählen nur die {itemCount} Aussagen und die Bereiche – nicht Beschreibung, Größe oder
                   Beliebtheit einer Gruppe.
                 </li>
                 <li>Ein Match ist ein Vorschlag, kein Urteil. Am besten findest du es heraus, indem du vorbeischaust.</li>

@@ -31,7 +31,7 @@ export function CompareGroups({ results, filters, lang = "de" }: CompareGroupsPr
           meetings: "Meetings",
           language: "Language",
           members: "Members",
-          activities: "Activities",
+          activities: "Areas",
           open: "open",
         }
       : {
@@ -43,7 +43,7 @@ export function CompareGroups({ results, filters, lang = "de" }: CompareGroupsPr
           meetings: "Termine",
           language: "Sprache",
           members: "Mitglieder",
-          activities: "Aktivitäten",
+          activities: "Bereiche",
           open: "öffnen",
         };
 

@@ -68,11 +68,39 @@ const FEEDBACK_SINCE = (() => {
   const ts = Date.parse(MILESTONES_FILE.feedbackSince ?? "");
   return Number.isFinite(ts) ? { date: MILESTONES_FILE.feedbackSince, ts } : null;
 })();
-const groupsAll = JSON.parse(readFileSync(join(ROOT, "data/groups.json"), "utf8")).groups;
+const areaAssignments = JSON.parse(readFileSync(join(ROOT, "data/areas.json"), "utf8")).assignments;
+
+// Area resolution — KEEP IN SYNC with resolveAreas in src/lib/areas.ts.
+const areaIds = quiz.filters.options.map((o) => o.attribute);
+const legacyToArea = new Map(
+  quiz.filters.options.flatMap((o) => (o.legacyAttributes ?? []).map((l) => [l, o.attribute])),
+);
+function toAreas(selections) {
+  const wanted = new Set(selections.map((s) => legacyToArea.get(s) ?? s));
+  return areaIds.filter((a) => wanted.has(a));
+}
+function resolveAreas(selections, assigned) {
+  if (selections.some((s) => areaIds.includes(s))) return areaIds.filter((a) => selections.includes(a));
+  if (assigned?.length) return areaIds.filter((a) => assigned.includes(a));
+  return toAreas(selections);
+}
+
+const groupsAll = JSON.parse(readFileSync(join(ROOT, "data/groups.json"), "utf8")).groups.map((g) => ({
+  ...g,
+  selfRating: {
+    ...g.selfRating,
+    filterSelections: resolveAreas(g.selfRating.filterSelections ?? [], areaAssignments[g.slug]?.areas),
+  },
+}));
 // Matching runs against verified groups only — mirror src/lib/data.ts.
 const groups = groupsAll.filter((g) => g.selfRating.derived !== true);
 const groupName = new Map(groupsAll.map((g) => [g.slug, g.name]));
-const filterLabel = new Map(quiz.filters.options.map((o) => [o.attribute, o.label]));
+// Live events before the 11/2026 switch carry the old activity filters —
+// labelled separately so old and new choices are never mixed up.
+const filterLabel = new Map([
+  ...(quiz.filters.legacyOptions ?? []).map((o) => [o.attribute, `${o.label} (alter Filter)`]),
+  ...quiz.filters.options.map((o) => [o.attribute, o.label]),
+]);
 
 // ---------------------------------------------------------------------------
 // Matching replica — KEEP IN SYNC with src/lib/matching.ts (scoreGroup).
@@ -143,7 +171,11 @@ export function decodeR(r) {
   if (!a || a.length !== quiz.items.length || !/^[012]+$/.test(a)) return null;
   const answers = {};
   quiz.items.forEach((it, i) => (answers[it.id] = Number(a[i]) - 1));
-  const filters = quiz.filters.options.filter((o, i) => f[i] === "1").map((o) => o.attribute);
+  const legacy = quiz.filters.legacyOptions ?? [];
+  const isLegacy = legacy.length > 0 && f.length === legacy.length && f.length !== quiz.filters.options.length;
+  const filters = isLegacy
+    ? toAreas(legacy.filter((o, i) => f[i] === "1").map((o) => o.attribute))
+    : quiz.filters.options.filter((o, i) => f[i] === "1").map((o) => o.attribute);
   return { answers, filters };
 }
 
@@ -642,7 +674,7 @@ function buildHtml(data, sim) {
     rows.push({ label: "— ohne Filter gestartet —", value: none });
     sections.push(
       `<section><h2>Filterwahl</h2>
-       <p class="sub">Welche Aktivitäts-Filter beim Quiz gewählt wurden (${total} Abschlüsse).</p>
+       <p class="sub">Welche Bereiche (bis 11/2026: Aktivitäts-Filter) beim Quiz gewählt wurden (${total} Abschlüsse).</p>
        ${hbarChart(rows)}${table(["Filter", "Anzahl"], rows.map((r) => [r.label, r.value]))}</section>`,
     );
   }

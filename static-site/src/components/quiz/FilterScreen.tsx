@@ -20,7 +20,7 @@ export function FilterScreen({
   lang = "de",
 }: FilterScreenProps) {
   const title =
-    lang === "en" ? "What would you mainly like to do in your student group?" : filters.question;
+    lang === "en" ? "Which area are you looking for a group in?" : filters.question;
 
   return (
     <div className="animate-fade-up">
@@ -33,12 +33,12 @@ export function FilterScreen({
       <h1 className="text-2xl text-navy sm:text-3xl">{title}</h1>
       <p className="mt-2 text-sm text-body">
         {lang === "en"
-          ? "Optional — you can start right away. If you pick something, we only show groups that offer it — leave everything unselected to keep all options open."
-          : "Optional – du kannst auch direkt starten. Wenn du etwas auswählst, zeigen wir dir nur Gruppen, die das anbieten — ohne Auswahl bleibt alles offen."}
+          ? "Optional — pick one or more areas, or start right away to keep everything open. The questions then find the groups that suit you best."
+          : "Optional – wähl einen oder mehrere Bereiche oder starte direkt, dann bleibt alles offen. Welche Gruppen am besten zu dir passen, ermitteln danach die Fragen."}
       </p>
 
       <div className="mt-5 grid gap-3">
-        {filters.options.map((opt) => {
+        {filters.options.filter((opt) => !opt.hidden).map((opt) => {
           const isOn = selected.includes(opt.attribute);
           return (
             <button
@@ -46,11 +46,18 @@ export function FilterScreen({
               type="button"
               aria-pressed={isOn}
               onClick={() => onToggle(opt.attribute)}
-              className={`flex items-center justify-between gap-3 border-poster px-4 py-4 text-left transition-colors ${
+              className={`flex items-center justify-between gap-3 border-poster px-4 py-3 text-left transition-colors ${
                 isOn ? "bg-navy text-sky" : "bg-card text-navy hover:bg-surface"
               }`}
             >
-              <span className="min-w-0 break-words font-medium">{opt.label}</span>
+              <span className="min-w-0">
+                <span className="block break-words font-medium">{opt.label}</span>
+                {opt.description && (
+                  <span className={`mt-0.5 block text-sm ${isOn ? "text-sky/80" : "text-body"}`}>
+                    {opt.description}
+                  </span>
+                )}
+              </span>
               <span
                 className={`flex h-6 w-6 shrink-0 items-center justify-center border-2 text-sm font-bold ${
                   isOn ? "border-sky bg-sky text-navy" : "border-navy"
@@ -65,8 +72,8 @@ export function FilterScreen({
       </div>
 
       {/* Sticky at the bottom: on phones (esp. the Instagram in-app browser)
-          the 8 options push the button ~2 screens below the fold, and most
-          visitors never scrolled to it. */}
+          the old 8 options pushed the button ~2 screens below the fold, and
+          most visitors never scrolled to it. Kept for small screens. */}
       <div className="sticky bottom-0 z-10 -mx-4 mt-6 bg-sky px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:-mx-6 sm:px-6">
         <button
           type="button"

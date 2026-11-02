@@ -50,14 +50,19 @@ const itemTitle: Record<string, string> = {
 };
 
 const filterLabel: Record<string, string> = {
-  "F-handsOn": "Hands-on building & workshops",
-  "F-arts": "Creative work (theatre, film, writing, design, photography)",
-  "F-competitive": "Taking part in competitions & championships",
-  "F-music": "Making music",
-  "F-outdoor": "Outdoor & nature (climbing, hiking, paddling)",
-  "F-tech": "Tech & digital (coding, software, esports)",
-  "F-party": "Student politics & participation",
-  "F-sports": "Sports & movement",
+  "F-sport": "Sports & outdoors",
+  "F-culture": "Arts, music & culture",
+  "F-projects": "Tech, business & projects",
+  "F-engagement": "Politics & social engagement",
+  "F-community": "Community & connection",
+};
+
+const filterDescription: Record<string, string> = {
+  "F-sport": "Training, competitions, nature, trips",
+  "F-culture": "Theatre, choir, band, photography, film, writing",
+  "F-projects": "Building, coding, research, consulting, start-ups",
+  "F-engagement": "Student politics, volunteering, environment, human rights",
+  "F-community": "Faith, student clubs, international",
 };
 
 export function translateQuizItems(items: QuizItem[]): QuizItem[] {
@@ -71,11 +76,12 @@ export function translateQuizItems(items: QuizItem[]): QuizItem[] {
 export function translateQuizFilters(filters: QuizFilters): QuizFilters {
   return {
     ...filters,
-    question: "What would you mainly like to do in your student group?",
+    question: "Which area are you looking for a group in?",
     subtitle: "",
     options: filters.options.map((option) => ({
       ...option,
       label: filterLabel[option.id] ?? option.label,
+      description: filterDescription[option.id] ?? option.description,
     })),
   };
 }

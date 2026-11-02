@@ -7,17 +7,30 @@
 import groupsJson from "../../data/groups.json";
 import quizJson from "../../data/quiz.json";
 import logosJson from "../../data/logos.json";
+import areasJson from "../../data/areas.json";
 import type { Group, QuizData, QuizItem, QuizFilters } from "./types";
+import { MIN_AREA_POOL, resolveAreas } from "./areas";
 import { categoryFallbackColor } from "./categories";
 
 // Logo overlay (slug → /logos/file). Kept separate from groups.json so logos
 // can be added without touching the big data file; a group's own logoUrl wins.
 const logos = logosJson as Record<string, string>;
+const quiz = quizJson as unknown as QuizData;
+// Area overlay (slug → areas, see src/lib/areas.ts): filterSelections below
+// always hold the 5 area ids, whatever format groups.json carries.
+const assignedAreas = (areasJson as { assignments: Record<string, { areas: string[] }> }).assignments;
 const groups = (groupsJson as { groups: Group[] }).groups.map((g) => ({
   ...g,
   logoUrl: g.logoUrl ?? logos[g.slug] ?? null,
+  selfRating: {
+    ...g.selfRating,
+    filterSelections: resolveAreas(
+      g.selfRating.filterSelections ?? [],
+      assignedAreas[g.slug]?.areas,
+      quiz.filters,
+    ),
+  },
 }));
-const quiz = quizJson as unknown as QuizData;
 
 /** All active groups (verified + unverified). Used for browsing /groups. */
 export function getGroups(): Group[] {
@@ -46,8 +59,20 @@ export function getQuizItems(): QuizItem[] {
   return quiz.items;
 }
 
+// Areas with too few verified groups stay in the option list (positional ?r=
+// encoding) but are hidden on the filter screen.
+const filtersWithPools: QuizFilters = {
+  ...quiz.filters,
+  options: quiz.filters.options.map((o) => {
+    const pool = groups.filter(
+      (g) => !isUnverified(g) && g.selfRating.filterSelections.includes(o.attribute),
+    ).length;
+    return { ...o, groupCount: pool, hidden: pool < MIN_AREA_POOL };
+  }),
+};
+
 export function getQuizFilters(): QuizFilters {
-  return quiz.filters;
+  return filtersWithPools;
 }
 
 /**

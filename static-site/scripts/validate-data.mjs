@@ -7,6 +7,7 @@
 //   node scripts/validate-data.mjs [--groups data/groups.json] [--quiz data/quiz.json]
 //                                  [--categories data/categories.json]
 //                                  [--translations data/group-translations.json]
+//                                  [--areas data/areas.json]
 
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -20,18 +21,20 @@ const groupsPath = getArg("--groups", "data/groups.json");
 const quizPath = getArg("--quiz", "data/quiz.json");
 const categoriesPath = getArg("--categories", "data/categories.json");
 const translationsPath = getArg("--translations", "data/group-translations.json");
+const areasPath = getArg("--areas", "data/areas.json");
 
 const errors = [];
 const warnings = [];
 const err = (m) => errors.push(m);
 const warn = (m) => warnings.push(m);
 
-let groups, quiz, categories, translations;
+let groups, quiz, categories, translations, areaAssignments;
 try {
   groups = JSON.parse(readFileSync(groupsPath, "utf8")).groups;
   quiz = JSON.parse(readFileSync(quizPath, "utf8"));
   categories = JSON.parse(readFileSync(categoriesPath, "utf8")).categories;
   translations = JSON.parse(readFileSync(translationsPath, "utf8")).translations;
+  areaAssignments = JSON.parse(readFileSync(areasPath, "utf8")).assignments;
 } catch (e) {
   console.error(`FEHLER: Datendateien nicht lesbar (kaputtes JSON?): ${e.message}`);
   process.exit(2);
@@ -39,7 +42,23 @@ try {
 
 const itemIds = quiz.items.map((i) => i.id);
 const itemIdSet = new Set(itemIds);
-const filterAttrs = new Set(quiz.filters.options.map((o) => o.attribute));
+// Areas (5, since 11/2026) plus the 8 old activity filters, which groups.json
+// may still carry until a group re-saves its profile (see src/lib/areas.ts).
+const areaIds = quiz.filters.options.map((o) => o.attribute);
+const areaSet = new Set(areaIds);
+const legacyToArea = new Map(
+  quiz.filters.options.flatMap((o) => (o.legacyAttributes ?? []).map((l) => [l, o.attribute])),
+);
+const filterAttrs = new Set([...areaSet, ...(quiz.filters.legacyOptions ?? []).map((o) => o.attribute)]);
+const MIN_AREA_POOL = 5; // keep in sync with src/lib/areas.ts
+const MAX_AREAS_PER_GROUP = 2;
+/** Same order as resolveAreas in src/lib/areas.ts. */
+function resolveAreas(selections, assigned) {
+  if (selections.some((s) => areaSet.has(s))) return areaIds.filter((a) => selections.includes(a));
+  if (assigned?.length) return areaIds.filter((a) => assigned.includes(a));
+  const wanted = new Set(selections.map((s) => legacyToArea.get(s) ?? s));
+  return areaIds.filter((a) => wanted.has(a));
+}
 const categoryNames = new Set(categories.map((c) => c.name));
 
 /** Absolute http(s) URL with a dotted host, e.g. https://verein.de/x */
@@ -96,6 +115,28 @@ for (const g of groups) {
   for (const f of sr.filterSelections ?? []) {
     if (!filterAttrs.has(f)) err(`${where}: unbekannter Filter "${f}"`);
   }
+}
+
+// Area assignments (data/areas.json): known slugs, known areas, 1–2 each.
+// An unknown slug is only a warning — a data sync may have removed the group.
+const knownSlugs = new Set(groups.map((g) => g.slug));
+for (const [slug, a] of Object.entries(areaAssignments ?? {})) {
+  if (!knownSlugs.has(slug)) warn(`data/areas.json: unbekannte Gruppe "${slug}" — Eintrag löschen`);
+  const list = Array.isArray(a?.areas) ? a.areas : [];
+  if (list.length < 1 || list.length > MAX_AREAS_PER_GROUP)
+    err(`data/areas.json: ${slug} hat ${list.length} Bereiche (erlaubt: 1–${MAX_AREAS_PER_GROUP})`);
+  for (const area of list) if (!areaSet.has(area)) err(`data/areas.json: ${slug}: unbekannter Bereich "${area}"`);
+}
+const areaPool = new Map(areaIds.map((a) => [a, 0]));
+for (const g of groups) {
+  if (g.selfRating?.derived === true) continue;
+  const areas = resolveAreas(g.selfRating?.filterSelections ?? [], areaAssignments?.[g.slug]?.areas);
+  if (areas.length === 0)
+    warn(`${g.slug}: kein Bereich — wird nie weggefiltert (Eintrag in data/areas.json ergänzen)`);
+  for (const a of areas) areaPool.set(a, areaPool.get(a) + 1);
+}
+for (const [a, n] of areaPool) {
+  if (n < MIN_AREA_POOL) warn(`Bereich "${a}" hat nur ${n} verifizierte Gruppen — im Quiz ausgeblendet (Minimum ${MIN_AREA_POOL})`);
 }
 
 // English translations (data/group-translations.json): flag ones whose German

@@ -7,6 +7,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { isRateLimited, getClientKey } from "@/lib/rate-limit";
 import { isHttpUrl, normalizeInstagramUrl, normalizeWebsiteUrl } from "@/lib/normalize-url";
+import { isValidAreaSelection, MAX_AREAS_PER_GROUP } from "@/lib/areas";
 
 function normalizeName(name: string): string {
   return name
@@ -76,7 +77,8 @@ const RegisterSchema = z.object({
     itemId: z.string().regex(/^WS2-\d{2}$/),
     value: z.union([z.literal(-1), z.literal(0), z.literal(1)]),
   })).min(1).max(25).optional(),
-  ws2FilterSelections: z.array(z.string()).max(8).optional(),
+  // Areas (1–2), required together with a self-rating.
+  ws2FilterSelections: z.array(z.string()).max(MAX_AREAS_PER_GROUP).optional(),
   raterCount: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
 
   // Verantwortliche Person
@@ -87,7 +89,14 @@ const RegisterSchema = z.object({
 
   // Einverständnis
   dataConsent: z.literal("ja"),
-});
+}).refine(
+  // With a self-rating: 1–2 areas. Without one: none, or a valid choice.
+  (d) =>
+    d.ws2Answers && d.ws2Answers.length > 0
+      ? isValidAreaSelection(d.ws2FilterSelections ?? [])
+      : (d.ws2FilterSelections ?? []).length === 0 || isValidAreaSelection(d.ws2FilterSelections ?? []),
+  { path: ["ws2FilterSelections"], message: "Bitte 1–2 Bereiche wählen." },
+);
 
 function generateSlug(name: string): string {
   return name

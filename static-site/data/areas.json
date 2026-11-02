@@ -1,0 +1,608 @@
+{
+  "_meta": {
+    "note": "Bereichs-Zuordnung durch das FOMO-Team (slug → 1–2 Bereiche aus quiz.json filters.options). Gilt, solange eine Gruppe in der Admin-App noch keine eigenen Bereiche gewählt hat — die eigene Wahl gewinnt immer. Gruppen wurden per Mail informiert und können widersprechen. Geprüft von scripts/validate-data.mjs.",
+    "assignedAt": "2026-11-02"
+  },
+  "assignments": {
+    "404-university-esports-dresden": {
+      "areas": [
+        "sport",
+        "community"
+      ],
+      "reason": "Esports in der Uniliga mit Turnieren plus Gaming-Community; als Wettkampf unter Sport geführt (eigene Kategorie: Sport & Bewegung)"
+    },
+    "aegee-dresden-e-v": {
+      "areas": [
+        "community"
+      ],
+      "reason": "European Students' Forum: interkulturelle Vernetzung, Austausch, Reisen"
+    },
+    "aias-dresden-e-v": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Aufklärung über Blutkrebs und Registrierungsaktionen für Stammzellspende (Ehrenamt)"
+    },
+    "aiesec-in-dresden": {
+      "areas": [
+        "community",
+        "projects"
+      ],
+      "reason": "Internationale Austauschprogramme sowie Praktika und Projekte im Ausland"
+    },
+    "akademische-fliegergruppe-der-tu-dresden-e-v-akaflieg": {
+      "areas": [
+        "projects",
+        "sport"
+      ],
+      "reason": "Bau und Entwicklung von Segelflugzeugen plus Segelfliegen"
+    },
+    "altbau-e-v-alumniverein-bauingenieurwesen-tu-dresden": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Alumni- und Karrierenetzwerk Bauingenieurwesen"
+    },
+    "amateurfunk-an-der-tu-dresden-dl0tud": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Technisches Hobby Amateurfunk, Klubstation"
+    },
+    "amnesty-international-hochschulgruppe-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Einsatz für Menschenrechte"
+    },
+    "anw-hochschulgruppe-tharandt": {
+      "areas": [
+        "sport",
+        "engagement"
+      ],
+      "reason": "Exkursionen in den Wald und Arbeitseinsätze (Outdoor), naturgemäße Waldwirtschaft (Umwelt)"
+    },
+    "arbeiterkind-de-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Ehrenamtliche Begleitung von Studierenden aus nichtakademischen Familien"
+    },
+    "baghira": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Mentoringprogramm „Balu und Du“ für Grundschulkinder (Ehrenamt)"
+    },
+    "betonbootteam-tu-dresden": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Konstruktion und Bau von Betonbooten für Wettbewerbe"
+    },
+    "bits-und-baeume-dresden": {
+      "areas": [
+        "engagement",
+        "projects"
+      ],
+      "reason": "Nachhaltige Digitalisierung: Umwelt-Engagement mit Tech-Projekten"
+    },
+    "bonding-studierendeninitiative-e-v": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Karriere-Events, Exkursionen und Firmenkontaktmesse"
+    },
+    "bts-life-sciences-studierendeninitiative-e-v": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Karriere- und Fachnetzwerk Life Sciences"
+    },
+    "campusradio-dresden-e-v": {
+      "areas": [
+        "culture"
+      ],
+      "reason": "Studentisches Radio: Podcasts und Sendungen zu Campus, Kultur und Musik"
+    },
+    "christians-for-mission": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Christliche Hochschulgruppe: Glaube und Gemeinschaft"
+    },
+    "club-11-e-v": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Studentenclub mit Bar und Partys"
+    },
+    "club-aquarium-e-v": {
+      "areas": [
+        "community",
+        "culture"
+      ],
+      "reason": "Studentenclub mit Bar, Bühne und Veranstaltungen"
+    },
+    "club-haengemathe-e-v": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Studentenclub als „Wohnzimmer“: Leute treffen, Spieleabende"
+    },
+    "de-latam-e-v": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Lateinamerikanische Community, interkultureller Austausch"
+    },
+    "dgb-hochschulgruppe-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Gewerkschaftliche Hochschulgruppe: Hochschulpolitik und Mitbestimmung"
+    },
+    "die-buehne-e-v-das-theater-der-tu-dresden": {
+      "areas": [
+        "culture"
+      ],
+      "reason": "Studentisches Theater"
+    },
+    "die-linke-sds-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Politische Hochschulgruppe"
+    },
+    "dresdner-interessenverband-fuer-aussen-und-sicherheitspolitik-dias": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Vorträge und Diskussionen zu internationaler Politik"
+    },
+    "effektiver-altruismus": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Community zur Frage, wie man am wirksamsten Gutes tut"
+    },
+    "elbe-model-united-nations-e-v-elbmun": {
+      "areas": [
+        "engagement",
+        "community"
+      ],
+      "reason": "UN-Simulation zu Politik mit internationaler Konferenz"
+    },
+    "elbflorace-formula-student-team-tu-dresden-e-v": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Formula-Student-Rennwagen: Konstruktion und Wettbewerb"
+    },
+    "energienetz-dresden": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Netzwerk Energiewirtschaft, Karriere und Praxis"
+    },
+    "erasmus-student-network-tu-dresden-e-v": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Netzwerk für internationale Studierende und Locals: Events, Ausflüge, Buddys"
+    },
+    "euroavia-dresden-e-v": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Luft- und Raumfahrt-Netzwerk mit Fachexkursionen"
+    },
+    "evangelische-studierendengemeinde-dresden-esg": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Christliche Gemeinschaft: Glauben, Diskutieren und Feiern"
+    },
+    "first-aid-for-all-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Ehrenamtliche Reanimationstrainings an Schulen"
+    },
+    "folkloretanzensemble-thea-maass-der-tu-dresden": {
+      "areas": [
+        "culture",
+        "sport"
+      ],
+      "reason": "Folkloretanz-Ensemble mit Bühnenauftritten (Kultur und Bewegung)"
+    },
+    "fridays-for-future-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Klimaschutzbewegung"
+    },
+    "genow-gender-equality-now": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Einsatz für Geschlechtergerechtigkeit"
+    },
+    "gutzkowclub-e-v": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Dresdens ältester Studentenclub mit Studentenbar"
+    },
+    "heinrich-cotta-club-e-v": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Studentenclub der Forstwissenschaften in Tharandt"
+    },
+    "hochschul-smd-dresden": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Christliche Studierendengruppe: Glaube und Gemeinschaft"
+    },
+    "hsg-grundvorlesung-oekologische-nachhaltigkeit": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Organisiert eine Ringvorlesung zu Nachhaltigkeit (Umwelt)"
+    },
+    "indian-association-dresden-e-v": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Indische Community: Kultur und Austausch"
+    },
+    "ingenieure-ohne-grenzen-dresden-iog": {
+      "areas": [
+        "engagement",
+        "projects"
+      ],
+      "reason": "Ehrenamtliche Entwicklungszusammenarbeit mit Technik-Projekten"
+    },
+    "interessengemeinschaft-boerse-an-der-tu-dresden-e-v": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Börsenverein: Wirtschaft und Finanzen"
+    },
+    "isc-international-student-club": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Internationale Treffen und Events"
+    },
+    "islamischer-hochschulbund-dresden": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Muslimische Studierenden-Community: Glaube, Dialog, Austausch"
+    },
+    "jdpg-dresden": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Junge Physikalische Gesellschaft: Wissenschaft, Exkursionen, Vorträge"
+    },
+    "juforum-lokalgruppe-dresden": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "MINT-Netzwerk für Jungforschende"
+    },
+    "junge-gew-gew-hochschulgruppe-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Gewerkschaftliche Hochschulgruppe: Bildungs- und Hochschulpolitik"
+    },
+    "junges-ensemble-dresden": {
+      "areas": [
+        "culture"
+      ],
+      "reason": "Kammerchor"
+    },
+    "juso-hochschulgruppe-jhg-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Politische Hochschulgruppe"
+    },
+    "kammerchor-cantabile-dresden": {
+      "areas": [
+        "culture"
+      ],
+      "reason": "A-cappella-Kammerchor"
+    },
+    "katholische-studierendengemeinde-ksg-thomas-von-aquin-zu-dresden": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Katholische Studierendengemeinde: Glaube und Gemeinschaft"
+    },
+    "kellerklub-gag-18-e-v": {
+      "areas": [
+        "community",
+        "culture"
+      ],
+      "reason": "Studentenclub mit alternativen Partys und Konzerten"
+    },
+    "kino-im-kasten": {
+      "areas": [
+        "culture"
+      ],
+      "reason": "Ehrenamtlich betriebenes Programmkino"
+    },
+    "kreta-kritische-einfuehrungstage": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Gesellschaftskritische Einführungstage mit Workshops"
+    },
+    "kritmed": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Kritische Medizin: Gesundheits- und Hochschulpolitik"
+    },
+    "kritmed-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Kritische Medizin: Gesundheits- und Hochschulpolitik"
+    },
+    "kultur-in-der-neuen-mensa": {
+      "areas": [
+        "culture",
+        "community"
+      ],
+      "reason": "Kulturprogramm und Bierstube in der Neuen Mensa: Konzerte, Kino, Partys"
+    },
+    "leo-club-dresden-august-der-starke": {
+      "areas": [
+        "engagement",
+        "community"
+      ],
+      "reason": "Soziale Projekte und Gemeinschaft (Ehrenamt)"
+    },
+    "liberale-hochschulgruppe-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Politische Hochschulgruppe"
+    },
+    "medinetz-dresden-e-v": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Medizinische Hilfe für Geflüchtete (Menschenrechte, Ehrenamt)"
+    },
+    "mit-sicherheit-verliebt-lokalgruppe-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Aufklärungsworkshops an Schulen (Peer-Education, Ehrenamt)"
+    },
+    "nachhaltigkeits-ag-bauwesen-der-tu-dresden-e-v": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Einsatz für nachhaltige Lehre und Baupraxis (Umwelt)"
+    },
+    "nightline-dresden-e-v": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Zuhörtelefon von Studierenden für Studierende (Ehrenamt)"
+    },
+    "p-e-a-c-h": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Orientierung und Unterstützung für Erstakademiker:innen (Ehrenamt)"
+    },
+    "pakistan-student-association-psa-dresden": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Pakistanische und internationale Studierenden-Community"
+    },
+    "paul-consultants-e-v": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Studentische Unternehmensberatung mit echten Projekten"
+    },
+    "progressiv-am-campus": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Hochschulpolitik und Mitgestaltung in Gremien"
+    },
+    "psycho-path-e-v": {
+      "areas": [
+        "culture"
+      ],
+      "reason": "Studentische Zeitschrift zu Psychologie-Themen (Schreiben und Gestalten)"
+    },
+    "rcds-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Politische Hochschulgruppe"
+    },
+    "rock-your-life-dresden-e-v": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "1:1-Mentoring für Jugendliche (Ehrenamt)"
+    },
+    "rotaract-club-dresden": {
+      "areas": [
+        "engagement",
+        "community"
+      ],
+      "reason": "Soziale Projekte und Gemeinschaft (Motto: Lernen, Helfen, Feiern)"
+    },
+    "rotaract-club-dresden-2": {
+      "areas": [
+        "engagement",
+        "community"
+      ],
+      "reason": "Soziale Projekte und Gemeinschaft (doppelter Eintrag)"
+    },
+    "schachboxen": {
+      "areas": [
+        "sport"
+      ],
+      "reason": "Schachboxen als Sport und Wettkampf"
+    },
+    "star-dresden-e-v": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Studentische Raumfahrt-Projekte"
+    },
+    "studentenclub-baerenzwinger-e-v": {
+      "areas": [
+        "community",
+        "culture"
+      ],
+      "reason": "Studentenclub und Kultur-Treffpunkt mit Konzerten"
+    },
+    "studentenclub-wu5": {
+      "areas": [
+        "community",
+        "culture"
+      ],
+      "reason": "Studentenclub mit Karaoke, Jam Sessions und Konzerten"
+    },
+    "studentenreiter-dresden": {
+      "areas": [
+        "sport"
+      ],
+      "reason": "Reitsport"
+    },
+    "studentische-arbeitsvermittlung-dresden-stav-e-v": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Studentische Jobvermittlung"
+    },
+    "studentische-wasserwacht-dresden": {
+      "areas": [
+        "sport",
+        "engagement"
+      ],
+      "reason": "Rettungsschwimmen: Schwimmtraining und Ehrenamt"
+    },
+    "studentischer-fotoclub-dresden": {
+      "areas": [
+        "culture"
+      ],
+      "reason": "Gemeinsam fotografieren"
+    },
+    "studentischer-sanitaetsdienst-der-tu-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Erste Hilfe und Sanitätsdienst (Ehrenamt)"
+    },
+    "studis-gegen-rechts-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Engagement gegen Rechtsruck und menschenfeindliche Positionen"
+    },
+    "studytutors-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Kostenlose Nachhilfe für Schüler:innen (Ehrenamt)"
+    },
+    "stutentenclub-borsi-34-e-v": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Studentenclub im Wohnheim"
+    },
+    "team-aufeinanderachten": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Aufklärung und Entstigmatisierung psychischer Gesundheit (Ehrenamt)"
+    },
+    "technische-universitaet-dresden-robotik-arbeitsgruppe": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Autonome Roboter für Wettbewerbe"
+    },
+    "the-big-band-therapy": {
+      "areas": [
+        "culture"
+      ],
+      "reason": "Big Band"
+    },
+    "therapie-mal-anders": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Gesellschaftskritische Perspektive auf Psychologie, Lese- und Diskussionsrunden"
+    },
+    "traumtaenzer-e-v": {
+      "areas": [
+        "community"
+      ],
+      "reason": "Studentenclub (Mittelalter-, Rollenspiel- und Cocktailbar)"
+    },
+    "tu-big-band-e-v": {
+      "areas": [
+        "culture"
+      ],
+      "reason": "Jazzorchester"
+    },
+    "tu-umweltinitiative-tuuwi": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Umwelt- und Klimaschutz an der Uni"
+    },
+    "universitaetsorchester-dresden": {
+      "areas": [
+        "culture"
+      ],
+      "reason": "Sinfonieorchester"
+    },
+    "verkehrte-welt-e-v": {
+      "areas": [
+        "projects",
+        "community"
+      ],
+      "reason": "Fachnetzwerk Verkehrswissenschaften mit internationalen Studienreisen"
+    },
+    "volt-hochschulgruppe-dresden": {
+      "areas": [
+        "engagement"
+      ],
+      "reason": "Politische Hochschulgruppe (pan-europäisch)"
+    },
+    "vwi-hg-dresden-e-v": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Netzwerk Wirtschaftsingenieurwesen: Karriere und Praxis"
+    },
+    "yeti-dresden": {
+      "areas": [
+        "projects"
+      ],
+      "reason": "Entrepreneurship-Programm: eigene Gründungsprojekte"
+    }
+  }
+}

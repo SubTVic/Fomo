@@ -70,9 +70,9 @@
       "infoOnlyButton": "Only change group info →"
     },
     "filter": {
-      "label": "Activities",
-      "title": "Which activities are central to your group?",
-      "multi": "Multiple selection · optional",
+      "label": "Areas",
+      "title": "Which area is your group mainly active in?",
+      "multi": "1–2 areas · required",
       "continueButton": "Continue to questions →"
     },
     "item": {

@@ -18,7 +18,7 @@ export function GroupAttributes({ group, filters, lang = "de" }: GroupAttributes
   return (
     <section className="mt-6 border-2 border-navy bg-surface p-4">
       <h2 className="font-heading text-sm uppercase text-navy">
-        {lang === "en" ? "Attributes" : "Attribute"}
+        {lang === "en" ? "Areas" : "Bereiche"}
       </h2>
       <div className="mt-3 flex flex-wrap gap-2">
         {labels.map((label) => (

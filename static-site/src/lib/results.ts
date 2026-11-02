@@ -4,9 +4,12 @@
 // Format: "<answers>-<filters>" where answers is one digit per quiz item
 // (0=disagree, 1=neutral, 2=agree, in quiz.json order) and filters is one bit
 // per filter option (1=selected, in quiz.json order).
+// Links from before the 11/2026 switch to 5 areas carry one bit per OLD filter
+// (8 digits, filters.legacyOptions order); they are translated to areas.
 
 import type { UserAnswers } from "./matching";
 import type { QuizItem, QuizFilters } from "./types";
+import { toAreas } from "./areas";
 
 export function encodeResults(
   answers: UserAnswers,
@@ -31,9 +34,11 @@ export function decodeResults(
   items.forEach((it, i) => {
     answers[it.id] = Number(a[i]) - 1; // 0|1|2 → -1|0|1
   });
-  const filters = quizFilters.options
-    .filter((o, i) => f[i] === "1")
-    .map((o) => o.attribute);
+  const legacy = quizFilters.legacyOptions ?? [];
+  const isLegacy = legacy.length > 0 && f.length === legacy.length && f.length !== quizFilters.options.length;
+  const filters = isLegacy
+    ? toAreas(legacy.filter((o, i) => f[i] === "1").map((o) => o.attribute), quizFilters)
+    : quizFilters.options.filter((o, i) => f[i] === "1").map((o) => o.attribute);
 
   return { answers, filters };
 }

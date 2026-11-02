@@ -125,7 +125,9 @@ export function GroupRegisterForm() {
       ...prev,
       ws2FilterSelections: prev.ws2FilterSelections.includes(attribute)
         ? prev.ws2FilterSelections.filter((f) => f !== attribute)
-        : [...prev.ws2FilterSelections, attribute],
+        : prev.ws2FilterSelections.length >= 2
+          ? prev.ws2FilterSelections
+          : [...prev.ws2FilterSelections, attribute],
     }));
   }
 
@@ -603,10 +605,10 @@ function Step4({
   if (quizScreen === "filter") {
     return (
       <div className="flex flex-col gap-4">
-        <h2 className="font-heading text-lg uppercase">Aktivitäten</h2>
+        <h2 className="font-heading text-lg uppercase">Bereiche</h2>
         <p className="text-sm text-muted-foreground">
-          Welche Aktivitäten stehen bei euch im Vordergrund?{" "}
-          <span className="text-xs">(Mehrfachauswahl · nicht Pflicht)</span>
+          In welchem Bereich ist eure Gruppe vor allem aktiv?{" "}
+          <span className="text-xs">(1–2 Bereiche · Pflicht)</span>
         </p>
         <div className="flex flex-col gap-2">
           {WS2_FILTER.options.map((opt) => {
@@ -631,14 +633,20 @@ function Step4({
                 >
                   {isOn ? "✓" : ""}
                 </span>
-                {opt.label}
+                <span>
+                  <span className="block">{opt.label}</span>
+                  {opt.description && (
+                    <span className="block text-xs text-muted-foreground">{opt.description}</span>
+                  )}
+                </span>
               </button>
             );
           })}
         </div>
         <button
           onClick={() => setQuizScreen(0)}
-          className="w-full bg-foreground py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
+          disabled={form.ws2FilterSelections.length === 0}
+          className="w-full bg-foreground py-3 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors disabled:cursor-not-allowed disabled:opacity-40"
         >
           Weiter zu den Fragen →
         </button>

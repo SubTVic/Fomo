@@ -7,14 +7,14 @@ import { z } from "zod";
 import { requireAdminApi } from "@/lib/require-admin";
 import { db } from "@/lib/db";
 import { recordChange, snapshotGroup } from "@/lib/change-log";
-import { WS2_FILTER, WS2_ITEMS } from "@/lib/ws2-items";
+import { WS2_ITEMS } from "@/lib/ws2-items";
+import { isValidAreaSelection } from "@/lib/areas";
 
 const ITEM_IDS = new Set(WS2_ITEMS.map((i) => i.id));
-const FILTER_ATTRS = new Set(WS2_FILTER.options.map((o) => o.attribute));
 
 const schema = z.object({
   raterCount: z.union([z.literal(1), z.literal(2), z.literal(3)]),
-  filterSelections: z.array(z.string().refine((f) => FILTER_ATTRS.has(f))).max(8),
+  filterSelections: z.array(z.string()).refine(isValidAreaSelection, "Bitte 1–2 Bereiche wählen."),
   answers: z
     .array(
       z.object({

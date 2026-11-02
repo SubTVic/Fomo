@@ -23,7 +23,7 @@ const OPTIONS: { value: Value; label: string }[] = [
   { value: -1, label: "Stimme nicht zu" },
 ];
 
-/** Admin editor for a group's 21 answers, activity filters and rater count. */
+/** Admin editor for a group's 21 answers, 1–2 areas and rater count. */
 export function SelfRatingEditor({ groupId, items, filters, initial }: Props) {
   const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, Value>>(() =>
@@ -37,10 +37,16 @@ export function SelfRatingEditor({ groupId, items, filters, initial }: Props) {
   const [feedback, setFeedback] = useState<{ ok: boolean; text: string } | null>(null);
 
   function toggleFilter(attr: string) {
-    setSelected((prev) => (prev.includes(attr) ? prev.filter((f) => f !== attr) : [...prev, attr]));
+    setSelected((prev) =>
+      prev.includes(attr) ? prev.filter((f) => f !== attr) : prev.length >= 2 ? prev : [...prev, attr],
+    );
   }
 
   async function save() {
+    if (selected.length === 0) {
+      setFeedback({ ok: false, text: "Bitte mindestens einen Bereich wählen." });
+      return;
+    }
     setSaving(true);
     setFeedback(null);
     try {
@@ -78,7 +84,7 @@ export function SelfRatingEditor({ groupId, items, filters, initial }: Props) {
       )}
 
       <div>
-        <p className="mb-1 text-sm font-medium">Aktivitäten (Filter)</p>
+        <p className="mb-1 text-sm font-medium">Bereiche (1–2, harter Filter im Quiz)</p>
         <div className="flex flex-wrap gap-2">
           {filters.map((f) => (
             <label key={f.attribute} className="flex items-center gap-1.5 border border-foreground/30 px-2 py-1 text-xs">

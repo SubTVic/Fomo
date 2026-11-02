@@ -52,6 +52,8 @@ interface GroupData {
     filterSelections: string[];
     answers: Array<{ itemId: string; value: number }>;
   } | null;
+  /** Areas the public site currently uses for the group (pre-fill). */
+  suggestedAreas?: string[];
 }
 
 // ─── Progress bar ──────────────────────────────────────────────────────────
@@ -159,6 +161,10 @@ export function GroupSelfRatingQuiz() {
         setCategoryId(g.categoryId);
         setCategories(data.categories ?? []);
 
+        // Areas: the ones currently live on the website (own choice, team
+        // assignment or translated old activity filters).
+        setFilterSelections(Array.isArray(g.suggestedAreas) ? g.suggestedAreas.slice(0, 2) : []);
+
         // Pre-fill from previous selfRating if it exists
         if (g.selfRating?.answers?.length) {
           const prev: Record<string, Ws2AnswerValue> = {};
@@ -166,9 +172,6 @@ export function GroupSelfRatingQuiz() {
             prev[a.itemId] = a.value as Ws2AnswerValue;
           }
           setAnswers(prev);
-          setFilterSelections(
-            Array.isArray(g.selfRating.filterSelections) ? g.selfRating.filterSelections : []
-          );
           setRaterCount((g.selfRating.raterCount as 1 | 2 | 3) ?? 1);
           setHasPrefill(true);
         } else {
@@ -190,9 +193,10 @@ export function GroupSelfRatingQuiz() {
     load();
   }, [token, noTokenMsg, unknownErrorMsg, networkErrorMsg]);
 
+  // 1–2 areas: a third click is ignored until one is deselected.
   const toggleFilter = useCallback((filterId: string) => {
     setFilterSelections((prev) =>
-      prev.includes(filterId) ? prev.filter((f) => f !== filterId) : [...prev, filterId]
+      prev.includes(filterId) ? prev.filter((f) => f !== filterId) : prev.length >= 2 ? prev : [...prev, filterId]
     );
   }, []);
 
@@ -414,13 +418,19 @@ export function GroupSelfRatingQuiz() {
                   >
                     {isOn ? "✓" : ""}
                   </span>
-                  {opt.label}
+                  <span>
+                    <span className="block">{opt.label}</span>
+                    {opt.description && (
+                      <span className="block text-xs text-muted-foreground">{opt.description}</span>
+                    )}
+                  </span>
                 </button>
               );
             })}
             <button
               onClick={() => setStep({ type: "item", index: 0 })}
-              className="mt-4 w-full bg-foreground py-4 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors"
+              disabled={filterSelections.length === 0}
+              className="mt-4 w-full bg-foreground py-4 font-heading text-sm uppercase tracking-wider text-primary-foreground hover:bg-[#2a3a45] transition-colors disabled:cursor-not-allowed disabled:opacity-40"
             >
               {t("filter.continueButton")}
             </button>

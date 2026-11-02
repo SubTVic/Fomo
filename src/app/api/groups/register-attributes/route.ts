@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { isHttpUrl, normalizeInstagramUrl, normalizeWebsiteUrl } from "@/lib/normalize-url";
 import { recordChange, snapshotGroup } from "@/lib/change-log";
 import { editLinkError, resolveEditLink } from "@/lib/edit-token";
+import { isValidAreaSelection, MAX_AREAS_PER_GROUP, resolveAreas } from "@/lib/areas";
 
 const SubmitSchema = z.object({
   token: z.string().min(1),
@@ -25,9 +26,17 @@ const SubmitSchema = z.object({
     itemId: z.string().regex(/^WS2-\d{2}$/),
     value: z.union([z.literal(-1), z.literal(0), z.literal(1)]),
   })).min(1).max(25).optional(),
-  ws2FilterSelections: z.array(z.string()).max(8).optional(),
+  // Areas (1–2), required together with a self-rating.
+  ws2FilterSelections: z.array(z.string()).max(MAX_AREAS_PER_GROUP).optional(),
   raterCount: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
-});
+}).refine(
+  // With a self-rating: 1–2 areas. Without one: none, or a valid choice.
+  (d) =>
+    d.ws2Answers && d.ws2Answers.length > 0
+      ? isValidAreaSelection(d.ws2FilterSelections ?? [])
+      : (d.ws2FilterSelections ?? []).length === 0 || isValidAreaSelection(d.ws2FilterSelections ?? []),
+  { path: ["ws2FilterSelections"], message: "Bitte 1–2 Bereiche wählen." },
+);
 
 export async function POST(req: NextRequest) {
   let body: unknown;
@@ -165,6 +174,7 @@ export async function GET(req: NextRequest) {
     select: {
       id: true,
       name: true,
+      slug: true,
       shortDescription: true,
       longDescription: true,
       websiteUrl: true,
@@ -192,8 +202,18 @@ export async function GET(req: NextRequest) {
 
   const categories = await db.category.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } });
 
+  // Pre-fill the areas the public site currently uses for this group (its own
+  // choice, the team's assignment or the translated old activity filters).
+  const groupForForm = {
+    ...group,
+    selfRating: group.selfRating
+      ? { ...group.selfRating, filterSelections: resolveAreas(group.selfRating.filterSelections, group.slug) }
+      : null,
+    suggestedAreas: resolveAreas(group.selfRating?.filterSelections ?? [], group.slug),
+  };
+
   return NextResponse.json({
-    group,
+    group: groupForForm,
     categories,
     email: link.kind === "invite" ? link.invite.email : null,
     reusable: link.kind === "edit-token",

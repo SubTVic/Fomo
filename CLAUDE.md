@@ -68,7 +68,16 @@ Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`.
 
 ## Quiz, Items, Matching
 
-- **21 WS2-Items + 8 Aktivitäts-Filter.** Die 17 Binär-Attribute sind Altbestand; sie
+- **21 WS2-Items + 5 Bereiche als Filter** (seit 11/2026, vorher 8 Aktivitäts-Filter):
+  Sport & Outdoor · Kunst, Musik & Kultur · Technik, Wirtschaft & Projekte · Politik &
+  Engagement · Gemeinschaft & Begegnung. Gruppen haben **1–2 Bereiche**. Auflösung pro
+  Gruppe: eigene Wahl in der DB → Team-Zuordnung `static-site/data/areas.json` (nach
+  Slug, mit Begründung) → Übersetzung alter Filter (`legacyAttributes` in `quiz.json`).
+  Logik: `static-site/src/lib/areas.ts` / `src/lib/areas.ts`. Bereiche mit < 5
+  verifizierten Gruppen blendet der Filterbildschirm aus. Alte `?r=`-Links (8 Filter-
+  Stellen) werden über `filters.legacyOptions` übersetzt. Grundsatz: Bereich = grob
+  (Was), die Fragen machen die Feinabstimmung (Wie) — keine Filter, die eine Frage
+  doppeln. Die 17 Binär-Attribute sind Altbestand; sie
   dienen nur noch dazu, Profile **unbestätigter** Gruppen abzuleiten.
 - **Items liegen doppelt:** `data/working-set-v2.json` (Registrierung, Modul
   `src/lib/ws2-items.ts`) und `static-site/data/quiz.json` (Website). Beide gemeinsam

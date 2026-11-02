@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-// The core item set ("Working Set v2": 21 items + 8 activity filters) that
+// The core item set ("Working Set v2": 21 items + 5 areas as filters) that
 // groups answer when registering/editing. Must stay identical to
 // static-site/data/quiz.json, which students answer on the public site —
 // scripts/check-items-sync.mjs enforces that in CI.
@@ -21,7 +21,16 @@ export type Ws2Item = {
 export type Ws2Filter = {
   question: string;
   subtitle: string;
-  options: Array<{ id: string; label: string; attribute: string; groupCount: number }>;
+  options: Array<{
+    id: string;
+    label: string;
+    description?: string;
+    attribute: string;
+    /** Activity filters used until 11/2026 that map onto this area. */
+    legacyAttributes?: string[];
+    groupCount: number;
+  }>;
+  legacyOptions?: Array<{ attribute: string; label: string }>;
 };
 
 export const WS2_ITEMS: Ws2Item[] = workingSet.items as Ws2Item[];

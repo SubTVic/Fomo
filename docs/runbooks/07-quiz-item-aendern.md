@@ -14,7 +14,12 @@ Begleitung (Entwickler:in oder KI mit Review). Nur den **Wortlaut** einer Frage 
   Position**. Eine neue/gelöschte/umsortierte Frage lässt alte Links **still falsch**
   auswerten.
 - Item-IDs müssen dem Muster `WS2-\d{2}` folgen, sonst lehnt die Registrierung ab.
-- Ein umbenannter Filter schließt Gruppen mit dem alten Filternamen aus.
+- Ein umbenannter Filter (Bereich) schließt Gruppen mit dem alten Namen aus.
+- Filter sind seit 11/2026 fünf breite **Bereiche** (`filters.options` in `quiz.json`).
+  Alte Angaben übersetzt `legacyAttributes`, alte Links `legacyOptions`; die
+  Team-Zuordnung steht in `static-site/data/areas.json`. Neue Bereiche nur anhängen
+  und erst sichtbar machen, wenn ≥ 5 verifizierte Gruppen darin sind (passiert
+  automatisch).
 
 ## Wenn es trotzdem sein muss (Checkliste für die technische Begleitung)
 

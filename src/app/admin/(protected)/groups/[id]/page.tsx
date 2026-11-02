@@ -10,6 +10,7 @@ import { GroupEditForm } from "./GroupEditForm";
 import { ToggleActiveButton } from "./ToggleActiveButton";
 import { MergeButton } from "./MergeButton";
 import { SelfRatingEditor } from "./SelfRatingEditor";
+import { resolveAreas } from "@/lib/areas";
 import { requireAdminPage } from "@/lib/require-admin";
 
 interface AdminGroupDetailPageProps {
@@ -154,7 +155,7 @@ export default async function AdminGroupDetailPage({
 
       {/* Self-Rating: the group's 21 answers + activity filters (editable, logged) */}
       <div className="mt-6 border-2 border-foreground bg-card p-6">
-        <h2 className="font-heading text-lg uppercase mb-1">Quiz-Profil (21 Fragen + Filter)</h2>
+        <h2 className="font-heading text-lg uppercase mb-1">Quiz-Profil (21 Fragen + Bereiche)</h2>
         <p className="text-xs text-muted-foreground mb-4">
           {group.selfRating
             ? `Zuletzt eingereicht: ${new Date(group.selfRating.submittedAt).toLocaleString("de-DE")}. `
@@ -170,9 +171,8 @@ export default async function AdminGroupDetailPage({
             group.selfRating
               ? {
                   raterCount: group.selfRating.raterCount,
-                  filterSelections: Array.isArray(group.selfRating.filterSelections)
-                    ? group.selfRating.filterSelections.filter((x): x is string => typeof x === "string")
-                    : [],
+                  // Shown as areas (old activity filters are translated).
+                  filterSelections: resolveAreas(group.selfRating.filterSelections, group.slug),
                   answers: Object.fromEntries(group.selfRating.answers.map((a) => [a.itemId, a.value])),
                 }
               : null

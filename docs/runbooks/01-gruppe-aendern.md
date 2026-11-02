@@ -2,7 +2,7 @@
 
 # Runbook: Eine Gruppe ändert ihre Daten (Attribute, Beschreibung, Kontakt, Logo)
 
-**Stand: Oktober 2026** (nach Umsetzungsplan Phase 1–5). Was noch kommt, steht unter
+**Stand: November 2026** (nach Umsetzungsplan Phase 1–5; 5 Bereiche, Abgleich, stündlicher Sync). Was noch kommt, steht unter
 „Noch offen".
 
 ## Wichtig vorab (sonst geht die Änderung schief oder verloren)
@@ -10,9 +10,9 @@
 - Gruppendaten leben in der **Datenbank der Admin-App**, nicht in der Website-Datei.
   Eine Korrektur **direkt in `static-site/data/groups.json`** wird beim nächsten
   Daten-Sync **überschrieben**. → Immer über die Admin-App gehen.
-- **Quiz-Antworten (die 21 Fragen) und Aktivitäts-Filter** ändert am besten die Gruppe
-  selbst über ihren Bearbeitungslink. Für kleine Korrekturen (z. B. ein falsch gesetzter
-  Filter) können Admins sie auf der Gruppenseite unter **„Quiz-Profil"** bearbeiten —
+- **Quiz-Antworten (die 21 Fragen) und Bereiche (1–2)** ändert am besten die Gruppe
+  selbst über ihren Bearbeitungslink. Für kleine Korrekturen (z. B. ein falscher
+  Bereich) können Admins sie auf der Gruppenseite unter **„Quiz-Profil"** bearbeiten —
   das landet im Änderungsprotokoll. **Keine Antworten erfinden.**
 - **Verifizierte Gruppen bleiben verifiziert, wenn sie etwas korrigieren** (Entscheidung
   E1). Die Änderung geht beim nächsten Daten-Sync live. Admins sehen jede Änderung unter
@@ -31,15 +31,15 @@
    gelöscht.
 4. Weiter mit „Daten live schalten" unten.
 
-## Fall B: Quiz-Antworten oder Filter ändern (braucht Bearbeitungslink)
+## Fall B: Quiz-Antworten oder Bereiche ändern (braucht Bearbeitungslink)
 
 1. Hat die Gruppe ihren **dauerhaften Bearbeitungslink** noch, reicht der. Sonst:
    Admin-App → „Gruppen" → **„Bearbeitungslink"** → **„Link erzeugen"** (Details und
    Mustertext: [Runbook 03](03-link-verloren.md)). Der Link erscheint **nur einmal**.
 2. Den Link per **„Mail an …"** bzw. selbst per Mail schicken (die App versendet
    nichts). Nur an eine hinterlegte Adresse. Der Link ist wie ein Passwort.
-3. Die Gruppe öffnet den Link, ändert ihre Antworten/Filter (bisherige Antworten sind
-   vorausgefüllt) und sendet ab (~5 Min) — oder wählt **„Nur Gruppeninfos ändern"**.
+3. Die Gruppe öffnet den Link, ändert ihre Antworten/Bereiche (bisherige Antworten und
+   die aktuell live genutzten Bereiche sind vorausgefüllt) und sendet ab (~5 Min) — oder wählt **„Nur Gruppeninfos ändern"**.
    Der Link gilt **12 Monate** und funktioniert **mehrfach**.
 4. **Danach in der Admin-App:** unter **„Änderungen"** prüfen, was die Gruppe geändert
    hat → „Gesehen" (oder „Rückgängig", falls etwas nicht stimmt). War die Gruppe noch
@@ -118,12 +118,21 @@ Bereichs-Zuordnung `static-site/data/areas.json` geändert, ohne dass die Datenb
 mitgezogen wurde, würde der nächste Daten-Sync diese Korrektur **zurückdrehen**.
 Deshalb vorher: Admin-App → **„Abgleich“**. Die Seite liest die Live-Daten vom
 `main`-Branch und zeigt pro Gruppe jedes abweichende Feld (Datenbank vs. Website).
-Website-Werte, die stimmen, anhaken → „Website-Werte übernehmen“. Jede Übernahme
-steht unter „Änderungen“ (Quelle „Abgleich mit Website“) und ist rückgängig machbar.
+Pro Gruppe:
+- **Website stimmt** (jemand hat sie direkt korrigiert) → Felder anhaken →
+  „Website-Werte übernehmen“. Jede Übernahme steht unter „Änderungen“ (Quelle
+  „Abgleich mit Website“) und ist rückgängig machbar.
+- **Datenbank stimmt** (die Gruppe hat sich seit dem letzten Sync selbst geändert) →
+  „Datenbank ist richtig“. Es wird nichts geschrieben; der nächste Sync bringt den
+  DB-Stand auf die Website.
+
 Verifizierung, Aktiv-Status und Bearbeitungslinks werden nie angefasst.
 
-Faustregel: Website direkt korrigiert → übernehmen. Gruppe hat sich seit dem
-letzten Sync selbst geändert → **nicht** übernehmen (der Sync bringt das Neue live).
+**Was ist aktueller?** Die Website ist der DB-Stand des letzten gemergten Syncs
+(`_meta.generatedAt` in `groups.json`). Hat seitdem niemand `groups.json`/`areas.json`
+direkt geändert (`git log` auf die Dateien), ist bei jeder Abweichung die **Datenbank**
+aktueller. Die Zeile „Bereiche“ ist die Team-Zuordnung aus `areas.json` — übernehmen
+schadet nie, wirkt aber auch ohne.
 
 ## Was schiefgehen kann
 
@@ -144,4 +153,5 @@ letzten Sync selbst geändert → **nicht** übernehmen (der Sync bringt das Neu
 - WP-4.3: Gruppen fordern ihren Link selbst per Mail an (wartet auf Entscheidung E3,
   Mailserver).
 - Phase 6 (Umzug auf den StuRa-Server): Der Daten-Sync wird dort ein Knopf
-  „Website aktualisieren“ in der Admin-App (WP-6.4).
+  „Website aktualisieren“ in der Admin-App (WP-6.4); dann kann ein Speichern direkt
+  einen Neubau auslösen statt stündlich abzugleichen.

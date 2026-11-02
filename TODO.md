@@ -1,6 +1,6 @@
 # FOMO – Offene Aufgaben
 
-**Stand: 4. Oktober 2026** (Status-Tabelle + Audit Okt. 2026 in §0; einzelne Abschnitte unten älter) — die
+**Stand: 2. November 2026** (Bereichs-Umstellung + Daten-Sync in §1.2; Status-Tabelle + Audit Okt. 2026 in §0; einzelne Abschnitte unten älter) — die
 **eine zentrale To-do-Datei** des Projekts. Der laufende Umbau (Sicherheit, Tests,
 Datenpflege, Umzug auf den StuRa-Server) ist in Arbeitspakete gegliedert:
 `docs/uebergabe/umsetzungsplan.md` (§9 = Fortschritt).
@@ -18,8 +18,8 @@ Kontext zum Projekt: `CLAUDE.md` (Root). Anleitungen je Aufgabe:
 | Bereich | Status |
 | --- | --- |
 | **Öffentliche Seite** `static-site/` | ✅ **Live auf www.fomo-dresden.app** (Vercel, deployt bei jedem Push auf `main`) |
-| Matching v2 (21 Items + 8 Filter, client-side) | ✅ Live — nur verifizierte Gruppen im Quiz |
-| Datenstand | 51 verifiziert / 44 unbestätigt / 95 gesamt (Export vom 17.08. — **seit 7 Wochen nicht aktualisiert**) |
+| Matching v2 (21 Items + 5 Bereiche als Filter, client-side) | ✅ Live seit 02.11. (vorher 8 Aktivitäts-Filter) — nur verifizierte Gruppen im Quiz |
+| Datenstand | 56 verifiziert / 41 unbestätigt / 97 gesamt (Daten-Sync 02.11.; **Sync läuft jetzt stündlich**, PRs mergt ein Mensch) |
 | Umami-Tracking + Live-Report `/report/` | ✅ Läuft mit echten Daten (Env-Vars in Vercel gesetzt, 11.07.) |
 | Dynamische Root-App (Registrierung/Admin) | 🔄 Internes Tool; Umbau Phase 1–5 seit 04.10. in `main` (PR #3) — **Migrationen in Prod einspielen: §1.0** |
 | Qualitäts-Netz | ✅ CI auf jedem PR, Datenprüfung vor jedem Build, Tests, KI-Leitplanken (Plan Phase 2) |
@@ -80,16 +80,14 @@ Ablauf und Hintergründe: `docs/runbooks/11-backup-und-migration.md`.
 - [ ] **Kurztest:** Admin-Login, Gruppe per Bearbeitungslink ändern, „Änderungen“,
       Impressum + Datenschutz der Admin-App; Website: Quiz (auch: nur „Neutral“ →
       Hinweis statt Ranking) und `/groups`.
-- [ ] **Daten-Sync einrichten:** `EXPORT_TOKEN` (`openssl rand -base64 48`) in Vercel
-      (`fomo`) **und** als GitHub-Secret; GitHub → Settings → Actions → General →
-      „Allow GitHub Actions to create and approve pull requests“.
-- [ ] **ESG Dresden** in der Admin-App auf „Glaube & Spiritualität“ stellen (sonst setzt
-      der erste Sync die Kategorie zurück).
+- [x] **Daten-Sync eingerichtet (02.11.):** `EXPORT_TOKEN` in Vercel (`fomo`) und als
+      GitHub-Secret, Actions dürfen PRs öffnen; erster Sync = PR #52.
+- [x] **ESG Dresden** steht in der DB auf „Glaube & Spiritualität“ (im Sync 02.11. bestätigt).
 - [ ] **Die 7 im Audit reparierten Links** auch in der DB prüfen (AIAS, DIAS, Effektiver
       Altruismus, ESG, Thea Maaß, Progressiv am Campus, Wasserwacht). Der Sync ergänzt
       fehlendes `https://` selbst; bleibt ein Link unvollständig, bricht die Datenprüfung
       jetzt ab (die Ausnahmeliste `KNOWN_BAD_URLS` ist entfernt).
-- [ ] Ersten **Daten-Sync** starten (Runbook 01) — die Website-Daten sind vom 17.08.
+- [x] Ersten **Daten-Sync** gestartet (02.11., PR #52).
 - [ ] **Seed-Admin prüfen:** Gibt es in der Prod-DB `admin@fomo.dev`? Falls ja:
       löschen (das Passwort steht öffentlich in `prisma/seed.ts`).
 - [ ] **Vercel-Projekt `fomo-utsx`:** baut bei jedem PR mit, Zweck nirgends
@@ -117,58 +115,43 @@ den entstehenden PR mergen.
 | `technische-universitaet-dresden-robotik-arbeitsgruppe` (verifiziert, 3 Bewertungen) | `tu-dresden-robotik-ag-turag` (unbestätigt) | Verifizierte Kopie ist besser. Logo ist auf beide Slugs verankert, bleibt sichtbar. |
 | `kritmed` | `kritmed-dresden` | Beide unbestätigt — nimm die, unter der die Gruppe erreichbar ist. |
 
-### 1.2 Zehn Gruppen ohne Aktivitäts-Filter (E-Mail-Runde) — größter Bias-Hebel
+### 1.2 Bereichs-Umstellung 11/2026 — Nacharbeiten
 
-Diese Gruppen haben keine Filter angegeben und können **nie weggefiltert
-werden** → strukturell ~1,8× so oft in den Ergebnissen wie fair. Die
-Live-Daten verschärfen das: **~96 % der Quiz-Durchläufe starten MIT Filtern**
-(25 von 26) — der Vorteil wirkt also praktisch immer. Lösung: eine Angabe
-pro Gruppe, keine Programmierung.
+**Was passiert ist (02.11.2026, PRs #48–#52):** Die 8 Aktivitäts-Filter sind durch
+**5 breite Bereiche** ersetzt (Sport & Outdoor · Kunst, Musik & Kultur · Technik,
+Wirtschaft & Projekte · Politik & Engagement · Gemeinschaft & Begegnung). Auslöser:
+Feedback der ESG (Glaube, Gemeinschaft, Gesellschaftspolitik fehlten) und Live-Daten
+(3 Filter doppelten eine Frage, mehrere hatten nur 2–4 echte Gruppen, 11 verifizierte
+Gruppen hatten gar keinen Filter und rutschten überall durch). Grundsatz: Bereich =
+grob, die 21 Fragen machen die Feinabstimmung. Das Team hat **alle 97 Gruppen**
+zugeordnet (`static-site/data/areas.json`, mit Begründung) — damit ist das alte
+Problem „Gruppen ohne Filter“ gelöst. Alle Gruppen mit bekannter Adresse wurden per
+Mail informiert (Widerspruch statt Zustimmung); unbestätigte Gruppen wurden zur
+Selbst-Registrierung eingeladen.
 
-**Warum das der wichtigste Hebel gegen „immer dieselben Gruppen oben" ist:**
-Beliebte Filter treffen nur wenige verifizierte Gruppen (Outdoor: 3, Musik: 4,
-Sport: 4 explizit) — der Rest des Pools sind die 9 filterlosen. Bei einem
-12-Gruppen-Pool ist 25 % Top-3-Rate schon der faire Erwartungswert; echte
-Vielfalt entsteht erst durch größere Pools (mehr Registrierungen + diese 9
-Filterangaben). Der Code-Anteil des Problems (deterministischer Tie-Breaker)
-ist seit Juli behoben (faire Gleichstands-Rotation pro Nutzer, s. u.).
-
-Die 8 Filter (Mehrfachauswahl): Hands-on/Werkstatt · Kunst
-(Theater/Film/Design/Foto) · Wettbewerbe · Musik · Outdoor/Natur ·
-Tech/Digital · Hochschulpolitik · Sport.
-
-| Gruppe | Kontakt |
-|---|---|
-| AufeinanderAchten | info@aufeinanderachten.de |
-| Effektiver Altruismus | dresden@effektiveraltruismus.de |
-| FIRST AID FOR ALL – Dresden | firstaidforall.dresden@mailbox.tu-dresden.de |
-| HSG Grundvorlesung ökologische Nachhaltigkeit | vl.sustainability@tu-dresden.de |
-| Heinrich-Cotta-Club e.V. | *(keine Mail hinterlegt — über Website kontaktieren)* |
-| Hochschul-SMD Dresden | dresden@smd.org |
-| Leo-Club Dresden 'August der Starke' | augustderstarke@leo-clubs.de |
-| Nightline Dresden e.V. | marketing@nightline-dresden.de |
-| VWI HG Dresden e.V. | vorstand@vwi-dresden.de |
-| PAUL Consultants e.V. *(neu seit Export 17.08.)* | vorstand@paul-consultants.de |
-
-**Fertige E-Mail-Vorlage:**
-
-> Betreff: Kurze Rückfrage zu eurem FOMO-Profil (1 Minute)
->
-> Hallo liebe [Gruppenname],
->
-> ihr seid auf FOMO gelistet (www.fomo-dresden.app) — dem Quiz, das Erstis
-> passende Hochschulgruppen vorschlägt. Damit euch die richtigen Leute finden,
-> fehlt uns noch **eine** Angabe: In welche dieser Aktivitäts-Kategorien passt
-> ihr? (Mehrfachauswahl, gern auch „keine davon")
->
-> ☐ Hands-on/Werkstatt ☐ Kunst & Kultur ☐ Wettbewerbe ☐ Musik
-> ☐ Outdoor & Natur ☐ Tech & Digital ☐ Hochschulpolitik ☐ Sport
->
-> Einfach zurückschreiben, wir tragen es ein. Danke!
->
-> Viele Grüße, das FOMO-Team
-
-Antworten in der Admin-App eintragen → neu exportieren (wie 1.1).
+- [ ] **Antworten der Gruppen einarbeiten:** Widerspruch → Bereich in der Admin-App
+      (Gruppe → „Quiz-Profil“) oder in `areas.json` ändern. Gefragt wurde außerdem nach
+      der Kategorie von **TU Big Band**, **Folkloretanzensemble** und **Junges Ensemble**
+      (stehen auf „Politik & Gesellschaft“).
+- [ ] **Neu registrierte unbestätigte Gruppen:** Die Registrierung legt einen zweiten
+      Eintrag an → in der Admin-App mit dem alten **zusammenführen** und verifizieren.
+- [ ] **Nicht angeschrieben** (keine passende Adresse): juFORUM Dresden (nur
+      Mitglieder-Verteiler), jDPG Dresden (Ansprechpersonen auf der DPG-Kontaktseite),
+      Christians for Mission (gar kein Kontakt). Die 10 verifizierten Gruppen ohne
+      Adresse im Export wurden über recherchierte Adressen angeschrieben — diese Adressen
+      bei Gelegenheit in der Admin-App hinterlegen.
+- [ ] **Möglicherweise inaktiv** (laut Recherche, nicht in der StuRa-Liste 2026/27):
+      genow., KRETA, PSA Dresden, Fridays for Future. Ohne Antwort → in der Admin-App
+      deaktivieren.
+- [ ] **Sport-Lücke:** Sport ist der meistgewählte Filter (47 % der Abschlüsse), aber
+      nur 5 verifizierte Gruppen. Unbestätigte Sportgruppen (z. B. Studentenreiter,
+      Akaflieg) zur Verifizierung bringen; ggf. Hinweis auf den Unisport.
+- [ ] **Nach der Kampagne:** Daten-Sync von stündlich auf täglich stellen (`cron` in
+      `.github/workflows/sync-groups.yml`).
+- [ ] **Nach ~1 Woche auswerten** (Report, Meilenstein 02.11.): Verteilung der
+      Bereichswahl, Anteil ohne Filter, Top-3-Vielfalt. Danach Working-Set v3 angehen:
+      WS2-17 (Einsteiger, 63 % ja / 3 % nein) streichen, WS2-05/06 (Hands-on vs.
+      Konzept, beide mehrheitlich „ja“) schärfen.
 
 ### 1.3 GitHub-Secrets für die Report-Automatik setzen (5 Min)
 

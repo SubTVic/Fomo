@@ -47,7 +47,7 @@ Vorgehen: Branch → in `quiz.json`, `working-set-v2.json` und `quiz-translation
   Geteilte Ergebnis-Links (`?r=`) und der Report kodieren positionsbasiert und werden
   sonst **still falsch** interpretiert; bestehende Gruppen-Ratings verwaisen. Das ist
   ein Code-/Daten-Migrationsthema (siehe Audit §5, Aufgabe 7).
-- **Keine Filter umbenennen/umsortieren** — dieselben Link-/Report-Probleme, und ein
+- **Keine Bereiche (Filter) umbenennen/umsortieren** (nur das Label darf sich ändern) — dieselben Link-/Report-Probleme, und ein
   umbenannter Filter schließt Gruppen mit altem Filternamen aus dem Matching aus.
 - Bedeutung/Richtung einer Frage ändern heißt: bestehende Gruppen-Antworten passen
   nicht mehr. Dann sollten die Gruppen neu bewerten.

@@ -47,7 +47,7 @@ Offene Aufgaben: siehe [TODO.md](TODO.md) · Anleitungen für Betrieb und Wartun
 ### Group Profiles & Registration
 
 - **95 TU Dresden student groups** in the public directory (data export 17.08.2026: 51 verified, 44 unverified)
-- **Self-rating:** each group answers the same 21 items + 8 filters as the students; only these verified profiles enter the matching
+- **Self-rating:** each group answers the same 21 items as the students and picks 1–2 of the 5 areas (the quiz's coarse filter); only these verified profiles enter the matching
 - **Unverified groups** (not yet registered) get a profile derived from scraped data — shown in the directory only, never in the quiz
 - **Reusable edit links** — groups review and update their profile via a personal link (created by an admin, valid 12 months, revocable)
 - **Self-registration flow** — 6-step form for groups not yet in the system, including a responsible-person confirmation with contact list storage
@@ -188,7 +188,7 @@ data/
 ├── working-set-v1.json             # 17-item quiz question set (v1.1)
 ├── hsg-profiles-scraped.json       # 83 group profiles (AI-scraped attributes)
 ├── group-attributes-schema.json    # Attribute definitions + scraper prompts
-├── working-set-v2.json             # The 21 items + 8 filters (registration; = static-site/data/quiz.json)
+├── working-set-v2.json             # The 21 items + 5 areas (registration; = static-site/data/quiz.json)
 └── item-empirical-validity-report.md
 
 scripts/
@@ -273,7 +273,11 @@ GitHub → Settings → Secrets and variables → Actions:
 | `UMAMI_API_KEY`, `UMAMI_WEBSITE_ID` | Secrets | `report-on-demand.yml` |
 
 The Daten-Sync also needs Settings → Actions → General → "Allow GitHub Actions to
-create and approve pull requests".
+create and approve pull requests". It runs hourly (cron in `sync-groups.yml`) and
+by hand; it opens at most one PR at a time and never merges by itself.
+
+Admin app, optional: `WEBSITE_GROUPS_URL` — where the "Abgleich" page reads the live
+website data (default: `static-site/data/groups.json` on `main` via raw.githubusercontent.com).
 
 ## Deployment
 

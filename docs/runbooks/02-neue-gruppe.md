@@ -5,7 +5,7 @@
 **Stand: Oktober 2026.**
 
 **Ziel:** Die Gruppe soll im **Quiz** auftauchen. Das geht **nur**, wenn die Gruppe
-ihr Profil (21 Fragen + Filter) selbst ausfüllt — erfundene Antworten verfälschen das
+ihr Profil (21 Fragen + 1–2 Bereiche) selbst ausfüllt — erfundene Antworten verfälschen das
 Matching aller Gruppen. Deshalb gibt es zwei Wege, beide enden mit „verifizieren +
 exportieren".
 
@@ -28,7 +28,7 @@ exportieren".
 2. Bei der Gruppe **„Bearbeitungslink" → „Link erzeugen"** → **„Mail an …"** (oder
    kopieren und selbst schicken). Der Link gilt 12 Monate und mehrfach
    ([Runbook 03](03-link-verloren.md)).
-3. Die Gruppe füllt über den Link die 21 Fragen + Filter aus.
+3. Die Gruppe füllt über den Link die 21 Fragen + 1–2 Bereiche aus.
 4. Admin-App → prüfen → **verifizieren**.
 5. Daten live schalten (siehe Runbook 01).
 

@@ -1,6 +1,7 @@
 # FOMO – Projektkontext für Claude Code
 
-**Stand: Oktober 2026** (Umbau Phase 1–5 + Oktober-Audit seit 04.10. in `main`;
+**Stand: November 2026** (Umbau Phase 1–5 + Oktober-Audit seit 04.10. in `main`; 5 Bereiche,
+Abgleich-Seite und stündlicher Daten-Sync seit 02.11.;
 Prod-Migrationen und Go-live-Schritte: `TODO.md` §1.0). Diese Datei beschreibt den
 **tatsächlichen** Stand. Offene
 Aufgaben: **`TODO.md`**. Laufender Umbau (Arbeitspakete, Regeln, Fortschritt):
@@ -33,11 +34,16 @@ funktionieren. Spaß und Wissenschaftlichkeit sind kein Widerspruch.
 
 ```
 Admin-App (Gruppe bearbeitet per Link / Admin pflegt)
-  → GitHub Actions „Daten-Sync" (.github/workflows/sync-groups.yml, per Hand gestartet)
+  → GitHub Actions „Daten-Sync" (.github/workflows/sync-groups.yml, stündlich + per Hand)
       holt /api/admin/export/static-groups (Bearer EXPORT_TOKEN, nur öffentliches Format)
       → validate-data.mjs → PR „Daten-Sync <Datum>" mit Änderungsliste
-  → CI grün → Merge → ~2 Min live
+  → CI grün → Merge (immer durch einen Menschen) → ~2 Min live
 ```
+Der Sync öffnet höchstens einen PR zur Zeit (ein neuerer ersetzt den älteren) und mergt
+nie selbst. Die Website ist also immer der Datenbank-Stand des letzten gemergten Syncs.
+Wurde die Website ausnahmsweise direkt korrigiert, zuerst in der Admin-App unter
+**„Abgleich“** (`src/lib/website-sync.ts`) die Website-Werte in die DB übernehmen —
+sonst dreht der nächste Sync die Korrektur zurück.
 Export-Logik: `src/lib/export/static-groups.ts` (gleiches Format wie der Notfallweg
 `static-site/scripts/export-from-backup.mjs`, ein Test hält beide gleich).
 Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`.
@@ -59,6 +65,9 @@ Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`.
   `static-site/data/group-translations.json` (mit `sourceHash`; `validate-data.mjs`
   warnt, wenn sich der deutsche Text seitdem geändert hat). Ohne EN-Text zeigt `/en`
   ehrlich den deutschen Text mit Hinweis — kein Wort-für-Wort-„Übersetzer".
+- **Bereichs-Zuordnung durch das Team** lebt ebenfalls außerhalb der DB:
+  `static-site/data/areas.json` (Slug → 1–2 Bereiche + Begründung). Sie gilt nur, solange
+  die Gruppe in der DB keine eigenen Bereiche gewählt hat; die eigene Wahl gewinnt immer.
 - **Kategorien:** eine Liste in `static-site/data/categories.json` (Name DE/EN, Farbe,
   SEO-Seite). Neue Kategorie in der DB → dort ergänzen, sonst bricht die Datenprüfung.
 - **Backup-Dateien NIE committen oder lesen** — Kontakt-PII und gültige Tokens.
@@ -97,7 +106,7 @@ Schritt-für-Schritt: `docs/runbooks/01-gruppe-aendern.md`.
   und der Report kodieren positionsbasiert (`docs/runbooks/07-quiz-item-aendern.md`).
 - **Nur verifizierte Gruppen** im Quiz (`getMatchableGroups`, **nie** `getGroups`).
 - Verzeichnis `/groups`: Toggle „unbestätigte anzeigen" steht **standardmäßig an**.
-- Datenstand im Repo (Export 17.08.2026): 95 Gruppen, 51 verifiziert, 44 unbestätigt.
+- Datenstand im Repo (Daten-Sync 02.11.2026): 97 Gruppen, 56 verifiziert, 41 unbestätigt.
 
 ## Leitplanken (technisch erzwungen)
 
@@ -170,7 +179,11 @@ Akzent #5a8a9a. Fallback-Farben der Kategorien: `static-site/data/categories.jso
 
 ## Fallstricke mit irreführenden Namen
 
-- Filter-Attribut `party` = **„Hochschulpolitik & Mitbestimmung"**, nicht „Feiern".
+- Alte Filter-Attribute (`party`, `sports`, `handsOn` …) stehen noch in manchen
+  DB-Profilen und in `quiz.json` unter `legacyAttributes`/`legacyOptions`. `party` hieß
+  „Hochschulpolitik & Mitbestimmung“ (nicht „Feiern“) und wird zu `engagement`; der
+  Bereich Sport heißt `sport` (nicht `sports`). `competitive` (Wettbewerbe) hat keinen
+  Bereich mehr — das deckt die Frage WS2-19 ab.
 - `scripts/export-static-data.ts` ist veraltet — die richtigen Exporter sind
   `src/lib/export/static-groups.ts` (Daten-Sync, `scripts/export-static-site-groups.ts`)
   und der Notfallweg `static-site/scripts/export-from-backup.mjs`.

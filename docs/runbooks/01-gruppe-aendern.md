@@ -105,6 +105,20 @@ Braucht einen Rechner mit Node.js + das Repo:
 3. `static-site/data/groups.json` **auf einem Branch** committen → Pull Request →
    CI grün → Merge. Backup-Datei danach löschen.
 
+## Website wurde direkt korrigiert? Erst „Abgleich“, dann Daten-Sync
+
+Wurde `static-site/data/groups.json` (z. B. per Notfallweg oder mit KI) oder die
+Bereichs-Zuordnung `static-site/data/areas.json` geändert, ohne dass die Datenbank
+mitgezogen wurde, würde der nächste Daten-Sync diese Korrektur **zurückdrehen**.
+Deshalb vorher: Admin-App → **„Abgleich“**. Die Seite liest die Live-Daten vom
+`main`-Branch und zeigt pro Gruppe jedes abweichende Feld (Datenbank vs. Website).
+Website-Werte, die stimmen, anhaken → „Website-Werte übernehmen“. Jede Übernahme
+steht unter „Änderungen“ (Quelle „Abgleich mit Website“) und ist rückgängig machbar.
+Verifizierung, Aktiv-Status und Bearbeitungslinks werden nie angefasst.
+
+Faustregel: Website direkt korrigiert → übernehmen. Gruppe hat sich seit dem
+letzten Sync selbst geändert → **nicht** übernehmen (der Sync bringt das Neue live).
+
 ## Was schiefgehen kann
 
 - „Profil gespeichert", aber live nichts geändert → Daten-Sync nicht gestartet oder

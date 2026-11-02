@@ -18,6 +18,9 @@ export function GroupDiffForm({ group }: { group: GroupDiff }) {
   const [picked, setPicked] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  // "Datenbank ist richtig": nothing is written — the next Daten-Sync copies the
+  // DB state to the website, after which the group no longer shows up here.
+  const [keepDb, setKeepDb] = useState(false);
 
   function toggle(key: string) {
     setPicked((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
@@ -47,6 +50,19 @@ export function GroupDiffForm({ group }: { group: GroupDiff }) {
     }
   }
 
+  if (keepDb) {
+    return (
+      <div className="flex flex-wrap items-center justify-between gap-2 border-2 border-foreground/30 bg-background px-4 py-2 text-xs">
+        <span>
+          <strong>{group.name}</strong>: Datenbank bleibt – kommt mit dem nächsten Daten-Sync auf die Website.
+        </span>
+        <button type="button" onClick={() => setKeepDb(false)} className="underline underline-offset-2">
+          Doch prüfen
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="border-2 border-foreground bg-background p-4">
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
@@ -59,7 +75,7 @@ export function GroupDiffForm({ group }: { group: GroupDiff }) {
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-foreground/20">
-              <th className="py-1 pr-2">Übernehmen</th>
+              <th className="py-1 pr-2">Website übernehmen?</th>
               <th className="py-1 pr-2">Feld</th>
               <th className="py-1 pr-2">Datenbank</th>
               <th className="py-1">Website</th>
@@ -99,6 +115,14 @@ export function GroupDiffForm({ group }: { group: GroupDiff }) {
           className="bg-foreground px-4 py-2 font-heading text-xs uppercase tracking-wider text-primary-foreground disabled:opacity-40"
         >
           {busy ? "Übernehme …" : `Website-Werte übernehmen (${picked.length})`}
+        </button>
+        <button
+          type="button"
+          onClick={() => setKeepDb(true)}
+          disabled={busy}
+          className="border-2 border-foreground px-4 py-2 font-heading text-xs uppercase tracking-wider disabled:opacity-40"
+        >
+          Datenbank ist richtig
         </button>
         {message && (
           <span className={`text-xs ${message.ok ? "text-green-700" : "text-red-700"}`}>{message.text}</span>

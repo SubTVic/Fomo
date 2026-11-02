@@ -63,6 +63,12 @@ Logos laufen **nicht** über die DB, sondern direkt über die Website-Dateien:
 
 ## Daten live schalten (nach Fall A oder B) — „Daten-Sync"
 
+**Automatisch:** Der Daten-Sync läuft stündlich von selbst (nach der Kampagne auf
+täglich stellen: `cron` in `.github/workflows/sync-groups.yml`). Gibt es Änderungen,
+öffnet er einen PR „Daten-Sync <Datum>“ — **mergen musst du selbst**. Ein neuerer
+Sync ersetzt einen älteren offenen Sync-PR. Ohne Secret `EXPORT_TOKEN` überspringt
+er still. Von Hand starten geht weiterhin wie unten beschrieben.
+
 Kein Terminal, kein Backup nötig. Am besten **gesammelt** (z. B. einmal pro Woche oder
 nach einer Bestätigungsrunde):
 1. Admin-App → Dashboard → **„Daten-Sync öffnen (GitHub)"** (oder GitHub → Actions →

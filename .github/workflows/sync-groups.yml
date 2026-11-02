@@ -2,7 +2,12 @@
 #
 # "Website aktualisieren": pulls the current group data from the admin app,
 # checks it and opens a pull request that updates static-site/data/groups.json
-# (Umsetzungsplan WP-4.5). Start it by hand: Actions → "Daten-Sync" → Run workflow.
+# (Umsetzungsplan WP-4.5). Runs on a schedule (see `on.schedule`) and can be
+# started by hand: Actions → "Daten-Sync" → Run workflow. It never merges by
+# itself — a person merges the PR. A newer sync replaces an older open sync PR.
+#
+# Before the first scheduled run: take website-only corrections into the DB
+# (Admin-App → "Abgleich"), otherwise the sync PR would undo them.
 #
 # Needs (one time, see docs/runbooks/01-gruppe-aendern.md):
 #   - secret EXPORT_TOKEN (same value as EXPORT_TOKEN in the admin app's Vercel env)
@@ -12,6 +17,9 @@
 name: Daten-Sync
 
 on:
+  # Hourly during the campaign; switch to daily (e.g. "23 5 * * *") afterwards.
+  schedule:
+    - cron: "23 * * * *"
   workflow_dispatch:
     inputs:
       allow_large_removal:
@@ -48,6 +56,12 @@ jobs:
           EXPORT_TOKEN: ${{ secrets.EXPORT_TOKEN }}
         run: |
           if [ -z "$EXPORT_TOKEN" ]; then
+            if [ "${{ github.event_name }}" = "schedule" ]; then
+              # Scheduled runs stay quiet until the secret is set.
+              echo "::notice::Secret EXPORT_TOKEN fehlt – geplanter Sync übersprungen."
+              echo "SKIP_SYNC=1" >> "$GITHUB_ENV"
+              exit 0
+            fi
             echo "::error::Secret EXPORT_TOKEN fehlt (Settings → Secrets and variables → Actions)."
             exit 1
           fi
@@ -60,6 +74,7 @@ jobs:
           ' "$RUNNER_TEMP/groups.json"
 
       - name: Änderungen zusammenfassen
+        if: env.SKIP_SYNC != '1'
         env:
           ALLOW_LARGE_REMOVAL: ${{ inputs.allow_large_removal }}
         run: |
@@ -73,10 +88,12 @@ jobs:
           cp "$RUNNER_TEMP/groups.json" static-site/data/groups.json
 
       - name: Daten prüfen
+        if: env.SKIP_SYNC != '1'
         working-directory: static-site
         run: node scripts/validate-data.mjs
 
       - name: Pull Request öffnen
+        if: env.SKIP_SYNC != '1'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -84,6 +101,19 @@ jobs:
             echo "Keine inhaltlichen Änderungen – kein Pull Request nötig." | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
+          # One open sync PR at a time: a newer export replaces older ones; an
+          # open PR with exactly this data is kept (no hourly re-open noise).
+          OPEN="$(gh pr list --state open --json number,headRefName \
+              --jq '.[] | select(.headRefName | startswith("daten-sync/")) | "\(.number) \(.headRefName)"')"
+          while read -r num ref; do
+            [ -z "$num" ] && continue
+            git fetch --quiet origin "$ref"
+            if git diff --quiet "origin/$ref" -- static-site/data/groups.json; then
+              echo "Offener Pull Request #$num enthält schon genau diese Daten – nichts zu tun." | tee -a "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            gh pr close "$num" --delete-branch --comment "Ersetzt durch einen neueren Daten-Sync." || true
+          done <<< "$OPEN"
           STAMP="$(date -u +%Y-%m-%d-%H%M)"
           BRANCH="daten-sync/$STAMP"
           git config user.name "github-actions[bot]"

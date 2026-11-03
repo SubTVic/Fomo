@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { WS2_ITEMS, WS2_FILTER } from "@/lib/ws2-items";
 import type { Ws2AnswerValue } from "@/lib/ws2-items";
+import { REGISTER_LIMITS, isWithinLimit } from "@/lib/register-limits";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -94,6 +95,45 @@ const STEPS = [
   "Abschluss",
 ];
 
+// Label and step per field, to turn server validation errors into a hint the
+// user can act on (instead of the raw Zod message).
+const FIELD_INFO: Record<string, { label: string; step: number }> = {
+  name: { label: "Name der Gruppe", step: 1 },
+  categoryName: { label: "Kategorie", step: 1 },
+  shortDescription: { label: "Kurzbeschreibung", step: 1 },
+  longDescription: { label: "Ausführliche Beschreibung", step: 1 },
+  foundedYear: { label: "Gründungsjahr", step: 1 },
+  motto: { label: "Motto / Slogan", step: 1 },
+  contactEmail: { label: "E-Mail-Adresse", step: 2 },
+  contactPerson: { label: "Ansprechperson", step: 2 },
+  contactPersonRole: { label: "Rolle", step: 2 },
+  websiteUrl: { label: "Website", step: 2 },
+  instagramUrl: { label: "Instagram", step: 2 },
+  memberCount: { label: "Mitgliederanzahl", step: 3 },
+  meetingSchedule: { label: "Treffen / Aktivitäten", step: 3 },
+  language: { label: "Hauptsprache", step: 3 },
+  onboardingInfo: { label: "Onboarding", step: 3 },
+  ws2Answers: { label: "Gruppencheck", step: 4 },
+  ws2FilterSelections: { label: "Bereiche", step: 4 },
+  raterCount: { label: "Anzahl Personen", step: 4 },
+  responsibleName: { label: "Name der verantwortlichen Person", step: 5 },
+  responsibleEmail: { label: "E-Mail der verantwortlichen Person", step: 5 },
+  responsibleRole: { label: "Rolle in der Gruppe", step: 5 },
+  responsibleConfirmed: { label: "Bestätigung", step: 5 },
+  dataConsent: { label: "Einwilligung", step: 6 },
+};
+
+function describeFieldErrors(fields: string[]): { message: string; step: number } {
+  const parts = fields.map((f) => {
+    const info = FIELD_INFO[f];
+    const label = info?.label ?? f;
+    const limit = (REGISTER_LIMITS as Record<string, number>)[f];
+    return `„${label}“` + (info ? ` (Schritt ${info.step}${limit ? `, max. ${limit} Zeichen` : ""})` : "");
+  });
+  const step = Math.min(...fields.map((f) => FIELD_INFO[f]?.step ?? 6));
+  return { message: `Bitte prüft: ${parts.join("; ")}.`, step };
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function GroupRegisterForm() {
@@ -107,6 +147,8 @@ export function GroupRegisterForm() {
   const [submitResult, setSubmitResult] = useState<{
     success: boolean;
     error?: string;
+    /** Step that holds the first invalid field, offered as a jump target. */
+    errorStep?: number;
   } | null>(null);
 
   function set<K extends keyof FormData>(key: K, value: FormData[K]) {
@@ -178,10 +220,13 @@ export function GroupRegisterForm() {
       if (res.ok && data.success) {
         setSubmitResult({ success: true });
       } else {
-        const detail = data.details?.fieldErrors
-          ? " (" + Object.entries(data.details.fieldErrors).map(([k, v]) => `${k}: ${(v as string[]).join(", ")}`).join("; ") + ")"
-          : "";
-        setSubmitResult({ success: false, error: (data.error ?? "Unbekannter Fehler") + detail });
+        const fields = Object.keys(data.details?.fieldErrors ?? {});
+        if (fields.length > 0) {
+          const { message, step: errorStep } = describeFieldErrors(fields);
+          setSubmitResult({ success: false, error: message, errorStep });
+        } else {
+          setSubmitResult({ success: false, error: data.error ?? "Unbekannter Fehler" });
+        }
       }
     } catch {
       setSubmitResult({ success: false, error: "Netzwerkfehler – bitte erneut versuchen." });
@@ -213,18 +258,33 @@ export function GroupRegisterForm() {
     if (step === 1) {
       return (
         form.name.trim().length >= 2 &&
+        isWithinLimit("name", form.name) &&
         form.categoryName !== "" &&
         form.shortDescription.trim().length >= 10 &&
-        form.shortDescription.trim().length <= 200
+        isWithinLimit("shortDescription", form.shortDescription) &&
+        isWithinLimit("motto", form.motto)
       );
     }
-    if (step === 2) return form.contactEmail.includes("@");
-    if (step === 3) return true;
+    if (step === 2) {
+      return (
+        form.contactEmail.includes("@") &&
+        isWithinLimit("contactPerson", form.contactPerson) &&
+        isWithinLimit("contactPersonRole", form.contactPersonRole)
+      );
+    }
+    if (step === 3) {
+      return (
+        isWithinLimit("meetingSchedule", form.meetingSchedule) &&
+        isWithinLimit("onboardingInfo", form.onboardingInfo)
+      );
+    }
     if (step === 4) return quizDone;
     if (step === 5) {
       return (
         form.responsibleName.trim().length >= 2 &&
+        isWithinLimit("responsibleName", form.responsibleName) &&
         form.responsibleEmail.includes("@") &&
+        isWithinLimit("responsibleRole", form.responsibleRole) &&
         form.responsibleConfirmed
       );
     }
@@ -273,7 +333,19 @@ export function GroupRegisterForm() {
           )}
           {step === 5 && <Step5Responsible form={form} set={set} />}
           {step === 6 && (
-            <Step6 form={form} set={set} error={submitResult?.error} />
+            <Step6
+              form={form}
+              set={set}
+              error={submitResult?.error}
+              onFix={
+                submitResult?.errorStep && submitResult.errorStep < 6
+                  ? () => {
+                      setStep(submitResult.errorStep!);
+                      setSubmitResult(null);
+                    }
+                  : undefined
+              }
+            />
           )}
 
           {/* Navigation — only show outside the quiz item flow */}
@@ -281,14 +353,10 @@ export function GroupRegisterForm() {
             <div className="mt-10 flex items-center justify-between">
               {step > 1 ? (
                 <button
-                  onClick={() => {
-                    if (step === 5) {
-                      // going back to step 4 resets quiz completion so user can re-do
-                      setQuizDone(false);
-                      setQuizScreen("intro");
-                    }
-                    setStep((s) => s - 1);
-                  }}
+                  // Going back to step 4 keeps the quiz completed: its answers stay
+                  // editable via the quiz's own back links, and the navigation stays
+                  // visible so steps 1–3 remain reachable.
+                  onClick={() => setStep((s) => s - 1)}
                   className="text-sm text-muted-foreground hover:text-foreground"
                 >
                   ← Zurück
@@ -343,6 +411,7 @@ function Step1({
           type="text"
           value={form.name}
           onChange={(e) => set("name", e.target.value)}
+          maxLength={REGISTER_LIMITS.name}
           placeholder="z.B. Fachschaftsrat Informatik"
           className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
         />
@@ -363,8 +432,8 @@ function Step1({
 
       <Field
         label="Kurzbeschreibung *"
-        hint={`${descLen}/200 Zeichen`}
-        error={descLen > 200 ? "Maximal 200 Zeichen" : undefined}
+        hint={`${descLen}/${REGISTER_LIMITS.shortDescription} Zeichen`}
+        error={descLen > REGISTER_LIMITS.shortDescription ? `Maximal ${REGISTER_LIMITS.shortDescription} Zeichen` : undefined}
       >
         <textarea
           rows={3}
@@ -402,6 +471,7 @@ function Step1({
             type="text"
             value={form.motto}
             onChange={(e) => set("motto", e.target.value)}
+            maxLength={REGISTER_LIMITS.motto}
             placeholder="Optional"
             className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
           />
@@ -440,6 +510,7 @@ function Step2({
             type="text"
             value={form.contactPerson}
             onChange={(e) => set("contactPerson", e.target.value)}
+            maxLength={REGISTER_LIMITS.contactPerson}
             placeholder="Vor- und Nachname"
             className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
           />
@@ -449,6 +520,7 @@ function Step2({
             type="text"
             value={form.contactPersonRole}
             onChange={(e) => set("contactPersonRole", e.target.value)}
+            maxLength={REGISTER_LIMITS.contactPersonRole}
             placeholder="z.B. Vorsitzende:r"
             className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
           />
@@ -487,6 +559,8 @@ function Step3({
   form: FormData;
   set: <K extends keyof FormData>(k: K, v: FormData[K]) => void;
 }) {
+  const meetingLen = form.meetingSchedule.trim().length;
+  const onboardingLen = form.onboardingInfo.trim().length;
   return (
     <div className="flex flex-col gap-6">
       <h2 className="font-heading text-lg uppercase">Struktur</h2>
@@ -510,13 +584,21 @@ function Step3({
         </div>
       </Field>
 
-      <Field label="Treffen / Aktivitäten" hint="Wann und wie oft trefft ihr euch?">
-        <input
-          type="text"
+      <Field
+        label="Treffen / Aktivitäten"
+        hint={`Wann und wie oft trefft ihr euch? Kurz halten – ${meetingLen}/${REGISTER_LIMITS.meetingSchedule} Zeichen`}
+        error={
+          meetingLen > REGISTER_LIMITS.meetingSchedule
+            ? `Maximal ${REGISTER_LIMITS.meetingSchedule} Zeichen. Mehr zu euren Aktivitäten passt in „Ausführliche Beschreibung“ (Schritt 1).`
+            : undefined
+        }
+      >
+        <textarea
+          rows={2}
           value={form.meetingSchedule}
           onChange={(e) => set("meetingSchedule", e.target.value)}
           placeholder="z.B. Jeden Dienstag 19:00 Uhr im APB"
-          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+          className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors resize-none"
         />
       </Field>
 
@@ -543,7 +625,15 @@ function Step3({
         </div>
       </Field>
 
-      <Field label="Onboarding" hint="Wie werden neue Mitglieder aufgenommen?">
+      <Field
+        label="Onboarding"
+        hint="Wie werden neue Mitglieder aufgenommen?"
+        error={
+          onboardingLen > REGISTER_LIMITS.onboardingInfo
+            ? `Maximal ${REGISTER_LIMITS.onboardingInfo} Zeichen (aktuell ${onboardingLen}).`
+            : undefined
+        }
+      >
         <textarea
           rows={4}
           value={form.onboardingInfo}
@@ -805,6 +895,7 @@ function Step5Responsible({
           type="text"
           value={form.responsibleName}
           onChange={(e) => set("responsibleName", e.target.value)}
+          maxLength={REGISTER_LIMITS.responsibleName}
           placeholder="Vor- und Nachname"
           className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
         />
@@ -825,6 +916,7 @@ function Step5Responsible({
           type="text"
           value={form.responsibleRole}
           onChange={(e) => set("responsibleRole", e.target.value)}
+          maxLength={REGISTER_LIMITS.responsibleRole}
           placeholder="z.B. Vorsitzende:r, Vorstand"
           className="w-full border-2 border-foreground/30 bg-card px-3 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
         />
@@ -853,10 +945,13 @@ function Step6({
   form,
   set,
   error,
+  onFix,
 }: {
   form: FormData;
   set: <K extends keyof FormData>(k: K, v: FormData[K]) => void;
   error?: string;
+  /** Jumps to the step with the first invalid field (data is kept). */
+  onFix?: () => void;
 }) {
   return (
     <div className="flex flex-col gap-6">
@@ -906,9 +1001,18 @@ function Step6({
       </p>
 
       {error && (
-        <p className="border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          Fehler: {error}
-        </p>
+        <div className="border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          <p>Fehler: {error}</p>
+          {onFix && (
+            <button
+              type="button"
+              onClick={onFix}
+              className="mt-2 font-medium underline underline-offset-2 hover:text-foreground"
+            >
+              Zum Feld springen – eure Angaben bleiben erhalten →
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

@@ -1,10 +1,10 @@
 {
   "_meta": {
     "source": "admin app export API",
-    "generatedAt": "2026-11-02T09:17:54.073Z",
+    "generatedAt": "2026-11-06T00:23:07.841Z",
     "groupCount": 97,
-    "verifiedCount": 56,
-    "derivedCount": 41,
+    "verifiedCount": 60,
+    "derivedCount": 37,
     "note": "All active groups. Verified have real selfRatings; unverified use naive-derived ratings flagged derived:true (excluded from quiz matching)."
   },
   "groups": [
@@ -803,26 +803,26 @@
     },
     {
       "id": "cmmwg2z7s000dib04bky8jtoq",
-      "name": "Amateurfunk an der TU Dresden (DL0TUD)",
+      "name": "Amateurfunk an der TU Dresden",
       "slug": "amateurfunk-an-der-tu-dresden-dl0tud",
-      "shortDescription": "Der DARC-Ortsverband TU Dresden (S07) betreibt die Klubstation DL0TUD im Barkhausenbau der TU Dresden und pflegt das Hobby Amateurfunk in allen Facetten. Dazu gehören Funkbetrieb auf Kurz- und Ultraku",
-      "longDescription": "Der DARC-Ortsverband TU Dresden (S07) betreibt die Klubstation DL0TUD im Barkhausenbau der TU Dresden und pflegt das Hobby Amateurfunk in allen Facetten. Dazu gehören Funkbetrieb auf Kurz- und Ultrakurzwelle, Ausbildung zur Amateurfunklizenz, Antennenbau und die Teilnahme an nationalen und internationalen Funkwettbewerben (Contesten).",
-      "categoryName": "Sonstiges",
-      "categoryColor": "",
-      "categoryIcon": "",
-      "websiteUrl": "https://dl0tud.tu-dresden.de/",
+      "shortDescription": "Wir sind der Ortsverband \"TU Dresden\" (S07) im Deutschen Amateur-Radio-Club e. V. (DARC). Und betreiben die Amateurfunk-Klubstation DL0TUD im Barkhausenbau. Deren Antennen sind ja gut sichtbar.",
+      "longDescription": "Amateurfunk an der TU Dresden gibt es seit 1956, wir feiern also in diesem Jahr unser 70-jähriges Jubiläum.\nZu unserem Ortsverband gehören derzeit gut 90 Mitglieder. Darunter sind (fast) alle Spielarten des Amateurfunks vertreten. Um nur einige zu nennen: Funker auf Kurzwelle und/oder UKW, Techniker/Selbstbauer, Outdoor-Funker, Funken über Satelliten oder den Mond.\nMehr Informationen findet Ihr auf https://dl0tud.tu-dresden.de.",
+      "categoryName": "Technik & Wissenschaft",
+      "categoryColor": "#00F5D4",
+      "categoryIcon": "cpu",
+      "websiteUrl": "https://dl0tud.tu-dresden.de",
       "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
-      "language": "german",
+      "contactEmail": "dl0tud@mailbox.tu-dresden.de",
+      "memberCount": 51,
+      "language": "both",
       "eventFrequency": "high",
       "groupSize": "large",
-      "motto": null,
-      "foundedYear": null,
+      "motto": "Wir funken auf allen unseren Frequenzen.",
+      "foundedYear": 1956,
       "logoUrl": null,
       "attributes": {
         "career": false,
-        "tech": true,
+        "tech": false,
         "socialImpact": false,
         "party": false,
         "religion": false,
@@ -831,19 +831,22 @@
         "arts": false,
         "music": false,
         "timeLow": false,
-        "handsOn": true,
-        "outdoor": true,
+        "handsOn": false,
+        "outdoor": false,
         "international": false,
-        "beginnerFriendly": true,
-        "competitive": true,
-        "financialCost": true,
-        "leadershipOpportunities": true
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
-        "filterSelections": [],
+        "raterCount": 1,
+        "derived": false,
+        "filterSelections": [
+          "sport",
+          "projects"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -855,11 +858,11 @@
           },
           {
             "itemId": "WS2-03",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-04",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-05",
@@ -867,7 +870,7 @@
           },
           {
             "itemId": "WS2-06",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-07",
@@ -875,7 +878,7 @@
           },
           {
             "itemId": "WS2-08",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-09",
@@ -883,23 +886,23 @@
           },
           {
             "itemId": "WS2-10",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-11",
             "value": 1
           },
           {
-            "itemId": "WS2-12",
+            "itemId": "WS2-11",
             "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 0
           },
           {
             "itemId": "WS2-13",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-14",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-15",
@@ -907,7 +910,7 @@
           },
           {
             "itemId": "WS2-16",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-17",
@@ -915,7 +918,7 @@
           },
           {
             "itemId": "WS2-18",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-19",
@@ -927,7 +930,7 @@
           },
           {
             "itemId": "WS2-21",
-            "value": 0
+            "value": 1
           }
         ]
       }
@@ -2791,57 +2794,60 @@
       "id": "cmmwg30z70011ib04mpvurca0",
       "name": "DE-LATAM e.V.",
       "slug": "de-latam-e-v",
-      "shortDescription": "DE-LATAM e.V. ist eine lateinamerikanische Hochschulgruppe an der TU Dresden, die Studierende aus Lateinamerika und Interessierte vernetzt und in den Bereichen Sprache, Sport, Freizeit, interkulturell",
-      "longDescription": "DE-LATAM e.V. ist eine lateinamerikanische Hochschulgruppe an der TU Dresden, die Studierende aus Lateinamerika und Interessierte vernetzt und in den Bereichen Sprache, Sport, Freizeit, interkultureller Austausch, Kunst und Kultur sowie akademische Veranstaltungen aktiv ist.",
-      "categoryName": "Sonstiges",
-      "categoryColor": "",
-      "categoryIcon": "",
-      "websiteUrl": "https://www.instagram.com/delatam.ev/",
-      "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
-      "language": "both",
+      "shortDescription": "DE-LATAM e.V. bringt Menschen aus Deutschland, Lateinamerika und anderen Ländern in Dresden zusammen. Wir organisieren kulturelle Veranstaltungen, Sprachtreffen und gemeinsame Aktivitäten.",
+      "longDescription": "DE-LATAM e.V. wurde 2024 in Dresden gegründet. Wir sind ein Verein, der Menschen aus Deutschland, Lateinamerika und anderen Teilen der Welt zusammenbringt.\n\nBei uns geht es darum, neue Menschen kennenzulernen, sich auszutauschen und gemeinsam etwas zu unternehmen. Dafür organisieren wir regelmäßig Stammtische, Sprach- und Lerngruppen, kulturelle Veranstaltungen und weitere Aktivitäten in Dresden.\n\nWir arbeiten auch mit anderen Vereinen und Initiativen zusammen, um gemeinsame Projekte und Veranstaltungen umzusetzen.\n\nEin wichtiger Teil unserer Arbeit ist das ehrenamtliche Engagement. Unsere Mitglieder und Freiwilligen helfen bei der Organisation von Veranstaltungen, bringen eigene Ideen ein und gestalten die Aktivitäten des Vereins mit.\n\nWer DE-LATAM kennenlernen möchte, kann einfach bei einer unserer Veranstaltungen vorbeischauen oder sich über unsere WhatsApp-Onboarding-Gruppe mit uns in Verbindung setzen.\n\nEgal, ob du aus Lateinamerika, Deutschland oder einem anderen Land kommst: Wir freuen uns über alle, die Interesse an kulturellem Austausch haben und bei uns mitmachen möchten.\n\nMehr über uns: www.delatam.de",
+      "categoryName": "Soziales Engagement",
+      "categoryColor": "#EF476F",
+      "categoryIcon": "heart",
+      "websiteUrl": "https://www.delatam.de",
+      "instagramUrl": "https://www.instagram.com/delatam.ev/",
+      "contactEmail": "info@delatam.de",
+      "memberCount": 26,
+      "language": "german",
       "eventFrequency": "medium",
       "groupSize": "small",
-      "motto": null,
-      "foundedYear": null,
+      "motto": "Learn. Grow. Connect.",
+      "foundedYear": 2024,
       "logoUrl": null,
       "attributes": {
         "career": false,
         "tech": false,
-        "socialImpact": true,
+        "socialImpact": false,
         "party": false,
         "religion": false,
-        "sports": true,
-        "networking": true,
-        "arts": true,
+        "sports": false,
+        "networking": false,
+        "arts": false,
         "music": false,
-        "timeLow": true,
+        "timeLow": false,
         "handsOn": false,
         "outdoor": false,
-        "international": true,
-        "beginnerFriendly": true,
+        "international": false,
+        "beginnerFriendly": false,
         "competitive": false,
         "financialCost": false,
-        "leadershipOpportunities": true
+        "leadershipOpportunities": false
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
-        "filterSelections": [],
+        "raterCount": 2,
+        "derived": false,
+        "filterSelections": [
+          "community",
+          "engagement"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-02",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-03",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-04",
@@ -2849,15 +2855,15 @@
           },
           {
             "itemId": "WS2-05",
-            "value": -1
-          },
-          {
-            "itemId": "WS2-06",
             "value": 1
           },
           {
+            "itemId": "WS2-06",
+            "value": 0
+          },
+          {
             "itemId": "WS2-07",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-08",
@@ -2869,15 +2875,15 @@
           },
           {
             "itemId": "WS2-10",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-11",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-12",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-13",
@@ -2889,7 +2895,7 @@
           },
           {
             "itemId": "WS2-15",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-16",
@@ -2905,15 +2911,15 @@
           },
           {
             "itemId": "WS2-19",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-20",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-21",
-            "value": 0
+            "value": 1
           }
         ]
       }
@@ -4113,47 +4119,50 @@
     },
     {
       "id": "cmmwg3208001fib04qqhw8l3a",
-      "name": "EUROAVIA Dresden e.V.",
+      "name": "Euroavia Dresden e.V.",
       "slug": "euroavia-dresden-e-v",
-      "shortDescription": "EUROAVIA Dresden ist eine studentische Vereinigung für Luft- und Raumfahrtinteressierte an der TU Dresden, die als Teil des europäischen EUROAVIA-Netzwerks den Austausch zwischen Studierenden, Unterne",
-      "longDescription": "EUROAVIA Dresden ist eine studentische Vereinigung für Luft- und Raumfahrtinteressierte an der TU Dresden, die als Teil des europäischen EUROAVIA-Netzwerks den Austausch zwischen Studierenden, Unternehmen und Hochschulen durch Exkursionen, Workshops, Vorträge und internationale Events fördert.",
-      "categoryName": "Sonstiges",
-      "categoryColor": "",
-      "categoryIcon": "",
-      "websiteUrl": "https://dresden.euroavia.eu",
-      "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
+      "shortDescription": "Wir sind EUROAVIA Dresden. Das studentische Netzwerk für Luft- und Raumfahrt an der TUD. Bei uns erwarten dich internationale Events, Unternehmens-Besichtigungen, Workshops und eine starke Community!",
+      "longDescription": "EUROAVIA Dresden ist die lokale Gruppe des europäischen Netzwerks für Luft- und Raumfahrtstudierende. Unser übergeordnetes Ziel ist es, die Lücke zwischen universitärer Theorie und der realen Aerospace-Industrie zu schließen. Wir fördern den interkulturellen Austausch, technisches Know-how und internationale Freundschaften. \nDas Beste: Bei uns ist jede Fachrichtung willkommen, egal ob du Verkehrswissenschaften, Maschinenbau, Informatik oder etwas ganz anderes studierst. Wenn dich Technik und Luftfahrt faszinieren, bist du bei uns richtig!\n\nUnsere Geschichte:\nAls Teil des 1959 europaweit gegründeten Netzwerks blickt EUROAVIA auf eine lange Tradition studentischer Initiative zurück. Unsere Dresdner Lokalgruppe treibt diesen Spirit seit über 3 Jahrzehnten voran. Ein absolutes Highlight unserer jüngeren Geschichte war die Ausrichtung des internationalen EUROAVIA-Kongresses in Dresden, bei dem wir zahlreiche Studierende aus ganz Europa in Sachsen willkommen heißen durften.\n\nWas wir machen:\nInternational Travel & Fly-Ins: Besuche andere europäische Universitätsstädte, nimm an internationalen Events teil und entdecke das Netzwerk vor Ort.\n\nIndustry & Tech: Exkursionen zu Unternehmen und Forschungseinrichtungen, technische Workshops und Einblicke in die reale Praxis.\n\nCommunity & Dresden Life: Neben dem organisatorischen und fachlichen Austausch kommen gemeinsame Treffen/Abende und ein starker Zusammenhalt im Team nicht zu kurz.",
+      "categoryName": "Technik & Wissenschaft",
+      "categoryColor": "#00F5D4",
+      "categoryIcon": "cpu",
+      "websiteUrl": "https://dresden.euroavia.eu/",
+      "instagramUrl": "https://www.instagram.com/euroavia.dresden/",
+      "contactEmail": "dresden@euroavia.eu",
+      "memberCount": 51,
       "language": "both",
       "eventFrequency": "medium",
       "groupSize": "medium",
-      "motto": null,
-      "foundedYear": null,
+      "motto": "Build the wings of your future",
+      "foundedYear": 1994,
       "logoUrl": null,
       "attributes": {
-        "career": true,
-        "tech": true,
+        "career": false,
+        "tech": false,
         "socialImpact": false,
         "party": false,
         "religion": false,
         "sports": false,
-        "networking": true,
+        "networking": false,
         "arts": false,
         "music": false,
-        "timeLow": true,
+        "timeLow": false,
         "handsOn": false,
         "outdoor": false,
-        "international": true,
-        "beginnerFriendly": true,
+        "international": false,
+        "beginnerFriendly": false,
         "competitive": false,
         "financialCost": false,
-        "leadershipOpportunities": true
+        "leadershipOpportunities": false
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
-        "filterSelections": [],
+        "raterCount": 3,
+        "derived": false,
+        "filterSelections": [
+          "projects",
+          "community"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
@@ -4161,11 +4170,11 @@
           },
           {
             "itemId": "WS2-02",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-03",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-04",
@@ -4173,7 +4182,7 @@
           },
           {
             "itemId": "WS2-05",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-06",
@@ -4181,11 +4190,11 @@
           },
           {
             "itemId": "WS2-07",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-08",
-            "value": 0
+            "value": -1
           },
           {
             "itemId": "WS2-09",
@@ -4201,15 +4210,15 @@
           },
           {
             "itemId": "WS2-12",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-13",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-14",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-15",
@@ -4229,11 +4238,11 @@
           },
           {
             "itemId": "WS2-19",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-20",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-21",
@@ -11656,53 +11665,56 @@
       "id": "cmmwg3bkt004bib0432qmbv54",
       "name": "Traumtänzer e.V.",
       "slug": "traumtaenzer-e-v",
-      "shortDescription": "Der Traumtänzer e.V. ist ein studentischer Mittelalter-Club in der Dresdner Südvorstadt, der eine Rollenspiel-, Mittelalter- und Cocktailbar in rustikalem Design betreibt. Neben regulärem Barbetrieb b",
-      "longDescription": "Der Traumtänzer e.V. ist ein studentischer Mittelalter-Club in der Dresdner Südvorstadt, der eine Rollenspiel-, Mittelalter- und Cocktailbar in rustikalem Design betreibt. Neben regulärem Barbetrieb bietet der Club regelmäßige Events wie Pen-and-Paper-Stammtische, Brettspielcafés, Karaoke, Mottopartys und das traditionelle Mittelalterfest.",
+      "shortDescription": "Als ehrenamtlich arbeitender Verein verbinden wir Pen & Paper, Magic: The Gathering, Videospiele oder Bierpong in einem einzigartigen Mix.",
+      "longDescription": "Entdecke den einzigartigen Charme des Club Traumtänzers e.V. – mehr als eine rustikale Kneipe, sind wir ein lebendiger Studierendenclub in Dresden! Mit mittelalterlichem Flair und dem Herzblut unserer vielfältigen Mitglieder bieten wir nicht nur eine Bar, sondern eine Gemeinschaft von Gleichgesinnten.\n\nAls ehrenamtlich arbeitender Verein verbinden wir Pen & Paper, Magic: The Gathering, Videospiele oder Bierpong in einem einzigartigen Mix. Unser Fokus liegt auf gemeinsamen Erlebnissen, sei es bei internen Rollenspielrunden, Spieleabenden oder dem Betrieb unserer Bar.\n\nJede*r Studierende, Azubi oder Berufstätige kann Mitglied werden, solange die Freude am Clubleben geteilt wird und man eine gewisse Zeit für den Club aufbringen kann. Von unterhaltsamen Abenden hinter der Bar bis hin zur Mitgestaltung des Traumtänzers ist alles möglich. Hier kann man ohne Leistungsdruck gastronomische Erfahrung sammeln, oder lernt von handwerklich geschickten Mitgliedern den Club in Bauphasen zu verschönern.\n\nWenn ihr euch also ein Bild von uns machen wollt, kommt am besten einfach zu uns und erlebt den Club live und in Palisander (Farbe).\nWir freuen uns über jedes neue Gesicht!",
       "categoryName": "Sonstiges",
       "categoryColor": "",
       "categoryIcon": "",
-      "websiteUrl": "https://club-traumtaenzer.de",
-      "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
+      "websiteUrl": "https://club-traumtaenzer.de/",
+      "instagramUrl": "https://www.instagram.com/studierendenclub_traumtaenzer/",
+      "contactEmail": "vorstand@club-traumtaenzer.de",
+      "memberCount": 26,
       "language": "german",
       "eventFrequency": "high",
       "groupSize": "medium",
-      "motto": null,
-      "foundedYear": null,
+      "motto": "der einzigartige mittelalterliche Studierendenclub in Dresden!",
+      "foundedYear": 2009,
       "logoUrl": null,
       "attributes": {
         "career": false,
         "tech": false,
         "socialImpact": false,
-        "party": true,
+        "party": false,
         "religion": false,
         "sports": false,
-        "networking": true,
-        "arts": true,
-        "music": true,
+        "networking": false,
+        "arts": false,
+        "music": false,
         "timeLow": false,
-        "handsOn": true,
+        "handsOn": false,
         "outdoor": false,
         "international": false,
-        "beginnerFriendly": true,
+        "beginnerFriendly": false,
         "competitive": false,
         "financialCost": false,
-        "leadershipOpportunities": true
+        "leadershipOpportunities": false
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
-        "filterSelections": [],
+        "raterCount": 1,
+        "derived": false,
+        "filterSelections": [
+          "culture",
+          "community"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-02",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-03",
@@ -11710,7 +11722,7 @@
           },
           {
             "itemId": "WS2-04",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-05",
@@ -11718,15 +11730,15 @@
           },
           {
             "itemId": "WS2-06",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-07",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-08",
-            "value": 0
+            "value": 1
           },
           {
             "itemId": "WS2-09",
@@ -11734,7 +11746,7 @@
           },
           {
             "itemId": "WS2-10",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-11",
@@ -11742,23 +11754,23 @@
           },
           {
             "itemId": "WS2-12",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-13",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-14",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-15",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-16",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-17",
@@ -11774,11 +11786,11 @@
           },
           {
             "itemId": "WS2-20",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-21",
-            "value": 0
+            "value": 1
           }
         ]
       }
@@ -12718,7 +12730,7 @@
       "categoryColor": "#00F5D4",
       "categoryIcon": "cpu",
       "websiteUrl": "https://yeti-dresden.org/",
-      "instagramUrl": null,
+      "instagramUrl": "https://www.instagram.com/yeti_dresden/",
       "contactEmail": null,
       "memberCount": 60,
       "language": "both",

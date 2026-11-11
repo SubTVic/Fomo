@@ -1,10 +1,10 @@
 {
   "_meta": {
     "source": "admin app export API",
-    "generatedAt": "2026-11-10T17:55:18.271Z",
-    "groupCount": 97,
-    "verifiedCount": 60,
-    "derivedCount": 37,
+    "generatedAt": "2026-11-11T22:02:31.661Z",
+    "groupCount": 98,
+    "verifiedCount": 62,
+    "derivedCount": 36,
     "note": "All active groups. Verified have real selfRatings; unverified use naive-derived ratings flagged derived:true (excluded from quiz matching)."
   },
   "groups": [
@@ -3459,14 +3459,14 @@
       "name": "Effektiver Altruismus",
       "slug": "effektiver-altruismus",
       "shortDescription": "Effektiver Altruismus ist eine Philosophie und internationale Community, die sich mit der Frage beschäftigt, wie wir unsere begrenzten Ressourcen am besten einsetzen können, um anderen zu helfen.",
-      "longDescription": "Viele von uns wollen die Welt zu einem besseren Ort machen. Aber unsere Zeit und Ressourcen sind begrenzt - wie können wir sie also am besten einsetzen? Um das herauszufinden, gibt es den Effektiven Altruismus (effektiveraltruismus.de).\n\nWir orientieren uns an den Prinzipien:\n1. Priorisierung\n2. unparteiischer Altruismus\n3. offene Wahrheitssuche\n4. Gemeinschaftsgeist\n\n...und beschäftigen uns zum Beispiel mit Fragen wie:\nMit welchem Berufsweg kann ich am meisten Gutes bewirken?\nWie können wir Armut und Krankheit bekämpfen?\nWie können wir die nächste Pandemie verhindern?\nWelche Risiken bringt die Entwicklung künstlicher Intelligenz mit sich, und wie können wir diesen begegnen?\nWie können wir die Lebensbedingungen für Tiere verbessern und die Massentierhaltung langfristig abschaffen?\n\nUm uns über diese und viele weitere Themen auszutauschen, gründen wir eine neue Hochschulgruppe. Angedacht sind - je nach Interesse neuer Mitglieder - wöchentliche offene Gesprächsrunden oder auch eine Lesegruppe rund um das Buch \"80,000 Hours: How to Have a Fulfilling Career That Does Good\", in der wir gemeinsam über unsere zukünftigen Berufswege nachdenken. Aber auch im Hier und Jetzt wollen wir uns gegenseitig bei unseren altruistischen Projekten motivieren und unterstützen.\n\nBei Interesse sendet gerne eine E-Mail an dresden@effektiveraltruismus.de. Wir freuen uns darauf, von euch zu hören!",
+      "longDescription": "Viele von uns wollen die Welt zu einem besseren Ort machen. Aber unsere Zeit und Ressourcen sind begrenzt - wie können wir sie also am besten einsetzen? Um das herauszufinden, gibt es den Effektiven Altruismus (effektiveraltruismus.de).\n\nJeden ersten Montag im Monat haben wir eine offene Kennenlernrunde oder einen Themenabend.\n\nAn den anderen Montagen widmen wir uns jeweils einem Kapitel des Buchs \"80,000 Hours: How to Have a Fulfilling Career That Does Good\" (kostenlos online verfügbar). Wenn du auch noch überlegst, welcher Berufsweg für dich der Richtige ist, würden wir uns sehr freuen, dich bei unserem Book Club zu sehen! :)",
       "categoryName": "Soziales Engagement",
       "categoryColor": "#EF476F",
       "categoryIcon": "heart",
-      "websiteUrl": "https://effektiveraltruismus.de",
-      "instagramUrl": null,
+      "websiteUrl": "https://forum.effectivealtruism.org/groups/mnTbgDNqxjdMoYW4h",
+      "instagramUrl": "https://www.instagram.com/effektiveraltruismusdresden?obrf=MTNrMzhoZ3djeXQ1cg==",
       "contactEmail": "dresden@effektiveraltruismus.de",
-      "memberCount": 1,
+      "memberCount": 7,
       "language": "both",
       "eventFrequency": null,
       "groupSize": null,
@@ -3510,7 +3510,7 @@
           },
           {
             "itemId": "WS2-03",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-04",
@@ -4118,11 +4118,11 @@
       }
     },
     {
-      "id": "cmmwg3208001fib04qqhw8l3a",
+      "id": "cmw817yna0001jq08qoz3emrb",
       "name": "Euroavia Dresden e.V.",
-      "slug": "euroavia-dresden-e-v",
-      "shortDescription": "Wir sind EUROAVIA Dresden. Das studentische Netzwerk für Luft- und Raumfahrt an der TUD. Bei uns erwarten dich internationale Events, Unternehmens-Besichtigungen, Workshops und eine starke Community!",
-      "longDescription": "EUROAVIA Dresden ist die lokale Gruppe des europäischen Netzwerks für Luft- und Raumfahrtstudierende. Unser übergeordnetes Ziel ist es, die Lücke zwischen universitärer Theorie und der realen Aerospace-Industrie zu schließen. Wir fördern den interkulturellen Austausch, technisches Know-how und internationale Freundschaften. \nDas Beste: Bei uns ist jede Fachrichtung willkommen, egal ob du Verkehrswissenschaften, Maschinenbau, Informatik oder etwas ganz anderes studierst. Wenn dich Technik und Luftfahrt faszinieren, bist du bei uns richtig!\n\nUnsere Geschichte:\nAls Teil des 1959 europaweit gegründeten Netzwerks blickt EUROAVIA auf eine lange Tradition studentischer Initiative zurück. Unsere Dresdner Lokalgruppe treibt diesen Spirit seit über 3 Jahrzehnten voran. Ein absolutes Highlight unserer jüngeren Geschichte war die Ausrichtung des internationalen EUROAVIA-Kongresses in Dresden, bei dem wir zahlreiche Studierende aus ganz Europa in Sachsen willkommen heißen durften.\n\nWas wir machen:\nInternational Travel & Fly-Ins: Besuche andere europäische Universitätsstädte, nimm an internationalen Events teil und entdecke das Netzwerk vor Ort.\n\nIndustry & Tech: Exkursionen zu Unternehmen und Forschungseinrichtungen, technische Workshops und Einblicke in die reale Praxis.\n\nCommunity & Dresden Life: Neben dem organisatorischen und fachlichen Austausch kommen gemeinsame Treffen/Abende und ein starker Zusammenhalt im Team nicht zu kurz.",
+      "slug": "euroavia-dresden-e-v-2",
+      "shortDescription": "Wir sind EUROAVIA Dresden.\nDas studentische Netzwerk für Luft- und Raumfahrt an der TUD. Bei uns erwarten dich internationale Events, Unternehmensführungen, Workshops und eine starke Community!",
+      "longDescription": "EUROAVIA Dresden ist eine lokale Gruppe des europäischen Netzwerks für Luft- und Raumfahrtstudierende. \nUnser übergeordnetes Ziel ist es, die Lücke zwischen universitärer Theorie und der realen Aerospace-Industrie zu schließen. Wir fördern den interkulturellen Austausch, technisches Know-how und internationale Freundschaften. \nDas Beste: Bei uns ist jede Fachrichtung willkommen, egal ob du Luft- und Raumfahrttechnik, Maschinenbau, Informatik oder etwas ganz anderes studierst. Wenn dich Technik und Luftfahrt faszinieren, bist du bei uns richtig!\n\nUnsere Geschichte:\nAls Teil des 1959 europaweit gegründeten Netzwerks blickt EUROAVIA auf eine lange Tradition studentischer Initiative zurück. Unsere Dresdner Lokalgruppe treibt diesen Spirit seit über 3 Jahrzehnten voran. \nEin absolutes Highlight unserer jüngeren Geschichte war die Ausrichtung des internationalen EUROAVIA-Kongresses in Dresden, bei dem wir zahlreiche Studierende aus ganz Europa in Sachsen willkommen heißen durften.\n\n\nWas wir machen:\nInternational Travel & Fly-Ins: Besuche andere europäische Universitätsstädte, nimm an internationalen Events teil und entdecke das Netzwerk vor Ort.\n\nIndustry & Tech: Exkursionen zu Unternehmen und Forschungseinrichtungen, technische Workshops und Einblicke in die reale Praxis.\n\nCommunity: Neben dem organisatorischen und fachlichen Austausch kommen gemeinsame Abende und ein starker Zusammenhalt im Team nicht zu kurz.",
       "categoryName": "Technik & Wissenschaft",
       "categoryColor": "#00F5D4",
       "categoryIcon": "cpu",
@@ -4131,8 +4131,8 @@
       "contactEmail": "dresden@euroavia.eu",
       "memberCount": 51,
       "language": "both",
-      "eventFrequency": "medium",
-      "groupSize": "medium",
+      "eventFrequency": null,
+      "groupSize": null,
       "motto": "Build the wings of your future",
       "foundedYear": 1994,
       "logoUrl": null,
@@ -4526,14 +4526,14 @@
       "name": "Folkloretanzensemble „-Thea Maass“ der TU Dresden",
       "slug": "folkloretanzensemble-thea-maass-der-tu-dresden",
       "shortDescription": "Seit 1950 zählt das Folkloretanzensemble „Thea Maass“ der TU Dresden zu den leistungsstärksten und künstlerisch profiliertesten Amateurtanzgruppen Deutschlands.",
-      "longDescription": "Unter der Leitung der Tanzpädagogin und Choreografin Maud Butter widmen sich gegenwärtig etwa 40 Tänzer und Musiker der Pflege und Interpretation deutscher Tanzfolklore sowie der tänzerischen Umsetzung von überlieferten Bräuchen aus verschiedenen deutschen Regionen in anspruchsvollen Bühnenchoreografien. Dabei steht der feinfühlige und verantwortungsbewusste Umgang mit unserem Kulturerbe im Vordergrund der Gestaltung thematischer und handlungsbezogener Werke mit den vielfältigen Mitteln des Folkloretanzes.\n\nGanz im Sinne der lange Zeit für das Ensemble wirkenden Choreografin und Tanzregisseurin Thea Maass ist das Ziel der Gruppe, Menschen die Folklore in ihrer lebendigen Natürlichkeit, ihrem ausdrucksstarken Formenreichtum und in ihrer ganzen Schönheit nahe zu bringen.\n\nGelegenheit dazu bietet sich dem vorwiegend aus Studenten und Absolventen der TU Dresden bestehenden Ensemble nicht nur bei regionalen und landesweiten Auftritten, sondern als Mitglied des Internationalen Rats für die Organisation von Folklorefestivals und Volkskunst (CIOFF) auch bei zahlreichen Folklorefestivals und Tanzwettbewerben im Ausland. Im Kontakt mit Folkloregruppen und Menschen aus der ganzen Welt erfährt das Ensemble nicht nur selbst immer wieder neue Impulse in seiner künstlerischen Arbeit, sondern trägt in seiner Vielseitigkeit auch zu einem regen Austausch zwischen den Kulturen bei.",
-      "categoryName": "Politik & Gesellschaft",
-      "categoryColor": "#E63946",
-      "categoryIcon": "megaphone",
+      "longDescription": "Unter der Leitung der Tanzpädagogin und Choreografin Josephine Wätzold widmen sich gegenwärtig etwa 40 Tänzer und Musiker der Pflege und Interpretation deutscher Tanzfolklore sowie der tänzerischen Umsetzung von überlieferten Bräuchen aus verschiedenen deutschen Regionen in anspruchsvollen Bühnenchoreografien. Dabei steht der feinfühlige und verantwortungsbewusste Umgang mit unserem Kulturerbe im Vordergrund der Gestaltung thematischer und handlungsbezogener Werke mit den vielfältigen Mitteln des Folkloretanzes.\n\nGanz im Sinne der lange Zeit für das Ensemble wirkenden Choreografin und Tanzregisseurin Thea Maass ist das Ziel der Gruppe, Menschen die Folklore in ihrer lebendigen Natürlichkeit, ihrem ausdrucksstarken Formenreichtum und in ihrer ganzen Schönheit nahe zu bringen.\n\nGelegenheit dazu bietet sich dem vorwiegend aus Studenten und Absolventen der TU Dresden bestehenden Ensemble nicht nur bei regionalen und landesweiten Auftritten, sondern als Mitglied des Internationalen Rats für die Organisation von Folklorefestivals und Volkskunst (CIOFF) auch bei zahlreichen Folklorefestivals und Tanzwettbewerben im Ausland. Im Kontakt mit Folkloregruppen und Menschen aus der ganzen Welt erfährt das Ensemble nicht nur selbst immer wieder neue Impulse in seiner künstlerischen Arbeit, sondern trägt in seiner Vielseitigkeit auch zu einem regen Austausch zwischen den Kulturen bei.",
+      "categoryName": "Kunst & Kultur",
+      "categoryColor": "#9B5DE5",
+      "categoryIcon": "palette",
       "websiteUrl": "https://tu-te.de",
       "instagramUrl": "https://www.instagram.com/theamaass_dance/",
       "contactEmail": "info@tu-te.de",
-      "memberCount": 26,
+      "memberCount": 47,
       "language": "german",
       "eventFrequency": "high",
       "groupSize": "medium",
@@ -4561,11 +4561,11 @@
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 3,
+        "raterCount": 2,
         "derived": false,
         "filterSelections": [
-          "culture",
-          "sport"
+          "sport",
+          "culture"
         ],
         "answers": [
           {
@@ -5284,6 +5284,140 @@
           {
             "itemId": "WS2-14",
             "value": 0
+          },
+          {
+            "itemId": "WS2-15",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-16",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-17",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-18",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-19",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-20",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-21",
+            "value": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmw4zs1060001lf08i6e610om",
+      "name": "Hochschulpirat*innen Dresden",
+      "slug": "hochschulpirat-innen-dresden",
+      "shortDescription": "Ahoi! Wir sind antiautoritäre Menschen, die piratige Sachen machen. Unsere Themen sind unter anderem freies Wissen, studentische Selbstverwaltung, dezentrale Kommunikation und digitale Unabhängigkeit.",
+      "longDescription": "Ahoi! Wir sind die Hoschulpirat*innen Dresden. Wir verstehen uns als eine Gruppe von jungen Menschen, die den Zielen der internationalen Piraten-Bewegung nah steht, agieren aber unabhängig und eigenständig von jeweiligen Parteistrukturen. An der Hochschule geht es uns vor allem darum, die Philosophie des frei zugänglichen Wissens für alle, die Verwendung von open source software und die Möglichkeiten studentischer Selbstverwaltung unter die Leute zu bringen.",
+      "categoryName": "Politik & Gesellschaft",
+      "categoryColor": "#E63946",
+      "categoryIcon": "megaphone",
+      "websiteUrl": "https://hopidd.de",
+      "instagramUrl": "https://dresden.network/@hopidd",
+      "contactEmail": "kontakt@hopidd.de",
+      "memberCount": 1,
+      "language": "both",
+      "eventFrequency": null,
+      "groupSize": null,
+      "motto": "Dezentraler Antifaschismus!",
+      "foundedYear": 2018,
+      "logoUrl": null,
+      "attributes": {
+        "career": false,
+        "tech": false,
+        "socialImpact": false,
+        "party": false,
+        "religion": false,
+        "sports": false,
+        "networking": false,
+        "arts": false,
+        "music": false,
+        "timeLow": false,
+        "handsOn": false,
+        "outdoor": false,
+        "international": false,
+        "beginnerFriendly": false,
+        "competitive": false,
+        "financialCost": false,
+        "leadershipOpportunities": false
+      },
+      "nextEvent": null,
+      "selfRating": {
+        "raterCount": 3,
+        "derived": false,
+        "filterSelections": [
+          "engagement",
+          "community"
+        ],
+        "answers": [
+          {
+            "itemId": "WS2-01",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-02",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-03",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-04",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-05",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-06",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-07",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-08",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-09",
+            "value": 0
+          },
+          {
+            "itemId": "WS2-10",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-11",
+            "value": -1
+          },
+          {
+            "itemId": "WS2-12",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-13",
+            "value": 1
+          },
+          {
+            "itemId": "WS2-14",
+            "value": 1
           },
           {
             "itemId": "WS2-15",
@@ -8349,28 +8483,28 @@
       }
     },
     {
-      "id": "cmmwg38kf0037ib04q1t5ivzs",
-      "name": "Mit Sicherheit Verliebt – Lokalgruppe Dresden",
-      "slug": "mit-sicherheit-verliebt-lokalgruppe-dresden",
-      "shortDescription": "Mit Sicherheit Verliebt (MSV) ist eine studentische Hochschulgruppe, die nach dem Peer-Education-Ansatz sexpositives Aufklärungsworkshops in Schulen (Klassen 6–10) zu Themen wie Sexualität, Verhütung,",
-      "longDescription": "Mit Sicherheit Verliebt (MSV) ist eine studentische Hochschulgruppe, die nach dem Peer-Education-Ansatz sexpositives Aufklärungsworkshops in Schulen (Klassen 6–10) zu Themen wie Sexualität, Verhütung, STIs, Körperbild und Toleranz durchführt. Die Gruppe ist Teil des bundesweiten bvmd-Projekts und trifft sich alle zwei Wochen zur Organisation und internen Weiterbildung.",
-      "categoryName": "Sonstiges",
-      "categoryColor": "",
-      "categoryIcon": "",
-      "websiteUrl": "https://www.sicher-verliebt.de",
-      "instagramUrl": null,
-      "contactEmail": null,
-      "memberCount": null,
+      "id": "cmw0v8nms0001jq08p3esh15d",
+      "name": "Mit Sicherheit Verliebt",
+      "slug": "mit-sicherheit-verliebt",
+      "shortDescription": "Mit Sicherheit Verliebt ist eine studentische, ehrenamtliche Initiative, die sich für sexuelle Bildung und Selbstbestimmung starkmacht – an Schulen und darüber hinaus.",
+      "longDescription": "Wer wir sind\nWir sind Mit Sicherheit verliebt Dresden – eine studentische, ehrenamtliche Aufklärungsinitiative und Teil des bundesweiten Projekts „Mit Sicherheit verliebt“ der Bundesvertretung der Medizinstudierenden in Deutschland (bvmd).\nWir setzen uns für eine offene, selbstbestimmte und positive Auseinandersetzung mit Sexualität ein. Unser Team besteht aus engagierten Studierenden unterschiedlicher Fachrichtungen, die sich gemeinsam für mehr sexuelle Bildung und Aufklärung einsetzen.\n\n\nWas wir machen\nUnser Schwerpunkt liegt auf Besuchen in der 8. und 9. Klasse. Dabei gestalten wir interaktive Workshops, in denen Jugendliche in einer offenen und vertrauensvollen Atmosphäre Fragen stellen, Wissen sammeln und eigene Perspektiven entwickeln können.\nWir sprechen über alles, was zu Sexualität und Beziehungen gehört: Verhütung, Schwangerschaft, sexuell übertragbare Infektionen (STI), HIV, Konsens, sexuelle Selbstbestimmung, geschlechtliche und sexuelle Vielfalt sowie Liebe, Beziehungen und Kommunikation.\nUns ist wichtig, einen Raum zu schaffen, in dem keine Frage peinlich sein muss und unterschiedliche Erfahrungen und Lebensrealitäten Platz haben. Wir möchten Wissen vermitteln, Vorurteile abbauen und junge Menschen darin bestärken, selbstbestimmte Entscheidungen zu treffen.\n\nNeben unserer Arbeit an Schulen organisieren wir gemeinsame Aktionen und Veranstaltungen, um sexuelle Bildung auch außerhalb des Klassenzimmers sichtbar zu machen. Dazu gehören Workshops auf Festivals, Pub Quiz, Speeddating oder Vernetzungstreffen.\n\nUnser Ziel: Mehr Wissen, weniger Tabus und ein selbstbestimmter Umgang mit Sexualität – für alle!",
+      "categoryName": "Soziales Engagement",
+      "categoryColor": "#EF476F",
+      "categoryIcon": "heart",
+      "websiteUrl": "https://sicher-verliebt.de",
+      "instagramUrl": "https://instagram.com/msv_dresden",
+      "contactEmail": "dresden@sicher-verliebt.de",
+      "memberCount": 26,
       "language": "german",
-      "eventFrequency": "medium",
-      "groupSize": "small",
+      "eventFrequency": null,
+      "groupSize": null,
       "motto": null,
-      "foundedYear": null,
+      "foundedYear": 2014,
       "logoUrl": null,
       "attributes": {
         "career": false,
         "tech": false,
-        "socialImpact": true,
+        "socialImpact": false,
         "party": false,
         "religion": false,
         "sports": false,
@@ -8378,35 +8512,37 @@
         "arts": false,
         "music": false,
         "timeLow": false,
-        "handsOn": true,
+        "handsOn": false,
         "outdoor": false,
         "international": false,
-        "beginnerFriendly": true,
+        "beginnerFriendly": false,
         "competitive": false,
         "financialCost": false,
-        "leadershipOpportunities": true
+        "leadershipOpportunities": false
       },
       "nextEvent": null,
       "selfRating": {
-        "raterCount": 0,
-        "derived": true,
-        "filterSelections": [],
+        "raterCount": 1,
+        "derived": false,
+        "filterSelections": [
+          "engagement"
+        ],
         "answers": [
           {
             "itemId": "WS2-01",
-            "value": 1
+            "value": -1
           },
           {
             "itemId": "WS2-02",
-            "value": 1
+            "value": -1
           },
           {
             "itemId": "WS2-03",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-04",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-05",
@@ -8414,11 +8550,11 @@
           },
           {
             "itemId": "WS2-06",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-07",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-08",
@@ -8426,11 +8562,11 @@
           },
           {
             "itemId": "WS2-09",
-            "value": 0
+            "value": 1
           },
           {
             "itemId": "WS2-10",
-            "value": -1
+            "value": 0
           },
           {
             "itemId": "WS2-11",
@@ -8446,7 +8582,7 @@
           },
           {
             "itemId": "WS2-14",
-            "value": 1
+            "value": 0
           },
           {
             "itemId": "WS2-15",
@@ -8462,7 +8598,7 @@
           },
           {
             "itemId": "WS2-18",
-            "value": -1
+            "value": 1
           },
           {
             "itemId": "WS2-19",
@@ -8474,7 +8610,7 @@
           },
           {
             "itemId": "WS2-21",
-            "value": 0
+            "value": 1
           }
         ]
       }

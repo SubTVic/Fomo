@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { isRateLimited, getClientKey } from "@/lib/rate-limit";
 import { isHttpUrl, normalizeInstagramUrl, normalizeWebsiteUrl } from "@/lib/normalize-url";
 import { isValidAreaSelection, MAX_AREAS_PER_GROUP } from "@/lib/areas";
+import { REGISTER_LIMITS as L } from "@/lib/register-limits";
 
 function normalizeName(name: string): string {
   return name
@@ -52,25 +53,25 @@ async function findDuplicateGroup(name: string, excludeId: string): Promise<stri
 
 const RegisterSchema = z.object({
   // Stammdaten
-  name: z.string().min(2).max(100),
+  name: z.string().min(2).max(L.name),
   categoryName: z.string().min(1),
-  shortDescription: z.string().min(10).max(200),
+  shortDescription: z.string().min(10).max(L.shortDescription),
   longDescription: z.string().optional(),
   foundedYear: z.number().int().min(1800).max(2030).optional(),
-  motto: z.string().max(150).optional(),
+  motto: z.string().max(L.motto).optional(),
 
   // Kontakt
   contactEmail: z.string().email(),
-  contactPerson: z.string().max(100).optional(),
-  contactPersonRole: z.string().max(100).optional(),
+  contactPerson: z.string().max(L.contactPerson).optional(),
+  contactPersonRole: z.string().max(L.contactPersonRole).optional(),
   websiteUrl: z.preprocess(normalizeWebsiteUrl, z.string().max(500).refine(isHttpUrl).optional().or(z.literal(""))),
   instagramUrl: z.preprocess(normalizeInstagramUrl, z.string().max(200).refine(isHttpUrl).optional().or(z.literal(""))),
 
   // Struktur
   memberCount: z.string().optional(),
-  meetingSchedule: z.string().max(200).optional(),
+  meetingSchedule: z.string().max(L.meetingSchedule).optional(),
   language: z.enum(["german", "both", "english"]).optional(),
-  onboardingInfo: z.string().max(2000).optional(),
+  onboardingInfo: z.string().max(L.onboardingInfo).optional(),
 
   // WS2-Profil
   ws2Answers: z.array(z.object({
@@ -82,9 +83,9 @@ const RegisterSchema = z.object({
   raterCount: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
 
   // Verantwortliche Person
-  responsibleName: z.string().min(2).max(100),
+  responsibleName: z.string().min(2).max(L.responsibleName),
   responsibleEmail: z.string().email(),
-  responsibleRole: z.string().max(100).optional(),
+  responsibleRole: z.string().max(L.responsibleRole).optional(),
   responsibleConfirmed: z.literal(true),
 
   // Einverständnis

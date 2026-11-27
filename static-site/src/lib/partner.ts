@@ -11,9 +11,11 @@
  *
  * To end the campaign set `enabled: false` (or delete this file and the
  * <PartnerCard> usage in ResultsScreen).
+ *
+ * Campaign ended November 2026: switched off, code kept for a possible rerun.
  */
 export const PARTNER_OFFER = {
-  enabled: true,
+  enabled: false,
   id: "fokus",
   name: "FOKUS",
   /** Affiliate link; already carries the discount code. */
